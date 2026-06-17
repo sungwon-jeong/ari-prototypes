@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ari — Discover (web)</title>
+<style>
+/* ================================================================
+   ari shared design tokens + components — v1206.2 (web)
+   Copy this block verbatim into every web prototype file.
+   ================================================================ */
+:root{
+  --bg:#FFFFFF;
+  --surface:#F2F2F2;
+  --ink:#111111;
+  --soft:#8A8A8E;
+  --line:#ECECEC;
+  --accent:linear-gradient(135deg,#A0A4F0,#E6A9C9);
+  --r-pill:999px;
+  --r-card:20px;
+  --r-img:6px;
+  --shadow-float:0 8px 30px rgba(0,0,0,.12);
+  --shadow-card:0 2px 14px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,"SF Pro Text","Inter","Helvetica Neue",sans-serif;
+  background:#ECEAE6;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;
+}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+input,textarea{font:inherit;border:0;outline:none;background:transparent;color:var(--ink);width:100%}
+
+/* ---- browser frame ---- */
+.browser{width:1280px;height:820px;background:var(--bg);border-radius:14px;
+  box-shadow:0 30px 90px rgba(0,0,0,.28);overflow:hidden;position:relative;display:flex;flex-direction:column;flex:none}
+@media (max-width:1340px){.browser{width:96vw;height:92vh}}
+.chrome{height:42px;background:#F6F5F3;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;padding:0 16px;flex:none}
+.chrome .dot{width:11px;height:11px;border-radius:50%}
+.urlbar{width:380px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:8px;height:27px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--soft)}
+.appwin{flex:1;position:relative;overflow:hidden;background:var(--bg)}
+
+/* ---- screens ---- */
+.screen{position:absolute;inset:0;background:var(--bg);overflow-y:auto;display:none;scrollbar-width:thin}
+.screen.active{display:block}
+
+/* ---- type ---- */
+.h1{font-size:26px;font-weight:700;letter-spacing:-.4px}
+.h2{font-size:18px;font-weight:700;letter-spacing:-.2px}
+.body{font-size:14.5px;line-height:1.6}
+.sec{font-size:13.5px;color:var(--soft)}
+.micro{font-size:12px;color:var(--soft)}
+.wordmark{font-size:24px;font-weight:800;letter-spacing:-.8px;line-height:1}
+
+/* ---- web top bar (no lens here — lens lives in the page header) ---- */
+.webbar{display:flex;align-items:center;gap:22px;padding:13px 34px;position:sticky;top:0;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(12px);z-index:20;border-bottom:1px solid var(--line)}
+.searchpill{display:flex;align-items:center;gap:9px;background:var(--surface);border-radius:var(--r-pill);padding:10px 18px;font-size:14px;color:var(--soft);flex:1;max-width:480px;margin:0 auto}
+/* lens pill — grouped nav in the header (Cosmos grammar) */
+.navpill{display:inline-flex;align-items:center;gap:20px;border:1px solid var(--line);border-radius:var(--r-pill);padding:10px 20px;flex:none}
+.navpill button{font-size:14px;font-weight:600;color:var(--soft)}
+.navpill button.on{color:var(--ink)}
+/* page header band: context + chips + view toggle */
+.pagehead{padding:18px 34px 0}
+.lensrow{display:flex;align-items:center;justify-content:space-between;gap:20px}
+/* editorial register (About page only) */
+.serif{font-family:Georgia,"Times New Roman",serif}
+.plate{display:grid;grid-template-columns:1.8fr 1fr;gap:28px;align-items:end}
+.filmstrip{display:flex;gap:8px;margin-top:16px;align-items:center}
+.filmstrip button{width:66px;height:46px;border-radius:3px;overflow:hidden;opacity:.7;flex:none}
+.filmstrip button.on{outline:2px solid var(--ink);outline-offset:2px;opacity:1}
+/* pond cover cards (Your eye) */
+.pcov{display:block;text-align:left;width:100%}
+.pcov .strip{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:8px;overflow:hidden}
+.pcov .strip div{height:46px}
+.pcov:hover{opacity:.85}
+/* focus viewing room */
+.focuswrap{display:grid;grid-template-columns:34px 1fr 320px 34px;gap:22px;align-items:center;padding:26px 40px 10px;max-width:1180px}
+.focuswrap .nav{font-size:26px;color:var(--soft);text-align:center}
+.focuswrap .nav:hover{color:var(--ink)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--accent);flex:none;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700}
+.av.lg{width:84px;height:84px;font-size:28px}
+.av.sm{width:24px;height:24px;font-size:10px}
+
+/* ---- pills, chips ---- */
+.pill{border-radius:var(--r-pill);padding:11px 24px;font-size:14.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+.pill.dark{background:var(--ink);color:#fff}
+.pill.outline{border:1.5px solid var(--line);background:var(--bg)}
+.seg{display:inline-flex;background:var(--surface);border-radius:var(--r-pill);padding:3px}
+.seg button{border-radius:var(--r-pill);padding:7px 18px;font-size:13.5px;font-weight:600;color:var(--soft)}
+.seg button.on{background:var(--bg);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.chiprow{display:flex;gap:8px;padding:14px 0 0;flex-wrap:wrap}
+.chip{border-radius:var(--r-pill);background:var(--surface);padding:8px 16px;font-size:13.5px;font-weight:500}
+.chip.on{background:var(--ink);color:#fff}
+.chip:hover{background:#E8E8E8}
+.chip.on:hover{background:var(--ink)}
+.kw{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-pill);background:var(--surface);padding:8px 15px;font-size:13.5px;font-weight:500;margin:0 6px 8px 0}
+.kw:hover{background:#E6E6E6}
+
+/* ---- masonry: 5 columns full-bleed on the feed ---- */
+.masonry{columns:5;column-gap:10px;padding:16px 34px}
+.tile{break-inside:avoid;margin-bottom:10px;position:relative;border-radius:var(--r-img);overflow:hidden;width:100%;display:block}
+.tile:hover .ph{transform:scale(1.015)}
+.ph{width:100%;border-radius:var(--r-img);display:block;transition:transform .25s}
+.bolt-badge{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.92);display:grid;place-items:center;font-size:13px;box-shadow:0 1px 5px rgba(0,0,0,.15)}
+
+/* ---- gradient palette ---- */
+.g0{background:linear-gradient(160deg,#1d3a5f,#6f93b4)}
+.g1{background:linear-gradient(165deg,#dfe8ee,#9fb6c6)}
+.g2{background:linear-gradient(150deg,#c9a36a,#eadfca)}
+.g3{background:linear-gradient(160deg,#2b2b2e,#6e6e74)}
+.g4{background:linear-gradient(155deg,#5c6b52,#cfd6c0)}
+.g5{background:linear-gradient(150deg,#a3543d,#e8c3b2)}
+.g6{background:linear-gradient(160deg,#10182b,#3c4f7a)}
+.g7{background:linear-gradient(160deg,#efece6,#cfc8ba)}
+.g8{background:linear-gradient(160deg,#7fa8a0,#dcebe6)}
+.g9{background:linear-gradient(160deg,#5a5a86,#cdaec6)}
+
+/* ---- pond cards ---- */
+.pondgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:14px 30px}
+.pondcard{border:1px solid var(--line);border-radius:var(--r-card);padding:14px;box-shadow:var(--shadow-card)}
+.pondcard .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;border-radius:12px;overflow:hidden;margin-bottom:12px}
+.pondcard .strip div{height:72px}
+.typechip{font-size:11.5px;font-weight:600;color:var(--soft);border:1px solid var(--line);border-radius:var(--r-pill);padding:3px 9px}
+.rise{font-size:12.5px;font-weight:600;color:#3d7a5c}
+
+/* ---- detail ---- */
+.dethead{display:flex;align-items:center;justify-content:space-between;padding:14px 30px;position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);z-index:20}
+.backbtn{width:40px;height:40px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:16px}
+.split{display:flex;gap:34px;padding:6px 40px 30px;align-items:flex-start}
+.split .imgcol{flex:1.25;position:sticky;top:74px}
+.split .infocol{width:430px;flex:none}
+.artistrow{display:flex;align-items:center;gap:10px}
+.bolt-line{display:inline-flex;align-items:center;gap:7px;border-radius:var(--r-pill);padding:8px 15px;font-size:13px;font-weight:600;background:#FFF7E0}
+.bolt-line.off{background:var(--surface);color:var(--soft);font-weight:500}
+.callout{border-radius:16px;background:var(--surface);padding:14px 16px;font-size:13.5px;line-height:1.5}
+.excard{border:1px solid var(--line);border-radius:var(--r-card);padding:16px;box-shadow:var(--shadow-card)}
+.avrow{display:flex}
+.avrow .av{margin-right:-8px;border:2px solid #fff}
+
+/* ---- profile ---- */
+.cover{height:120px;background:linear-gradient(135deg,#EFEDE9,#E3E6EC)}
+.profhead{padding:0 40px;margin-top:-42px;position:relative;max-width:980px}
+.vchip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;border-radius:var(--r-pill);background:var(--surface);padding:4px 10px;vertical-align:4px;margin-left:10px}
+.quote{font-size:15.5px;margin-top:12px}
+.proftabs{display:flex;gap:26px;padding:8px 40px 0;border-bottom:1px solid var(--line);margin-top:20px}
+.proftab{font-size:15px;font-weight:600;color:var(--soft);padding:10px 0;position:relative;display:inline-flex;align-items:center}
+.proftab.on{color:var(--ink)}
+.proftab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2.5px;background:var(--ink);border-radius:2px}
+.proftab .cnt{font-size:11.5px;font-weight:700;background:var(--surface);border-radius:var(--r-pill);padding:2px 8px;margin-left:6px;color:var(--soft)}
+.proftab.on .cnt{background:var(--ink);color:#fff}
+.fingerprint{padding:28px 40px 8px}
+.fingerprint .w{font-weight:700;letter-spacing:-.5px;line-height:1.22;display:block}
+.listitem{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.listitem span{color:var(--soft);font-size:13px;flex:none;margin-left:14px}
+.workcard{break-inside:avoid;margin-bottom:20px;width:100%;text-align:left;display:block}
+.workcard .wt{font-size:14.5px;font-weight:700;margin-top:9px}
+.workcard .wm{font-size:12px;color:var(--soft);margin-top:2px}
+.workcard .wd{font-size:13px;color:#444;line-height:1.5;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.workcard .read{font-size:12px;font-weight:600;text-decoration:underline;color:var(--ink)}
+.idxrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 0;border-bottom:1px solid var(--line)}
+.idxrow:hover{background:#FAFAFA}
+.idxrow .nm{font-size:14.5px;font-weight:600}
+.idxrow .mt{font-size:12px;color:var(--soft);margin-top:2px}
+.idxrow .live{color:#3d7a5c;font-weight:600}
+
+/* ---- centred modals (web pickers) ---- */
+.sheetwrap{position:absolute;inset:0;z-index:60;display:none}
+.sheetwrap.open{display:block}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.sheet{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:580px;max-height:84%;
+  overflow-y:auto;background:var(--bg);border-radius:22px;box-shadow:0 26px 80px rgba(0,0,0,.3);padding:28px 32px}
+.sheet .searchpill{flex:0 0 auto;max-width:none;margin:0}
+.grab{display:none}
+.toast{position:absolute;left:50%;bottom:34px;transform:translateX(-50%) translateY(8px);background:var(--ink);color:#fff;
+  font-size:13.5px;font-weight:500;border-radius:var(--r-pill);padding:10px 20px;opacity:0;pointer-events:none;transition:.25s;z-index:80;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.field{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:8px;font-size:14.5px}
+.field:focus-within{border-color:#bbb}
+.bscard{border:1px solid var(--line);border-radius:var(--r-card);padding:20px;box-shadow:var(--shadow-card);margin-top:18px}
+.star{font-size:18px;position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 1px 5px rgba(0,0,0,.15)}
+.selgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.selgrid button{position:relative;border-radius:var(--r-img);overflow:hidden}
+.hr{height:1px;background:var(--line);margin:18px 0}
+.demoseg{display:flex;justify-content:center;padding:8px 0 0}
+.constellation circle{cursor:pointer}
+.constellation text{cursor:pointer;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="browser">
+  <div class="chrome">
+    <span class="dot" style="background:#F26D5F"></span><span class="dot" style="background:#F2BD4D"></span><span class="dot" style="background:#5FC468"></span>
+    <div class="urlbar">ari.art</div><div style="width:55px"></div>
+  </div>
+  <div class="appwin">
+
+    <!-- ============ D1 · FEED ============ -->
+    <section class="screen active" id="scr-feed">
+      <div class="webbar">
+        <span class="wordmark">ari</span>
+        <div class="navpill">
+          <button class="on" id="tab-plops" onclick="setLens('plops')">Plops</button>
+          <button id="tab-ponds" onclick="setLens('ponds')">Ponds</button>
+        </div>
+        <button class="searchpill" onclick="openSheet('search-sheet')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8A8E" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+          Try 'water, boundary, migration…'
+        </button>
+        <button class="pill dark" style="padding:10px 22px" onclick="openSheet('create-sheet')">Create</button>
+        <button onclick="navMe()"><span class="av">SJ</span></button>
+      </div>
+      <div class="pagehead">
+        <div class="lensrow">
+          <div class="chiprow" id="chips" style="padding:0"></div>
+          <div style="display:flex;align-items:center;gap:14px;flex:none">
+            <p class="micro" id="lens-note">The Pool — every public plop flows in.</p>
+            <div class="seg" id="view-seg">
+              <button class="on" id="view-grid" onclick="setViewMode('grid')">Grid</button>
+              <button id="view-focus" onclick="setViewMode('focus')">Focus</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="feed-plops">
+        <div class="masonry" id="plops-grid"></div>
+        <div id="feed-focus" style="display:none">
+          <div class="focuswrap">
+            <button class="nav" onclick="focusMove(-1)">‹</button>
+            <button onclick="openPlopFromFocus()" title="Open this plop"><div class="ph" id="fc-img" style="height:480px;border-radius:4px"></div></button>
+            <div>
+              <button style="font-weight:700;font-size:16px;text-align:left" onclick="openPlopFromFocus()"><span id="fc-title"></span> <span style="color:var(--soft);font-weight:500">↗</span> <span class="rise" id="fc-spark"></span></button>
+              <div style="margin-top:6px;display:flex;gap:12px;align-items:baseline">
+                <button class="sec" style="text-align:left;font-weight:600;color:var(--ink)" id="fc-artist" onclick="openProfileFromPlop()"></button>
+                <button class="micro" style="font-weight:600;text-decoration:underline" onclick="openAboutFromPlop()">About</button>
+              </div>
+              <p class="sec" style="margin-top:2px" id="fc-meta"></p>
+              <p class="body" style="color:#444;margin-top:12px;font-size:13.5px" id="fc-desc"></p>
+              <p class="micro" style="margin:14px 0 6px">Currents — tap to enter the pond</p>
+              <div id="fc-kws"></div>
+              <button class="pill dark" id="fc-save" style="margin-top:12px;padding:9px 22px;font-size:13px" onclick="toggleSaveFocus()">Save</button>
+            </div>
+            <button class="nav" onclick="focusMove(1)">›</button>
+          </div>
+          <p class="micro" style="text-align:center;padding:8px 0 20px" id="fc-note"></p>
+        </div>
+      </div>
+      <div id="feed-ponds" style="display:none">
+        <div class="pondgrid" id="ponds-list"></div>
+      </div>
+    </section>
+
+    <!-- ============ D2 · PLOP DETAIL ============ -->
+    <section class="screen" id="scr-plop">
+      <div class="dethead">
+        <button class="backbtn" onclick="goBack()">←</button>
+        <button class="pill outline" style="padding:9px 18px;font-size:13px" onclick="toast('Link copied')">Share ↗</button>
+      </div>
+      <div class="split">
+        <div class="imgcol"><div class="ph" id="plop-img" style="height:560px;border-radius:16px"></div><div id="plop-views" style="display:none;gap:6px;align-items:center;margin-top:10px"></div></div>
+        <div class="infocol">
+          <div class="artistrow" style="justify-content:space-between">
+            <button class="artistrow" onclick="openProfileFromPlop()">
+              <span class="av" id="plop-av"></span>
+              <span style="font-weight:700;font-size:15.5px"><span id="plop-artist"></span> <span style="color:var(--soft);font-weight:500">↗</span></span>
+            </button>
+            <button class="pill outline" style="padding:8px 18px;font-size:13px" onclick="openAboutFromPlop()">About</button>
+          </div>
+          <h1 class="h1" style="margin-top:18px" id="plop-title"></h1>
+          <p class="sec" style="margin-top:5px" id="plop-meta"></p>
+          <div style="margin-top:16px" id="plop-bolt"></div>
+          <p class="sec" style="margin:24px 0 10px;font-weight:600;color:var(--ink)">Keywords — tap to enter the pond</p>
+          <div id="plop-kws"></div>
+          <div style="display:flex;gap:10px;margin-top:22px">
+            <button class="pill dark" id="plop-save" style="flex:1" onclick="toggleSavePlop()">Save</button>
+            <button class="pill outline" onclick="toast('Link copied')">Share</button>
+          </div>
+          <p class="micro" style="margin-top:20px" id="plop-foot"></p>
+        </div>
+      </div>
+      <p class="sec" style="font-weight:600;color:var(--ink);padding:4px 30px 0">Connected works — pulled by the same currents</p>
+      <div class="masonry" id="plop-related" style="padding-top:12px"></div>
+    </section>
+
+    <!-- ============ D3 · POND ============ -->
+    <section class="screen" id="scr-pond">
+      <div class="dethead">
+        <button class="backbtn" onclick="goBack()">←</button>
+        <button class="pill outline" style="padding:9px 18px;font-size:13px" onclick="toast('Link copied')">Share ↗</button>
+      </div>
+      <div class="split" style="padding-bottom:0">
+        <div style="flex:1">
+          <p class="micro" id="pond-typelabel"></p>
+          <h1 class="h1" style="font-size:34px;margin-top:8px" id="pond-name"></h1>
+          <p class="rise" style="margin-top:10px" id="pond-rise"></p>
+          <p class="sec" style="margin-top:12px" id="pond-poolline"></p>
+          <div style="display:flex;gap:10px;margin-top:16px;max-width:420px">
+            <button class="pill dark" id="pond-save" style="flex:1" onclick="toggleSavePond()">Save this pond</button>
+            <button class="pill outline" onclick="toast('Link copied')">Share</button>
+          </div>
+          <div id="pond-typeblock" style="max-width:480px"></div>
+        </div>
+        <div class="infocol">
+          <p class="sec" style="font-weight:600;color:var(--ink);margin-bottom:6px">Nearby keywords — hop across the currents</p>
+          <svg class="constellation" id="pond-constellation" width="430" height="240" viewBox="0 0 430 240"></svg>
+        </div>
+      </div>
+      <p class="sec" style="font-weight:600;color:var(--ink);padding:10px 30px 0">This keyword's plops — by many people</p>
+      <div class="masonry" id="pond-grid" style="padding-top:12px"></div>
+    </section>
+
+    <!-- ============ D4 · PROFILE (someone else's) ============ -->
+    <section class="screen" id="scr-profile">
+      <div class="dethead" style="position:absolute;left:0;right:0;background:none;backdrop-filter:none">
+        <button class="backbtn" onclick="goBack()">←</button>
+        <button class="backbtn" onclick="toast('Link copied')">↗</button>
+      </div>
+      <div class="cover"></div>
+      <div class="profhead">
+        <span class="av lg" id="pf-av"></span>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:30px">
+          <div>
+            <h1 class="h1" style="margin-top:12px"><span id="pf-name"></span><span class="vchip" id="pf-vchip">✦ Artist</span></h1>
+            <p class="sec" style="margin-top:4px" id="pf-handle"></p>
+            <p class="quote" id="pf-quote"></p>
+            <p class="micro" style="margin-top:8px;font-weight:600" id="pf-links"></p>
+            <p class="micro" style="margin-top:8px">Follow to get this person's new work in your feed.</p>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px;flex:none">
+            <button class="pill dark" id="pf-follow" onclick="toggleFollow()">Follow</button>
+            <button class="pill outline" onclick="openAboutFromProfile()">About</button>
+          </div>
+        </div>
+        <div class="excard" id="pf-excard" style="margin-top:18px;max-width:560px;display:none;cursor:pointer" onclick="openExModal()">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <p class="micro" style="font-weight:700;color:#3d7a5c">NOW SHOWING</p>
+            <span class="micro" style="font-weight:600">Details ↗</span>
+          </div>
+          <p style="font-weight:700;font-size:15.5px;margin-top:6px" id="pf-extitle"></p>
+          <p class="sec" style="margin-top:3px" id="pf-exmeta"></p>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+            <div class="avrow"><span class="av sm"></span><span class="av sm"></span><span class="av sm"></span></div>
+            <span class="sec">people going</span>
+          </div>
+        </div>
+      </div>
+      <div class="proftabs" id="pf-tabs"></div>
+      <div id="pf-body"></div>
+    </section>
+
+    <!-- ============ D4 · OWN PROFILE ============ -->
+    <section class="screen" id="scr-me">
+      <div class="demoseg"><div class="seg">
+        <button id="me-as-visitor" class="on" onclick="setMeMode('visitor')">Visitor</button>
+        <button id="me-as-artist" onclick="setMeMode('artist')">Artist</button>
+      </div></div>
+      <div class="dethead" style="position:absolute;left:0;right:0;top:36px;background:none;backdrop-filter:none">
+        <button class="backbtn" onclick="goBack()">←</button><span></span>
+      </div>
+      <div class="cover" style="margin-top:4px"></div>
+      <div class="profhead">
+        <span class="av lg" id="me-av">SJ</span>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:30px">
+          <div>
+            <h1 class="h1" style="margin-top:12px"><span id="me-name">Sungwon Jeong</span><span class="vchip" id="me-vchip" style="display:none">✦ Artist</span></h1>
+            <p class="sec" style="margin-top:4px" id="me-handle">@sjeong</p>
+            <p class="quote" id="me-quote" style="display:none"></p>
+            <p class="micro" style="margin-top:8px;font-weight:600" id="me-links"></p>
+            <p class="micro" style="margin-top:8px">Your profile · your posts and saves gather here.</p>
+            <p class="sec" style="margin-top:6px;font-weight:600;color:var(--ink)" id="me-following">12 following</p>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px;flex:none">
+            <button class="pill outline" onclick="toast('Edit profile — not in this prototype')">Edit profile</button>
+            <button class="pill outline" id="me-about" style="display:none" onclick="openAbout('Haneul Jung')">About</button>
+          </div>
+        </div>
+        <div class="excard" id="me-excard" style="margin-top:18px;max-width:560px;display:none;cursor:pointer" onclick="openExModal()">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <p class="micro" style="font-weight:700;color:#3d7a5c">NOW SHOWING</p>
+            <span class="micro" style="font-weight:600">Details ↗</span>
+          </div>
+          <p style="font-weight:700;font-size:15.5px;margin-top:6px">Euljiro Open Storage</p>
+          <p class="sec" style="margin-top:3px">Onsu Ground, Euljiro · until 28 Jun</p>
+        </div>
+        <button class="callout" id="me-backstage" style="display:none;margin-top:16px;width:100%;max-width:560px;text-align:left" onclick="push('scr-backstage',renderSelGrid)">
+          ⚙ <b>Backstage</b> — your private studio <span class="sec">(only you)</span>
+        </button>
+      </div>
+      <div class="proftabs" id="me-tabs"></div>
+      <div id="me-body"></div>
+    </section>
+
+    <!-- ============ BACKSTAGE (your private studio) ============ -->
+    <section class="screen" id="scr-backstage">
+      <div class="dethead">
+        <button class="backbtn" onclick="goBack()">←</button>
+        <span class="micro" style="font-weight:700;letter-spacing:.5px">ONLY YOU CAN SEE THIS</span>
+        <span style="width:40px"></span>
+      </div>
+      <div style="padding:8px 56px;max-width:760px;margin:0 auto">
+        <p class="micro" style="font-weight:700;letter-spacing:.5px">YOUR PROFILE · BACKSTAGE</p>
+        <h1 class="serif" style="font-size:40px;letter-spacing:-.5px;margin-top:14px;font-weight:500">⚙ Backstage</h1>
+        <p class="sec" style="margin-top:6px">A screen only you can see.</p>
+
+        <!-- 1 · post an exhibition -->
+        <div class="bscard">
+          <p class="h2">Post an exhibition</p>
+          <div class="field"><input id="bs-exname" placeholder="Exhibition name"></div>
+          <div class="field"><input id="bs-exvenue" placeholder="Venue"></div>
+          <div class="field"><input id="bs-exdates" placeholder="Dates — e.g. 14–30 Aug 2026"></div>
+          <button class="pill dark" style="width:100%;margin-top:12px" onclick="postExhibition()">Post exhibition</button>
+          <p class="micro" style="margin-top:10px">The closer the opening, the more the exhibition pond fills (by days remaining).</p>
+          <p class="sec" style="margin-top:8px;font-weight:600;color:#3d7a5c" id="bs-exposted"></p>
+        </div>
+
+        <!-- 2 · dispatch -->
+        <div class="bscard">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <p class="h2">Dispatch — to your followers</p>
+            <span class="micro" style="font-weight:700" id="bs-dispcount">2 left this month</span>
+          </div>
+          <div style="display:flex;justify-content:center;margin-top:12px">
+            <div class="seg">
+              <button id="bs-d-invite" class="on" onclick="setDispatch('invite')">Exhibition invite</button>
+              <button id="bs-d-studio" onclick="setDispatch('studio')">Studio share</button>
+            </div>
+          </div>
+          <div class="field"><textarea id="bs-dmsg" rows="3" placeholder="A few lines — where, when, why it matters…"></textarea></div>
+          <button class="pill dark" style="width:100%;margin-top:12px" id="bs-dsend" onclick="sendDispatch()">Send dispatch — to 38 people</button>
+          <p class="micro" style="margin-top:10px">Exhibition invite = pull people into the real world · Studio share = a new piece or a studio shot, only your followers see it. The frequency limit keeps a dispatch precious.</p>
+        </div>
+
+        <!-- 3 · edit About page -->
+        <div class="bscard">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <p class="h2">Your About page</p>
+            <button class="micro" style="font-weight:600" onclick="openAbout('Haneul Jung')">Preview ↗</button>
+          </div>
+          <p class="micro" style="margin-top:4px">what galleries &amp; curators see</p>
+          <p class="micro" style="margin-top:12px;font-weight:700">STATUS LINE</p>
+          <div class="field" style="margin-top:6px"><input id="bs-quote" value="Lately I photograph the city where it’s sinking."></div>
+          <p class="micro" style="margin-top:12px;font-weight:700">BIO</p>
+          <div class="field" style="margin-top:6px"><textarea id="bs-bio" rows="3">Haneul Jung photographs water where it is least romantic — reservoirs, drainage canals, the flooded basements of buildings waiting for demolition.</textarea></div>
+          <p class="micro" style="margin-top:12px;font-weight:700">CONTACT · LINKS</p>
+          <div class="field" style="margin-top:6px"><input id="bs-contact" value="studio@haneuljung.kr"></div>
+          <div class="field"><input id="bs-site" value="haneuljung.kr"></div>
+          <div class="field"><input id="bs-insta" value="@haneul.studio"></div>
+          <button class="pill dark" style="width:100%;margin-top:14px" onclick="saveAbout()">Save About page</button>
+        </div>
+
+        <!-- 4 · what carries your work -->
+        <div class="bscard">
+          <p class="h2">What carries your work — only you see</p>
+          <p class="micro" style="margin-top:4px">the currents people keep your work from — read from saves, nobody writes a word</p>
+          <div style="margin-top:12px;line-height:1.5">
+            <span style="font-weight:800;font-size:26px;letter-spacing:-.5px">water</span>&nbsp;&nbsp;
+            <span style="font-weight:700;font-size:20px;color:#5a6b7c">memory</span>&nbsp;&nbsp;
+            <span style="font-weight:700;font-size:17px;color:#8a8a8e">demolition</span>&nbsp;&nbsp;
+            <span style="font-weight:700;font-size:15px;color:#8a8a8e">basements</span>
+          </div>
+          <p class="sec" style="margin-top:10px">⚡ Recent spark: <b style="color:var(--ink)">Tide Ledger IV</b> — saves clustered this week.</p>
+          <p class="sec" style="margin-top:8px">38 followers · 5 new this week</p>
+        </div>
+
+        <!-- 5 · selected works -->
+        <div class="bscard" style="margin-bottom:40px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <p class="h2">Selected works — shown in About</p>
+            <span class="micro" style="font-weight:700" id="bs-selcount"></span>
+          </div>
+          <p class="micro" style="margin-top:4px">pick up to 5 · ★ toggles</p>
+          <div class="selgrid" id="bs-selgrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ D5 · ABOUT ============ -->
+    <section class="screen" id="scr-about">
+      <div class="dethead">
+        <button class="backbtn" onclick="goBack()">←</button>
+        <button class="pill outline" style="padding:9px 18px;font-size:13px" onclick="toast('Portfolio link copied')">Share</button>
+      </div>
+      <div style="padding:8px 56px;max-width:1060px;margin:0 auto">
+        <p class="micro" style="font-weight:700;letter-spacing:.5px;border-bottom:1px solid var(--line);padding-bottom:12px">ARI · ARTIST</p>
+        <h1 class="serif" style="font-size:46px;letter-spacing:-.5px;margin-top:20px;font-weight:500" id="about-name"></h1>
+        <p class="sec" style="margin-top:8px" id="about-line"></p>
+
+        <div class="plate" style="margin-top:30px">
+          <div class="ph" id="about-plate-img" style="height:420px;border-radius:3px"></div>
+          <div>
+            <p style="font-weight:700;font-size:16px" id="about-plate-title"></p>
+            <p class="serif sec" style="font-style:italic;margin-top:3px;font-size:14px" id="about-plate-year"></p>
+            <p class="sec" style="margin-top:14px;line-height:1.6" id="about-plate-mat"></p>
+            <p class="body" style="color:#444;margin-top:12px;font-size:13.5px" id="about-plate-desc"></p>
+            <p class="micro" style="margin-top:14px" id="about-plate-credit"></p>
+          </div>
+        </div>
+        <div class="filmstrip">
+          <div id="about-film" style="display:flex;gap:8px"></div>
+          <span class="micro" style="margin-left:12px" id="about-platecount"></span>
+        </div>
+
+        <p class="h2" style="margin-top:40px;border-top:1px solid var(--line);padding-top:24px">About</p>
+        <p class="serif body" style="margin-top:14px;color:#333;max-width:640px;font-size:15.5px;line-height:1.75" id="about-bio"></p>
+        <button class="sec" id="about-readmore" style="font-weight:600;color:var(--ink);margin-top:8px" onclick="expandBio()">Read more</button>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:54px;margin-top:34px">
+          <div>
+            <p class="h2">Exhibitions</p>
+            <div id="about-ex"></div>
+          </div>
+          <div>
+            <p class="h2">Awards · selections</p>
+            <div id="about-awards"></div>
+          </div>
+        </div>
+        <p class="h2" style="margin-top:30px">Contact</p>
+        <p class="body" style="margin-top:8px;color:#333" id="about-contact"></p>
+        <div style="height:40px"></div>
+      </div>
+    </section>
+
+  </div><!-- /appwin -->
+
+  <!-- search modal -->
+  <div class="sheetwrap" id="search-sheet">
+    <div class="scrim" onclick="closeSheet('search-sheet')"></div>
+    <div class="sheet">
+      <div class="searchpill" style="max-width:none">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8A8A8E" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+        <input id="search-input" placeholder="Try 'water, boundary, migration…'" oninput="filterSearch()">
+      </div>
+      <p class="micro" style="margin:18px 0 10px">Currents right now</p>
+      <div id="search-kws"></div>
+      <p class="micro" style="margin:14px 0 10px">People</p>
+      <div id="search-people"></div>
+      <div class="hr"></div>
+      <button class="sec" style="font-weight:600;color:var(--ink)" onclick="closeSheet('search-sheet');openNominate()">Can’t find an artist? Nominate them →</button>
+    </div>
+  </div>
+
+  <!-- create modal (stub) -->
+  <div class="sheetwrap" id="create-sheet">
+    <div class="scrim" onclick="closeSheet('create-sheet')"></div>
+    <div class="sheet">
+      <p class="micro" style="font-weight:700">DROP A PLOP</p>
+      <h2 class="h1" style="margin-top:6px">What are you dropping?</h2>
+      <button class="pill outline" style="width:100%;margin-top:14px;justify-content:flex-start;padding:16px 18px" onclick="createStub()">
+        <b>Image</b>&nbsp;<span class="sec">upload a photo of the work</span>
+      </button>
+      <button class="pill outline" style="width:100%;margin-top:10px;justify-content:flex-start;padding:16px 18px" onclick="createStub()">
+        <b>Add by link</b>&nbsp;<span class="sec">website · artist page · Instagram URL</span>
+      </button>
+      <p class="micro" style="margin-top:14px">Tag a keyword and it flows into that pond automatically.</p>
+    </div>
+  </div>
+
+  <!-- library index modal -->
+  <div class="sheetwrap" id="index-sheet">
+    <div class="scrim" onclick="closeSheet('index-sheet')"></div>
+    <div class="sheet" style="width:600px;height:78%;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 class="h2" id="index-title"></h2>
+        <div class="seg">
+          <button id="index-sort-active" class="on" onclick="setIndexSort('active')">Active</button>
+          <button id="index-sort-az" onclick="setIndexSort('az')">A–Z</button>
+        </div>
+      </div>
+      <div class="searchpill" style="margin-top:14px;max-width:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8A8E" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+        <input id="index-search" placeholder="Search…" oninput="renderIndexList()">
+      </div>
+      <div id="index-list" style="flex:1;overflow-y:auto;margin-top:6px;scrollbar-width:thin"></div>
+    </div>
+  </div>
+
+  <!-- nominate an artist -->
+  <div class="sheetwrap" id="nominate-sheet">
+    <div class="scrim" onclick="closeSheet('nominate-sheet')"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div id="nom-form">
+        <p class="h2">Nominate an artist</p>
+        <p class="micro" style="margin-top:6px">Someone whose work belongs here — no need to know them. We look at every nomination; the invite, if it comes, goes out sealed from ari with your name on it. <b id="nom-left">3</b> left this month.</p>
+        <div class="field"><input id="nom-link" placeholder="Their work — Instagram · website"></div>
+        <div class="field"><input id="nom-why" placeholder="One line — why this work?"></div>
+        <button class="pill dark" style="width:100%;margin-top:14px" onclick="submitNomination()">Send the nomination</button>
+        <p class="micro" style="margin-top:10px">Nominations don’t spend your invite keys. Nothing of theirs is shown unless they say yes.</p>
+      </div>
+      <div id="nom-after" style="display:none;text-align:center">
+        <p class="wordmark" style="font-size:28px;margin-top:8px">ari</p>
+        <p class="body" style="color:#333;margin-top:14px" id="nom-line"></p>
+        <p class="sec" style="margin-top:8px">If it’s a yes, the sealed invite carries your name and your line.</p>
+        <button class="pill outline" style="width:100%;margin-top:16px" onclick="closeSheet('nominate-sheet')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- exhibition modal -->
+  <div class="sheetwrap" id="ex-sheet">
+    <div class="scrim" onclick="closeSheet('ex-sheet')"></div>
+    <div class="sheet">
+      <p class="micro" style="font-weight:700">EXHIBITION</p>
+      <h2 class="h1" style="margin-top:6px">Euljiro Open Storage</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
+        <div><p class="micro">Dates</p><p style="font-weight:600;font-size:14px">12 – 28 Jun</p></div>
+        <div><p class="micro">Hours</p><p style="font-weight:600;font-size:14px">Tue–Sun 12–19</p></div>
+        <div><p class="micro">Admission</p><p style="font-weight:600;font-size:14px">Free</p></div>
+      </div>
+      <p class="micro" style="margin-top:16px">Venue</p>
+      <p style="font-weight:600;font-size:14px;margin-top:3px">Onsu Ground · Euljiro 3-ga, Jung-gu, Seoul</p>
+      <div style="height:130px;border-radius:14px;background:linear-gradient(160deg,#E9EEF2,#DBE4EA);display:grid;place-items:center;font-size:24px;margin-top:8px">📍</div>
+      <p class="micro" style="text-align:right;margin-top:6px;font-weight:600">View on map ↗</p>
+      <p class="micro" style="margin-top:14px">About</p>
+      <p class="body" style="color:#333;margin-top:4px">New works on water, storage and the memory of a district that keeps being rebuilt. Twelve pieces translating the traces of flooded basements into glass and light.</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:18px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="avrow"><span class="av sm"></span><span class="av sm"></span><span class="av sm"></span></div>
+          <span class="sec">people going</span>
+        </div>
+        <button class="pill dark" id="ex-going" style="padding:10px 20px;font-size:13.5px" onclick="toggleGoingEx()">I’ll go</button>
+      </div>
+      <button class="pill outline" style="width:100%;margin-top:14px" onclick="closeSheet('ex-sheet');openPond('Euljiro Open Storage')">Open the exhibition pond →</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ================= data (identical to mobile) ================= */
+var ARTISTS = {
+  "Haneul Jung":{handle:"@haneuljung",init:"HJ",line:"b.1994, Seoul · photography, video, installation",
+    q:"“Lately I photograph the city where it’s sinking.”",
+    bio:"Haneul Jung photographs water where it is least romantic — reservoirs, drainage canals, the flooded basements of buildings waiting for demolition. Her recent work pairs long-exposure images with municipal records, asking what a city chooses to keep and what it lets evaporate.",
+    bio2:" She studied photography at Hongik University and runs a small risograph archive of demolition notices. Her work has been shown in Seoul, Busan and Yokohama.",
+    ex:[["Euljiro Open Storage — Onsu Ground, Seoul","2026"],["Tidal Records — d/p, Seoul","2025"],["Soft Infrastructure — WESS, Seoul","2024"]],
+    awards:[["SeMA Emerging Artist Grant","2025"],["Ilwoo Photography Prize — shortlist","2024"]],
+    contact:"studio@haneuljung.kr · Seoul",links:["haneuljung.kr","Instagram"],nowShowing:true},
+  "Mara Lindqvist":{handle:"@maralind",init:"ML",line:"b.1991, Gothenburg · painting, moving image",
+    q:"“Painting the sea from memory, mistakes included.”",
+    bio:"Mara Lindqvist paints the sea from memory only — never from photographs — and lets the errors accumulate across a series until the water becomes a fiction. Her slow video works document the same harbour over years of mornings.",bio2:"",
+    ex:[["Salt Horizon — Galleri Box, Gothenburg","2025"],["Standing Water — Index, Stockholm","2024"]],
+    awards:[["Maria Bonnier Dahlin Foundation — nominee","2025"]],contact:"hello@maralindqvist.se · Gothenburg",links:["maralindqvist.se","Instagram"]},
+  "Tomás Reyes":{handle:"@t_reyes",init:"TR",line:"b.1989, Valparaíso · installation, archive",
+    q:"“Paperwork is a landscape if you stack it high enough.”",
+    bio:"Tomás Reyes builds installations from the paperwork of movement — visas, ferry tickets, customs forms — folded and stacked until bureaucracy reads as landscape. He works between Valparaíso and Mexico City.",bio2:"",
+    ex:[["Crossing No.7 — Die Ecke, Santiago","2025"],["Paper Passport — Material, CDMX","2024"]],
+    awards:[["FONDART Visual Arts Grant","2024"]],contact:"t.reyes.studio@gmail.com · Valparaíso"},
+  "June Okafor":{handle:"@juneokafor",init:"JO",line:"b.1996, Lagos · text, sound",
+    q:"“Two languages in one room, played at once.”",
+    bio:"June Okafor records her grandmother's Igbo and her own London English in the same room and plays them back at the same time. The interference pattern is the work. She writes that translation is a form of weather.",bio2:"",
+    ex:[["Mother Tongue — South London Gallery, London","2025"]],awards:[["Jerwood New Work Fund","2025"]],contact:"juneokafor.studio@gmail.com · London"},
+  "Sena Park":{handle:"@senapark",init:"SP",line:"b.1993, Seoul · textile, performance",
+    q:"“The time of the weave is the wage of the weave.”",
+    bio:"Sena Park weaves with materials that are paid by the hour — work gloves, uniform fabric, delivery-bag nylon. Her looms are slow on purpose; the time of the weave is the wage of the weave.",bio2:"",
+    ex:[["Night Shift — Audio Visual Pavilion, Seoul","2026"],["Soft Border — Boan1942, Seoul","2024"]],
+    awards:[["Arts Council Korea — Young Artist","2025"]],contact:"senapark.txt@gmail.com · Seoul"},
+  "Dana Cho":{handle:"@danacho",init:"DC",line:"b.1995, Incheon · photography",
+    q:"“Re-staging my family’s letters, forty years late.”",
+    bio:"Dana Cho photographs the port city she grew up in through the letters her family sent from it — re-staging each described scene forty years later, at the same address, in the same light where possible.",bio2:"",
+    ex:[["Letters from Incheon — Space Beam, Incheon","2025"]],awards:[["Park Geon-hi Foundation Fellowship","2024"]],contact:"danacho.photo@gmail.com · Incheon"},
+  "Elio Marchetti":{handle:"@eliomarchetti",init:"EM",line:"b.1990, Torino · glass, sculpture",
+    q:"“Casting the census into glass.”",
+    bio:"Elio Marchetti casts statistical tables into hand-blown glass — census rows, income deciles — so the data bends light unevenly. The numbers are accurate; the reading of them never is.",bio2:"",
+    ex:[["Glass Census — Quartz Studio, Torino","2025"]],awards:[["Premio Cairo — finalist","2024"]],contact:"studio@eliomarchetti.it · Torino"},
+  "Yusuf Demir":{handle:"@yusufdemir",init:"YD",line:"b.1992, Istanbul · architecture, research",
+    q:"“Drafting the floors nobody photographs.”",
+    bio:"Yusuf Demir surveys the buildings that never get photographed — service corridors, night-cleaner floors, staff entrances — and drafts them at the same loving precision as facades. Architecture, he argues, is who it lets in at which door.",bio2:"",
+    ex:[["Quiet Floor — SALT Beyoğlu, Istanbul","2025"]],awards:[["Graham Foundation Grant","2025"]],contact:"y.demir.research@gmail.com · Istanbul"}
+};
+var PLOPS = [
+  {id:1,t:"Tide Ledger IV",a:"Haneul Jung",yr:"2025",m:"Single-channel video, 11 min",kw:["water","memory","Euljiro Open Storage"],spark:true,g:"g0",h:360,v:["g0","g6","g1"],
+   d:"A fixed camera watches a tidal gate through one full cycle; the soundtrack is the gate's own machinery, slowed until it reads as breathing."},
+  {id:2,t:"Salt Horizon",a:"Mara Lindqvist",yr:"2024",m:"Oil on linen, 160 × 130 cm",kw:["water","boundary"],spark:false,g:"g1",h:160,
+   d:"Painted from memory in a windowless studio; the horizon drifts a few degrees with each session and is left uncorrected."},
+  {id:3,t:"Crossing No.7",a:"Tomás Reyes",yr:"2025",m:"Stamped documents, steel shelving",kw:["migration","boundary"],spark:true,g:"g5",h:230,
+   d:"Seven years of one family's transit papers, stamped, folded and shelved in the order they were issued."},
+  {id:4,t:"Mother Tongue",a:"June Okafor",yr:"2025",m:"Two-channel sound, 8 min loop",kw:["migration","language"],spark:false,g:"g9",h:140,
+   d:"Two voices — a grandmother's Igbo, a granddaughter's English — recorded in the same room and played back at once."},
+  {id:5,t:"Soft Border",a:"Sena Park",yr:"2024",m:"Woven work gloves, 300 × 220 cm",kw:["boundary","textile"],spark:false,g:"g4",h:350,
+   d:"Three hundred pairs of used work gloves, unpicked and rewoven into a single bolt of cloth."},
+  {id:6,t:"Reservoir (Winter)",a:"Haneul Jung",yr:"2024",m:"Archival pigment print, 120 × 96 cm",kw:["water","infrastructure"],spark:false,g:"g6",h:190,
+   d:"The city's backup reservoir photographed at 4 a.m., lit only by its own maintenance lights."},
+  {id:7,t:"Letters from Incheon",a:"Dana Cho",yr:"2025",m:"C-print, found letters",kw:["migration","memory"],spark:false,g:"g7",h:280,
+   d:"Each photograph restages a scene described in a letter sent from the port in 1984 — same address, forty years later."},
+  {id:8,t:"Glass Census",a:"Elio Marchetti",yr:"2025",m:"Hand-blown glass, engraved data",kw:["inequality","glass"],spark:false,g:"g8",h:175,
+   d:"A census table cast in hand-blown glass; the rows distort as the glass cools, and the data with them."},
+  {id:9,t:"Night Shift",a:"Sena Park",yr:"2026",m:"Uniform fabric, time-lapse loom",kw:["inequality","labour"],spark:true,g:"g3",h:380,v:["g3","g7"],
+   d:"A loom that runs at the speed of a cleaner's shift; the cloth records the hours as rows."},
+  {id:10,t:"Currents Study II",a:"Mara Lindqvist",yr:"2025",m:"Video, 24 min, silent",kw:["water"],spark:false,g:"g1",h:130,
+   d:"Twenty-four silent minutes of the same harbour current, repainted one frame at a time."},
+  {id:11,t:"Paper Passport",a:"Tomás Reyes",yr:"2024",m:"Folded customs forms",kw:["migration"],spark:false,g:"g2",h:170,
+   d:"A passport folded from customs declarations, page for page."},
+  {id:12,t:"Quiet Floor",a:"Yusuf Demir",yr:"2025",m:"Graphite on mylar, survey set",kw:["inequality","architecture"],spark:false,g:"g3",h:185,
+   d:"Survey drawings of a museum's service floor, drafted to the same precision as its galleries."},
+  {id:13,t:"Basement, Pre-Demolition",a:"Haneul Jung",yr:"2026",m:"Archival pigment print",kw:["water","memory","Euljiro Open Storage"],spark:true,g:"g6",h:310,
+   d:"The flooded basement of a building scheduled for demolition, printed at architectural scale."},
+  {id:14,t:"Harbour, 214 Mornings",a:"Mara Lindqvist",yr:"2023",m:"Video stills, grid of 36",kw:["water","memory"],spark:false,g:"g8",h:155,
+   d:"Thirty-six stills from a video diary of the same harbour, one morning per frame."},
+  {id:15,t:"Drain Study",a:"Haneul Jung",yr:"2026",m:"Archival pigment print, strip of 52",kw:["water","infrastructure"],spark:false,g:"g1",h:340,
+   d:"A storm drain photographed weekly for a year; the series hangs as one continuous strip."},
+  {id:16,t:"Wallpaper, Flooded",a:"Haneul Jung",yr:"2025",m:"Found wallpaper, resin",kw:["water","memory","domestic"],spark:false,g:"g7",h:150,
+   d:"Wallpaper peeled from a flooded flat, sealed in resin mid-peel."},
+  {id:17,t:"Pump Room",a:"Haneul Jung",yr:"2024",m:"Single-channel video, 7 min",kw:["water","infrastructure"],spark:false,g:"g3",h:320,
+   d:"The basement pump room of a 1970s apartment block, lit only by its own warning lamps."},
+  {id:18,t:"High-Water Mark",a:"Haneul Jung",yr:"2026",m:"Graphite frottage on paper",kw:["water","memory"],spark:true,g:"g8",h:185,
+   d:"Rubbings taken from the high-water lines left on basement walls after the June rains."}
+];
+var PONDS = {
+  "water":{type:"Topic",plops:214,people:37,rise:"+18% this week",nearby:["boundary","memory","migration","infrastructure"]},
+  "migration":{type:"Topic",plops:178,people:41,rise:"+12% this week",nearby:["boundary","language","memory","water"]},
+  "boundary":{type:"Topic",plops:96,people:22,rise:"+9% this week",nearby:["water","migration","textile"]},
+  "memory":{type:"Topic",plops:121,people:26,rise:"+4% this week",nearby:["water","migration","language"]},
+  "inequality":{type:"Topic",plops:132,people:29,rise:"+7% this week",nearby:["labour","architecture","glass"]},
+  "Haneul Jung":{type:"Person",plops:48,people:21,rise:"+15% this week",nearby:["water","memory","Euljiro Open Storage"]},
+  "Euljiro Open Storage":{type:"Exhibition",plops:42,people:19,rise:"+26% this week",nearby:["water","Haneul Jung","memory"],
+    ex:{venue:"Onsu Ground, Euljiro, Seoul",dates:"12–28 Jun 2026 · Free",going:7}}
+};
+function getPond(k){
+  if(!PONDS[k]){
+    var n=(k.length*7)%30+6;
+    PONDS[k]={type:"Topic",plops:n,people:Math.max(3,Math.round(n/3)),rise:"+2% this week",nearby:["water","migration","memory"]};
+  }
+  return PONDS[k];
+}
+function linkRowHTML(links){
+  if(!links||!links.length)return"";
+  return links.map(function(l){
+    return '<button style="font-weight:600;color:var(--ink)" onclick="toast(\'Opens '+l.replace(/'/g,"")+' — external links are stubbed\')">'+l+' ↗</button>';
+  }).join(' <span style="color:var(--line)">·</span> ');
+}
+var FOLLOWED=["Haneul Jung","Mara Lindqvist","Sena Park"];
+var savedPlops={}, savedPonds={}, followState={}, goingState={};
+var MY_SAVES=[1,2,5,9,13,14];
+var MY_PEOPLE=["Haneul Jung","Mara Lindqvist","Sena Park","Tomás Reyes","June Okafor","Dana Cho","Elio Marchetti","Yusuf Demir"];
+var lensFilter=null;
+var EXTRA_KW=["glass","labour","language","textile","infrastructure","architecture","salt","archive","demolition","harbour","census","night work","tide","border towns","silence","repair","dust","monsoon","concrete","translation","care work","ruins","light leak","north wind","cartography","waiting rooms","domestic","fog","scaffolding","surveys","letters","storage","basements","currents","gloves","uniforms","ferries","customs","grandmothers","playback","interference","weather","precision","corridors","facades","thresholds","deciles","cooling","drift","horizon lines","windowless","sessions","mornings","diaries","frames","stains","wallpaper","evaporation"];
+var PONDS_SAVED=["water","boundary","Euljiro Open Storage","memory","migration","inequality"].concat(EXTRA_KW)
+  .map(function(k,i){
+    var pd=PONDS[k];
+    return {k:k,type:pd?pd.type:"Topic",plops:pd?pd.plops:((k.length*7)%30+6),act:(k.length*13+i*7)%100};
+  });
+var FIRST=["Mina","Jonas","Aiko","Pavel","Ruth","Kofi","Lena","Marco","Yuki","Amara","Theo","Sofia"];
+var LAST=["Okada","Berg","Castillo","Mensah","Novak","Ito","Albrecht","Duarte","Han","Keller","Moreau","Tan"];
+var PEOPLE_ALL=MY_PEOPLE.map(function(n,i){
+  return {name:n,handle:ARTISTS[n].handle,real:true,days:[1,3,0,6,12,2,20,8][i]};
+});
+(function(){
+  for(var i=0;i<94;i++){
+    var n=FIRST[i%12]+" "+LAST[Math.floor(i/12)%12];
+    PEOPLE_ALL.push({name:n,handle:"@"+n.toLowerCase().replace(/\s/g,""),real:false,days:(i*7)%45+1});
+  }
+})();
+function lensWeights(){
+  var counts={};
+  MY_SAVES.forEach(function(id){
+    var p=PLOPS.find(function(x){return x.id===id});if(!p)return;
+    p.kw.forEach(function(k){counts[k]=(counts[k]||0)+1});
+  });
+  return Object.keys(counts).map(function(k){return[k,counts[k]]})
+    .sort(function(a,b){return b[1]-a[1]}).slice(0,6);
+}
+
+/* ================= navigation ================= */
+var navStack=[{id:"scr-feed",fn:null}];
+function show(id){
+  document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active")});
+  var el=document.getElementById(id);
+  el.classList.add("active");el.scrollTop=0;
+}
+function push(id,fn){navStack.push({id:id,fn:fn});show(id)}
+function goBack(){
+  if(navStack.length>1){
+    navStack.pop();
+    var top=navStack[navStack.length-1];
+    if(top.fn)top.fn();
+    show(top.id);
+  }
+}
+function navMe(){lensFilter=null;
+  meTab=meMode==="visitor"?"Saved":"Posted";
+  navStack=[{id:"scr-feed",fn:null},{id:"scr-me",fn:renderMe}];renderMe();show("scr-me")}
+
+/* ================= feed ================= */
+var lens="plops", plopChip="All", pondChip="All", viewMode="grid", focusIdx=0;
+function setLens(l){lens=l;
+  document.getElementById("tab-plops").classList.toggle("on",l==="plops");
+  document.getElementById("tab-ponds").classList.toggle("on",l==="ponds");
+  document.getElementById("feed-plops").style.display=l==="plops"?"block":"none";
+  document.getElementById("feed-ponds").style.display=l==="ponds"?"block":"none";
+  document.getElementById("view-seg").style.visibility=l==="plops"?"visible":"hidden";
+  document.getElementById("lens-note").textContent=l==="plops"
+    ?"The Pool — every public plop flows in."
+    :"Currents — where the moment is gathering.";
+  renderChips();renderFeed();}
+function setViewMode(m){viewMode=m;focusIdx=0;
+  document.getElementById("view-grid").classList.toggle("on",m==="grid");
+  document.getElementById("view-focus").classList.toggle("on",m==="focus");
+  renderFeed();}
+function plopsList(){
+  var list=PLOPS.slice();
+  if(plopChip==="Spark")list=list.filter(function(p){return p.spark});
+  if(plopChip==="Recent")list=list.slice().sort(function(a,b){return parseInt(b.yr)-parseInt(a.yr)});
+  if(plopChip==="Following")list=list.filter(function(p){return FOLLOWED.indexOf(p.a)>=0});
+  return list;
+}
+function renderChips(){
+  var wrap=document.getElementById("chips");wrap.innerHTML="";
+  var list=lens==="plops"?["All","Recent","Spark","Following"]:["All","Topic","Person","Exhibition","Saved"];
+  var cur=lens==="plops"?plopChip:pondChip;
+  list.forEach(function(c){
+    var b=document.createElement("button");b.className="chip"+(c===cur?" on":"");
+    b.textContent=c==="Spark"?"⚡ Spark":c;
+    b.onclick=function(){if(lens==="plops"){plopChip=c}else{pondChip=c}renderChips();renderFeed()};
+    wrap.appendChild(b);
+  });
+}
+function tileFor(p){
+  var t=document.createElement("button");t.className="tile";
+  t.innerHTML='<div class="ph '+p.g+'" style="height:'+Math.round(p.h*0.82)+'px"></div>'+(p.spark?'<span class="bolt-badge">⚡</span>':'')+(p.v?'<span class="bolt-badge" style="right:auto;left:8px;width:auto;padding:0 8px;font-size:10px;font-weight:700">▣ '+p.v.length+'</span>':'');
+  t.onclick=function(){openPlop(p.id)};
+  return t;
+}
+function renderFeed(){
+  if(lens==="plops"){
+    var grid=document.getElementById("plops-grid");
+    var fwrap=document.getElementById("feed-focus");
+    if(viewMode==="focus"){
+      grid.style.display="none";fwrap.style.display="block";
+      renderFocus();return;
+    }
+    grid.style.display="block";fwrap.style.display="none";
+    grid.innerHTML="";
+    plopsList().forEach(function(p){grid.appendChild(tileFor(p))});
+  }else{
+    var wrap=document.getElementById("ponds-list");wrap.innerHTML="";
+    var keys=Object.keys(PONDS);
+    if(pondChip==="Topic"||pondChip==="Person"||pondChip==="Exhibition")keys=keys.filter(function(k){return PONDS[k].type===pondChip});
+    if(pondChip==="Saved")keys=keys.filter(function(k){return savedPonds[k]});
+    if(!keys.length){wrap.innerHTML='<p class="sec" style="padding:30px;grid-column:1/-1;text-align:center">Nothing here yet — save a pond and it gathers here.</p>';return}
+    keys.forEach(function(k){
+      var pd=PONDS[k];
+      var imgs=PLOPS.filter(function(p){return p.kw.indexOf(k)>=0});
+      var strip="";for(var i=0;i<4;i++){strip+='<div class="'+(imgs[i]?imgs[i].g:["g1","g7","g8","g2"][i])+'"></div>'}
+      var card=document.createElement("div");card.className="pondcard";
+      card.innerHTML='<button style="width:100%;text-align:left" onclick="openPond(\''+k.replace(/'/g,"\\'")+'\')">'+
+        '<div class="strip">'+strip+'</div>'+
+        '<div><span style="font-weight:700;font-size:16px">'+k+'</span> <span class="typechip">'+pd.type+'</span>'+
+        '<p class="sec" style="margin-top:4px">'+pd.plops+' plops · '+pd.people+' people <span class="rise" style="margin-left:6px">⚡ '+pd.rise.split(" ")[0]+'</span></p></div></button>'+
+        '<div style="display:flex;justify-content:flex-end;margin-top:-30px"><button class="pill outline" style="padding:8px 18px;font-size:13px" onclick="quickSavePond(\''+k.replace(/'/g,"\\'")+'\',this)">'+(savedPonds[k]?"Saved":"Save")+'</button></div>';
+      wrap.appendChild(card);
+    });
+  }
+}
+function quickSavePond(k,btn){savedPonds[k]=!savedPonds[k];btn.textContent=savedPonds[k]?"Saved":"Save";toast(savedPonds[k]?"Pond saved":"Removed")}
+
+/* ================= focus — the viewing room ================= */
+function renderFocus(){
+  var list=plopsList();if(!list.length)return;
+  if(focusIdx>=list.length)focusIdx=0;
+  var p=list[focusIdx];curPlop=p;
+  var ar=ARTISTS[p.a];
+  document.getElementById("fc-img").className="ph "+p.g;
+  document.getElementById("fc-title").textContent=p.t;
+  document.getElementById("fc-spark").textContent=p.spark?"⚡ sparking":"";
+  document.getElementById("fc-artist").textContent=p.a+" ↗";
+  document.getElementById("fc-meta").textContent=p.m+" · "+p.yr;
+  document.getElementById("fc-desc").textContent=p.d;
+  var kws=document.getElementById("fc-kws");kws.innerHTML="";
+  p.kw.forEach(function(k){
+    var b=document.createElement("button");b.className="kw";b.textContent=k;
+    b.onclick=function(){openPond(k)};kws.appendChild(b);
+  });
+  document.getElementById("fc-save").textContent=savedPlops[p.id]?"Saved ✓":"Save";
+  document.getElementById("fc-note").textContent="→ moves along the “"+p.kw[0]+"” current, not down a list · arrow keys work";
+}
+function focusMove(dir){
+  var list=plopsList();if(list.length<2)return;
+  var cur=list[focusIdx];
+  var n=list.length;
+  for(var step=1;step<n;step++){
+    var i=(focusIdx+dir*step+n*step)%n;
+    if(list[i].kw.some(function(k){return cur.kw.indexOf(k)>=0})){focusIdx=i;renderFocus();return}
+  }
+  focusIdx=(focusIdx+dir+n)%n;renderFocus();
+}
+function openPlopFromFocus(){if(curPlop)openPlop(curPlop.id)}
+function toggleSaveFocus(){if(!curPlop)return;savedPlops[curPlop.id]=!savedPlops[curPlop.id];
+  document.getElementById("fc-save").textContent=savedPlops[curPlop.id]?"Saved ✓":"Save";
+  toast(savedPlops[curPlop.id]?"Kept — it joins your eye":"Removed");}
+document.addEventListener("keydown",function(e){
+  if(viewMode!=="focus"||lens!=="plops")return;
+  if(!document.getElementById("scr-feed").classList.contains("active"))return;
+  if(e.key==="ArrowRight")focusMove(1);
+  if(e.key==="ArrowLeft")focusMove(-1);
+});
+
+/* ================= plop detail ================= */
+var curPlop=null;
+function renderPlop(id){
+  var p=PLOPS.find(function(x){return x.id===id});if(!p)return;curPlop=p;
+  var ar=ARTISTS[p.a];
+  document.getElementById("plop-img").className="ph "+p.g;
+  /* views — one work, several images */
+  var pv=document.getElementById("plop-views");pv.innerHTML="";
+  if(p.v&&p.v.length>1){
+    pv.style.display="flex";
+    var mk=function(g,i){
+      var b=document.createElement("button");
+      b.innerHTML='<div class="ph '+g+'" style="height:40px;width:58px;border-radius:3px"></div>';
+      b.style.cssText=i===0?"outline:2px solid var(--ink);outline-offset:2px;border-radius:3px":"opacity:.7";
+      b.onclick=function(){
+        document.getElementById("plop-img").className="ph "+g;
+        for(var j=0;j<p.v.length;j++){pv.children[j].style.cssText=j===i?"outline:2px solid var(--ink);outline-offset:2px;border-radius:3px":"opacity:.7"}
+        document.getElementById("plop-viewlabel").textContent="View "+(i+1)+" of "+p.v.length;
+      };
+      pv.appendChild(b);
+    };
+    for(var vi=0;vi<p.v.length;vi++)mk(p.v[vi],vi);
+    var lab=document.createElement("span");lab.className="micro";lab.id="plop-viewlabel";
+    lab.style.marginLeft="8px";lab.textContent="View 1 of "+p.v.length;
+    pv.appendChild(lab);
+    document.getElementById("plop-img").className="ph "+p.v[0];
+  }else{pv.style.display="none"}
+  document.getElementById("plop-artist").textContent=p.a;
+  document.getElementById("plop-av").textContent=ar.init;
+  document.getElementById("plop-title").textContent=p.t;
+  document.getElementById("plop-meta").textContent=p.m+" · "+p.yr;
+  document.getElementById("plop-bolt").innerHTML=p.spark
+    ?'<span class="bolt-line">⚡ Sparking now</span><p class="micro" style="margin-top:7px">Recent saves are clustering · fades soon.</p>'
+    :'<span class="bolt-line off">Quiet for now — ⚡ sparks when saves cluster.</span>';
+  var kws=document.getElementById("plop-kws");kws.innerHTML="";
+  p.kw.forEach(function(k){
+    var b=document.createElement("button");b.className="kw";b.textContent=k;
+    b.onclick=function(){openPond(k)};kws.appendChild(b);
+  });
+  document.getElementById("plop-save").textContent=savedPlops[p.id]?"Saved ✓":"Save";
+  document.getElementById("plop-foot").textContent="From "+ar.handle+"'s profile · save counts are owner-only.";
+  var rel=document.getElementById("plop-related");rel.innerHTML="";
+  PLOPS.filter(function(x){
+    if(x.id===p.id)return false;
+    return x.kw.some(function(k){return p.kw.indexOf(k)>=0});
+  }).slice(0,6).forEach(function(x){rel.appendChild(tileFor(x))});
+  if(!rel.children.length)rel.innerHTML='<p class="sec" style="padding:4px">Nothing connected yet.</p>';
+}
+function openPlop(id){renderPlop(id);push("scr-plop",function(){renderPlop(id)})}
+function toggleSavePlop(){if(!curPlop)return;savedPlops[curPlop.id]=!savedPlops[curPlop.id];
+  document.getElementById("plop-save").textContent=savedPlops[curPlop.id]?"Saved ✓":"Save";
+  toast(savedPlops[curPlop.id]?"Kept — it joins your eye":"Removed");}
+function openProfileFromPlop(){if(curPlop)openProfile(curPlop.a)}
+function openAboutFromPlop(){if(curPlop)openAbout(curPlop.a)}
+
+/* ================= pond + constellation ================= */
+var curPond=null;
+function renderPond(k){
+  var pd=getPond(k);curPond=k;
+  document.getElementById("pond-name").textContent=k;
+  document.getElementById("pond-typelabel").textContent="KEYWORD · "+pd.type.toUpperCase();
+  document.getElementById("pond-rise").textContent="⚡ "+pd.rise;
+  document.getElementById("pond-poolline").textContent=pd.people+" people are moving through this current · "+pd.plops+" plops";
+  document.getElementById("pond-save").textContent=savedPonds[k]?"Saved ✓":"Save this pond";
+  var tb=document.getElementById("pond-typeblock");tb.innerHTML="";
+  if(pd.type==="Person"){
+    tb.innerHTML='<div class="callout" style="margin-top:16px">⚠ <b>Pond ≠ Profile.</b> This is every plop tagged “'+k+'” (a crowd). For their own posted work, see <button style="font-weight:700;text-decoration:underline" onclick="openProfile(\''+k.replace(/'/g,"\\'")+'\')">'+(ARTISTS[k]?ARTISTS[k].handle:"@"+k.toLowerCase().replace(/\s/g,""))+'’s profile →</button></div>';
+  }else if(pd.type==="Exhibition"&&pd.ex){
+    var avs="";for(var i=0;i<4;i++){avs+='<span class="av sm"></span>'}
+    tb.innerHTML='<div class="excard" style="margin-top:16px"><p style="font-weight:700;font-size:15.5px">'+k+'</p>'+
+      '<p class="sec" style="margin-top:4px">'+pd.ex.venue+' · '+pd.ex.dates+'</p>'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">'+
+      '<div style="display:flex;align-items:center;gap:10px"><div class="avrow">'+avs+'</div><span class="sec">people going</span></div>'+
+      '<button class="pill dark" id="pond-going" style="padding:9px 18px;font-size:13px" onclick="toggleGoing()">'+(goingState[k]?"Going ✓":"I’ll go")+'</button></div>'+
+      '<button class="micro" style="font-weight:600;margin-top:12px" onclick="openExModal()">Details ↗</button></div>';
+  }
+  renderConstellation(k,pd);
+  var grid=document.getElementById("pond-grid");grid.innerHTML="";
+  var list=PLOPS.filter(function(p){return p.kw.indexOf(k)>=0});
+  if(!list.length)list=PLOPS.slice(0,6);
+  list.forEach(function(p){grid.appendChild(tileFor(p))});
+}
+function renderConstellation(k,pd){
+  var svg=document.getElementById("pond-constellation");
+  var W=430,H=240,cx=215,cy=120;
+  var n=pd.nearby.length;
+  var html="";
+  var pos=pd.nearby.map(function(nk,i){
+    var ang=(Math.PI*2*i)/n - Math.PI/2 + 0.35;
+    var r=82+((nk.length*13)%26);
+    return {k:nk,x:cx+Math.cos(ang)*r*1.6,y:cy+Math.sin(ang)*r*0.78};
+  });
+  pos.forEach(function(p){
+    html+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p.x+'" y2="'+p.y+'" stroke="#E3E3E6" stroke-width="1.5"/>';
+  });
+  html+='<circle cx="'+cx+'" cy="'+cy+'" r="9" fill="#111"/>';
+  html+='<text x="'+cx+'" y="'+(cy+26)+'" text-anchor="middle" font-size="13.5" fill="#111" font-weight="700">'+k+'</text>';
+  pos.forEach(function(p,i){
+    html+='<g onclick="openPond(\''+p.k.replace(/'/g,"\\'")+'\')">'+
+      '<circle cx="'+p.x+'" cy="'+p.y+'" r="6.5" fill="#fff" stroke="#111" stroke-width="1.8"/>'+
+      '<text x="'+p.x+'" y="'+(p.y-13)+'" text-anchor="middle" font-size="12.5" fill="#444">'+p.k+'</text></g>';
+  });
+  svg.innerHTML=html;
+}
+function openPond(k){renderPond(k);push("scr-pond",function(){renderPond(k)})}
+function toggleSavePond(){if(!curPond)return;savedPonds[curPond]=!savedPonds[curPond];
+  document.getElementById("pond-save").textContent=savedPonds[curPond]?"Saved ✓":"Save this pond";
+  toast(savedPonds[curPond]?"Pond saved":"Removed");}
+function toggleGoing(){goingState[curPond]=!goingState[curPond];
+  var b=document.getElementById("pond-going");if(b)b.textContent=goingState[curPond]?"Going ✓":"I’ll go";
+  toast(goingState[curPond]?"See you there — added to people going":"Removed");}
+
+/* ================= profile (others) ================= */
+var curArtist=null, pfTab="Posted";
+function renderProfile(name){
+  var ar=ARTISTS[name];if(!ar)return;
+  curArtist=name;
+  document.getElementById("pf-av").textContent=ar.init;
+  document.getElementById("pf-name").textContent=name;
+  document.getElementById("pf-handle").textContent=ar.handle+" · "+ar.line.split("·")[1].trim();
+  document.getElementById("pf-quote").textContent=ar.q;
+  document.getElementById("pf-links").innerHTML=linkRowHTML(ar.links||[ar.handle.replace("@","")+".com","Instagram"]);
+  document.getElementById("pf-follow").textContent=followState[name]||FOLLOWED.indexOf(name)>=0?"Following ✓":"Follow";
+  var exc=document.getElementById("pf-excard");
+  if(ar.nowShowing){exc.style.display="block";
+    document.getElementById("pf-extitle").textContent="Euljiro Open Storage";
+    document.getElementById("pf-exmeta").textContent="Onsu Ground, Euljiro · until 28 Jun";
+  }else{exc.style.display="none"}
+  renderPfTabs();renderPfBody();
+}
+function openProfile(name){
+  if(!ARTISTS[name]){toast("Profile not in this prototype");return}
+  pfTab="Posted";
+  renderProfile(name);
+  push("scr-profile",function(){renderProfile(name)});
+}
+function renderPfTabs(){
+  var posted=PLOPS.filter(function(p){return p.a===curArtist}).length;
+  var tabs=[["Posted",posted],["Saved",7]];
+  var w=document.getElementById("pf-tabs");w.innerHTML="";
+  tabs.forEach(function(t){
+    var b=document.createElement("button");b.className="proftab"+(t[0]===pfTab?" on":"");
+    b.innerHTML=t[0]+'<span class="cnt">'+t[1]+'</span>';
+    b.onclick=function(){pfTab=t[0];renderPfTabs();renderPfBody()};w.appendChild(b);
+  });
+}
+function renderPfBody(){
+  var w=document.getElementById("pf-body");w.innerHTML="";
+  if(pfTab==="Posted"){
+    var g=document.createElement("div");g.className="masonry";g.style.padding="16px 40px";
+    PLOPS.filter(function(p){return p.a===curArtist}).forEach(function(p){g.appendChild(tileFor(p))});
+    if(!g.children.length)g.innerHTML='<p class="sec" style="padding:20px 4px">No plops yet.</p>';
+    w.appendChild(g);
+  }else{
+    var d=document.createElement("div");d.style.padding="18px 40px 0";
+    d.innerHTML='<p class="micro" style="margin-bottom:10px">Saved ponds</p>'+
+      '<div><button class="kw" onclick="openPond(\'water\')">water</button><button class="kw" onclick="openPond(\'memory\')">memory</button><button class="kw" onclick="openPond(\'boundary\')">boundary</button></div>'+
+      '<p class="micro" style="margin:14px 0 10px">Saved plops</p>';
+    w.appendChild(d);
+    var g2=document.createElement("div");g2.className="masonry";g2.style.padding="0 40px 16px";
+    PLOPS.filter(function(p){return p.a!==curArtist}).slice(0,4).forEach(function(p){g2.appendChild(tileFor(p))});
+    w.appendChild(g2);
+  }
+}
+function toggleFollow(){if(!curArtist)return;
+  var on=!(followState[curArtist]||FOLLOWED.indexOf(curArtist)>=0);
+  followState[curArtist]=on;
+  if(!on&&FOLLOWED.indexOf(curArtist)>=0)FOLLOWED.splice(FOLLOWED.indexOf(curArtist),1);
+  document.getElementById("pf-follow").textContent=on?"Following ✓":"Follow";
+  toast(on?"Following — their new work joins your feed":"Unfollowed");}
+function openAboutFromProfile(){if(curArtist)openAbout(curArtist)}
+function openExModal(){document.getElementById("ex-sheet").classList.add("open");
+  document.getElementById("ex-going").textContent=goingState["Euljiro Open Storage"]?"Going ✓":"I’ll go";}
+function toggleGoingEx(){
+  goingState["Euljiro Open Storage"]=!goingState["Euljiro Open Storage"];
+  document.getElementById("ex-going").textContent=goingState["Euljiro Open Storage"]?"Going ✓":"I’ll go";
+  toast(goingState["Euljiro Open Storage"]?"See you there — added to people going":"Removed");
+}
+
+/* ================= own profile + saved tab ================= */
+var meMode="visitor", meTab="Posted";
+function setMeMode(m){meMode=m;meTab=m==="visitor"?"Saved":"Posted";
+  document.getElementById("me-as-visitor").classList.toggle("on",m==="visitor");
+  document.getElementById("me-as-artist").classList.toggle("on",m==="artist");
+  renderMe();}
+function renderMe(){
+  var isA=meMode==="artist";
+  document.getElementById("me-name").textContent=isA?"Haneul Jung":"Sungwon Jeong";
+  document.getElementById("me-handle").textContent=isA?"@haneuljung · photography, video, installation":"@sjeong";
+  document.getElementById("me-av").textContent=isA?"HJ":"SJ";
+  document.getElementById("me-vchip").style.display=isA?"inline-flex":"none";
+  document.getElementById("me-about").style.display=isA?"inline-flex":"none";
+  document.getElementById("me-backstage").style.display=isA?"block":"none";
+  document.getElementById("me-excard").style.display=isA?"block":"none";
+  var mq=document.getElementById("me-quote");
+  mq.style.display=isA?"block":"none";
+  if(isA)mq.textContent=ARTISTS["Haneul Jung"].q;
+  document.getElementById("me-links").innerHTML=isA
+    ?linkRowHTML(ARTISTS["Haneul Jung"].links)
+    :linkRowHTML(["sungwonjeong.com"]);
+  document.getElementById("me-following").textContent=isA?"21 following":"12 following";
+  var posted=isA?PLOPS.filter(function(p){return p.a==="Haneul Jung"}).length:0;
+  var tabs=[["Posted",posted],["Saved",MY_SAVES.length+PONDS_SAVED.length]];
+  if(tabs.map(function(t){return t[0]}).indexOf(meTab)<0)meTab=tabs[0][0];
+  var tw=document.getElementById("me-tabs");tw.innerHTML="";
+  tabs.forEach(function(t){
+    var b=document.createElement("button");b.className="proftab"+(t[0]===meTab?" on":"");
+    b.innerHTML=t[0]+'<span class="cnt">'+t[1]+'</span>';
+    b.onclick=function(){meTab=t[0];renderMe()};tw.appendChild(b);
+  });
+  var w=document.getElementById("me-body");w.innerHTML="";
+  if(meTab==="Posted"){
+    if(isA){
+      var g=document.createElement("div");g.className="masonry";g.style.padding="16px 40px";
+      PLOPS.filter(function(p){return p.a==="Haneul Jung"}).forEach(function(p){g.appendChild(tileFor(p))});
+      w.appendChild(g);
+    }else{
+      w.innerHTML='<p class="sec" style="padding:36px;text-align:center">Nothing posted yet.<br>Your own photos, words and links are welcome — other people’s work isn’t.</p>';
+    }
+  }else{
+    renderSavedTab(w,!isA);
+  }
+}
+function rowHeader(label,total,onAll){
+  var h=document.createElement("div");
+  h.style.cssText="display:flex;justify-content:space-between;align-items:baseline;margin:0 0 10px";
+  var l=document.createElement("p");l.className="micro";l.textContent=label;h.appendChild(l);
+  var b=document.createElement("button");b.className="micro";b.style.fontWeight="600";b.style.color="var(--ink)";
+  b.textContent="All "+total+" →";
+  b.onclick=onAll;h.appendChild(b);
+  return h;
+}
+/* "Your eye" — the library as a destination (ownership register) */
+function renderSavedTab(w,withLens){
+  var weights=lensWeights();
+  var main=document.createElement("div");
+  main.style.cssText="padding:30px 40px 30px;max-width:1180px";
+  if(withLens){
+    var head=document.createElement("div");
+    head.innerHTML='<h2 style="font-size:38px;font-weight:700;letter-spacing:-.8px;line-height:1.05">Your eye</h2>'+
+      '<p class="micro" style="margin-top:6px">'+MY_SAVES.length+' plops kept · '+PONDS_SAVED.length+' ponds · '+PEOPLE_ALL.length+' people · how you see</p>';
+    main.appendChild(head);
+    var lensrow=document.createElement("div");
+    lensrow.style.cssText="display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;margin:18px 0 26px";
+    var sizes=[26,22,19,17,15,14], cols=["var(--ink)","#5a6b7c","#8a8a8e","#8a8a8e","#b4b2a9","#b4b2a9"];
+    weights.forEach(function(kv,i){
+      var b=document.createElement("button");
+      b.style.cssText="font-size:"+sizes[i]+"px;color:"+cols[i]+";font-weight:700;letter-spacing:-.4px";
+      b.textContent=kv[0];
+      if(lensFilter===kv[0]){b.style.textDecoration="underline";b.style.textUnderlineOffset="5px";b.style.color="var(--ink)"}
+      b.onclick=function(){lensFilter=lensFilter===kv[0]?null:kv[0];renderMe()};
+      lensrow.appendChild(b);
+    });
+    var hint=document.createElement("button");hint.className="micro";hint.style.marginLeft="auto";
+    if(lensFilter){hint.style.fontWeight="600";hint.style.color="var(--ink)";hint.textContent="✕ Clear — show everything";
+      hint.onclick=function(){lensFilter=null;renderMe()};}
+    else hint.textContent="tap a word to filter";
+    lensrow.appendChild(hint);
+    main.appendChild(lensrow);
+  }
+  /* saved ponds as cover cards, ranked by liveness */
+  main.appendChild(rowHeader("Saved ponds — most alive",PONDS_SAVED.length,function(){openIndex("ponds")}));
+  var pgrid=document.createElement("div");
+  pgrid.style.cssText="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px";
+  PONDS_SAVED.slice().sort(function(a,b){return b.act-a.act}).slice(0,4).forEach(function(p){
+    var imgs=PLOPS.filter(function(x){return x.kw.indexOf(p.k)>=0});
+    var pal=["g1","g7","g8","g2"];
+    var strip="";for(var i=0;i<4;i++){strip+='<div class="'+(imgs[i]?imgs[i].g:pal[i])+'"></div>'}
+    var b=document.createElement("button");b.className="pcov";
+    b.innerHTML='<div class="strip">'+strip+'</div>'+
+      '<p style="font-weight:700;font-size:14px;margin-top:7px">'+p.k+(p.act>70?' <span class="rise">⚡</span>':'')+'</p>'+
+      '<p class="micro" style="margin-top:1px">'+p.plops+' plops</p>';
+    b.onclick=function(){openPond(p.k)};
+    pgrid.appendChild(b);
+  });
+  main.appendChild(pgrid);
+  main.appendChild(rowHeader("People you follow — active lately",PEOPLE_ALL.length,function(){openIndex("people")}));
+  var pe=document.createElement("div");pe.style.marginBottom="24px";
+  PEOPLE_ALL.slice().sort(function(a,b){return a.days-b.days}).slice(0,5).forEach(function(pp){
+    var b=document.createElement("button");b.className="kw";b.textContent=pp.handle;
+    b.onclick=function(){openProfile(pp.name)};pe.appendChild(b);
+  });
+  main.appendChild(pe);
+  var ph=document.createElement("p");ph.className="micro";ph.style.margin="0 0 4px";
+  ph.textContent=lensFilter?"Saved plops — in “"+lensFilter+"”":"Saved plops";
+  main.appendChild(ph);
+  var g2=document.createElement("div");
+  g2.style.cssText="columns:4;column-gap:12px;padding:10px 0 0";
+  var list=MY_SAVES.map(function(id){return PLOPS.find(function(x){return x.id===id})}).filter(Boolean);
+  if(lensFilter)list=list.filter(function(p){return p.kw.indexOf(lensFilter)>=0});
+  list.forEach(function(p){g2.appendChild(tileFor(p))});
+  if(!list.length)g2.innerHTML='<p class="sec" style="padding:4px">Nothing kept under this word yet.</p>';
+  main.appendChild(g2);
+  w.appendChild(main);
+}
+
+/* ================= library index modal ================= */
+var indexKind="ponds", indexSort="active";
+function openIndex(kind){
+  if(indexKind!==kind)indexSort="active";
+  indexKind=kind;
+  document.getElementById("index-title").textContent=
+    indexKind==="ponds"?"Saved ponds · "+PONDS_SAVED.length:"People you follow · "+PEOPLE_ALL.length;
+  document.getElementById("index-search").value="";
+  document.getElementById("index-sort-active").classList.toggle("on",indexSort==="active");
+  document.getElementById("index-sort-az").classList.toggle("on",indexSort==="az");
+  renderIndexList();
+  document.getElementById("index-sheet").classList.add("open");
+}
+function setIndexSort(s){
+  indexSort=s;
+  document.getElementById("index-sort-active").classList.toggle("on",s==="active");
+  document.getElementById("index-sort-az").classList.toggle("on",s==="az");
+  renderIndexList();
+}
+function renderIndexList(){
+  var q=document.getElementById("index-search").value.toLowerCase();
+  var wrap=document.getElementById("index-list");wrap.innerHTML="";
+  if(indexKind==="ponds"){
+    var items=PONDS_SAVED.filter(function(p){return !q||p.k.toLowerCase().indexOf(q)>=0});
+    items.sort(indexSort==="active"?function(a,b){return b.act-a.act}:function(a,b){return a.k.localeCompare(b.k)});
+    items.forEach(function(p){
+      var b=document.createElement("button");b.className="idxrow";
+      b.innerHTML='<div style="flex:1"><p class="nm">'+p.k+' <span class="typechip" style="margin-left:4px">'+p.type+'</span></p>'+
+        '<p class="mt">'+(p.act>70?'<span class="live">⚡ rising this week</span> · ':'')+p.plops+' plops</p></div><span class="sec">→</span>';
+      b.onclick=function(){closeSheet("index-sheet");openPond(p.k)};
+      wrap.appendChild(b);
+    });
+  }else{
+    var ppl=PEOPLE_ALL.filter(function(pp){return !q||pp.name.toLowerCase().indexOf(q)>=0||pp.handle.indexOf(q)>=0});
+    ppl.sort(indexSort==="active"?function(a,b){return a.days-b.days}:function(a,b){return a.name.localeCompare(b.name)});
+    ppl.forEach(function(pp){
+      var init=pp.name.split(" ").map(function(x){return x[0]}).join("");
+      var act=pp.days<=7?'<span class="live">new plop · '+(pp.days===0?"today":pp.days+"d ago")+'</span>':'quiet · '+Math.round(pp.days/7)+'w';
+      var b=document.createElement("button");b.className="idxrow";
+      b.innerHTML='<span class="av">'+init+'</span><div style="flex:1"><p class="nm">'+pp.name+'</p>'+
+        '<p class="mt">'+pp.handle+' · '+act+'</p></div><span class="sec">→</span>';
+      b.onclick=function(){closeSheet("index-sheet");openProfile(pp.name)};
+      wrap.appendChild(b);
+    });
+  }
+  if(!wrap.children.length)wrap.innerHTML='<p class="sec" style="padding:20px 0;text-align:center">No match.</p>';
+}
+
+/* ================= About ================= */
+var bioExpanded=false, curAbout=null;
+function renderAbout(name){
+  var ar=ARTISTS[name];if(!ar)return;
+  curAbout=name;bioExpanded=false;
+  document.getElementById("about-name").textContent=name;
+  document.getElementById("about-line").textContent=ar.line;
+  document.getElementById("about-bio").textContent=ar.bio;
+  document.getElementById("about-readmore").style.display=ar.bio2?"inline":"none";
+  document.getElementById("about-readmore").textContent="Read more";
+  aboutPlates=PLOPS.filter(function(p){return p.a===name});
+  showPlate(0);
+  var ex=document.getElementById("about-ex");ex.innerHTML="";
+  ar.ex.forEach(function(e){ex.innerHTML+='<div class="listitem"><span style="color:var(--ink)">'+e[0]+'</span><span>'+e[1]+'</span></div>'});
+  var aw=document.getElementById("about-awards");aw.innerHTML="";
+  ar.awards.forEach(function(e){aw.innerHTML+='<div class="listitem"><span style="color:var(--ink)">'+e[0]+'</span><span>'+e[1]+'</span></div>'});
+  document.getElementById("about-contact").innerHTML=ar.contact+
+    '<br><span style="display:inline-block;margin-top:6px">'+linkRowHTML(ar.links||[ar.handle.replace("@","")+".com","Instagram"])+'</span>';
+}
+function openAbout(name){
+  if(!ARTISTS[name]){toast("Portfolio not in this prototype");return}
+  renderAbout(name);
+  push("scr-about",function(){renderAbout(name)});
+}
+function expandBio(){
+  var ar=ARTISTS[curAbout];bioExpanded=!bioExpanded;
+  document.getElementById("about-bio").textContent=bioExpanded?ar.bio+ar.bio2:ar.bio;
+  document.getElementById("about-readmore").textContent=bioExpanded?"Read less":"Read more";
+}
+/* the plate viewer — one work at a time, catalogue grammar */
+var aboutPlates=[];
+function showPlate(i){
+  if(!aboutPlates.length)return;
+  var p=aboutPlates[i];
+  var parts=p.t&&p.yr?[p.t,p.yr]:[p.t,""];
+  document.getElementById("about-plate-img").className="ph "+p.g;
+  document.getElementById("about-plate-title").textContent=parts[0];
+  document.getElementById("about-plate-year").textContent=p.yr;
+  document.getElementById("about-plate-mat").textContent=p.m;
+  document.getElementById("about-plate-desc").textContent=p.d;
+  document.getElementById("about-plate-credit").textContent="© "+p.a+" · courtesy of the artist";
+  var film=document.getElementById("about-film");film.innerHTML="";
+  aboutPlates.forEach(function(x,j){
+    var b=document.createElement("button");b.className=j===i?"on":"";
+    b.innerHTML='<div class="ph '+x.g+'" style="height:46px;border-radius:3px"></div>';
+    b.onclick=function(){showPlate(j)};
+    film.appendChild(b);
+  });
+  document.getElementById("about-platecount").textContent="Selected works · "+(i+1)+" of "+aboutPlates.length;
+}
+
+/* ================= search / create ================= */
+function openSheet(id){
+  document.getElementById(id).classList.add("open");
+  if(id==="search-sheet"){document.getElementById("search-input").value="";filterSearch()}
+}
+function createStub(){closeSheet("create-sheet");toast("The full upload flow lives in the Studio prototype")}
+function closeSheet(id){document.getElementById(id).classList.remove("open")}
+function filterSearch(){
+  var q=document.getElementById("search-input").value.toLowerCase();
+  var kwrap=document.getElementById("search-kws");kwrap.innerHTML="";
+  Object.keys(PONDS).filter(function(k){return !q||k.toLowerCase().indexOf(q)>=0}).slice(0,8).forEach(function(k){
+    var b=document.createElement("button");b.className="kw";b.textContent=k;
+    b.onclick=function(){closeSheet("search-sheet");openPond(k)};kwrap.appendChild(b);
+  });
+  var pwrap=document.getElementById("search-people");pwrap.innerHTML="";
+  Object.keys(ARTISTS).filter(function(n){return !q||n.toLowerCase().indexOf(q)>=0||ARTISTS[n].handle.indexOf(q)>=0}).slice(0,5).forEach(function(n){
+    var b=document.createElement("button");b.className="kw";b.textContent=ARTISTS[n].handle+" · "+n;
+    b.onclick=function(){closeSheet("search-sheet");openProfile(n)};pwrap.appendChild(b);
+  });
+  if(!kwrap.children.length&&!pwrap.children.length)kwrap.innerHTML='<p class="sec">No current by that name yet — tag it on a plop and the pond appears by itself.</p>';
+}
+
+/* ================= nomination — champion a stranger's work ================= */
+var nomLeft=3;
+function openNominate(){
+  document.getElementById("nom-form").style.display="block";
+  document.getElementById("nom-after").style.display="none";
+  document.getElementById("nom-left").textContent=nomLeft;
+  document.getElementById("nominate-sheet").classList.add("open");
+}
+function submitNomination(){
+  var l=document.getElementById("nom-link").value.trim();
+  if(!l){toast("A link to their work — that’s all we need");return}
+  if(nomLeft<=0){toast("No nominations left this month");return}
+  nomLeft--;
+  document.getElementById("nom-line").textContent="Sent — we’ll look at "+l.replace(/^https?:\/\//,"")+" properly.";
+  document.getElementById("nom-form").style.display="none";
+  document.getElementById("nom-after").style.display="block";
+  document.getElementById("nom-link").value="";document.getElementById("nom-why").value="";
+}
+
+/* ================= backstage (your private studio) ================= */
+var dispatchLeft=2, dispatchKind="invite";
+var SELWORKS=[
+  {t:"Tide Ledger IV",g:"g0",sel:true},
+  {t:"Reservoir (Winter)",g:"g6",sel:true},
+  {t:"Basement, Pre-Demolition",g:"g6",sel:true},
+  {t:"Drain Study",g:"g1",sel:false},
+  {t:"Wallpaper, Flooded",g:"g7",sel:false},
+  {t:"Pump Room",g:"g3",sel:false}
+];
+function postExhibition(){
+  var n=document.getElementById("bs-exname").value.trim();
+  if(!n){toast("Give the exhibition a name");return}
+  var v=document.getElementById("bs-exvenue").value.trim()||"venue TBC";
+  document.getElementById("bs-exposted").textContent="Now showing — "+n+" · "+v+" · its pond is open.";
+  toast("Exhibition posted — pond created");
+}
+function setDispatch(k){
+  dispatchKind=k;
+  document.getElementById("bs-d-invite").classList.toggle("on",k==="invite");
+  document.getElementById("bs-d-studio").classList.toggle("on",k==="studio");
+}
+function sendDispatch(){
+  if(dispatchLeft<=0)return;
+  var msg=document.getElementById("bs-dmsg").value.trim();
+  if(!msg){toast("Write a few lines first");return}
+  dispatchLeft--;
+  document.getElementById("bs-dispcount").textContent=dispatchLeft+" left this month";
+  document.getElementById("bs-dmsg").value="";
+  toast(dispatchKind==="invite"?"Invite sent to 38 people":"Studio share sent to 38 people");
+  if(dispatchLeft<=0){
+    var b=document.getElementById("bs-dsend");
+    b.disabled=true;b.textContent="No dispatches left this month";
+  }
+}
+function saveAbout(){
+  toast("About updated — visible to galleries & curators");
+}
+function renderSelGrid(){
+  var g=document.getElementById("bs-selgrid");g.innerHTML="";
+  var n=SELWORKS.filter(function(w){return w.sel}).length;
+  document.getElementById("bs-selcount").textContent=n+" / 5";
+  SELWORKS.forEach(function(wk){
+    var b=document.createElement("button");
+    b.innerHTML='<div class="ph '+wk.g+'" style="height:110px"></div><span class="star">'+(wk.sel?"★":"☆")+'</span>';
+    b.onclick=function(){
+      if(!wk.sel&&n>=5){toast("Five is the limit — unstar one first");return}
+      wk.sel=!wk.sel;renderSelGrid();
+    };
+    g.appendChild(b);
+  });
+}
+
+/* ================= toast ================= */
+var toastTimer=null;
+function toast(msg){
+  var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove("show")},1900);
+}
+
+/* ================= init ================= */
+renderChips();renderFeed();
+</script>
+</body>
+</html>
