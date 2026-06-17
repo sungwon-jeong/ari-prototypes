@@ -43,7 +43,7 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
 .statusbar{height:48px;display:flex;align-items:center;justify-content:space-between;
   padding:10px 28px 0;font-size:14px;font-weight:600;position:relative;z-index:30}
 .statusbar .sicons{display:flex;gap:5px;align-items:center;font-size:11px;letter-spacing:1px}
-.app{position:absolute;inset:48px 0 0 0}
+.app{position:absolute;inset:0}
 .screen{position:absolute;inset:0;background:var(--bg);overflow-y:auto;overflow-x:hidden;
   display:none;scrollbar-width:none;padding-bottom:110px}
 .screen::-webkit-scrollbar{display:none}
@@ -76,7 +76,7 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
 .g8{background:linear-gradient(160deg,#7fa8a0,#dcebe6)}
 .g9{background:linear-gradient(160deg,#5a5a86,#cdaec6)}
 .av{width:30px;height:30px;border-radius:50%;background:var(--accent);flex:none;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
-.dethead{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);z-index:20}
+.dethead{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:20}
 .backbtn{width:38px;height:38px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:16px}
 .excard{border:1px solid var(--line);border-radius:var(--r-card);padding:16px;box-shadow:var(--shadow-card)}
 .callout{border-radius:16px;background:var(--surface);padding:14px 16px;font-size:13.5px;line-height:1.5}
@@ -92,7 +92,6 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .searchpill{display:flex;align-items:center;gap:9px;background:var(--surface);border-radius:var(--r-pill);padding:12px 16px;font-size:14.5px;color:var(--soft)}
 .hr{height:1px;background:var(--line);margin:18px 0}
-.demoseg{position:sticky;top:0;z-index:21;display:flex;justify-content:center;padding:6px 0 2px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px)}
 .bottomnav{
   position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
   background:rgba(255,255,255,.95);backdrop-filter:blur(14px);
@@ -141,16 +140,10 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
 <body>
 
 <div class="phone">
-  <div class="statusbar"><span>10:25</span><span class="sicons">▪▪▪ <span>⌁</span> ▮92</span></div>
-
   <div class="app">
 
-    <div class="demoseg" style="position:absolute;left:0;right:0;top:0">
-      <span class="micro" style="font-weight:700;color:var(--soft);letter-spacing:.5px;padding:9px 0">STUDIO · UPLOAD</span>
-    </div>
-
     <!-- ============ S1 · UPLOAD ============ -->
-    <section class="screen active" id="sec-upload" style="padding-top:46px">
+    <section class="screen active" id="sec-upload">
 
       <!-- home: the session starts here, from the + on the nav -->
       <div id="u-home">
@@ -297,8 +290,8 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
     </section>
 
     <!-- ============ S2 · ORGANIZE ============ -->
-    <section class="screen" id="sec-organize" style="padding-top:46px">
-      <div class="dethead" style="top:40px">
+    <section class="screen" id="sec-organize">
+      <div class="dethead">
         <button class="backbtn" onclick="setView('upload')">←</button>
         <span class="h2">Where this plop lands</span>
         <span style="width:38px"></span>
@@ -344,8 +337,8 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
     </section>
 
     <!-- ============ PLOP VIEW (where you land after organising) ============ -->
-    <section class="screen" id="sec-plopview" style="padding-top:46px">
-      <div class="dethead" style="top:40px">
+    <section class="screen" id="sec-plopview">
+      <div class="dethead">
         <button class="backbtn" onclick="setView('upload');setStep('u-home')">←</button>
         <button class="micro" style="font-weight:600" onclick="toast('Opens in the Discover prototype')">Open in Pool ↗</button>
       </div>
@@ -367,8 +360,8 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
     </section>
 
     <!-- ============ S3 · COLLABORATOR CONSENT ============ -->
-    <section class="screen" id="sec-consent" style="padding-top:46px">
-      <div class="dethead" style="top:40px">
+    <section class="screen" id="sec-consent">
+      <div class="dethead">
         <button class="backbtn" onclick="setView('upload')">←</button>
         <span class="h2">Collaboration</span>
         <span style="width:38px"></span>

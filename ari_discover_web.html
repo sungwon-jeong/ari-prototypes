@@ -810,7 +810,7 @@ function plopsList(){
 }
 function renderChips(){
   var wrap=document.getElementById("chips");wrap.innerHTML="";
-  var list=lens==="plops"?["All","Recent","Spark","Following"]:["All","Topic","Person","Exhibition","Saved"];
+  var list=lens==="plops"?["All","Recent","Spark","Following"]:["All","Topic","Person","Exhibition"];
   var cur=lens==="plops"?plopChip:pondChip;
   list.forEach(function(c){
     var b=document.createElement("button");b.className="chip"+(c===cur?" on":"");
@@ -840,7 +840,6 @@ function renderFeed(){
     var wrap=document.getElementById("ponds-list");wrap.innerHTML="";
     var keys=Object.keys(PONDS);
     if(pondChip==="Topic"||pondChip==="Person"||pondChip==="Exhibition")keys=keys.filter(function(k){return PONDS[k].type===pondChip});
-    if(pondChip==="Saved")keys=keys.filter(function(k){return savedPonds[k]});
     if(!keys.length){wrap.innerHTML='<p class="sec" style="padding:30px;grid-column:1/-1;text-align:center">Nothing here yet — save a pond and it gathers here.</p>';return}
     keys.forEach(function(k){
       var pd=PONDS[k];

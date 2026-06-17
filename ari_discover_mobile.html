@@ -49,7 +49,7 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
 .statusbar .sicons{display:flex;gap:5px;align-items:center;font-size:11px;letter-spacing:1px}
 
 /* ---- screens ---- */
-.app{position:absolute;inset:48px 0 0 0}
+.app{position:absolute;inset:0}
 .screen{position:absolute;inset:0;background:var(--bg);overflow-y:auto;overflow-x:hidden;
   display:none;scrollbar-width:none;padding-bottom:110px}
 .screen::-webkit-scrollbar{display:none}
@@ -195,7 +195,6 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
 <body>
 
 <div class="phone">
-  <div class="statusbar"><span>10:25</span><span class="sicons">▪▪▪ <span>⌁</span> ▮92</span></div>
 
   <div class="app" id="app">
 
@@ -785,7 +784,7 @@ function setLens(l){lens=l;
 
 function renderChips(){
   var wrap=document.getElementById("chips");wrap.innerHTML="";
-  var list=lens==="plops"?["All","Recent","Spark","Following"]:["All","Topic","Person","Exhibition","Saved"];
+  var list=lens==="plops"?["All","Recent","Spark","Following"]:["All","Topic","Person","Exhibition"];
   var cur=lens==="plops"?plopChip:pondChip;
   list.forEach(function(c){
     var b=document.createElement("button");b.className="chip"+(c===cur?" on":"");
@@ -813,7 +812,6 @@ function renderFeed(){
     var wrap=document.getElementById("ponds-list");wrap.innerHTML="";
     var keys=Object.keys(PONDS);
     if(pondChip==="Topic"||pondChip==="Person"||pondChip==="Exhibition")keys=keys.filter(function(k){return PONDS[k].type===pondChip});
-    if(pondChip==="Saved")keys=keys.filter(function(k){return savedPonds[k]});
     if(!keys.length){wrap.innerHTML='<p class="sec" style="padding:30px 22px;text-align:center">Nothing here yet — save a pond and it gathers here.</p>';return}
     keys.forEach(function(k){
       var pd=PONDS[k];
