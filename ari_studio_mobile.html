@@ -43,11 +43,12 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
 .statusbar{height:48px;display:flex;align-items:center;justify-content:space-between;
   padding:10px 28px 0;font-size:14px;font-weight:600;position:relative;z-index:30}
 .statusbar .sicons{display:flex;gap:5px;align-items:center;font-size:11px;letter-spacing:1px}
-.app{position:absolute;inset:0}
+.app{position:absolute;top:48px;left:0;right:0;bottom:0}
 .screen{position:absolute;inset:0;background:var(--bg);overflow-y:auto;overflow-x:hidden;
   display:none;scrollbar-width:none;padding-bottom:110px}
 .screen::-webkit-scrollbar{display:none}
 .screen.active{display:block}
+.screen.active.centered{display:flex;flex-direction:column;justify-content:center;padding-bottom:0}
 .h1{font-size:24px;font-weight:700;letter-spacing:-.4px}
 .h2{font-size:17px;font-weight:700;letter-spacing:-.2px}
 .body{font-size:14.5px;line-height:1.55}
@@ -126,20 +127,28 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
 @keyframes ripple{0%{transform:scale(.5);opacity:.8}100%{transform:scale(3.2);opacity:0}}
 .belongrow{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:flex-start}
 .belongrow .ic{width:34px;height:34px;border-radius:12px;background:var(--surface);display:grid;place-items:center;flex:none;font-size:15px}
-.bscard{margin:14px 18px 0;border:1px solid var(--line);border-radius:var(--r-card);padding:18px;box-shadow:var(--shadow-card)}
-.star{font-size:18px;position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 1px 5px rgba(0,0,0,.15)}
-.selgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.selgrid button{position:relative;border-radius:var(--r-img);overflow:hidden}
 .libgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
 .libgrid button{height:96px;border-radius:10px;overflow:hidden}
 .upbar{height:6px;border-radius:3px;background:var(--surface);margin-top:12px;overflow:hidden}
 .upbar div{height:100%;width:0;background:var(--ink);border-radius:3px;transition:width .15s linear}
 .linkpreview{border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:14px;box-shadow:var(--shadow-card)}
+.suggestbox{border:1px solid var(--line);border-radius:14px;margin-top:6px;overflow:hidden}
+.suggestbox button{display:block;width:100%;text-align:left;padding:11px 13px;font-size:14px;border-bottom:1px solid var(--line)}
+.suggestbox button:last-child{border-bottom:0}
+.suggestbox button:active{background:var(--surface)}
 </style>
 </head>
 <body>
 
 <div class="phone">
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sicons">
+      <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7.5" width="3" height="3.5" rx="1"/><rect x="5" y="5" width="3" height="6" rx="1"/><rect x="10" y="2.5" width="3" height="8.5" rx="1"/><rect x="15" y="0" width="3" height="11" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 4.2C5 1.3 12 1.3 15.5 4.2"/><path d="M4 6.8C6.3 4.9 10.2 4.9 12.5 6.8"/><path d="M6.5 9.2c1-.9 2.5-.9 3.5 0"/></svg>
+      <span style="display:inline-flex;align-items:center"><span style="border:1.3px solid currentColor;border-radius:3px;width:22px;height:11px;display:inline-block;position:relative;opacity:.9"><span style="position:absolute;inset:1.5px;background:currentColor;border-radius:1px"></span></span></span>
+    </span>
+  </div>
   <div class="app">
 
     <!-- ============ S1 · UPLOAD ============ -->
@@ -164,11 +173,18 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
         <div class="masonry" id="u-homefeed"></div>
       </div>
 
+      <!-- shared step header -->
+      <div class="dethead" id="u-tophead" style="display:none;position:absolute;left:0;right:0;top:0;z-index:25">
+        <button class="backbtn" onclick="stepBack()">←</button>
+        <span class="h2" id="u-stephead">Drop a plop</span>
+        <span style="width:38px"></span>
+      </div>
+
       <!-- step 1 · image -->
-      <div id="u-step1" style="padding:18px 24px;display:none">
-        <p class="steplabel">1 · ARTWORK IMAGE</p>
+      <div id="u-step1" style="padding:24px 24px 30px;display:none">
+        <p class="steplabel">1 · YOUR IMAGE</p>
         <button class="dropslot" id="u-imgslot" onclick="openSheet('lib-sheet')">
-          <div><p style="font-weight:700">Add the image</p>
+          <div><p style="font-weight:700">Add your photo</p>
           <p class="sec" style="margin-top:4px">tap to choose from your library</p></div>
         </button>
         <div class="upbar" id="u-upbar" style="display:none"><div id="u-upfill"></div></div>
@@ -178,12 +194,12 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
       </div>
 
       <!-- link branch · paste -->
-      <div id="u-l1" style="padding:18px 24px;display:none">
+      <div id="u-l1" style="padding:24px 24px 30px;display:none">
         <p class="steplabel">1 · ADD BY LINK</p>
-        <p class="sec" style="margin-top:6px">Your website, an artist page, or an Instagram post of your own work.</p>
-        <div class="field"><input id="u-linkurl" placeholder="https://haneuljung.kr/tide-ledger"></div>
+        <p class="sec" style="margin-top:6px">Paste a source URL. We keep a thumbnail and link back to the original.</p>
+        <div class="field"><input id="u-linkurl" placeholder="https://…"></div>
         <button class="pill dark" style="width:100%;margin-top:14px" onclick="fetchLink()">Fetch the page</button>
-        <p class="micro" style="margin-top:10px">We read the page once and keep a static preview — image, title, and the text around it.</p>
+        <p class="micro" style="margin-top:10px">We read the page once and keep a static preview: a thumbnail and the text around it.</p>
       </div>
 
       <!-- link branch · reading -->
@@ -200,55 +216,69 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
         <div class="linkpreview">
           <div class="ph g0" style="height:190px;border-radius:0" id="u-l3img"></div>
           <div style="padding:13px 15px">
-            <p style="font-weight:700;font-size:15px" id="u-l3title">Tide Ledger IV — Haneul Jung</p>
-            <p class="sec" style="margin-top:3px" id="u-l3src">haneuljung.kr · single-channel video, 11 min, 2025</p>
+            <p style="font-weight:700;font-size:15px" id="u-l3title">Thumbnail + source found</p>
+            <p class="sec" style="margin-top:3px" id="u-l3src">we keep a thumbnail and link back to the original</p>
           </div>
         </div>
-        <p class="sec" style="margin-top:12px">✓ We pulled the image and the text around it. You can fix anything in the next step.</p>
-        <button class="pill dark" style="width:100%;margin-top:14px" onclick="fromLink()">Looks right — continue</button>
+        <p class="sec" style="margin-top:12px">✓ We pulled a thumbnail and the source link. Add your caption next.</p>
+        <button class="pill dark" style="width:100%;margin-top:14px" onclick="fromLink()">Looks right, continue</button>
         <button class="micro" style="font-weight:600;margin-top:12px;display:block;margin-left:auto;margin-right:auto" onclick="setStep('u-l1')">Try a different link</button>
       </div>
 
-      <!-- step 2 · about this work -->
-      <div id="u-step2" style="padding:18px 24px;display:none">
-        <p class="steplabel">2 · ABOUT THIS WORK</p>
-        <p class="sec" style="margin-top:6px">Either one works. You can leave it blank.</p>
-        <div style="display:flex;justify-content:center;margin-top:12px">
-          <div class="seg">
-            <button id="u-mode-label" onclick="setMode('label')">Label photo</button>
-            <button id="u-mode-type" class="on" onclick="setMode('type')">Type it</button>
+      <!-- step 2 · caption + title + creator + link -->
+      <div id="u-step2" style="padding:24px 24px 30px;display:none">
+        <p class="steplabel">2 · CAPTION</p>
+        <p class="sec" style="margin-top:6px">What moved you? If it's someone's work, credit them.</p>
+
+        <div id="u-capmode-wrap">
+          <div style="display:flex;justify-content:center;margin-top:14px">
+            <div class="seg">
+              <button id="u-cap-write" class="on" onclick="setCapMode('write')">Write</button>
+              <button id="u-cap-scan" onclick="setCapMode('scan')">Scan a label</button>
+            </div>
+          </div>
+          <div id="u-scanlabelbox" style="display:none">
+            <button class="dropslot" id="u-labelslot" style="height:130px;margin-top:14px" onclick="scanLabel()">
+              <div><p style="font-weight:700">Add a photo of the label</p>
+              <p class="sec" style="margin-top:4px">wall text or handout — we read the title and creator</p></div>
+            </button>
           </div>
         </div>
-        <div id="u-labelbox" style="display:none">
-          <button class="dropslot" id="u-capslot" style="height:130px" onclick="fillCaptionPhoto()">
-            <div><p style="font-weight:700">Add a caption photo</p>
-            <p class="sec" style="margin-top:4px">the wall label or handout works</p></div>
-          </button>
-        </div>
-        <div id="u-typebox">
-          <div class="field"><input id="u-f-artist" placeholder="Artist — e.g. Haneul Jung"></div>
-          <div class="field"><input id="u-f-title" placeholder="Title · year — e.g. Tide Ledger IV · 2025"></div>
-          <div class="field"><input id="u-f-medium" placeholder="Medium — e.g. single-channel video"></div>
-        </div>
-        <button class="pill dark" style="width:100%;margin-top:16px" onclick="startScan()">Scan</button>
+
+        <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 6px">Caption</p>
+        <div class="field"><textarea id="u-caption" rows="3" placeholder="The way the white forms curl against the brick…"></textarea></div>
+
+        <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Title <span class="sec" style="font-weight:400">(optional)</span></p>
+        <div class="field"><input id="u-title" placeholder="e.g. Tide Ledger IV"></div>
+
+        <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Creator / source <span class="sec" style="font-weight:400">(if it's someone's work)</span></p>
+        <div class="field"><input id="u-creator" placeholder="e.g. Ava Teetsel" autocomplete="off" oninput="renderCreatorSuggest()"></div>
+        <div id="u-creator-suggest"></div>
+        <p class="micro" id="u-creator-hint" style="margin-top:8px"></p>
+
+        <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Original link <span class="sec" style="font-weight:400">(optional)</span></p>
+        <div class="field"><input id="u-link" placeholder="https://…"></div>
+
+        <button class="pill dark" style="width:100%;margin-top:20px" onclick="toRefine()">Next</button>
       </div>
 
-      <!-- step 3 · scan -->
-      <div id="u-step3" style="padding:18px 24px;display:none">
-        <p class="steplabel">SCAN</p>
-        <div class="scanwrap"><div class="ph g0" id="u-scanimg" style="height:300px;border-radius:18px"></div><div class="scanline"></div></div>
-        <p class="h2" style="text-align:center;margin-top:18px">Looking at the work…</p>
-        <p class="sec" style="text-align:center;margin-top:6px">reading what you gave · proposing keywords</p>
+      <!-- step 3 · finding keywords -->
+      <div id="u-step3" style="padding:60px 24px;display:none;text-align:center">
+        <div class="ripplebox"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span style="font-size:26px;color:var(--soft)">〜</span></div>
+        <p class="h2" style="margin-top:8px">Finding keywords…</p>
+        <p class="sec" style="margin-top:6px">reading your caption</p>
       </div>
 
       <!-- step 4 · refine -->
-      <div id="u-step4" style="padding:18px 24px;display:none">
+      <div id="u-step4" style="padding:24px 24px 30px;display:none">
         <p class="steplabel">REFINE</p>
         <div style="position:relative;margin-top:12px">
           <div class="ph g0" id="u-r-img" style="height:260px;border-radius:18px"></div>
           <div class="overlaymeta" id="u-r-meta"></div>
         </div>
         <p class="sec" style="margin-top:10px" id="u-conf"></p>
+        <p class="micro" id="u-r-title" style="margin-top:6px"></p>
+        <p class="body" id="u-r-caption" style="margin-top:6px;color:#333"></p>
 
         <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 8px">Keywords — tap to toggle</p>
         <div id="u-kws"></div>
@@ -256,26 +286,13 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
           <input id="u-newkw" placeholder="+ add a keyword">
           <button style="font-weight:700" onclick="addKeyword()">Add</button>
         </div>
-        <p class="micro" style="margin-top:6px">Tag a keyword and the plop flows into that pond automatically.</p>
-
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 8px">Category</p>
-        <div class="seg">
-          <button id="u-cat-Image" class="on" onclick="setCat('Image')">Image</button>
-          <button id="u-cat-Text" onclick="setCat('Text')">Text</button>
-        </div>
-
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 8px">Caption</p>
-        <div class="field"><textarea id="u-caption" rows="3" placeholder="A line about where you met this work…"></textarea></div>
-
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 8px">Collaborators <span class="sec" style="font-weight:400">(optional)</span></p>
-        <div id="u-collabs"></div>
-        <button class="pill outline" style="padding:9px 18px;font-size:13px" onclick="openSheet('collab-sheet')">+ Add</button>
+        <p class="micro" style="margin-top:6px">Each keyword becomes a pond. Your creator credit becomes a pond too.</p>
 
         <button class="pill dark" style="width:100%;margin-top:22px;font-size:16px" onclick="doPlop()">PLOP — drop it</button>
       </div>
 
       <!-- step 5 · done -->
-      <div id="u-step5" style="padding:18px 24px;display:none;text-align:center">
+      <div id="u-step5" style="padding:40px 24px 18px;display:none;text-align:center">
         <div class="ripplebox">
           <span class="ring"></span><span class="ring"></span><span class="ring"></span>
           <span style="font-size:30px;font-weight:800;letter-spacing:-.5px">PLOP</span>
@@ -283,7 +300,6 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
         <p class="body" style="color:#333" id="u-done-line"></p>
         <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px">
           <button class="pill outline" onclick="setView('organize')">✎ Organize · where this plop lands</button>
-          <button class="pill outline" id="u-consent-link" onclick="setView('consent')">Collaborator consent screen →</button>
           <button class="micro" style="font-weight:600;margin-top:6px" onclick="resetUpload()">Drop another</button>
         </div>
       </div>
@@ -301,30 +317,16 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
         <p class="sec" style="margin-top:8px" id="org-worktitle"></p>
 
         <div style="margin-top:10px">
-          <div class="belongrow">
-            <span class="ic">👤</span>
-            <div style="flex:1">
-              <p style="font-weight:700;font-size:14.5px">Authors — profiles</p>
-              <div style="margin-top:8px" id="org-authors"></div>
-            </div>
-          </div>
-          <div class="belongrow">
+          <div class="belongrow" style="border-bottom:0">
             <span class="ic">〜</span>
             <div style="flex:1">
               <p style="font-weight:700;font-size:14.5px">Keywords → ponds <span class="micro" style="font-weight:500">tap ✕ to pull it out</span></p>
               <div style="margin-top:8px" id="org-kws"></div>
-              <p class="micro" style="margin-top:4px">Topic, person, exhibition are all keywords. Tag one and the plop flows into that pond automatically — remove it and the plop leaves that pond.</p>
-            </div>
-          </div>
-          <div class="belongrow" style="border-bottom:0">
-            <span class="ic">▤</span>
-            <div style="flex:1">
-              <p style="font-weight:700;font-size:14.5px">Private grouping — Series <span class="sec" style="font-weight:400">(artist)</span></p>
-              <div style="margin-top:8px" id="org-series"></div>
+              <p class="micro" style="margin-top:4px">A creator is a keyword too — its pond just shows more. Tag a keyword and the plop flows into that pond automatically.</p>
             </div>
           </div>
         </div>
-        <button class="pill outline" style="width:100%;margin-top:10px" onclick="openSheet('org-sheet')">+ Add keywords · series</button>
+        <button class="pill outline" style="width:100%;margin-top:10px" onclick="openSheet('org-sheet')">+ Add keywords</button>
         <button class="pill dark" style="width:100%;margin-top:10px" onclick="finishOrganize()">Done</button>
       </div>
       <div style="padding:8px 24px;display:none;text-align:center" id="org-done">
@@ -348,35 +350,16 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
       </div>
       <div style="padding:8px 24px">
         <div style="display:flex;align-items:center;gap:10px">
-          <span class="av">HJ</span><span style="font-weight:700;font-size:15.5px" id="pv-artist"></span>
+          <span class="av">YOU</span><span style="font-weight:700;font-size:15.5px">You · just now</span>
         </div>
-        <h1 class="h1" style="margin-top:14px" id="pv-title"></h1>
-        <p class="sec" style="margin-top:5px" id="pv-caption"></p>
+        <p class="body" style="margin-top:14px;font-weight:700;display:none" id="pv-title"></p>
+        <p class="body" style="margin-top:6px" id="pv-caption"></p>
+        <p class="sec" style="margin-top:8px" id="pv-credit"></p>
+        <button class="micro" id="pv-source" style="font-weight:600;margin-top:6px;display:none;color:var(--ink)" onclick="toast('Opens the original source')">View source ↗</button>
         <div style="margin-top:14px"><span class="kw" style="background:var(--surface);font-weight:500;color:var(--soft)">Quiet for now — ⚡ sparks when saves cluster.</span></div>
         <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 8px">Keywords — its ponds</p>
         <div id="pv-kws"></div>
         <p class="micro" style="margin-top:16px">On your profile · save counts are owner-only.</p>
-      </div>
-    </section>
-
-    <!-- ============ S3 · COLLABORATOR CONSENT ============ -->
-    <section class="screen" id="sec-consent">
-      <div class="dethead">
-        <button class="backbtn" onclick="setView('upload')">←</button>
-        <span class="h2">Collaboration</span>
-        <span style="width:38px"></span>
-      </div>
-      <div style="padding:8px 24px">
-        <div class="ph g0" id="cons-img" style="height:200px;border-radius:18px"></div>
-        <p class="h2" style="margin-top:16px" id="cons-line">Haneul Jung added you as a collaborator on this work</p>
-        <p class="sec" style="margin-top:6px" id="cons-meta">“Tide Ledger IV” · role: Curator</p>
-        <div class="callout" style="margin-top:14px">“We made this together. Let’s hold it together on ari.”</div>
-        <p class="micro" style="margin-top:10px">If you accept, this work flows into your profile too — as a shared author.</p>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
-          <button class="pill dark" onclick="consent(true)">Yes — we made this together</button>
-          <button class="pill outline" onclick="consent(false)">No</button>
-        </div>
-        <p class="sec" style="margin-top:14px;text-align:center;font-weight:600" id="cons-result"></p>
       </div>
     </section>
 
@@ -403,16 +386,16 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
     <div class="sheet">
       <div class="grab"></div>
       <p class="micro" style="font-weight:700">DROP A PLOP</p>
-      <h2 class="h1" style="margin-top:6px">What are you dropping?</h2>
+      <h2 class="h1" style="margin-top:6px">What inspired you?</h2>
       <button class="optcard" onclick="closeSheet('create-sheet');setStep('u-step1')">
-        <b>Image</b>
-        <p class="sec" style="margin-top:3px">upload a photo of the work</p>
+        <b>Your photo</b>
+        <p class="sec" style="margin-top:3px">a photo you took</p>
       </button>
       <button class="optcard" onclick="closeSheet('create-sheet');setStep('u-l1')">
         <b>Add by link</b>
-        <p class="sec" style="margin-top:3px">website · artist page · Instagram URL</p>
+        <p class="sec" style="margin-top:3px">paste a source URL</p>
       </button>
-      <p class="micro" style="margin-top:14px">Your own work, words and links are welcome — hosting other people’s work images isn’t.</p>
+      <p class="micro" style="margin-top:14px">Post your own photos. For someone else's work, credit the creator and add the source link.</p>
     </div>
   </div>
 
@@ -428,50 +411,20 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
     </div>
   </div>
 
-  <!-- collaborator sheet -->
-  <div class="sheetwrap" id="collab-sheet">
-    <div class="scrim" onclick="closeSheet('collab-sheet')"></div>
-    <div class="sheet">
-      <div class="grab"></div>
-      <p class="h2">Add a collaborator</p>
-      <div class="searchpill" style="margin-top:12px;padding:10px 14px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8A8E" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-        <input id="collab-search" placeholder="Search people on ari…" oninput="renderCollabList()">
-      </div>
-      <div id="collab-list" style="margin-top:10px"></div>
-      <div class="hr"></div>
-      <p class="sec" style="font-weight:600;color:var(--ink)">Not on ari yet? Invite by handle</p>
-      <div class="field" style="display:flex;gap:8px;align-items:center">
-        <input id="collab-handle" placeholder="@instagram-handle">
-        <button style="font-weight:700" onclick="mintInvite()">Invite</button>
-      </div>
-      <div id="collab-invitecard" style="display:none">
-        <div class="excard" style="margin:12px 0 0">
-          <p class="micro" style="font-weight:700">INVITE CARD</p>
-          <p class="body" style="margin-top:6px">“We made this together. Let’s hold it together on ari.”</p>
-          <p class="sec" style="margin-top:6px" id="collab-invitehandle"></p>
-          <button class="pill outline" style="margin-top:10px;padding:8px 16px;font-size:13px" onclick="toast('Invite link copied')">Copy link</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- organize sheet -->
   <div class="sheetwrap" id="org-sheet">
     <div class="scrim" onclick="closeSheet('org-sheet')"></div>
     <div class="sheet">
       <div class="grab"></div>
       <p class="h2">Organize</p>
-      <p class="micro" style="margin-top:6px">Keywords are public tags that spread to search &amp; ponds. Series is the artist’s private grouping.</p>
+      <p class="micro" style="margin-top:6px">Keywords are public tags that spread to search &amp; ponds.</p>
       <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 8px">Keywords — tap to toggle</p>
       <div id="orgsheet-kws"></div>
       <div class="field" style="display:flex;gap:8px;align-items:center">
         <input id="orgsheet-newkw" placeholder="+ add a keyword">
         <button style="font-weight:700" onclick="addKeywordFromSheet()">Add</button>
       </div>
-      <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 8px">Series — tap to toggle</p>
-      <div id="orgsheet-series"></div>
-      <button class="pill dark" style="width:100%;margin-top:16px" onclick="closeSheet('org-sheet');renderOrganize();toast('Belonging updated')">Done</button>
+      <button class="pill dark" style="width:100%;margin-top:16px" onclick="closeSheet('org-sheet');renderOrganize();toast('Ponds updated')">Done</button>
     </div>
   </div>
 
@@ -481,24 +434,22 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
 <script>
 /* ================= state ================= */
 var UPL={
-  img:"g0", imgs:[], cover:0, mode:"type", capPhoto:false, uploaded:false, viaLink:false,
-  artist:"", title:"", medium:"",
-  cat:"Image", caption:"",
-  kws:{"water":true,"memory":true,"reflections":false,"Euljiro Open Storage":true},
-  collabs:[],
-  series:{"Tide Ledger":true,"Demolition Notices":false}
+  img:"g0", imgs:[], cover:0, uploaded:false, viaLink:false,
+  caption:"", title:"", creator:"", link:"",
+  kws:{"pattern":true,"wood":true,"weathered":true,"symmetry":false}
 };
-var PEOPLE=[
-  {name:"Sena Park",handle:"@senapark",role:"Artist"},
-  {name:"Dana Cho",handle:"@danacho",role:"Artist"},
-  {name:"Jiwoo Han",handle:"@jiwoohan",role:"Curator"}
+var CREATORS=[
+  {name:"Ava Teetsel",n:12},
+  {name:"Antonio Lopez",n:31},
+  {name:"Satish Gujral",n:8},
+  {name:"Haneul Jung",n:5}
 ];
 var HOMEFEED=[["g1",170],["g5",200],["g8",150],["g3",210],["g7",160],["g4",190],["g9",150],["g2",180]];
 
 /* ================= views & steps ================= */
 var STEPS=["u-home","u-step1","u-step2","u-step3","u-step4","u-step5","u-l1","u-l2","u-l3"];
 function setView(v){
-  ["upload","organize","consent","plopview"].forEach(function(s){
+  ["upload","organize","plopview"].forEach(function(s){
     document.getElementById("sec-"+s).classList.toggle("active",s===v);
   });
   if(v==="organize")renderOrganize();
@@ -506,14 +457,29 @@ function setView(v){
   updateNav();
 }
 var curStep="u-home";
+var HEADSTEPS={"u-step1":"Drop a plop","u-l1":"Add by link","u-l3":"Add by link","u-step2":"Caption","u-step4":"Refine"};
+var BACKMAP={"u-step1":"u-home","u-l1":"u-home","u-l2":"u-l1","u-l3":"u-l1","u-step3":"u-step2","u-step4":"u-step2","u-step5":"u-step4"};
 function setStep(id){
   curStep=id;
   STEPS.forEach(function(s){
     var el=document.getElementById(s);
     if(el)el.style.display=s===id?"block":"none";
   });
-  document.getElementById("sec-upload").scrollTop=0;
+  var th=document.getElementById("u-tophead");
+  if(HEADSTEPS[id]){th.style.display="flex";document.getElementById("u-stephead").textContent=HEADSTEPS[id];}
+  else th.style.display="none";
+  if(id==="u-step2"){
+    var wrap=document.getElementById("u-capmode-wrap");
+    if(wrap){wrap.style.display=UPL.viaLink?"none":"block";if(!UPL.viaLink)setCapMode("write");}
+  }
+  var su=document.getElementById("sec-upload");
+  su.classList.toggle("centered",id!=="u-home");
+  su.scrollTop=0;
   updateNav();
+}
+function stepBack(){
+  if(curStep==="u-step2"){setStep(UPL.viaLink?"u-l3":"u-step1");return;}
+  setStep(BACKMAP[curStep]||"u-home");
 }
 function updateNav(){
   var onHome=document.getElementById("sec-upload").classList.contains("active")&&curStep==="u-home";
@@ -534,15 +500,7 @@ function buildHomeFeed(){
 }
 
 /* ================= image pick + upload moment ================= */
-function buildLibrary(){libSel=[];renderLibrary();return;
-  var g=document.getElementById("lib-grid");g.innerHTML="";
-  ["g0","g6","g1","g5","g3","g7","g8","g2","g4"].forEach(function(cls){
-    var b=document.createElement("button");
-    b.innerHTML='<div class="ph '+cls+'" style="height:96px;border-radius:10px"></div>';
-    b.onclick=function(){pickImage(cls)};
-    g.appendChild(b);
-  });
-}
+function buildLibrary(){libSel=[];renderLibrary();}
 var libSel=[];
 function renderLibrary(){
   var g=document.getElementById("lib-grid");g.innerHTML="";
@@ -563,7 +521,7 @@ function renderLibrary(){
   btn.onclick=confirmLibSel;
   a.appendChild(btn);
   var note=document.createElement("p");note.className="micro";note.style.marginTop="8px";
-  note.textContent="Several images, one work — the first you pick becomes the cover.";
+  note.textContent="Several images, one plop — the first you pick becomes the cover.";
   a.appendChild(note);
 }
 function toggleLibSel(cls){
@@ -628,60 +586,101 @@ function renderViews(){
     add.onclick=function(){openSheet('lib-sheet')};
     w.appendChild(add);
   }
-  var lab=document.createElement("span");lab.className="micro";lab.textContent=UPL.imgs.length+" of 5 · views of one work";
+  var lab=document.createElement("span");lab.className="micro";lab.textContent=UPL.imgs.length+" of 5 · views of one plop";
   w.appendChild(lab);
 }
 
 /* ================= link branch ================= */
 function fetchLink(){
-  var v=document.getElementById("u-linkurl").value.trim()||"haneuljung.kr/tide-ledger";
+  var v=document.getElementById("u-linkurl").value.trim()||"avateetsel.com/paper";
   document.getElementById("u-l2url").textContent=v.replace(/^https?:\/\//,"");
   setStep("u-l2");
   setTimeout(function(){
-    document.getElementById("u-l3img").className="ph g0";
+    document.getElementById("u-l3img").className="ph g7";
     setStep("u-l3");
   },1500);
 }
 function fromLink(){
-  UPL.viaLink=true;UPL.img="g0";UPL.imgs=["g0"];UPL.cover=0;UPL.uploaded=true;
-  UPL.artist="Haneul Jung";UPL.title="Tide Ledger IV · 2025";UPL.medium="single-channel video";
-  setStep("u-step3");
-  setTimeout(function(){buildRefine();setStep("u-step4")},1400);
+  UPL.viaLink=true;UPL.img="g7";UPL.imgs=["g7"];UPL.cover=0;UPL.uploaded=true;
+  UPL.link=document.getElementById("u-l2url").textContent||"";
+  UPL.title="Tide Ledger IV";
+  UPL.caption="Single-channel video, 2025. Pulled from the page.";
+  setStep("u-step2");
+  setTimeout(function(){
+    document.getElementById("u-link").value=UPL.link;
+    document.getElementById("u-title").value=UPL.title;
+    document.getElementById("u-caption").value=UPL.caption;
+    pickCreator("Haneul Jung");
+    toast("Pulled the title, creator and text from the page");
+  },0);
 }
 
-/* ================= about / scan / refine ================= */
-function setMode(m){
-  UPL.mode=m;
-  document.getElementById("u-mode-label").classList.toggle("on",m==="label");
-  document.getElementById("u-mode-type").classList.toggle("on",m==="type");
-  document.getElementById("u-labelbox").style.display=m==="label"?"block":"none";
-  document.getElementById("u-typebox").style.display=m==="type"?"block":"none";
+/* ================= caption / creator / scan / refine ================= */
+function renderCreatorSuggest(){
+  var q=document.getElementById("u-creator").value.trim();
+  var w=document.getElementById("u-creator-suggest");w.innerHTML="";
+  document.getElementById("u-creator-hint").textContent="";
+  UPL.creator="";
+  if(!q)return;
+  var box=document.createElement("div");box.className="suggestbox";
+  CREATORS.filter(function(c){return c.name.toLowerCase().indexOf(q.toLowerCase())>=0}).forEach(function(c){
+    var r=document.createElement("button");
+    r.innerHTML='<span style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">'+c.name+'</span><span class="micro">existing pond · '+c.n+'</span></span>';
+    r.onclick=function(){pickCreator(c.name)};
+    box.appendChild(r);
+  });
+  var nr=document.createElement("button");
+  nr.style.color="#3a3a3a";
+  nr.textContent='+ Create new creator “'+q+'”';
+  nr.onclick=function(){pickCreator(q)};
+  box.appendChild(nr);
+  w.appendChild(box);
 }
-function fillCaptionPhoto(){
-  UPL.capPhoto=true;
-  var s=document.getElementById("u-capslot");
-  s.className="dropslot filled";s.style.height="auto";
-  s.innerHTML='<div class="ph g7" style="height:110px;border-radius:14px;display:grid;place-items:center"><span class="sec" style="color:#666">caption photo ✓</span></div>';
+function pickCreator(name){
+  document.getElementById("u-creator").value=name;
+  UPL.creator=name;
+  document.getElementById("u-creator-suggest").innerHTML="";
+  document.getElementById("u-creator-hint").innerHTML='→ joins the <b>'+name+'</b> pond';
 }
-function startScan(){
-  UPL.artist=document.getElementById("u-f-artist").value.trim();
-  UPL.title=document.getElementById("u-f-title").value.trim();
-  UPL.medium=document.getElementById("u-f-medium").value.trim();
-  document.getElementById("u-scanimg").className="ph "+UPL.img;
+function setCapMode(m){
+  document.getElementById("u-cap-write").classList.toggle("on",m==="write");
+  document.getElementById("u-cap-scan").classList.toggle("on",m==="scan");
+  document.getElementById("u-scanlabelbox").style.display=m==="scan"?"block":"none";
+}
+function scanLabel(){
+  var s=document.getElementById("u-labelslot");
+  s.className="dropslot filled";
+  s.innerHTML='<div class="ph g3" style="height:180px;border-radius:14px;position:relative;overflow:hidden;display:grid;place-items:center"><div class="scanline"></div><span style="color:#fff;font-weight:600;font-size:13px;z-index:2">Reading the label…</span></div>';
+  setTimeout(function(){
+    s.innerHTML='<div class="ph g3" style="height:120px;border-radius:14px;display:grid;place-items:center"><span style="color:#fff;font-weight:600;font-size:13px">✓ Title and creator read</span></div>';
+    document.getElementById("u-title").value="Tide Ledger IV";
+    if(!document.getElementById("u-caption").value)document.getElementById("u-caption").value="Single-channel video at the back of the show.";
+    pickCreator("Haneul Jung");
+    flashField("u-title");flashField("u-creator");
+    toast("Pulled the title and creator from the label");
+  },1700);
+}
+function flashField(id){
+  var e=document.getElementById(id);if(!e)return;
+  var f=e.parentNode;
+  f.style.transition="border-color .25s";f.style.borderColor="#111";
+  setTimeout(function(){f.style.borderColor=""},800);
+}
+function toRefine(){
+  UPL.caption=document.getElementById("u-caption").value.trim();
+  UPL.title=document.getElementById("u-title").value.trim();
+  if(!UPL.creator)UPL.creator=document.getElementById("u-creator").value.trim();
+  UPL.link=document.getElementById("u-link").value.trim();
   setStep("u-step3");
-  setTimeout(function(){buildRefine();setStep("u-step4")},1600);
+  setTimeout(function(){buildRefine();setStep("u-step4")},1200);
 }
-function knownInfo(){return (UPL.artist&&UPL.title)||UPL.capPhoto||UPL.viaLink}
 function buildRefine(){
-  var artist=UPL.artist||"Unknown artist";
-  var title=UPL.title||"Untitled · 2026?";
   document.getElementById("u-r-img").className="ph "+UPL.img;
-  document.getElementById("u-r-meta").textContent=artist+" · "+title;
-  document.getElementById("u-conf").textContent=knownInfo()
-    ?"✓ Title, artist, year all sorted."
-    :"~ Keywords & the visual are sorted · title/artist are a guess.";
-  document.getElementById("u-caption").value=UPL.caption||"Met this at the back of the show — the room hummed.";
-  renderKws();renderCollabs();
+  document.getElementById("u-r-meta").textContent=UPL.creator?("Credit · "+UPL.creator):"Your capture";
+  document.getElementById("u-conf").textContent="✓ Keywords proposed from your caption — tap to refine.";
+  document.getElementById("u-r-title").textContent=UPL.title?("Title · "+UPL.title):"";
+  document.getElementById("u-r-caption").textContent=UPL.caption||"";
+  renderKws();
 }
 function renderKws(){
   var w=document.getElementById("u-kws");w.innerHTML="";
@@ -698,102 +697,60 @@ function addKeyword(){
   UPL.kws[v]=true;inp.value="";renderKws();
   toast("“"+v+"” — its pond now exists");
 }
-function setCat(c){
-  UPL.cat=c;
-  ["Image","Text"].forEach(function(x){
-    document.getElementById("u-cat-"+x).classList.toggle("on",x===c);
-  });
-}
-function renderCollabs(){
-  var w=document.getElementById("u-collabs");w.innerHTML="";
-  UPL.collabs.forEach(function(c,i){
-    var b=document.createElement("button");b.className="kw on";
-    b.textContent=c.handle+" · "+c.role+" ✕";
-    b.onclick=function(){UPL.collabs.splice(i,1);renderCollabs()};
-    w.appendChild(b);
-  });
-}
-function renderCollabList(){
-  var q=(document.getElementById("collab-search").value||"").toLowerCase();
-  var w=document.getElementById("collab-list");w.innerHTML="";
-  PEOPLE.filter(function(p){return !q||p.name.toLowerCase().indexOf(q)>=0||p.handle.indexOf(q)>=0})
-    .forEach(function(p){
-      var b=document.createElement("button");b.className="optcard";b.style.marginTop="8px";
-      b.innerHTML='<b>'+p.name+'</b> <span class="sec">'+p.handle+' · '+p.role+'</span>';
-      b.onclick=function(){
-        if(!UPL.collabs.some(function(c){return c.handle===p.handle}))UPL.collabs.push(p);
-        renderCollabs();closeSheet("collab-sheet");
-        toast(p.name+" added — they’ll be asked to confirm");
-      };
-      w.appendChild(b);
-    });
-}
-function mintInvite(){
-  var h=document.getElementById("collab-handle").value.trim();
-  if(!h){toast("Add a handle first");return}
-  document.getElementById("collab-invitehandle").textContent="For "+(h[0]==="@"?h:"@"+h)+" · joins as your collaborator";
-  document.getElementById("collab-invitecard").style.display="block";
-}
 function doPlop(){
-  UPL.caption=document.getElementById("u-caption").value;
+  UPL.caption=document.getElementById("u-caption").value||UPL.caption;
   var on=Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]});
+  var ponds=on.slice();
+  if(UPL.creator)ponds.push(UPL.creator);
   document.getElementById("u-done-line").innerHTML=
-    "Dropped into the Pool + your profile.<br>Joined the <b>"+on.join("</b> · <b>")+"</b> ponds.";
-  document.getElementById("u-consent-link").style.display=UPL.collabs.length?"inline-flex":"none";
+    "Dropped into your profile and the Pool.<br>Joined the <b>"+(ponds.join("</b> · <b>")||"none")+"</b> ponds.";
   setStep("u-step5");
 }
 function resetUpload(){
-  UPL.kws={"water":true,"memory":true,"reflections":false,"Euljiro Open Storage":true};
-  UPL.collabs=[];UPL.capPhoto=false;UPL.uploaded=false;UPL.viaLink=false;
-  UPL.artist="";UPL.title="";UPL.medium="";UPL.caption="";UPL.img="g0";UPL.imgs=[];UPL.cover=0;document.getElementById("u-views").innerHTML="";
-  ["u-f-artist","u-f-title","u-f-medium","u-newkw","u-linkurl"].forEach(function(id){document.getElementById(id).value=""});
+  UPL.kws={"pattern":true,"wood":true,"weathered":true,"symmetry":false};
+  UPL.caption="";UPL.title="";UPL.creator="";UPL.link="";UPL.uploaded=false;UPL.viaLink=false;
+  UPL.img="g0";UPL.imgs=[];UPL.cover=0;
+  document.getElementById("u-views").innerHTML="";
+  ["u-caption","u-title","u-creator","u-link","u-newkw","u-linkurl"].forEach(function(id){var e=document.getElementById(id);if(e)e.value=""});
+  document.getElementById("u-creator-suggest").innerHTML="";
+  document.getElementById("u-creator-hint").textContent="";
+  setCapMode("write");
+  var ls=document.getElementById("u-labelslot");
+  if(ls){ls.className="dropslot";ls.style.height="130px";ls.innerHTML='<div><p style="font-weight:700">Add a photo of the label</p><p class="sec" style="margin-top:4px">wall text or handout — we read the title and creator</p></div>';}
   var slot=document.getElementById("u-imgslot");
   slot.className="dropslot";
-  slot.innerHTML='<div><p style="font-weight:700">Add the image</p><p class="sec" style="margin-top:4px">tap to choose from your library</p></div>';
+  slot.innerHTML='<div><p style="font-weight:700">Add your photo</p><p class="sec" style="margin-top:4px">tap to choose from your library</p></div>';
   document.getElementById("u-upbar").style.display="none";
   document.getElementById("u-upstatus").textContent="";
   document.getElementById("u-next1").disabled=true;
-  var s=document.getElementById("u-capslot");
-  s.className="dropslot";s.style.height="130px";
-  s.innerHTML='<div><p style="font-weight:700">Add a caption photo</p><p class="sec" style="margin-top:4px">the wall label or handout works</p></div>';
   document.getElementById("org-edit").style.display="block";
   document.getElementById("org-done").style.display="none";
-  setMode("type");setView("upload");setStep("u-home");
+  setView("upload");setStep("u-home");
 }
 
 /* ================= organize ================= */
 function renderOrganize(){
   document.getElementById("org-img").className="ph "+UPL.img;
-  document.getElementById("org-worktitle").textContent=(UPL.title||"Untitled · 2026?")+" — "+(UPL.artist||"you");
-  var a=document.getElementById("org-authors");a.innerHTML='<span class="kw on">@haneuljung · you</span>';
-  UPL.collabs.forEach(function(c,i){
-    var b=document.createElement("button");b.className="kw";
-    b.textContent=c.handle+" · pending ✕";
-    b.onclick=function(){UPL.collabs.splice(i,1);renderOrganize();toast("Removed from the credits")};
-    a.appendChild(b);
-  });
+  document.getElementById("org-worktitle").textContent=(UPL.title?UPL.title+" — ":"")+(UPL.caption||"Your plop");
   var kk=document.getElementById("org-kws");kk.innerHTML="";
+  if(UPL.creator){
+    var cb=document.createElement("button");cb.className="kw on";cb.textContent=UPL.creator+" · Creator ✕";
+    cb.onclick=function(){UPL.creator="";renderOrganize();toast("Removed the creator credit")};
+    kk.appendChild(cb);
+  }
   Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]}).forEach(function(k){
     var b=document.createElement("button");b.className="kw on";b.textContent=k+" ✕";
     b.onclick=function(){UPL.kws[k]=false;renderOrganize();toast("Removed — it leaves the “"+k+"” pond")};
     kk.appendChild(b);
   });
   if(!kk.children.length)kk.innerHTML='<p class="sec">No keywords — it floats free. Add at least one so people can find it.</p>';
-  var ss=document.getElementById("org-series");ss.innerHTML="";
-  Object.keys(UPL.series).filter(function(s){return UPL.series[s]}).forEach(function(s){
-    var b=document.createElement("button");b.className="kw on";b.textContent=s+" ✕";
-    b.onclick=function(){UPL.series[s]=false;renderOrganize();toast("Removed from “"+s+"”")};
-    ss.appendChild(b);
-  });
-  if(!ss.children.length)ss.innerHTML='<p class="sec">Not in a series.</p>';
 }
 function finishOrganize(){
   var ponds=Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]});
-  var series=Object.keys(UPL.series).filter(function(s){return UPL.series[s]});
+  var all=ponds.slice();if(UPL.creator)all.push(UPL.creator);
   document.getElementById("org-doneline").innerHTML=
-    "This plop now lives in:<br>ponds — <b>"+(ponds.join("</b> · <b>")||"none")+"</b><br>"+
-    "profile — <b>@haneuljung</b>"+(UPL.collabs.length?" + <b>"+UPL.collabs.map(function(c){return c.handle}).join("</b>, <b>")+"</b> (pending)":"")+
-    (series.length?"<br>series — <b>"+series.join("</b> · <b>")+"</b> (private)":"");
+    "This plop now lives in:<br>ponds — <b>"+(all.join("</b> · <b>")||"none")+"</b><br>"+
+    "profile — <b>you</b>";
   document.getElementById("org-edit").style.display="none";
   document.getElementById("org-done").style.display="block";
   document.getElementById("sec-organize").scrollTop=0;
@@ -804,12 +761,6 @@ function renderOrgSheet(){
     var b=document.createElement("button");b.className="kw"+(UPL.kws[k]?" on":"");b.textContent=k;
     b.onclick=function(){UPL.kws[k]=!UPL.kws[k];renderOrgSheet()};
     w.appendChild(b);
-  });
-  var s=document.getElementById("orgsheet-series");s.innerHTML="";
-  Object.keys(UPL.series).forEach(function(k){
-    var b=document.createElement("button");b.className="kw"+(UPL.series[k]?" on":"");b.textContent=k;
-    b.onclick=function(){UPL.series[k]=!UPL.series[k];renderOrgSheet()};
-    s.appendChild(b);
   });
 }
 function addKeywordFromSheet(){
@@ -835,31 +786,32 @@ function renderPlopView(){
       };
       vv.appendChild(b);
     });
-    var lab=document.createElement("span");lab.className="micro";lab.style.marginLeft="6px";lab.textContent=UPL.imgs.length+" views · one work";
+    var lab=document.createElement("span");lab.className="micro";lab.style.marginLeft="6px";lab.textContent=UPL.imgs.length+" views · one plop";
     vv.appendChild(lab);
   }else vv.style.display="none";
-  document.getElementById("pv-artist").textContent=UPL.artist||"Haneul Jung";
-  document.getElementById("pv-title").textContent=UPL.title||"Untitled · 2026?";
+  var pt=document.getElementById("pv-title");
+  if(UPL.title){pt.textContent=UPL.title;pt.style.display="block"}else pt.style.display="none";
   document.getElementById("pv-caption").textContent=UPL.caption||"";
+  var cr=document.getElementById("pv-credit");
+  cr.innerHTML=UPL.creator?("Credit · <b>"+UPL.creator+"</b>"):"";
+  var ps=document.getElementById("pv-source");
+  if(ps)ps.style.display=UPL.link?"block":"none";
   var w=document.getElementById("pv-kws");w.innerHTML="";
   Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]}).forEach(function(k){
     var b=document.createElement("button");b.className="kw";b.textContent=k;
     b.onclick=function(){toast("Opens the “"+k+"” pond — Discover prototype")};
     w.appendChild(b);
   });
-}
-
-/* ================= consent ================= */
-function consent(yes){
-  document.getElementById("cons-result").textContent=yes
-    ?"Joined — this work now flows into your profile too. ✓"
-    :"Declined — removed from the credits.";
+  if(UPL.creator){
+    var cb=document.createElement("button");cb.className="kw";cb.textContent=UPL.creator+" · Creator";
+    cb.onclick=function(){toast("Opens the "+UPL.creator+" creator pond — Discover prototype")};
+    w.appendChild(cb);
+  }
 }
 
 /* ================= sheets / toast ================= */
 function openSheet(id){
   document.getElementById(id).classList.add("open");
-  if(id==="collab-sheet"){document.getElementById("collab-search").value="";renderCollabList()}
   if(id==="org-sheet")renderOrgSheet();
   if(id==="lib-sheet")buildLibrary();
 }

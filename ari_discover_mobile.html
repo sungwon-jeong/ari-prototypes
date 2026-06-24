@@ -49,7 +49,7 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
 .statusbar .sicons{display:flex;gap:5px;align-items:center;font-size:11px;letter-spacing:1px}
 
 /* ---- screens ---- */
-.app{position:absolute;inset:0}
+.app{position:absolute;top:48px;left:0;right:0;bottom:0}
 .screen{position:absolute;inset:0;background:var(--bg);overflow-y:auto;overflow-x:hidden;
   display:none;scrollbar-width:none;padding-bottom:110px}
 .screen::-webkit-scrollbar{display:none}
@@ -196,6 +196,15 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
 
 <div class="phone">
 
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sicons">
+      <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7.5" width="3" height="3.5" rx="1"/><rect x="5" y="5" width="3" height="6" rx="1"/><rect x="10" y="2.5" width="3" height="8.5" rx="1"/><rect x="15" y="0" width="3" height="11" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 4.2C5 1.3 12 1.3 15.5 4.2"/><path d="M4 6.8C6.3 4.9 10.2 4.9 12.5 6.8"/><path d="M6.5 9.2c1-.9 2.5-.9 3.5 0"/></svg>
+      <span style="display:inline-flex;align-items:center"><span style="border:1.3px solid currentColor;border-radius:3px;width:22px;height:11px;display:inline-block;position:relative;opacity:.9"><span style="position:absolute;inset:1.5px;background:currentColor;border-radius:1px"></span></span></span>
+    </span>
+  </div>
+
   <div class="app" id="app">
 
     <!-- ============ D1 · FEED (Pool) ============ -->
@@ -225,18 +234,16 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
         <button class="backbtn" onclick="goBack()">←</button>
         <button class="iconbtn" onclick="toast('Link copied')">↗</button>
       </div>
+      <div style="display:flex;align-items:center;gap:9px;padding:0 20px 9px">
+        <span class="av" id="plop-poster-av" style="width:30px;height:30px;font-size:11px"></span>
+        <span style="font-weight:600;font-size:14px" id="plop-poster-name"></span>
+        <span style="color:var(--soft);font-size:12.5px" id="plop-poster-handle"></span>
+      </div>
       <div class="detimg"><div class="ph" id="plop-img" style="height:430px"></div></div>
       <div id="plop-views" style="display:none;gap:6px;align-items:center;padding:8px 18px 0"></div>
       <div class="detbody">
-        <div class="artistrow" style="justify-content:space-between">
-          <button class="artistrow" id="plop-artist-btn" onclick="openProfileFromPlop()">
-            <span class="av" id="plop-av"></span>
-            <span style="font-weight:700;font-size:15.5px"><span id="plop-artist"></span> <span style="color:var(--soft);font-weight:500">↗</span></span>
-          </button>
-          <button class="pill outline" id="plop-about-btn" style="padding:8px 16px;font-size:13px" onclick="openAboutFromPlop()">About</button>
-        </div>
-        <h1 class="h1" style="margin-top:16px" id="plop-title"></h1>
-        <p class="sec" style="margin-top:5px" id="plop-meta"></p>
+        <p class="body" style="font-size:16px;color:#222" id="plop-caption"></p>
+        <div id="plop-credit" style="margin-top:12px"></div>
 
         <div style="margin-top:16px" id="plop-bolt"></div>
 
@@ -275,7 +282,7 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
         <p class="sec" style="font-weight:600;color:var(--ink);margin-bottom:10px">Nearby keywords — hop across the currents</p>
         <div id="pond-nearby"></div>
       </div>
-      <p class="sec" style="font-weight:600;color:var(--ink);padding:16px 22px 0">This keyword's plops — by many people</p>
+      <p class="sec" style="font-weight:600;color:var(--ink);padding:16px 22px 0" id="pond-gridlabel">This keyword's plops — by many people</p>
       <div class="masonry" id="pond-grid" style="padding-top:10px"></div>
     </section>
 
@@ -288,26 +295,15 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
       <div class="cover"></div>
       <div class="profhead">
         <span class="av lg" id="pf-av"></span>
-        <h1 class="h1" style="margin-top:10px"><span id="pf-name"></span><span class="vchip" id="pf-vchip">✦ Artist</span></h1>
+        <h1 class="h1" style="margin-top:10px" id="pf-name"></h1>
         <p class="sec" style="margin-top:3px" id="pf-handle"></p>
-        <p class="quote" id="pf-quote"></p>
-        <p class="micro" style="margin-top:8px;font-weight:600" id="pf-links"></p>
-        <div style="display:flex;gap:10px;margin-top:14px">
-          <button class="pill dark" id="pf-follow" style="flex:1" onclick="toggleFollow()">Follow</button>
-          <button class="pill outline" id="pf-about" onclick="openAboutFromProfile()">About</button>
+        <p class="body" id="pf-bio" style="margin-top:10px"></p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:13px">
+          <span class="sec" id="pf-counts" style="font-weight:600;color:var(--ink)"></span>
+          <span id="pf-links" style="display:flex;gap:14px;color:#555"></span>
         </div>
-        <p class="micro" style="margin-top:10px" id="pf-subline">Follow to get this person's new work in your feed.</p>
-        <div class="excard" id="pf-excard" style="margin:16px 0 0;display:none" onclick="openExModal()">
-          <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <p class="micro" style="font-weight:700;color:#3d7a5c">NOW SHOWING</p>
-            <span class="micro" style="font-weight:600">Details ↗</span>
-          </div>
-          <p style="font-weight:700;font-size:15.5px;margin-top:6px" id="pf-extitle"></p>
-          <p class="sec" style="margin-top:3px" id="pf-exmeta"></p>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
-            <div class="avrow"><span class="av sm"></span><span class="av sm"></span><span class="av sm"></span></div>
-            <span class="sec">people going</span>
-          </div>
+        <div style="display:flex;gap:10px;margin-top:15px">
+          <button class="pill dark" id="pf-follow" style="flex:1" onclick="toggleFollow()">Follow</button>
         </div>
       </div>
       <div class="proftabs" id="pf-tabs"></div>
@@ -316,34 +312,19 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
 
     <!-- ============ D4 · OWN PROFILE ============ -->
     <section class="screen" id="scr-me">
-      <div class="demoseg"><div class="seg">
-        <button id="me-as-visitor" class="on" onclick="setMeMode('visitor')">Visitor</button>
-        <button id="me-as-artist" onclick="setMeMode('artist')">Artist</button>
-      </div></div>
       <div class="cover" style="margin-top:0"></div>
       <div class="profhead">
         <span class="av lg" id="me-av">SJ</span>
-        <h1 class="h1" style="margin-top:10px"><span id="me-name">Sungwon Jeong</span><span class="vchip" id="me-vchip" style="display:none">✦ Artist</span></h1>
+        <h1 class="h1" style="margin-top:10px" id="me-name">Sungwon Jeong</h1>
         <p class="sec" style="margin-top:3px" id="me-handle">@sjeong</p>
-        <p class="quote" id="me-quote" style="display:none"></p>
-        <p class="micro" style="margin-top:8px;font-weight:600" id="me-links"></p>
-        <p class="micro" style="margin-top:8px">Your profile · your posts and saves gather here.</p>
-        <p class="sec" style="margin-top:8px;font-weight:600;color:var(--ink)" id="me-following">12 following</p>
-        <div style="display:flex;gap:10px;margin-top:14px">
+        <p class="body" id="me-bio" style="margin-top:10px"></p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:13px">
+          <span class="sec" id="me-counts" style="font-weight:600;color:var(--ink)"></span>
+          <span id="me-links" style="display:flex;gap:14px;color:#555"></span>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:15px">
           <button class="pill outline" style="flex:1" onclick="toast('Edit profile — not in this prototype')">Edit profile</button>
-          <button class="pill outline" id="me-about" style="display:none" onclick="openAbout('Haneul Jung')">About</button>
         </div>
-        <div class="excard" id="me-excard" style="margin:16px 0 0;display:none" onclick="openExModal()">
-          <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <p class="micro" style="font-weight:700;color:#3d7a5c">NOW SHOWING</p>
-            <span class="micro" style="font-weight:600">Details ↗</span>
-          </div>
-          <p style="font-weight:700;font-size:15.5px;margin-top:6px">Euljiro Open Storage</p>
-          <p class="sec" style="margin-top:3px">Onsu Ground, Euljiro · until 28 Jun</p>
-        </div>
-        <button class="callout" id="me-backstage" style="display:none;margin:16px 0 0;width:100%;text-align:left" onclick="push('scr-backstage',renderSelGrid)">
-          ⚙ <b>Backstage</b> — your private studio <span class="sec">(only you)</span>
-        </button>
       </div>
       <div class="proftabs" id="me-tabs"></div>
       <div id="me-body"></div>
@@ -473,7 +454,7 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
     <button id="bn-create" onclick="openCreate()">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
     </button>
-    <button id="bn-me" onclick="navMe()"><span class="av"></span></button>
+    <button id="bn-me" onclick="navMe()"><span class="av" style="width:28px;height:28px;font-size:11px">SJ</span></button>
   </div>
 
   <!-- search sheet -->
@@ -681,21 +662,39 @@ var PLOPS = [
    d:"Rubbings taken from the high-water lines left on basement walls after the June rains."}
 ];
 
+var POSTERS=[
+  {name:"Rama Duwaji",handle:"@rama",init:"RM"},
+  {name:"Theo Berg",handle:"@theob",init:"TB"},
+  {name:"Aiko Ito",handle:"@aiko",init:"AI"},
+  {name:"Lena Novak",handle:"@lenan",init:"LN"}
+];
+function posterFor(p){return POSTERS[p.id%POSTERS.length]}
+var OWN_PLOPS=[16];        /* demo: your own photo — no creator, no source */
+var SRC_PLOPS=[1,7,13];    /* demo: added by link — has View source */
+
 var PONDS = {
-  "water":{type:"Topic",plops:214,people:37,rise:"+18% this week",nearby:["boundary","memory","migration","infrastructure"]},
-  "migration":{type:"Topic",plops:178,people:41,rise:"+12% this week",nearby:["boundary","language","memory","water"]},
-  "boundary":{type:"Topic",plops:96,people:22,rise:"+9% this week",nearby:["water","migration","textile"]},
-  "memory":{type:"Topic",plops:121,people:26,rise:"+4% this week",nearby:["water","migration","language"]},
-  "inequality":{type:"Topic",plops:132,people:29,rise:"+7% this week",nearby:["labour","architecture","glass"]},
-  "Haneul Jung":{type:"Person",plops:48,people:21,rise:"+15% this week",nearby:["water","memory","Euljiro Open Storage"]},
-  "Euljiro Open Storage":{type:"Exhibition",plops:42,people:19,rise:"+26% this week",nearby:["water","Haneul Jung","memory"],
-    ex:{venue:"Onsu Ground, Euljiro, Seoul",dates:"12–28 Jun 2026 · Free",going:7}}
+  "water":{type:"Theme",plops:214,people:37,rise:"+18% this week",nearby:["boundary","memory","migration","infrastructure"]},
+  "migration":{type:"Theme",plops:178,people:41,rise:"+12% this week",nearby:["boundary","language","memory","water"]},
+  "boundary":{type:"Theme",plops:96,people:22,rise:"+9% this week",nearby:["water","migration","textile"]},
+  "memory":{type:"Theme",plops:121,people:26,rise:"+4% this week",nearby:["water","migration","language"]},
+  "inequality":{type:"Theme",plops:132,people:29,rise:"+7% this week",nearby:["labour","architecture","glass"]},
+  "Haneul Jung":{type:"Creator",plops:48,people:21,rise:"+15% this week",nearby:["water","memory","Euljiro Open Storage"]},
+  "Euljiro Open Storage":{type:"Theme",plops:42,people:19,rise:"+26% this week",nearby:["water","Haneul Jung","memory"]},
+  "paper":{type:"Material",plops:88,people:24,rise:"+9% this week",nearby:["resin","wool","texture"]},
+  "glass":{type:"Material",plops:51,people:17,rise:"+5% this week",nearby:["paper","steel","light"]},
+  "blue":{type:"Color",plops:130,people:33,rise:"+11% this week",nearby:["water","monochrome","glass"]},
+  "earth":{type:"Color",plops:74,people:21,rise:"+7% this week",nearby:["paper","clay","material"]},
+  "quiet":{type:"Mood",plops:54,people:18,rise:"+6% this week",nearby:["still","water","memory"]},
+  "tender":{type:"Mood",plops:38,people:14,rise:"+4% this week",nearby:["memory","quiet","care"]}
 };
+/* pond facets: Theme/Creator fixed; Material/Color/Mood rotate */
+var FACET={"paper":"Material","glass":"Material","wool":"Material","resin":"Material","concrete":"Material","textile":"Material","steel":"Material","blue":"Color","earth":"Color","monochrome":"Color","amber":"Color","green":"Color","clay":"Color","quiet":"Mood","tender":"Mood","still":"Mood","tense":"Mood","care":"Mood"};
+function facetOf(k){return ARTISTS[k]?"Creator":(FACET[k]||"Theme")}
 /* ponds auto-exist: any keyword without an entry gets one on first visit */
 function getPond(k){
   if(!PONDS[k]){
     var n=(k.length*7)%30+6;
-    PONDS[k]={type:"Topic",plops:n,people:Math.max(3,Math.round(n/3)),rise:"+2% this week",nearby:["water","migration","memory"]};
+    PONDS[k]={type:facetOf(k),plops:n,people:Math.max(3,Math.round(n/3)),rise:"+2% this week",nearby:["water","migration","memory"]};
   }
   return PONDS[k];
 }
@@ -721,7 +720,7 @@ var EXTRA_KW=["glass","labour","language","textile","infrastructure","architectu
 var PONDS_SAVED=["water","boundary","Euljiro Open Storage","memory","migration","inequality"].concat(EXTRA_KW)
   .map(function(k,i){
     var pd=PONDS[k];
-    return {k:k,type:pd?pd.type:"Topic",plops:pd?pd.plops:((k.length*7)%30+6),act:(k.length*13+i*7)%100};
+    return {k:k,type:pd?pd.type:facetOf(k),plops:pd?pd.plops:((k.length*7)%30+6),act:(k.length*13+i*7)%100};
   });
 var MY_PONDS=PONDS_SAVED; /* kept name for tab counts */
 
@@ -770,7 +769,7 @@ function goBack(){
 }
 function navHome(){navStack=[{id:"scr-feed",fn:null}];show("scr-feed")}
 function navMe(){lensFilter=null;
-  meTab=meMode==="visitor"?"Saved":"Posted";
+  meTab="Plops";
   navStack=[{id:"scr-feed",fn:null},{id:"scr-me",fn:renderMe}];renderMe();show("scr-me")}
 
 /* ================= feed ================= */
@@ -784,11 +783,11 @@ function setLens(l){lens=l;
 
 function renderChips(){
   var wrap=document.getElementById("chips");wrap.innerHTML="";
-  var list=lens==="plops"?["All","Recent","Spark","Following"]:["All","Topic","Person","Exhibition"];
+  var list=lens==="plops"?["All","Recent","Spark","Following"]:["All","Theme","Creator","Material","Color","Mood"];
   var cur=lens==="plops"?plopChip:pondChip;
   list.forEach(function(c){
     var b=document.createElement("button");b.className="chip"+(c===cur?" on":"");
-    b.textContent=c==="Spark"?"⚡ Spark":c;
+    b.textContent=c==="Spark"?"⚡ Spark":((c==="Material"||c==="Color"||c==="Mood")?"↻ "+c:c);
     b.onclick=function(){if(lens==="plops"){plopChip=c}else{pondChip=c}renderChips();renderFeed()};
     wrap.appendChild(b);
   });
@@ -811,7 +810,7 @@ function renderFeed(){
   }else{
     var wrap=document.getElementById("ponds-list");wrap.innerHTML="";
     var keys=Object.keys(PONDS);
-    if(pondChip==="Topic"||pondChip==="Person"||pondChip==="Exhibition")keys=keys.filter(function(k){return PONDS[k].type===pondChip});
+    if(pondChip!=="All")keys=keys.filter(function(k){return getPond(k).type===pondChip});
     if(!keys.length){wrap.innerHTML='<p class="sec" style="padding:30px 22px;text-align:center">Nothing here yet — save a pond and it gathers here.</p>';return}
     keys.forEach(function(k){
       var pd=PONDS[k];
@@ -856,20 +855,33 @@ function renderPlop(id){
     pv.appendChild(lab);
     document.getElementById("plop-img").className="ph "+p.v[0];
   }else{pv.style.display="none"}
-  document.getElementById("plop-artist").textContent=p.a;
-  document.getElementById("plop-av").textContent=ar.init;
-  document.getElementById("plop-title").textContent=p.t;
-  document.getElementById("plop-meta").textContent=p.m+" · "+p.yr;
+  var poster=posterFor(p);
+  document.getElementById("plop-poster-av").textContent=poster.init;
+  document.getElementById("plop-poster-name").textContent=poster.name;
+  document.getElementById("plop-poster-handle").textContent=poster.handle;
+  document.getElementById("plop-caption").textContent=p.d;
+  var hasCreator=OWN_PLOPS.indexOf(p.id)<0;
+  var hasSource=SRC_PLOPS.indexOf(p.id)>=0 && !p.v;  /* multi-view = your own photos, never a source link */
+  var ch="";
+  var hasTitle=hasCreator&&p.t;
+  if(hasTitle)ch+='<div style="font-size:15px;font-weight:700;line-height:1.35">'+p.t+'</div>';
+  var line=[];
+  if(hasCreator)line.push((hasTitle?'by ':'')+'<button style="font-weight:600;color:var(--ink)" onclick="openCreatorPond()">'+p.a+' ↗</button>');
+  if(hasSource)line.push('<button style="font-weight:600;color:var(--ink)" onclick="toast(\'Opens the original source\')">View source ↗</button>');
+  if(line.length)ch+='<p class="sec" style="margin-top:'+(hasTitle?"5px":"0")+';line-height:1.7">'+line.join(' &nbsp;·&nbsp; ')+'</p>';
+  document.getElementById("plop-credit").innerHTML=ch;
   document.getElementById("plop-bolt").innerHTML=p.spark
     ?'<span class="bolt-line">⚡ Sparking now</span><p class="micro" style="margin-top:7px">Recent saves are clustering · fades soon.</p>'
     :'<span class="bolt-line off">Quiet for now — ⚡ sparks when saves cluster.</span>';
+  var kwlist=p.kw.slice();var extra=["texture","light","memory","form","quiet","colour"];
+  for(var ei=0;kwlist.length<5&&ei<extra.length;ei++){if(kwlist.indexOf(extra[ei])<0)kwlist.push(extra[ei])}
   var kws=document.getElementById("plop-kws");kws.innerHTML="";
-  p.kw.forEach(function(k){
+  kwlist.forEach(function(k){
     var b=document.createElement("button");b.className="kw";b.textContent=k;
     b.onclick=function(){openPond(k)};kws.appendChild(b);
   });
   var sv=document.getElementById("plop-save");sv.textContent=savedPlops[p.id]?"Saved ✓":"Save";
-  document.getElementById("plop-foot").textContent="From "+ar.handle+"'s profile · save counts are owner-only.";
+  document.getElementById("plop-foot").textContent="Kept 2h ago · in the Pool · save counts are owner-only.";
   /* connected works — the digging thread */
   var rel=document.getElementById("plop-related");rel.innerHTML="";
   PLOPS.filter(function(x){
@@ -883,21 +895,27 @@ function toggleSavePlop(){if(!curPlop)return;savedPlops[curPlop.id]=!savedPlops[
   document.getElementById("plop-save").textContent=savedPlops[curPlop.id]?"Saved ✓":"Save";
   toast(savedPlops[curPlop.id]?"Kept — it joins your eye":"Removed");}
 function openProfileFromPlop(){if(curPlop)openProfile(curPlop.a)}
+function openCreatorPond(){if(curPlop)openPond(curPlop.a)}
 function openAboutFromPlop(){if(curPlop)openAbout(curPlop.a)}
 
 /* ================= pond ================= */
 var curPond=null;
 function renderPond(k){
   var pd=getPond(k);curPond=k;
+  var isCreator=pd.type==="Creator";
   document.getElementById("pond-name").textContent=k;
-  document.getElementById("pond-typelabel").textContent="KEYWORD · "+pd.type.toUpperCase();
+  document.getElementById("pond-typelabel").textContent=isCreator?"CREATOR POND":("KEYWORD · "+pd.type.toUpperCase());
   document.getElementById("pond-rise").textContent="⚡ "+pd.rise;
-  document.getElementById("pond-poolline").textContent=pd.people+" people are moving through this current · "+pd.plops+" plops";
+  document.getElementById("pond-poolline").textContent=isCreator
+    ?(pd.people+" people have credited "+k+" · "+pd.plops+" plops")
+    :(pd.people+" people are moving through this current · "+pd.plops+" plops");
   document.getElementById("pond-save").textContent=savedPonds[k]?"Saved ✓":"Save this pond";
+  var gl=document.getElementById("pond-gridlabel");
+  if(gl)gl.textContent=isCreator?("Inspirations crediting "+k):"This keyword's plops — by many people";
 
   var tb=document.getElementById("pond-typeblock");tb.innerHTML="";
-  if(pd.type==="Person"){
-    tb.innerHTML='<div class="callout">⚠ <b>Pond ≠ Profile.</b> This is every plop tagged “'+k+'” (a crowd). For their own posted work, see <button style="font-weight:700;text-decoration:underline" onclick="openProfile(\''+k.replace(/'/g,"\\'")+'\')">'+(ARTISTS[k]?ARTISTS[k].handle:"@"+k.toLowerCase().replace(/\s/g,""))+'’s profile →</button></div>';
+  if(isCreator){
+    tb.innerHTML='<div class="callout">Inspirations crediting <b>'+k+'</b>, saved by the community. A community pond, not the creator’s account.</div>';
   }else if(pd.type==="Exhibition"&&pd.ex){
     var avs="";for(var i=0;i<4;i++){avs+='<span class="av sm"></span>'}
     tb.innerHTML='<div class="excard"><p style="font-weight:700;font-size:15.5px">'+k+'</p>'+
@@ -915,7 +933,7 @@ function renderPond(k){
   });
 
   var grid=document.getElementById("pond-grid");grid.innerHTML="";
-  var list=PLOPS.filter(function(p){return p.kw.indexOf(k)>=0});
+  var list=isCreator?PLOPS.filter(function(p){return p.a===k}):PLOPS.filter(function(p){return p.kw.indexOf(k)>=0});
   if(!list.length)list=PLOPS.slice(0,6);
   list.forEach(function(p){grid.appendChild(tileFor(p))});
 }
@@ -928,32 +946,28 @@ function toggleGoing(){goingState[curPond]=!goingState[curPond];
   toast(goingState[curPond]?"See you there — added to people going":"Removed");}
 
 /* ================= profile (others) ================= */
-var curArtist=null, pfTab="Posted";
+var curArtist=null, pfTab="Plops", pfSavedSub="Plops";
 function renderProfile(name){
   var ar=ARTISTS[name];if(!ar)return;
   curArtist=name;
   document.getElementById("pf-av").textContent=ar.init;
   document.getElementById("pf-name").textContent=name;
-  document.getElementById("pf-handle").textContent=ar.handle+" · "+ar.line.split("·")[1].trim();
-  document.getElementById("pf-quote").textContent=ar.q;
-  document.getElementById("pf-links").innerHTML=linkRowHTML(ar.links||[ar.handle.replace("@","")+".com","Instagram"]);
-  document.getElementById("pf-follow").textContent=followState[name]||FOLLOWED.indexOf(name)>=0?"Following ✓":"Follow";
-  var exc=document.getElementById("pf-excard");
-  if(ar.nowShowing){exc.style.display="block";
-    document.getElementById("pf-extitle").textContent="Euljiro Open Storage";
-    document.getElementById("pf-exmeta").textContent="Onsu Ground, Euljiro · until 28 Jun";
-  }else{exc.style.display="none"}
+  document.getElementById("pf-handle").textContent=ar.handle;
+  document.getElementById("pf-bio").textContent=ar.bio?ar.bio.split(". ")[0]+".":"";
+  document.getElementById("pf-links").innerHTML=iconLinksHTML();
+  document.getElementById("pf-counts").innerHTML="<b>"+((name.length*13)%180+40)+"</b> following · <b>"+((name.length*3)%4+1)+"."+((name.length*7)%9)+"k</b> followers";
+  document.getElementById("pf-follow").textContent=(followState[name]||FOLLOWED.indexOf(name)>=0)?"Following ✓":"Follow";
   renderPfTabs();renderPfBody();
 }
 function openProfile(name){
   if(!ARTISTS[name]){toast("Profile not in this prototype");return}
-  pfTab="Posted";
+  pfTab="Plops";pfSavedSub="Plops";
   renderProfile(name);
   push("scr-profile",function(){renderProfile(name)});
 }
 function renderPfTabs(){
   var posted=PLOPS.filter(function(p){return p.a===curArtist}).length;
-  var tabs=[["Posted",posted],["Saved",7]];
+  var tabs=[["Plops",posted],["Saved",7]];
   var w=document.getElementById("pf-tabs");w.innerHTML="";
   tabs.forEach(function(t){
     var b=document.createElement("button");b.className="proftab"+(t[0]===pfTab?" on":"");
@@ -963,20 +977,13 @@ function renderPfTabs(){
 }
 function renderPfBody(){
   var w=document.getElementById("pf-body");w.innerHTML="";
-  if(pfTab==="Posted"){
+  if(pfTab==="Plops"){
     var g=document.createElement("div");g.className="masonry";
     PLOPS.filter(function(p){return p.a===curArtist}).forEach(function(p){g.appendChild(tileFor(p))});
-    if(!g.children.length)g.innerHTML='<p class="sec" style="padding:20px 4px">No plops yet.</p>';
+    if(!g.children.length)g.innerHTML='<p class="sec" style="padding:20px 22px">No plops yet.</p>';
     w.appendChild(g);
   }else{
-    var d=document.createElement("div");d.style.padding="18px 22px 0";
-    d.innerHTML='<p class="micro" style="margin-bottom:10px">Saved ponds</p>'+
-      '<div><button class="kw" onclick="openPond(\'water\')">water</button><button class="kw" onclick="openPond(\'memory\')">memory</button><button class="kw" onclick="openPond(\'boundary\')">boundary</button></div>'+
-      '<p class="micro" style="margin:14px 0 10px">Saved plops</p>';
-    w.appendChild(d);
-    var g2=document.createElement("div");g2.className="masonry";
-    PLOPS.filter(function(p){return p.a!==curArtist}).slice(0,4).forEach(function(p){g2.appendChild(tileFor(p))});
-    w.appendChild(g2);
+    renderSavedView(w,"pf");
   }
 }
 function toggleFollow(){if(!curArtist)return;
@@ -995,29 +1002,23 @@ function toggleGoingEx(){
 }
 
 /* ================= own profile ================= */
-var meMode="visitor", meTab="Posted";
-function setMeMode(m){meMode=m;meTab=m==="visitor"?"Saved":"Posted";
-  document.getElementById("me-as-visitor").classList.toggle("on",m==="visitor");
-  document.getElementById("me-as-artist").classList.toggle("on",m==="artist");
-  renderMe();}
+var meTab="Plops", meSavedSub="Plops";
+function iconLinksHTML(){
+  function ic(svg,label){return '<button onclick="toast(\''+label+' — external links are stubbed\')" style="color:#555;display:inline-flex;align-items:center">'+svg+'</button>'}
+  var globe='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg>';
+  var insta='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>';
+  var link='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10.5 13.5a4 4 0 0 0 5.7.3l2-2a4 4 0 0 0-5.7-5.7l-1.1 1.1"/><path d="M13.5 10.5a4 4 0 0 0-5.7-.3l-2 2a4 4 0 0 0 5.7 5.7l1.1-1.1"/></svg>';
+  return ic(globe,"Website")+ic(insta,"Instagram")+ic(link,"Link");
+}
 function renderMe(){
-  var isA=meMode==="artist";
-  document.getElementById("me-name").textContent=isA?"Haneul Jung":"Sungwon Jeong";
-  document.getElementById("me-handle").textContent=isA?"@haneuljung · photography, video, installation":"@sjeong";
-  document.getElementById("me-av").textContent=isA?"HJ":"SJ";
-  document.getElementById("me-vchip").style.display=isA?"inline-flex":"none";
-  document.getElementById("me-about").style.display=isA?"inline-flex":"none";
-  document.getElementById("me-backstage").style.display=isA?"block":"none";
-  document.getElementById("me-excard").style.display=isA?"block":"none";
-  var mq=document.getElementById("me-quote");
-  mq.style.display=isA?"block":"none";
-  if(isA)mq.textContent=ARTISTS["Haneul Jung"].q;
-  document.getElementById("me-links").innerHTML=isA
-    ?linkRowHTML(ARTISTS["Haneul Jung"].links)
-    :linkRowHTML(["sungwonjeong.com"]);
-  document.getElementById("me-following").textContent=isA?"21 following":"12 following";
-  var posted=isA?PLOPS.filter(function(p){return p.a==="Haneul Jung"}).length:0;
-  var tabs=[["Posted",posted],["Saved",MY_SAVES.length+MY_PONDS.length]];
+  document.getElementById("me-name").textContent="Sungwon Jeong";
+  document.getElementById("me-handle").textContent="@sjeong";
+  document.getElementById("me-av").textContent="SJ";
+  document.getElementById("me-bio").textContent="collecting textures, thresholds, and quiet rooms";
+  document.getElementById("me-links").innerHTML=iconLinksHTML();
+  document.getElementById("me-counts").innerHTML="<b>128</b> following · <b>2.4k</b> followers";
+  var myPlops=PLOPS.filter(function(p){return p.a==="Haneul Jung"});
+  var tabs=[["Plops",myPlops.length],["Saved",MY_SAVES.length]];
   if(tabs.map(function(t){return t[0]}).indexOf(meTab)<0)meTab=tabs[0][0];
   var tw=document.getElementById("me-tabs");tw.innerHTML="";
   tabs.forEach(function(t){
@@ -1026,16 +1027,51 @@ function renderMe(){
     b.onclick=function(){meTab=t[0];renderMe()};tw.appendChild(b);
   });
   var w=document.getElementById("me-body");w.innerHTML="";
-  if(meTab==="Posted"){
-    if(isA){
-      var g=document.createElement("div");g.className="masonry";
-      PLOPS.filter(function(p){return p.a==="Haneul Jung"}).forEach(function(p){g.appendChild(tileFor(p))});
-      w.appendChild(g);
-    }else{
-      w.innerHTML='<p class="sec" style="padding:30px 22px;text-align:center">Nothing posted yet.<br>Your own photos, words and links are welcome — other people’s work isn’t.</p>';
-    }
+  if(meTab==="Plops"){
+    var g=document.createElement("div");g.className="masonry";
+    myPlops.forEach(function(p){g.appendChild(tileFor(p))});
+    w.appendChild(g);
   }else{
-    renderSavedTab(w,!isA);
+    renderSavedView(w,"me");
+  }
+}
+function renderSavedView(w,who){
+  var sub=(who==="me")?meSavedSub:pfSavedSub;
+  var sg=document.createElement("div");
+  sg.style.cssText="display:inline-flex;background:var(--surface);border-radius:var(--r-pill);padding:3px;margin:14px 22px 0";
+  ["Plops","Ponds"].forEach(function(t){
+    var on=(t===sub);
+    var b=document.createElement("button");
+    b.style.cssText="border-radius:var(--r-pill);padding:6px 18px;font-size:13px;font-weight:600;"+(on?"background:var(--bg);box-shadow:0 1px 4px rgba(0,0,0,.08);color:var(--ink)":"color:var(--soft)");
+    b.textContent=t;
+    b.onclick=function(){if(who==="me"){meSavedSub=t;renderMe()}else{pfSavedSub=t;renderProfile(curArtist)}};
+    sg.appendChild(b);
+  });
+  w.appendChild(sg);
+  if(sub==="Plops"){
+    var fh=document.createElement("p");fh.className="micro";fh.style.cssText="font-weight:700;letter-spacing:.4px;padding:16px 22px 8px";fh.textContent="FOLDERS";w.appendChild(fh);
+    var fr=document.createElement("div");fr.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 22px";
+    [["Brutalism","g3",42,false],["Mood · blue","g6",17,true],["Shows 2026","g2",31,false]].forEach(function(f){
+      var c=document.createElement("button");c.style.cssText="border:1px solid var(--line);border-radius:14px;padding:8px;text-align:left";
+      c.innerHTML='<div class="ph '+f[1]+'" style="height:60px;border-radius:8px;position:relative">'+(f[3]?'<span style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,.55);color:#fff;font-size:9px;border-radius:999px;padding:2px 7px">Private</span>':'')+'</div><p style="font-weight:600;font-size:13px;margin-top:6px">'+f[0]+'</p><p class="micro">'+f[2]+' saved</p>';
+      c.onclick=function(){toast("Opens the “"+f[0]+"” folder")};fr.appendChild(c);
+    });
+    var nf=document.createElement("button");nf.style.cssText="border:1.5px dashed #D8D8DC;border-radius:14px;display:grid;place-items:center;color:var(--soft);font-size:13px;font-weight:600;min-height:96px";nf.textContent="+ New folder";nf.onclick=function(){toast("New folder — not in this prototype")};fr.appendChild(nf);
+    w.appendChild(fr);
+    var ah=document.createElement("p");ah.className="micro";ah.style.cssText="font-weight:700;letter-spacing:.4px;padding:18px 22px 6px";ah.textContent="ALL SAVED PLOPS";w.appendChild(ah);
+    var g=document.createElement("div");g.className="masonry";
+    MY_SAVES.map(function(id){return PLOPS.find(function(x){return x.id===id})}).filter(Boolean).forEach(function(p){g.appendChild(tileFor(p))});
+    w.appendChild(g);
+  }else{
+    var ph=document.createElement("p");ph.className="micro";ph.style.cssText="font-weight:700;letter-spacing:.4px;padding:16px 22px 4px";ph.textContent="SAVED PONDS";w.appendChild(ph);
+    PONDS_SAVED.slice(0,8).forEach(function(pd){
+      var imgs=PLOPS.filter(function(p){return p.kw.indexOf(pd.k)>=0});
+      var strip="";for(var i=0;i<4;i++){strip+='<div class="'+(imgs[i]?imgs[i].g:["g1","g7","g8","g2"][i])+'"></div>'}
+      var typeLabel=pd.type==="Person"?"Creator":pd.type;
+      var card=document.createElement("div");card.className="pondcard";
+      card.innerHTML='<button style="width:100%;text-align:left" onclick="openPond(\''+pd.k.replace(/'/g,"\\'")+'\')"><div class="strip">'+strip+'</div><div class="pondrow"><div><span style="font-weight:700;font-size:16px">'+pd.k+'</span> <span class="typechip">'+typeLabel+'</span></div><span class="sec">'+pd.plops+' plops</span></div></button>';
+      w.appendChild(card);
+    });
   }
 }
 
