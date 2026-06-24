@@ -234,7 +234,7 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
         <button class="backbtn" onclick="goBack()">←</button>
         <button class="iconbtn" onclick="toast('Link copied')">↗</button>
       </div>
-      <div style="display:flex;align-items:center;gap:9px;padding:0 20px 9px">
+      <div style="display:flex;align-items:center;gap:9px;padding:0 20px 9px;cursor:pointer" onclick="openProfileFromPlop()">
         <span class="av" id="plop-poster-av" style="width:30px;height:30px;font-size:11px"></span>
         <span style="font-weight:600;font-size:14px" id="plop-poster-name"></span>
         <span style="color:var(--soft);font-size:12.5px" id="plop-poster-handle"></span>
@@ -894,7 +894,9 @@ function openPlop(id){renderPlop(id);push("scr-plop",function(){renderPlop(id)})
 function toggleSavePlop(){if(!curPlop)return;savedPlops[curPlop.id]=!savedPlops[curPlop.id];
   document.getElementById("plop-save").textContent=savedPlops[curPlop.id]?"Saved ✓":"Save";
   toast(savedPlops[curPlop.id]?"Kept — it joins your eye":"Removed");}
-function openProfileFromPlop(){if(curPlop)openProfile(curPlop.a)}
+function openProfileFromPlop(){if(curPlop)openProfile(posterFor(curPlop).name)}
+function posterByName(n){for(var i=0;i<POSTERS.length;i++)if(POSTERS[i].name===n)return POSTERS[i];return null}
+function pfPlops(){if(pfIsArtist)return PLOPS.filter(function(p){return p.a===curArtist});return PLOPS.filter(function(p){return posterFor(p).name===curArtist})}
 function openCreatorPond(){if(curPlop)openPond(curPlop.a)}
 function openAboutFromPlop(){if(curPlop)openAbout(curPlop.a)}
 
@@ -946,27 +948,29 @@ function toggleGoing(){goingState[curPond]=!goingState[curPond];
   toast(goingState[curPond]?"See you there — added to people going":"Removed");}
 
 /* ================= profile (others) ================= */
-var curArtist=null, pfTab="Plops", pfSavedSub="Plops";
+var curArtist=null, pfTab="Plops", pfSavedSub="Plops", pfIsArtist=true;
 function renderProfile(name){
-  var ar=ARTISTS[name];if(!ar)return;
-  curArtist=name;
-  document.getElementById("pf-av").textContent=ar.init;
+  var ar=ARTISTS[name];
+  var po=ar?null:posterByName(name);
+  if(!ar&&!po)return;
+  curArtist=name;pfIsArtist=!!ar;
+  document.getElementById("pf-av").textContent=ar?ar.init:po.init;
   document.getElementById("pf-name").textContent=name;
-  document.getElementById("pf-handle").textContent=ar.handle;
-  document.getElementById("pf-bio").textContent=ar.bio?ar.bio.split(". ")[0]+".":"";
-  document.getElementById("pf-links").innerHTML=iconLinksHTML();
+  document.getElementById("pf-handle").textContent=ar?ar.handle:po.handle;
+  document.getElementById("pf-bio").textContent=ar?(ar.bio?ar.bio.split(". ")[0]+".":""):"Collects inspiration and ideas — plops what catches the eye.";
+  document.getElementById("pf-links").innerHTML=ar?iconLinksHTML():"";
   document.getElementById("pf-counts").innerHTML="<b>"+((name.length*13)%180+40)+"</b> following · <b>"+((name.length*3)%4+1)+"."+((name.length*7)%9)+"k</b> followers";
   document.getElementById("pf-follow").textContent=(followState[name]||FOLLOWED.indexOf(name)>=0)?"Following ✓":"Follow";
   renderPfTabs();renderPfBody();
 }
 function openProfile(name){
-  if(!ARTISTS[name]){toast("Profile not in this prototype");return}
+  if(!ARTISTS[name]&&!posterByName(name)){toast("Profile not in this prototype");return}
   pfTab="Plops";pfSavedSub="Plops";
   renderProfile(name);
   push("scr-profile",function(){renderProfile(name)});
 }
 function renderPfTabs(){
-  var posted=PLOPS.filter(function(p){return p.a===curArtist}).length;
+  var posted=pfPlops().length;
   var tabs=[["Plops",posted],["Saved",7]];
   var w=document.getElementById("pf-tabs");w.innerHTML="";
   tabs.forEach(function(t){
@@ -979,7 +983,7 @@ function renderPfBody(){
   var w=document.getElementById("pf-body");w.innerHTML="";
   if(pfTab==="Plops"){
     var g=document.createElement("div");g.className="masonry";
-    PLOPS.filter(function(p){return p.a===curArtist}).forEach(function(p){g.appendChild(tileFor(p))});
+    pfPlops().forEach(function(p){g.appendChild(tileFor(p))});
     if(!g.children.length)g.innerHTML='<p class="sec" style="padding:20px 22px">No plops yet.</p>';
     w.appendChild(g);
   }else{

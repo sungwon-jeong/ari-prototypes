@@ -246,18 +246,18 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
         </div>
 
         <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 6px">Caption</p>
-        <div class="field"><textarea id="u-caption" rows="3" placeholder="The way the white forms curl against the brick…"></textarea></div>
+        <div class="field"><textarea id="u-caption" rows="3" placeholder="The way the white forms curl against the brick…">Met this at the back of the show — the room hummed.</textarea></div>
 
         <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Title <span class="sec" style="font-weight:400">(optional)</span></p>
-        <div class="field"><input id="u-title" placeholder="e.g. Tide Ledger IV"></div>
+        <div class="field"><input id="u-title" placeholder="e.g. Tide Ledger IV" value="Tide Ledger IV"></div>
 
         <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Creator / source <span class="sec" style="font-weight:400">(if it's someone's work)</span></p>
-        <div class="field"><input id="u-creator" placeholder="e.g. Ava Teetsel" autocomplete="off" oninput="renderCreatorSuggest()"></div>
+        <div class="field"><input id="u-creator" placeholder="e.g. Ava Teetsel" autocomplete="off" oninput="renderCreatorSuggest()" value="Haneul Jung"></div>
         <div id="u-creator-suggest"></div>
         <p class="micro" id="u-creator-hint" style="margin-top:8px"></p>
 
         <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Original link <span class="sec" style="font-weight:400">(optional)</span></p>
-        <div class="field"><input id="u-link" placeholder="https://…"></div>
+        <div class="field"><input id="u-link" placeholder="https://…" value="haneuljung.kr/tide"></div>
 
         <button class="pill dark" style="width:100%;margin-top:20px" onclick="toRefine()">Next</button>
       </div>
@@ -299,7 +299,7 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
         </div>
         <p class="body" style="color:#333" id="u-done-line"></p>
         <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px">
-          <button class="pill outline" onclick="setView('organize')">✎ Organize · where this plop lands</button>
+          <button class="pill outline" onclick="setView('organize')">✎ Edit this plop</button>
           <button class="micro" style="font-weight:600;margin-top:6px" onclick="resetUpload()">Drop another</button>
         </div>
       </div>
@@ -309,24 +309,20 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
     <section class="screen" id="sec-organize">
       <div class="dethead">
         <button class="backbtn" onclick="setView('upload')">←</button>
-        <span class="h2">Where this plop lands</span>
+        <span class="h2">Edit plop</span>
         <span style="width:38px"></span>
       </div>
       <div style="padding:8px 24px" id="org-edit">
-        <div class="ph g0" id="org-img" style="height:180px;border-radius:18px"></div>
-        <p class="sec" style="margin-top:8px" id="org-worktitle"></p>
-
-        <div style="margin-top:10px">
-          <div class="belongrow" style="border-bottom:0">
-            <span class="ic">〜</span>
-            <div style="flex:1">
-              <p style="font-weight:700;font-size:14.5px">Keywords → ponds <span class="micro" style="font-weight:500">tap ✕ to pull it out</span></p>
-              <div style="margin-top:8px" id="org-kws"></div>
-              <p class="micro" style="margin-top:4px">A creator is a keyword too — its pond just shows more. Tag a keyword and the plop flows into that pond automatically.</p>
-            </div>
-          </div>
-        </div>
-        <button class="pill outline" style="width:100%;margin-top:10px" onclick="openSheet('org-sheet')">+ Add keywords</button>
+        <div class="ph g0" id="org-img" style="height:150px;border-radius:18px"></div>
+        <p class="sec" style="font-weight:600;color:var(--ink);margin-top:14px">Caption</p>
+        <div class="field"><textarea id="org-caption" rows="3" placeholder="What moved you…" oninput="UPL.caption=this.value"></textarea></div>
+        <p class="sec" style="font-weight:600;color:var(--ink);margin-top:12px">Title <span class="sec" style="font-weight:400">(optional)</span></p>
+        <div class="field"><input id="org-title" placeholder="e.g. Tide Ledger IV" oninput="UPL.title=this.value"></div>
+        <p class="sec" style="font-weight:600;color:var(--ink);margin-top:12px">Creator / source <span class="sec" style="font-weight:400">(if it's someone's work)</span></p>
+        <div class="field"><input id="org-creator-in" placeholder="e.g. Haneul Jung" oninput="UPL.creator=this.value"></div>
+        <p class="sec" style="font-weight:600;color:var(--ink);margin-top:16px">Keywords → ponds <span class="micro" style="font-weight:500">tap ✕ to pull it out</span></p>
+        <div style="margin-top:8px" id="org-kws"></div>
+        <button class="pill outline" style="width:100%;margin-top:12px" onclick="openSheet('org-sheet')">+ Add keywords</button>
         <button class="pill dark" style="width:100%;margin-top:10px" onclick="finishOrganize()">Done</button>
       </div>
       <div style="padding:8px 24px;display:none;text-align:center" id="org-done">
@@ -416,7 +412,7 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
     <div class="scrim" onclick="closeSheet('org-sheet')"></div>
     <div class="sheet">
       <div class="grab"></div>
-      <p class="h2">Organize</p>
+      <p class="h2">Add keywords</p>
       <p class="micro" style="margin-top:6px">Keywords are public tags that spread to search &amp; ponds.</p>
       <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 8px">Keywords — tap to toggle</p>
       <div id="orgsheet-kws"></div>
@@ -433,9 +429,10 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
 
 <script>
 /* ================= state ================= */
+var DEMO={caption:"Met this at the back of the show — the room hummed.",title:"Tide Ledger IV",creator:"Haneul Jung",link:"haneuljung.kr/tide"};
 var UPL={
   img:"g0", imgs:[], cover:0, uploaded:false, viaLink:false,
-  caption:"", title:"", creator:"", link:"",
+  caption:DEMO.caption, title:DEMO.title, creator:DEMO.creator, link:DEMO.link,
   kws:{"pattern":true,"wood":true,"weathered":true,"symmetry":false}
 };
 var CREATORS=[
@@ -708,10 +705,14 @@ function doPlop(){
 }
 function resetUpload(){
   UPL.kws={"pattern":true,"wood":true,"weathered":true,"symmetry":false};
-  UPL.caption="";UPL.title="";UPL.creator="";UPL.link="";UPL.uploaded=false;UPL.viaLink=false;
+  UPL.caption=DEMO.caption;UPL.title=DEMO.title;UPL.creator=DEMO.creator;UPL.link=DEMO.link;UPL.uploaded=false;UPL.viaLink=false;
   UPL.img="g0";UPL.imgs=[];UPL.cover=0;
   document.getElementById("u-views").innerHTML="";
-  ["u-caption","u-title","u-creator","u-link","u-newkw","u-linkurl"].forEach(function(id){var e=document.getElementById(id);if(e)e.value=""});
+  document.getElementById("u-caption").value=DEMO.caption;
+  document.getElementById("u-title").value=DEMO.title;
+  document.getElementById("u-creator").value=DEMO.creator;
+  document.getElementById("u-link").value=DEMO.link;
+  ["u-newkw","u-linkurl"].forEach(function(id){var e=document.getElementById(id);if(e)e.value=""});
   document.getElementById("u-creator-suggest").innerHTML="";
   document.getElementById("u-creator-hint").textContent="";
   setCapMode("write");
@@ -731,13 +732,10 @@ function resetUpload(){
 /* ================= organize ================= */
 function renderOrganize(){
   document.getElementById("org-img").className="ph "+UPL.img;
-  document.getElementById("org-worktitle").textContent=(UPL.title?UPL.title+" — ":"")+(UPL.caption||"Your plop");
+  document.getElementById("org-caption").value=UPL.caption||"";
+  document.getElementById("org-title").value=UPL.title||"";
+  document.getElementById("org-creator-in").value=UPL.creator||"";
   var kk=document.getElementById("org-kws");kk.innerHTML="";
-  if(UPL.creator){
-    var cb=document.createElement("button");cb.className="kw on";cb.textContent=UPL.creator+" · Creator ✕";
-    cb.onclick=function(){UPL.creator="";renderOrganize();toast("Removed the creator credit")};
-    kk.appendChild(cb);
-  }
   Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]}).forEach(function(k){
     var b=document.createElement("button");b.className="kw on";b.textContent=k+" ✕";
     b.onclick=function(){UPL.kws[k]=false;renderOrganize();toast("Removed — it leaves the “"+k+"” pond")};
@@ -746,6 +744,9 @@ function renderOrganize(){
   if(!kk.children.length)kk.innerHTML='<p class="sec">No keywords — it floats free. Add at least one so people can find it.</p>';
 }
 function finishOrganize(){
+  UPL.caption=document.getElementById("org-caption").value.trim();
+  UPL.title=document.getElementById("org-title").value.trim();
+  UPL.creator=document.getElementById("org-creator-in").value.trim();
   var ponds=Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]});
   var all=ponds.slice();if(UPL.creator)all.push(UPL.creator);
   document.getElementById("org-doneline").innerHTML=
