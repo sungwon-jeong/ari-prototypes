@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ari — Discover (mobile)</title>
+<style>
+:root {
+  --bg: #FFFFFF;
+  --surface: #F2F2F2;
+  --ink: #111111;
+  --soft: #8A8A8E;
+  --line: #ECECEC;
+  --mark: #FF5A3C;
+  --amber: #E39B3A;
+  --r-pill: 999px;
+  --r-card: 20px;
+  --r-img: 6px;
+  --shadow-float: 0 8px 30px rgba(0,0,0,.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
+  background: #ECEAE6; color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px 0;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; border: 0; background: none; cursor: pointer; color: inherit; }
+input, textarea { font: inherit; border: 0; outline: none; background: transparent; color: var(--ink); width: 100%; }
+
+.phone {
+  width: 390px; height: 844px; background: var(--bg); border-radius: 48px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.25), 0 0 0 10px #111, 0 0 0 12px #3a3a3a;
+  overflow: hidden; position: relative; flex: none;
+}
+@media (max-width: 440px) {
+  body { padding: 0; background: var(--bg); }
+  .phone { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
+}
+
+.statusbar {
+  height: 48px; display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 28px 0; font-size: 14px; font-weight: 600;
+  position: relative; z-index: 30;
+}
+.statusbar .sicons { display: flex; gap: 5px; align-items: center; font-size: 11px; letter-spacing: 1px; }
+
+.app { position: absolute; top: 48px; left: 0; right: 0; bottom: 0; }
+.screen { position: absolute; inset: 0; background: var(--bg); display: none; overflow: hidden; }
+.screen.active { display: block; }
+.scrollpage { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding-bottom: 120px; }
+.scrollpage::-webkit-scrollbar { display: none; }
+
+.h1 { font-size: 24px; font-weight: 700; letter-spacing: -.4px; }
+.h2 { font-size: 17px; font-weight: 700; letter-spacing: -.2px; }
+.body { font-size: 14.5px; line-height: 1.55; }
+.sec { font-size: 13.5px; color: var(--soft); }
+.micro { font-size: 12px; color: var(--soft); }
+.wordmark { font-size: 23px; font-weight: 800; letter-spacing: -.8px; line-height: 1; }
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 20px 4px;
+  position: sticky; top: 0;
+  background: rgba(255,255,255,.94); backdrop-filter: blur(12px); z-index: 20;
+}
+.iconbtn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 17px; }
+.iconbtn:active { background: var(--surface); }
+.iconbtn svg { width: 20px; height: 20px; }
+.backbtn { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-size: 16px; }
+.dethead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  position: sticky; top: 0;
+  background: rgba(255,255,255,.94); backdrop-filter: blur(12px); z-index: 20;
+}
+
+.pill { border-radius: var(--r-pill); padding: 11px 22px; font-size: 14.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 7px; justify-content: center; }
+.pill.dark { background: var(--ink); color: #fff; }
+.pill.outline { border: 1.5px solid var(--line); background: var(--bg); }
+.seg { display: inline-flex; background: var(--surface); border-radius: var(--r-pill); padding: 3px; }
+.seg button { border-radius: var(--r-pill); padding: 7px 18px; font-size: 13.5px; font-weight: 600; color: var(--soft); }
+.seg button.on { background: var(--bg); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+
+.masonry { columns: 2; column-gap: 8px; padding: 12px 18px 40px; }
+.tile { break-inside: avoid; margin-bottom: 8px; position: relative; border-radius: var(--r-img); overflow: hidden; cursor: pointer; }
+.tile:active { opacity: .85; }
+.ph { width: 100%; border-radius: var(--r-img); display: block; position: relative; }
+.tile .cap { padding: 6px 4px 4px; font-size: 12px; color: var(--ink); font-weight: 500; }
+.tile .cap .h { color: var(--soft); font-size: 10.5px; font-weight: 400; margin-top: 1px; }
+
+.g0 { background: linear-gradient(160deg, #1d3a5f, #6f93b4); }
+.g1 { background: linear-gradient(165deg, #d8c9a8, #a58c66); }
+.g2 { background: linear-gradient(150deg, #c9a36a, #eadfca); }
+.g3 { background: linear-gradient(160deg, #2b2b2e, #6e6e74); }
+.g4 { background: linear-gradient(155deg, #5c6b52, #cfd6c0); }
+.g5 { background: linear-gradient(150deg, #a3543d, #e8c3b2); }
+.g6 { background: linear-gradient(160deg, #10182b, #3c4f7a); }
+.g7 { background: linear-gradient(160deg, #efece6, #cfc8ba); }
+.g8 { background: linear-gradient(160deg, #7fa8a0, #dcebe6); }
+.g9 { background: linear-gradient(160deg, #5a5a86, #cdaec6); }
+
+/* ---- bottom nav (with clear icons) ---- */
+.bottomnav {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  background: rgba(255,255,255,.95); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill); box-shadow: var(--shadow-float);
+  display: flex; align-items: center; gap: 4px; padding: 8px 10px; z-index: 40;
+}
+.bottomnav button {
+  width: 50px; height: 44px; border-radius: var(--r-pill);
+  display: grid; place-items: center;
+  color: var(--soft); position: relative;
+}
+.bottomnav button.on { background: var(--ink); color: #fff; }
+.bottomnav .plus { background: var(--ink); color: white; }
+.bottomnav svg { width: 22px; height: 22px; }
+.bottomnav .badge {
+  position: absolute; top: 6px; right: 10px;
+  width: 8px; height: 8px; border-radius: 100px;
+  background: var(--mark); border: 1.5px solid white;
+}
+
+.av { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #A0A4F0, #E6A9C9); display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+.av.lg { width: 84px; height: 84px; font-size: 28px; border: 4px solid white; }
+.av.sm { width: 24px; height: 24px; font-size: 10px; }
+.av.g1 { background: linear-gradient(135deg, #ffb37b, #e88e6f); }
+.av.g2 { background: linear-gradient(135deg, #7cb0a5, #a5c8b8); }
+.av.g3 { background: linear-gradient(135deg, #b09fd7, #8c8cd4); }
+.av.g4 { background: linear-gradient(135deg, #d4a173, #b47552); }
+
+/* plop detail */
+.plop-poster { display: flex; align-items: center; gap: 9px; padding: 6px 20px 10px; cursor: pointer; }
+.plop-poster .n { font-weight: 600; font-size: 14px; }
+.plop-poster .h { color: var(--soft); font-size: 12.5px; margin-left: 2px; }
+
+.detimg { margin: 4px 18px; border-radius: 14px; overflow: hidden; position: relative; }
+.detimg .marks-vis {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.28s ease-out;
+}
+.detimg.show-marks .marks-vis { opacity: 1; }
+.detimg .mark-dot {
+  position: absolute; width: 22px; height: 22px;
+  border-radius: 100px; background: var(--mark);
+  color: white; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transform: translate(-50%,-50%);
+  opacity: 0;
+  transition: opacity 0.28s ease-out;
+}
+.detimg.show-marks .mark-dot { opacity: 1; }
+
+.marks-pill {
+  position: absolute; top: 12px; right: 12px;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.55); color: white;
+  border-radius: 100px; font-size: 12px; font-weight: 600;
+  backdrop-filter: blur(8px);
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer;
+  z-index: 5;
+}
+.marks-pill .dot { width: 6px; height: 6px; background: var(--mark); border-radius: 50%; border: 1.5px solid white; }
+.marks-pill.hiding { display: none; }
+
+.detbody { padding: 14px 22px 4px; }
+.det-cap { font-size: 16px; font-weight: 600; letter-spacing: -0.2px; }
+.det-sub { font-size: 13.5px; color: var(--soft); margin-top: 3px; }
+
+.kept-by {
+  padding: 12px 20px; background: var(--surface); border-radius: 14px;
+  margin: 10px 20px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.kept-by .avs { display: flex; }
+.kept-by .avs .av { border: 2px solid white; margin-right: -8px; }
+.kept-by .txt { font-size: 13px; }
+.kept-by .txt b { font-weight: 600; }
+
+.notes-strip {
+  padding: 14px 16px;
+  margin: 10px 20px 0;
+  border: 1px dashed rgba(0,0,0,0.14); border-radius: 14px;
+}
+.notes-strip .lbl {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--soft);
+  letter-spacing: 0.5px; text-transform: uppercase;
+  font-weight: 700; margin-bottom: 10px;
+}
+.notes-strip .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.notes-strip .chip {
+  background: var(--ink); color: white;
+  padding: 5px 12px; border-radius: var(--r-pill);
+  font-size: 12.5px; font-weight: 500;
+}
+
+.reco-section-h {
+  padding: 22px 20px 12px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 15.5px; font-weight: 700; letter-spacing: -0.2px;
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+}
+.reco-section-h .why-badge {
+  padding: 3px 10px;
+  background: var(--surface); color: var(--soft);
+  border-radius: var(--r-pill);
+  font-size: 10.5px; font-weight: 600;
+  margin-left: auto; text-transform: none; letter-spacing: 0;
+}
+.reco-slider { display: flex; gap: 10px; padding: 0 20px 8px; overflow-x: auto; scrollbar-width: none; }
+.reco-slider::-webkit-scrollbar { display: none; }
+.reco-card { flex-shrink: 0; width: 148px; cursor: pointer; }
+.reco-card .rc-img { width: 100%; aspect-ratio: 4/5; border-radius: 10px; margin-bottom: 8px; position: relative; }
+.reco-card .rc-why { font-size: 11.5px; color: var(--soft); line-height: 1.4; padding: 0 2px; }
+.reco-card .rc-why b { color: var(--ink); font-weight: 600; }
+
+/* keep CTA */
+.keep-cta-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 14px 20px 22px;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  z-index: 40;
+}
+.keep-cta-bar button {
+  width: 100%; padding: 13px; border-radius: var(--r-pill);
+  background: var(--ink); color: white;
+  font-size: 14.5px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+/* reblog */
+.repost-attr {
+  padding: 10px 14px; background: var(--surface); border-radius: 12px;
+  font-size: 12.5px; color: var(--soft);
+  display: flex; align-items: center; gap: 10px;
+  margin: 8px 20px 12px;
+}
+.repost-attr .av { width: 24px; height: 24px; font-size: 10px; }
+.repost-attr .txt { flex: 1; }
+.repost-attr .txt b { color: var(--ink); }
+
+.rev-image-wrap { padding: 0 18px 14px; }
+.rev-image {
+  width: 100%; aspect-ratio: 4/5;
+  border-radius: 14px; position: relative; overflow: hidden;
+  touch-action: pan-y;
+}
+.rev-image svg.marks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.rev-image.marking { touch-action: none; cursor: crosshair; }
+.mark-dot-editable {
+  position: absolute; width: 22px; height: 22px;
+  border-radius: 100px; background: var(--mark);
+  color: white; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transform: translate(-50%,-50%);
+  pointer-events: auto; cursor: pointer;
+}
+.mark-start-cue {
+  position: absolute; bottom: 12px; left: 12px; right: 12px;
+  padding: 10px 14px;
+  background: rgba(15,15,15,0.72); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill);
+  color: white; font-size: 12.5px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+}
+.mark-start-cue .msg { color: rgba(255,255,255,0.9); }
+.mark-start-cue button { padding: 6px 14px; border-radius: var(--r-pill); background: white; color: var(--ink); font-size: 12.5px; font-weight: 700; }
+.mark-toolbar {
+  position: absolute; bottom: 12px; left: 12px; right: 12px;
+  padding: 4px 5px;
+  background: rgba(15,15,15,0.78); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill);
+  display: flex; align-items: center; gap: 2px;
+  justify-content: space-between;
+}
+.mark-toolbar .group { display: flex; align-items: center; gap: 2px; }
+.mark-toolbar button {
+  height: 32px; padding: 0 10px; border-radius: var(--r-pill);
+  color: rgba(255,255,255,0.85);
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 3px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.mark-toolbar button.on { background: var(--mark); color: white; }
+.mark-toolbar .util { color: rgba(255,255,255,0.7); font-weight: 600; padding: 0 8px; font-size: 15px; }
+.mark-toolbar .divider { width: 1px; height: 18px; background: rgba(255,255,255,0.2); margin: 0 3px; flex-shrink: 0; }
+.mark-toolbar .done-btn { background: white; color: var(--ink); font-weight: 700; padding: 0 12px; font-size: 12.5px; }
+
+.rev-body { position: absolute; top: 60px; bottom: 0; left: 0; right: 0; overflow-y: auto; scrollbar-width: none; padding-bottom: 100px; }
+.rev-body::-webkit-scrollbar { display: none; }
+
+.field-h { display: flex; align-items: center; gap: 6px; padding: 0 20px; font-size: 11px; color: var(--soft); letter-spacing: 0.6px; text-transform: uppercase; font-weight: 700; margin: 14px 0 8px; }
+.field-h .private-note { color: var(--soft); font-weight: 500; font-size: 10.5px; letter-spacing: 0; text-transform: none; margin-left: 4px; }
+.field-h .ic { font-size: 12px; }
+
+.field { margin: 0 20px 10px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: white; }
+.field.readonly { background: var(--surface); border-color: var(--line); color: var(--soft); }
+.field input { font-size: 15px; padding: 2px 0; }
+
+.chip-input { margin: 0 20px 6px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 10px; background: white; display: flex; flex-wrap: wrap; gap: 6px; min-height: 62px; align-items: flex-start; }
+.chip-input:focus-within { border-color: #bbb; }
+.note-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--ink); color: white; padding: 5px 10px 5px 12px; border-radius: var(--r-pill); font-size: 13px; font-weight: 500; }
+.note-chip .x { opacity: 0.55; margin-left: 3px; cursor: pointer; font-size: 15px; line-height: 1; }
+.chip-input input { flex: 1; min-width: 100px; font-size: 14.5px; padding: 4px 0; }
+
+.saveto-list { padding: 0 20px; display: flex; gap: 6px; flex-wrap: wrap; }
+.saveto-list button { padding: 8px 14px; border-radius: var(--r-pill); border: 1px solid var(--line); background: white; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; color: var(--ink); }
+.saveto-list button.on { background: var(--ink); color: white; border-color: var(--ink); }
+.saveto-list button .vis { font-size: 10px; opacity: 0.7; }
+
+.rev-cta { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 20px 22px; background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: flex; gap: 8px; z-index: 15; }
+.rev-cta .later { padding: 13px 18px; border-radius: var(--r-pill); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--soft); }
+.rev-cta .save { flex: 1; padding: 13px 18px; border-radius: var(--r-pill); border: 0; background: var(--ink); color: white; font-size: 14.5px; font-weight: 600; }
+
+.note-sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--bg); border-radius: 26px 26px 0 0;
+  padding: 14px 22px 26px; z-index: 50;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.14);
+  display: none;
+  animation: slideup 0.26s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes slideup { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.note-sheet.on { display: block; }
+.note-sheet .grab { width: 38px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 14px; }
+.note-sheet .h { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 12px; }
+.note-sheet .h .num { width: 24px; height: 24px; background: var(--mark); color: white; border-radius: 100px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.note-sheet .h .lbl { font-weight: 700; font-size: 14px; }
+.note-sheet .n-method-tabs { display: flex; gap: 4px; margin-bottom: 12px; background: var(--surface); border-radius: var(--r-pill); padding: 3px; width: fit-content; }
+.note-sheet .n-method-tabs button { padding: 6px 12px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; color: var(--soft); display: flex; align-items: center; gap: 5px; }
+.note-sheet .n-method-tabs button.on { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.note-sheet input.n-txt { border-bottom: 1px solid var(--line); font-size: 15px; padding: 10px 0; margin-bottom: 14px; }
+.note-sheet input.n-txt:focus { border-bottom-color: var(--ink); }
+.note-sheet .actions { display: flex; gap: 8px; }
+.note-sheet .actions button { padding: 12px 18px; border-radius: var(--r-pill); font-size: 13.5px; font-weight: 600; }
+.note-sheet .actions .skip { border: 1px solid var(--line); color: var(--soft); }
+.note-sheet .actions .save { flex: 1; background: var(--ink); color: white; }
+
+/* profile */
+.cover { height: 92px; background: linear-gradient(135deg, #EFEDE9, #E3E6EC); }
+.profhead { padding: 0 22px; margin-top: -42px; position: relative; }
+.profname { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-top: 10px; }
+.profhandle { font-size: 13px; color: var(--soft); margin-top: 3px; }
+.profcounts { font-size: 12.5px; color: var(--soft); margin-top: 8px; line-height: 1.5; }
+.profcounts b { color: var(--ink); font-weight: 600; }
+
+.proftabs {
+  display: flex; gap: 24px; padding: 6px 22px 0;
+  border-bottom: 1px solid var(--line); margin-top: 20px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.proftabs::-webkit-scrollbar { display: none; }
+.proftab {
+  font-size: 15px; font-weight: 600; color: var(--soft);
+  padding: 10px 0; position: relative;
+  display: inline-flex; align-items: center; gap: 6px;
+  white-space: nowrap; cursor: pointer;
+}
+.proftab.on { color: var(--ink); }
+.proftab.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2.5px; background: var(--ink); border-radius: 2px; }
+.proftab .cnt { font-size: 11.5px; font-weight: 700; background: var(--surface); border-radius: var(--r-pill); padding: 2px 7px; color: var(--soft); }
+.proftab.on .cnt { background: var(--ink); color: #fff; }
+.proftab .vis { font-size: 10px; color: var(--soft); font-weight: 500; }
+.proftab.on .vis { color: var(--ink); }
+.proftab.add { color: var(--soft); font-weight: 500; display: inline-flex; align-items: center; gap: 5px; }
+.proftab.add .pro-badge { padding: 1px 6px; background: var(--ink); color: white; border-radius: var(--r-pill); font-size: 9px; letter-spacing: 0.4px; font-weight: 700; }
+
+.tab-toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 22px 12px; border-bottom: 1px solid var(--line); }
+.tab-toolbar .hint { font-size: 11.5px; color: var(--soft); flex: 1; line-height: 1.4; }
+.tab-toolbar button { padding: 5px 10px; border-radius: var(--r-pill); background: var(--surface); font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; color: var(--ink); }
+
+/* alerts */
+.alerts-head { padding: 8px 22px 4px; display: flex; justify-content: space-between; align-items: center; }
+.alerts-head h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+.alerts-head .filter { display: flex; gap: 4px; margin-top: 10px; padding: 0 22px 14px; overflow-x: auto; scrollbar-width: none; }
+.alerts-head .filter::-webkit-scrollbar { display: none; }
+.alerts-head .filter button { padding: 6px 12px; border-radius: var(--r-pill); background: var(--surface); font-size: 12.5px; font-weight: 600; color: var(--soft); white-space: nowrap; }
+.alerts-head .filter button.on { background: var(--ink); color: white; }
+
+.alert-section {
+  padding: 18px 22px 8px;
+  font-size: 11px; color: var(--soft);
+  letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700;
+}
+
+.alert-card {
+  margin: 0 18px 8px;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  display: flex; gap: 14px; align-items: flex-start;
+  cursor: pointer;
+}
+.alert-card:active { background: var(--surface); }
+.alert-card .thumb { width: 60px; height: 74px; border-radius: 8px; flex-shrink: 0; position: relative; }
+.alert-card .thumb .status-dot {
+  position: absolute; top: 4px; right: 4px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--amber); border: 2px solid white;
+}
+.alert-card .body { flex: 1; padding-top: 2px; }
+.alert-card .title { font-size: 13.5px; font-weight: 700; letter-spacing: -0.1px; line-height: 1.3; }
+.alert-card .msg { font-size: 12px; color: var(--soft); margin-top: 4px; line-height: 1.4; }
+.alert-card .cta {
+  margin-top: 10px; padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--ink); color: white;
+  font-size: 12px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+
+.alert-social {
+  display: flex; align-items: center; gap: 12px;
+}
+.alert-social .body { font-size: 13.5px; line-height: 1.4; }
+.alert-social .body b { font-weight: 700; }
+.alert-social .body .m { color: var(--soft); font-size: 11.5px; margin-top: 3px; display: block; }
+.alert-social .side-thumb { width: 44px; height: 54px; border-radius: 6px; flex-shrink: 0; }
+
+/* sheets */
+.sheetwrap { position: absolute; inset: 0; z-index: 60; display: none; }
+.sheetwrap.open { display: block; }
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.35); }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--bg); border-radius: 26px 26px 0 0; padding: 18px 22px 32px; max-height: 82%; overflow-y: auto; animation: slideup 0.26s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.grab { width: 38px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 14px; }
+.sheet-h { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.sheet-p { font-size: 12.5px; color: var(--soft); margin-bottom: 16px; line-height: 1.5; }
+.sheet-field { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+.sheet-field .lbl { font-size: 11px; color: var(--soft); font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 4px; }
+.sheet-field input { font-size: 15px; }
+.sheet-row-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border: 1px solid var(--line);
+  border-radius: 14px; margin-bottom: 10px;
+}
+.sheet-row-toggle .l { font-size: 14px; font-weight: 600; }
+.sheet-row-toggle .l .sub { font-size: 11.5px; color: var(--soft); font-weight: 500; margin-top: 2px; display: block; }
+.toggle-sw { width: 46px; height: 26px; background: var(--ink); border-radius: 100px; position: relative; cursor: pointer; flex-shrink: 0; }
+.toggle-sw::after { content: ''; position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; background: white; border-radius: 100px; transition: all 0.15s; }
+.toggle-sw.off { background: #D1D1D6; }
+.toggle-sw.off::after { right: auto; left: 3px; }
+.sheet-cta { display: flex; gap: 8px; margin-top: 16px; }
+.sheet-cta .delete { padding: 13px 18px; border-radius: var(--r-pill); border: 1px solid var(--line); font-size: 13.5px; font-weight: 600; color: #d9463c; }
+.sheet-cta .save { flex: 1; padding: 13px; background: var(--ink); color: white; border-radius: var(--r-pill); font-size: 14.5px; font-weight: 600; }
+.pro-block { margin-top: 16px; padding: 14px; background: var(--surface); border-radius: 12px; font-size: 12.5px; color: var(--ink); }
+.pro-block a { color: var(--ink); font-weight: 700; text-decoration: underline; margin-left: 4px; }
+
+.pro-sheet-body { text-align: center; padding: 8px 4px 0; }
+.pro-sheet-body .icn { width: 60px; height: 60px; border-radius: 100px; background: var(--ink); color: white; display: grid; place-items: center; font-size: 24px; margin: 0 auto 14px; }
+.pro-sheet-body h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; }
+.pro-sheet-body p { font-size: 13px; color: var(--soft); margin-top: 8px; line-height: 1.5; padding: 0 12px; }
+.pro-features { text-align: left; padding: 18px 0 0; }
+.pro-features .row { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+.pro-features .row:last-child { border: 0; }
+.pro-features .row .c { color: var(--soft); font-size: 15px; }
+
+.toast { position: absolute; left: 50%; bottom: 100px; transform: translateX(-50%) translateY(8px); background: var(--ink); color: #fff; font-size: 13.5px; font-weight: 500; border-radius: var(--r-pill); padding: 10px 18px; opacity: 0; pointer-events: none; transition: .25s; z-index: 80; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sicons">
+      <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7.5" width="3" height="3.5" rx="1"/><rect x="5" y="5" width="3" height="6" rx="1"/><rect x="10" y="2.5" width="3" height="8.5" rx="1"/><rect x="15" y="0" width="3" height="11" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 4.2C5 1.3 12 1.3 15.5 4.2"/><path d="M4 6.8C6.3 4.9 10.2 4.9 12.5 6.8"/><path d="M6.5 9.2c1-.9 2.5-.9 3.5 0"/></svg>
+      <span style="display:inline-flex;align-items:center"><span style="border:1.3px solid currentColor;border-radius:3px;width:22px;height:11px;display:inline-block;position:relative;opacity:.9"><span style="position:absolute;inset:1.5px;background:currentColor;border-radius:1px"></span></span></span>
+    </span>
+  </div>
+
+  <div class="app">
+
+    <!-- ============ FEED ============ -->
+    <section class="screen active" id="scr-feed">
+      <div class="scrollpage">
+        <div class="topbar">
+          <div class="wordmark">ari</div>
+          <div style="display:flex;gap:6px">
+            <button class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+            <button class="iconbtn" onclick="go('scr-alerts')" style="position:relative">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--mark);border:1.5px solid white"></span>
+            </button>
+          </div>
+        </div>
+        <div style="padding: 4px 20px 8px">
+          <p class="sec" style="font-size:13px">The pool — what people are keeping today.</p>
+        </div>
+        <div class="masonry">
+          <div class="tile" onclick="openMine()"><div class="ph g1" style="height:220px"></div><div class="cap">Moon jar<div class="h">Joseon · Nat'l Museum</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph g4" style="height:180px"></div><div class="cap">"Wearing a duvet"<div class="h">@studio.yumi</div></div></div>
+          <div class="tile" onclick="openMine()"><div class="ph g2" style="height:210px"></div><div class="cap">Brutalist stairs<div class="h">Hongdae</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g5','Moss brick wall','Seongbuk-dong')"><div class="ph g5" style="height:170px"></div><div class="cap">Moss brick wall<div class="h">Seongbuk-dong</div></div></div>
+          <div class="tile" onclick="openMine()"><div class="ph g7" style="height:190px"></div><div class="cap">Sign, Euljiro<div class="h">printing quarter</div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Coffee stain','morning')"><div class="ph g6" style="height:230px"></div><div class="cap">Coffee stain<div class="h">morning</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g8','Anni Albers · weaving','Tate catalogue')"><div class="ph g8" style="height:190px"></div><div class="cap">Anni Albers · weaving<div class="h">Tate catalogue</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g9','Kimsooja · Needle Woman','Leeum, 2020')"><div class="ph g9" style="height:210px"></div><div class="cap">Kimsooja · Needle Woman<div class="h">Leeum, 2020</div></div></div>
+        </div>
+      </div>
+      <div class="bottomnav">
+        <button class="on" title="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V11z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+        <button class="plus" title="Add" onclick="window.location.href='ari_studio_mobile.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></button>
+        <button title="Alerts" onclick="go('scr-alerts')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="badge"></span>
+        </button>
+        <button title="Me" onclick="go('scr-my-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke-linecap="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ============ PLOP DETAIL (mine) — marking hidden by default ============ -->
+    <section class="screen" id="scr-plop-mine">
+      <div class="scrollpage" style="padding-bottom:60px">
+        <div class="dethead">
+          <button class="backbtn" onclick="go('scr-feed')">←</button>
+          <button class="iconbtn" onclick="toast('Link copied')">↗</button>
+        </div>
+        <div class="plop-poster">
+          <span class="av">S</span>
+          <span class="n">Sungwon</span>
+          <span class="h">@sungwon</span>
+          <span class="sec" style="margin-left:auto;font-size:12px">2h · in Public</span>
+        </div>
+        <div class="detimg" id="mine-detimg">
+          <div class="ph g1" style="height:430px">
+            <div class="marks-pill" id="marks-pill" onclick="toggleMarks()">
+              <span class="dot"></span>
+              <span id="marks-pill-txt">Show 3 marks</span>
+            </div>
+            <svg class="marks-vis" viewBox="0 0 400 500">
+              <ellipse cx="150" cy="180" rx="80" ry="90" fill="none" stroke="#FF5A3C" stroke-width="4"/>
+              <line x1="270" y1="120" x2="330" y2="80" stroke="#FF5A3C" stroke-width="4" stroke-linecap="round"/>
+              <polygon points="330,80 322,92 318,74" fill="#FF5A3C"/>
+            </svg>
+            <div class="mark-dot" style="left:37.5%;top:36%">1</div>
+            <div class="mark-dot" style="left:82.5%;top:16%">2</div>
+            <div class="mark-dot" style="left:60%;top:75%">3</div>
+          </div>
+        </div>
+        <div class="detbody">
+          <div class="det-cap">Moon jar · Joseon · 17th c.</div>
+          <div class="det-sub">National Museum of Korea</div>
+        </div>
+
+        <div class="kept-by">
+          <div class="avs">
+            <span class="av sm g1"></span>
+            <span class="av sm g2"></span>
+            <span class="av sm g3"></span>
+          </div>
+          <div class="txt">Kept by <b>@hanuel</b>, <b>@jinyoung</b> and 12 more</div>
+        </div>
+
+        <div class="notes-strip">
+          <div class="lbl">🔒 Your notes · only you</div>
+          <div class="chips">
+            <span class="chip">materials</span>
+            <span class="chip">wood</span>
+            <span class="chip">everyday materials in art</span>
+            <span class="chip">ancestors</span>
+            <span class="chip">traditional fruits</span>
+          </div>
+        </div>
+
+        <div class="reco-section-h">
+          <span>Visually related</span>
+          <span class="why-badge">image similarity</span>
+        </div>
+        <div class="reco-slider">
+          <div class="reco-card"><div class="rc-img g6"></div><div class="rc-why"><b>Round form</b> and earthy tones</div></div>
+          <div class="reco-card"><div class="rc-img g8"></div><div class="rc-why"><b>Similar negative space</b></div></div>
+          <div class="reco-card"><div class="rc-img g3"></div><div class="rc-why"><b>Monochrome texture</b> matches</div></div>
+          <div class="reco-card"><div class="rc-img g7"></div><div class="rc-why"><b>Centred composition</b></div></div>
+          <div class="reco-card"><div class="rc-img g2"></div><div class="rc-why"><b>Warm neutral</b> palette</div></div>
+        </div>
+
+        <div class="reco-section-h">
+          <span>Threads from your notes</span>
+          <span class="why-badge">meaning</span>
+        </div>
+        <div class="reco-slider">
+          <div class="reco-card"><div class="rc-img g5"></div><div class="rc-why">You noted '<b>ancestors</b>' → another take on roots</div></div>
+          <div class="reco-card"><div class="rc-img g4"></div><div class="rc-why">Threads to '<b>traditional materials</b>'</div></div>
+          <div class="reco-card"><div class="rc-img g2"></div><div class="rc-why">'<b>everyday materials in art</b>' connection</div></div>
+          <div class="reco-card"><div class="rc-img g9"></div><div class="rc-why">'<b>wood · sculpture</b>' from your other notes</div></div>
+          <div class="reco-card"><div class="rc-img g8"></div><div class="rc-why">You often note '<b>grid · repetition</b>'</div></div>
+        </div>
+
+        <p class="micro" style="padding:20px 22px 4px;text-align:center;line-height:1.6">
+          Threads use your private notes — nobody else sees which words connected these.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ PLOP DETAIL (others) ============ -->
+    <section class="screen" id="scr-plop-others">
+      <div style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding-bottom:100px" id="others-scroll">
+        <div class="dethead">
+          <button class="backbtn" onclick="go('scr-feed')">←</button>
+          <button class="iconbtn" onclick="toast('Link copied')">↗</button>
+        </div>
+        <div class="plop-poster" onclick="go('scr-other-profile')">
+          <span class="av g1" id="op-av">H</span>
+          <span class="n" id="op-name">Hanuel</span>
+          <span class="h" id="op-handle">@hanuel</span>
+          <span class="sec" style="margin-left:auto;font-size:12px">5h · in Portfolio</span>
+        </div>
+        <div class="detimg">
+          <div class="ph" id="op-img" style="height:430px"></div>
+        </div>
+        <div class="detbody">
+          <div class="det-cap" id="op-cap">"Wearing a duvet"</div>
+          <div class="det-sub" id="op-sub">@studio.yumi · 2024</div>
+        </div>
+        <div class="kept-by">
+          <div class="avs"><span class="av sm g2"></span><span class="av sm g3"></span><span class="av sm g4"></span></div>
+          <div class="txt">Kept by <b>@jinyoung</b>, <b>@dahye</b> and 8 more</div>
+        </div>
+
+        <div class="reco-section-h">
+          <span>Visually related</span>
+          <span class="why-badge">image similarity</span>
+        </div>
+        <div class="reco-slider">
+          <div class="reco-card"><div class="rc-img g7"></div><div class="rc-why"><b>Translucent fabric</b></div></div>
+          <div class="reco-card"><div class="rc-img g2"></div><div class="rc-why"><b>Beige tones</b> match</div></div>
+          <div class="reco-card"><div class="rc-img g8"></div><div class="rc-why"><b>Draped textile</b></div></div>
+          <div class="reco-card"><div class="rc-img g5"></div><div class="rc-why"><b>Soft light</b></div></div>
+        </div>
+
+        <p class="micro" style="padding:24px 22px 4px;text-align:center;line-height:1.6">
+          Notes on someone else's plop stay private to them. When you keep this to your ari, you write your own.
+        </p>
+      </div>
+      <div class="keep-cta-bar">
+        <button onclick="go('scr-reblog')">✎ Keep to my ari</button>
+      </div>
+    </section>
+
+    <!-- ============ REBLOG ============ -->
+    <section class="screen" id="scr-reblog">
+      <div class="dethead">
+        <button class="backbtn" onclick="go('scr-plop-others')">←</button>
+        <span class="sec">Keeping to your ari</span>
+        <div style="width:38px"></div>
+      </div>
+      <div class="rev-body">
+        <div class="repost-attr">
+          <span class="av g1">H</span>
+          <div class="txt">Kept from <b>@hanuel</b>'s ari · they'll be notified</div>
+        </div>
+        <div class="rev-image-wrap">
+          <div class="rev-image g4" id="reblog-image">
+            <svg class="marks" id="reblog-marks-svg" viewBox="0 0 400 500"></svg>
+            <div id="reblog-marks-dots"></div>
+            <div class="mark-start-cue" id="reblog-mark-cue">
+              <span class="msg">Mark what caught your eye.</span>
+              <button onclick="startReblogMarking()">✎ Mark</button>
+            </div>
+            <div class="mark-toolbar" id="reblog-mark-toolbar" style="display:none">
+              <div class="group">
+                <button class="on" data-tool="tap">· Tap</button>
+                <button data-tool="circle">◯ Circle</button>
+                <button data-tool="arrow">↗ Arrow</button>
+              </div>
+              <div class="group">
+                <button class="util" onclick="undoReblogMark()">↶</button>
+                <button class="util" onclick="clearReblogMarks()">✕</button>
+                <div class="divider"></div>
+                <button class="done-btn" onclick="stopReblogMarking()">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-h"><span class="ic">👁</span> Caption <span class="private-note">— from the original</span></div>
+        <div class="field readonly">
+          <input value='"Wearing a duvet" · @studio.yumi · 2024' readonly>
+        </div>
+
+        <div class="field-h"><span class="ic">🔒</span> Your notes <span class="private-note">— private to you</span></div>
+        <div class="chip-input" id="reblog-notes-input" onclick="document.getElementById('reblog-notes-txt').focus()">
+          <span class="note-chip">textile <span class="x" onclick="event.target.parentElement.remove()">×</span></span>
+          <span class="note-chip">translucent <span class="x" onclick="event.target.parentElement.remove()">×</span></span>
+          <input placeholder="Type a word · enter to add" id="reblog-notes-txt" onkeydown="handleReblogNoteKey(event)">
+        </div>
+        <p class="micro" style="padding:6px 24px 12px">Neither @hanuel nor @studio.yumi see these.</p>
+
+        <div class="field-h">Save to</div>
+        <div class="saveto-list" id="reblog-saveto">
+          <button class="on" data-tab="Public"><span>Public</span><span class="vis">👁</span></button>
+          <button data-tab="Digs"><span>Digs</span><span class="vis">🔒</span></button>
+        </div>
+      </div>
+
+      <div class="rev-cta">
+        <button class="later" onclick="doReblogSave(false)">Save without notes</button>
+        <button class="save" onclick="doReblogSave(true)">Save</button>
+      </div>
+
+      <div class="note-sheet" id="reblog-note-sheet">
+        <div class="grab"></div>
+        <div class="h">
+          <span class="num" id="rn-num">1</span>
+          <span class="lbl">Mark note</span>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--soft)">private</span>
+        </div>
+        <div class="n-method-tabs">
+          <button class="on" data-nm="text">⌨ Text</button>
+          <button data-nm="voice">🎙 Voice</button>
+        </div>
+        <input class="n-txt" id="rn-input" placeholder="What caught your eye here?">
+        <div class="actions">
+          <button class="skip" onclick="closeReblogNote(false)">Skip</button>
+          <button class="save" onclick="closeReblogNote(true)">Save note</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ALERTS ============ -->
+    <section class="screen" id="scr-alerts">
+      <div class="scrollpage" style="padding-bottom:120px">
+        <div class="dethead">
+          <button class="backbtn" onclick="go('scr-feed')">←</button>
+          <span style="font-size:15px;font-weight:700">Alerts</span>
+          <button class="iconbtn" onclick="toast('Cleared')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0v13a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V7"/></svg></button>
+        </div>
+        <div class="alerts-head" style="padding:16px 22px 4px">
+          <div>
+            <h1>Your alerts</h1>
+            <p class="sec" style="font-size:13px;margin-top:4px">Plops waiting for you · people keeping your plops.</p>
+          </div>
+        </div>
+        <div class="alerts-head" style="padding:0;flex-direction:column;align-items:stretch">
+          <div class="filter">
+            <button class="on">All</button>
+            <button>Needs caption</button>
+            <button>Needs notes</button>
+            <button>Kept your plop</button>
+          </div>
+        </div>
+
+        <div class="alert-section">Waiting for you</div>
+        <div class="alert-card" onclick="toast('Would open in Studio review')">
+          <div class="thumb g4"><div class="status-dot"></div></div>
+          <div class="body">
+            <div class="title">Needs a caption</div>
+            <div class="msg">Captured yesterday · 6:44pm · from Photo library</div>
+            <button class="cta">✎ Add caption</button>
+          </div>
+        </div>
+        <div class="alert-card" onclick="toast('Would open in Studio review')">
+          <div class="thumb g6"><div class="status-dot"></div></div>
+          <div class="body">
+            <div class="title">Needs a caption</div>
+            <div class="msg">Camera · 2 days ago · 3:12pm</div>
+            <button class="cta">✎ Add caption</button>
+          </div>
+        </div>
+        <div class="alert-card" onclick="toast('Would open in Studio review')">
+          <div class="thumb g5"><div class="status-dot"></div></div>
+          <div class="body">
+            <div class="title">Moss on brick wall — needs notes</div>
+            <div class="msg">Seongbuk-dong · 5 days ago</div>
+            <button class="cta">✎ Add notes</button>
+          </div>
+        </div>
+        <div class="alert-card" onclick="toast('Would open in Studio review')">
+          <div class="thumb g7"><div class="status-dot"></div></div>
+          <div class="body">
+            <div class="title">Sign, Euljiro — needs notes</div>
+            <div class="msg">Printing quarter · a week ago</div>
+            <button class="cta">✎ Add notes</button>
+          </div>
+        </div>
+
+        <div class="alert-section">People</div>
+        <div class="alert-card alert-social" onclick="go('scr-plop-mine')">
+          <span class="av g1">H</span>
+          <div class="body">
+            <b>@hanuel</b> kept your <b>Moon jar</b>
+            <span class="m">1 hour ago</span>
+          </div>
+          <div class="side-thumb g1"></div>
+        </div>
+        <div class="alert-card alert-social" onclick="go('scr-plop-mine')">
+          <span class="av g2">J</span>
+          <div class="body">
+            <b>@jinyoung</b> kept your <b>Brutalist stairs</b>
+            <span class="m">Yesterday</span>
+          </div>
+          <div class="side-thumb g2"></div>
+        </div>
+        <div class="alert-card alert-social">
+          <span class="av g3">D</span>
+          <div class="body">
+            <b>@dahye</b> started following you
+            <span class="m">2 days ago</span>
+          </div>
+        </div>
+      </div>
+      <div class="bottomnav">
+        <button title="Home" onclick="go('scr-feed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V11z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+        <button class="plus" title="Add" onclick="window.location.href='ari_studio_mobile.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></button>
+        <button class="on" title="Alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Me" onclick="go('scr-my-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke-linecap="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ============ OTHER PROFILE ============ -->
+    <section class="screen" id="scr-other-profile">
+      <div class="scrollpage" style="padding-bottom:40px">
+        <div class="dethead" style="position:absolute;background:none;backdrop-filter:none;left:0;right:0">
+          <button class="backbtn" onclick="go('scr-plop-others')">←</button>
+          <button class="iconbtn" onclick="toast('Link copied')" style="background:var(--surface)">↗</button>
+        </div>
+        <div class="cover"></div>
+        <div class="profhead">
+          <span class="av lg g1">H</span>
+          <div class="profname">Hanuel</div>
+          <div class="profhandle">@hanuel · Seoul</div>
+          <div class="profcounts"><b>124</b> plops in public tabs · Following <b>Sungwon</b> and 47 others</div>
+          <div style="margin-top: 12px;">
+            <button class="pill outline" style="padding: 8px 16px; font-size: 13px;">Follow</button>
+          </div>
+        </div>
+        <div class="proftabs" id="other-tabs">
+          <div class="proftab on">Portfolio <span class="cnt">42</span></div>
+          <div class="proftab">Refs <span class="cnt">78</span></div>
+          <div class="proftab">Ceramics <span class="cnt">14</span></div>
+        </div>
+        <div class="tab-toolbar">
+          <div class="hint">You see the tabs Hanuel marked public. Private tabs stay hidden.</div>
+        </div>
+        <div class="masonry">
+          <div class="tile"><div class="ph g4" style="height:210px"></div><div class="cap">"Wearing a duvet"<div class="h">@studio.yumi</div></div></div>
+          <div class="tile"><div class="ph g7" style="height:180px"></div><div class="cap">Draped light</div></div>
+          <div class="tile"><div class="ph g2" style="height:200px"></div><div class="cap">Ceramic study</div></div>
+          <div class="tile"><div class="ph g8" style="height:230px"></div><div class="cap">Weaving detail</div></div>
+          <div class="tile"><div class="ph g5" style="height:170px"></div><div class="cap">Studio, morning</div></div>
+          <div class="tile"><div class="ph g6" style="height:210px"></div><div class="cap">Old brochures</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MY PROFILE ============ -->
+    <section class="screen" id="scr-my-profile">
+      <div class="scrollpage" style="padding-bottom:120px">
+        <div class="dethead" style="position:absolute;background:none;backdrop-filter:none;left:0;right:0">
+          <button class="backbtn" onclick="go('scr-feed')">←</button>
+          <button class="iconbtn" onclick="toast('Settings')" style="background:var(--surface)">⚙</button>
+        </div>
+        <div class="cover"></div>
+        <div class="profhead">
+          <span class="av lg">S</span>
+          <div class="profname">Sungwon</div>
+          <div class="profhandle">@sungwon · Seoul</div>
+          <div class="profcounts"><b id="tab-total">78</b> plops total across <b id="tab-count">2</b> tabs · Free plan</div>
+          <div style="margin-top: 12px;">
+            <button class="pill outline" style="padding: 8px 16px; font-size: 13px;" onclick="openEditProfileSheet()">Edit profile</button>
+          </div>
+        </div>
+        <div class="proftabs" id="my-tabs"></div>
+        <div class="tab-toolbar">
+          <div class="hint" id="tab-hint"></div>
+          <button onclick="openEditTabSheet()">✎ Edit tab</button>
+        </div>
+        <div class="masonry" id="my-plops">
+          <div class="tile" onclick="openMine()"><div class="ph g1" style="height:220px"></div><div class="cap">Moon jar<div class="h">Joseon</div></div></div>
+          <div class="tile"><div class="ph g3" style="height:190px"></div><div class="cap">Brutalist stairs</div></div>
+          <div class="tile"><div class="ph g5" style="height:170px"></div><div class="cap">Moss brick wall</div></div>
+          <div class="tile"><div class="ph g7" style="height:210px"></div><div class="cap">Sign, Euljiro</div></div>
+          <div class="tile"><div class="ph g2" style="height:200px"></div><div class="cap">Coffee stain</div></div>
+          <div class="tile"><div class="ph g8" style="height:230px"></div><div class="cap">Weaving detail</div></div>
+        </div>
+      </div>
+      <div class="bottomnav">
+        <button title="Home" onclick="go('scr-feed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V11z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+        <button class="plus" title="Add" onclick="window.location.href='ari_studio_mobile.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></button>
+        <button title="Alerts" onclick="go('scr-alerts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="on" title="Me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke-linecap="round"/></svg></button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- edit tab sheet -->
+  <div class="sheetwrap" id="tab-sheet">
+    <div class="scrim" onclick="closeTabSheet()"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <h2 class="sheet-h" id="tab-sheet-h">Edit tab</h2>
+      <p class="sheet-p" id="tab-sheet-p">Rename this tab and set whether the world can see it.</p>
+      <div class="sheet-field">
+        <div class="lbl">Tab name</div>
+        <input value="Public" id="tab-name-input">
+      </div>
+      <div class="sheet-row-toggle">
+        <div class="l">
+          <span id="tab-vis-lbl">👁 Public</span>
+          <div class="sub" id="tab-vis-sub">Anyone can see this tab on your profile.</div>
+        </div>
+        <div class="toggle-sw" id="tab-vis-toggle" onclick="toggleTabVis()"></div>
+      </div>
+      <div class="sheet-cta">
+        <button class="delete" id="tab-delete-btn" onclick="deleteTab()">Delete</button>
+        <button class="save" onclick="saveTab()">Save</button>
+      </div>
+      <div class="pro-block">Free plan: <b>2 tabs</b>. <a href="#" onclick="openProSheet(event)">Upgrade to PRO</a> for unlimited.</div>
+    </div>
+  </div>
+
+  <div class="sheetwrap" id="editprof-sheet">
+    <div class="scrim" onclick="closeEditProfileSheet()"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <h2 class="sheet-h">Edit profile</h2>
+      <p class="sheet-p">Change your name, handle, or avatar. Tabs are edited on the profile page.</p>
+      <div class="sheet-field"><div class="lbl">Display name</div><input value="Sungwon"></div>
+      <div class="sheet-field"><div class="lbl">Handle</div><input value="@sungwon"></div>
+      <div class="sheet-field"><div class="lbl">Location</div><input value="Seoul"></div>
+      <div class="sheet-cta"><button class="save" onclick="toast('Profile saved'); closeEditProfileSheet();">Save</button></div>
+    </div>
+  </div>
+
+  <div class="sheetwrap" id="pro-sheet">
+    <div class="scrim" onclick="closeProSheet()"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div class="pro-sheet-body">
+        <div class="icn">★</div>
+        <h3>Ari PRO</h3>
+        <p>Unlimited tabs · deeper thread searches · directly support the artists you keep.</p>
+        <div class="pro-features">
+          <div class="row"><span class="c">◯</span> Unlimited tabs (Free: 2)</div>
+          <div class="row"><span class="c">◯</span> Larger private capacity</div>
+          <div class="row"><span class="c">◯</span> Advanced threads across your notes</div>
+          <div class="row"><span class="c">◯</span> Support artists directly</div>
+        </div>
+      </div>
+      <div class="sheet-cta" style="margin-top:20px"><button class="save" onclick="toast('Coming soon'); closeProSheet();">Try PRO — free 14 days</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script>
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // reset marks visibility on plop detail
+  if (id === 'scr-plop-mine') {
+    document.getElementById('mine-detimg').classList.remove('show-marks');
+    document.getElementById('marks-pill').classList.remove('hiding');
+    document.getElementById('marks-pill-txt').textContent = 'Show 3 marks';
+  }
+}
+function openMine() { go('scr-plop-mine'); }
+function openOthers(user, grad, cap, sub) {
+  document.getElementById('op-name').textContent = user.charAt(0).toUpperCase() + user.slice(1);
+  document.getElementById('op-handle').textContent = '@' + user;
+  document.getElementById('op-av').textContent = user.charAt(0).toUpperCase();
+  document.getElementById('op-img').className = 'ph ' + grad;
+  document.getElementById('op-cap').innerHTML = cap;
+  document.getElementById('op-sub').textContent = sub;
+  document.getElementById('reblog-image').className = 'rev-image ' + grad;
+  document.getElementById('others-scroll').scrollTop = 0;
+  go('scr-plop-others');
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+// ============ marks reveal toggle ============
+function toggleMarks() {
+  const det = document.getElementById('mine-detimg');
+  const pill = document.getElementById('marks-pill');
+  const txt = document.getElementById('marks-pill-txt');
+  if (det.classList.contains('show-marks')) {
+    det.classList.remove('show-marks');
+    txt.textContent = 'Show 3 marks';
+  } else {
+    det.classList.add('show-marks');
+    txt.textContent = 'Hide marks';
+  }
+}
+
+// ============ my profile tabs state ============
+let myTabs = [
+  { name: 'Public', vis: 'public', count: 24 },
+  { name: 'Digs', vis: 'private', count: 54 }
+];
+let activeTabIdx = 0;
+
+function renderMyTabs() {
+  const el = document.getElementById('my-tabs');
+  el.innerHTML = myTabs.map((t, i) => `
+    <div class="proftab ${i === activeTabIdx ? 'on' : ''}" onclick="setActiveTab(${i})">
+      ${t.name} <span class="cnt">${t.count}</span><span class="vis">${t.vis === 'public' ? '👁' : '🔒'}</span>
+    </div>
+  `).join('') + `
+    <div class="proftab add" onclick="openNewTabSheet()">+ Tab <span class="pro-badge">PRO</span></div>
+  `;
+  document.getElementById('tab-count').textContent = myTabs.length;
+  document.getElementById('tab-total').textContent = myTabs.reduce((s, t) => s + t.count, 0);
+  const active = myTabs[activeTabIdx];
+  document.getElementById('tab-hint').innerHTML = `Tab <b style="color:var(--ink)">"${active.name}"</b> is ${active.vis === 'public' ? 'public (👁 anyone sees it)' : 'private (🔒 only you)'}.`;
+}
+function setActiveTab(i) { activeTabIdx = i; renderMyTabs(); }
+renderMyTabs();
+
+let editingTabIdx = -1;
+let sheetTabVis = 'public';
+
+function openEditTabSheet() {
+  editingTabIdx = activeTabIdx;
+  const t = myTabs[activeTabIdx];
+  document.getElementById('tab-sheet-h').textContent = 'Edit tab';
+  document.getElementById('tab-sheet-p').textContent = 'Rename this tab and set whether the world can see it.';
+  document.getElementById('tab-name-input').value = t.name;
+  sheetTabVis = t.vis;
+  updateTabVisUI();
+  document.getElementById('tab-delete-btn').style.display = 'block';
+  document.getElementById('tab-sheet').classList.add('open');
+}
+function openNewTabSheet() {
+  if (myTabs.length >= 2) { openProSheet(); return; }
+  editingTabIdx = -1;
+  document.getElementById('tab-sheet-h').textContent = 'New tab';
+  document.getElementById('tab-sheet-p').textContent = 'Name it and choose whether it\'s public.';
+  document.getElementById('tab-name-input').value = '';
+  sheetTabVis = 'public';
+  updateTabVisUI();
+  document.getElementById('tab-delete-btn').style.display = 'none';
+  document.getElementById('tab-sheet').classList.add('open');
+}
+function closeTabSheet() { document.getElementById('tab-sheet').classList.remove('open'); }
+function updateTabVisUI() {
+  const t = document.getElementById('tab-vis-toggle');
+  const lbl = document.getElementById('tab-vis-lbl');
+  const sub = document.getElementById('tab-vis-sub');
+  if (sheetTabVis === 'private') {
+    t.classList.add('off');
+    lbl.textContent = '🔒 Private';
+    sub.textContent = 'Only you can see this tab.';
+  } else {
+    t.classList.remove('off');
+    lbl.textContent = '👁 Public';
+    sub.textContent = 'Anyone can see this tab on your profile.';
+  }
+}
+function toggleTabVis() {
+  sheetTabVis = sheetTabVis === 'public' ? 'private' : 'public';
+  updateTabVisUI();
+}
+function saveTab() {
+  const name = document.getElementById('tab-name-input').value.trim() || 'Tab';
+  if (editingTabIdx >= 0) {
+    myTabs[editingTabIdx].name = name;
+    myTabs[editingTabIdx].vis = sheetTabVis;
+  } else {
+    myTabs.push({ name, vis: sheetTabVis, count: 0 });
+    activeTabIdx = myTabs.length - 1;
+  }
+  renderMyTabs();
+  toast('Tab saved · ' + name);
+  closeTabSheet();
+}
+function deleteTab() {
+  if (editingTabIdx < 0 || myTabs.length <= 1) { toast('Need at least 1 tab'); return; }
+  const name = myTabs[editingTabIdx].name;
+  myTabs.splice(editingTabIdx, 1);
+  activeTabIdx = 0;
+  renderMyTabs();
+  toast('Deleted · ' + name);
+  closeTabSheet();
+}
+function openEditProfileSheet() { document.getElementById('editprof-sheet').classList.add('open'); }
+function closeEditProfileSheet() { document.getElementById('editprof-sheet').classList.remove('open'); }
+function openProSheet(e) { if (e) e.preventDefault(); closeTabSheet(); document.getElementById('pro-sheet').classList.add('open'); }
+function closeProSheet() { document.getElementById('pro-sheet').classList.remove('open'); }
+
+document.querySelectorAll('#other-tabs .proftab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('#other-tabs .proftab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+  };
+});
+
+// ============ alerts filter ============
+document.querySelectorAll('#scr-alerts .filter button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#scr-alerts .filter button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+  };
+});
+
+// ============ reblog ============
+function handleReblogNoteKey(e) {
+  const inp = e.target;
+  if (e.key === 'Enter' && inp.value.trim()) {
+    e.preventDefault();
+    const chip = document.createElement('span');
+    chip.className = 'note-chip';
+    chip.innerHTML = inp.value.trim() + ' <span class="x" onclick="event.target.parentElement.remove()">×</span>';
+    inp.parentElement.insertBefore(chip, inp);
+    inp.value = '';
+  } else if (e.key === 'Backspace' && !inp.value) {
+    const chips = document.querySelectorAll('#reblog-notes-input .note-chip');
+    if (chips.length) chips[chips.length - 1].remove();
+  }
+}
+document.querySelectorAll('#reblog-saveto button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#reblog-saveto button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+  };
+});
+function doReblogSave(withNotes) {
+  const dest = document.querySelector('#reblog-saveto button.on').dataset.tab;
+  toast('Kept to ' + dest + (withNotes ? ' · notes saved' : ' · notes skipped'));
+  setTimeout(() => go('scr-feed'), 900);
+}
+
+// ============ reblog marking ============
+let reblogMarking = false;
+let reblogTool = 'tap';
+let reblogMarks = [];
+let reblogDrawing = false;
+let reblogDragStart = null;
+let reblogEditIdx = -1;
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const reblogImage = document.getElementById('reblog-image');
+const reblogMarksSvg = document.getElementById('reblog-marks-svg');
+const reblogMarksDots = document.getElementById('reblog-marks-dots');
+
+function startReblogMarking() {
+  reblogMarking = true;
+  document.getElementById('reblog-mark-cue').style.display = 'none';
+  document.getElementById('reblog-mark-toolbar').style.display = 'flex';
+  reblogImage.classList.add('marking');
+}
+function stopReblogMarking() {
+  reblogMarking = false;
+  document.getElementById('reblog-mark-cue').style.display = 'flex';
+  document.getElementById('reblog-mark-toolbar').style.display = 'none';
+  reblogImage.classList.remove('marking');
+}
+
+document.querySelectorAll('#reblog-mark-toolbar button[data-tool]').forEach(b => {
+  b.onclick = (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('#reblog-mark-toolbar button[data-tool]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    reblogTool = b.dataset.tool;
+  };
+});
+
+function reblogPos(e) {
+  const rect = reblogImage.getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+  return { x: (p.clientX - rect.left) / rect.width * 400, y: (p.clientY - rect.top) / rect.height * 500 };
+}
+function renderReblogMarks() {
+  reblogMarksSvg.innerHTML = '';
+  reblogMarksDots.innerHTML = '';
+  reblogMarks.forEach((m, i) => {
+    if (m.type === 'circle') {
+      const el = document.createElementNS(SVG_NS, 'ellipse');
+      const cx = (m.x1 + m.x2) / 2, cy = (m.y1 + m.y2) / 2;
+      el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+      el.setAttribute('rx', Math.max(Math.abs(m.x2 - m.x1) / 2, 24));
+      el.setAttribute('ry', Math.max(Math.abs(m.y2 - m.y1) / 2, 24));
+      el.setAttribute('fill', 'none'); el.setAttribute('stroke', '#FF5A3C'); el.setAttribute('stroke-width', '4');
+      reblogMarksSvg.appendChild(el);
+    } else if (m.type === 'arrow') {
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.setAttribute('x1', m.x1); line.setAttribute('y1', m.y1);
+      line.setAttribute('x2', m.x2); line.setAttribute('y2', m.y2);
+      line.setAttribute('stroke', '#FF5A3C'); line.setAttribute('stroke-width', '4'); line.setAttribute('stroke-linecap', 'round');
+      reblogMarksSvg.appendChild(line);
+      const dx = m.x2 - m.x1, dy = m.y2 - m.y1;
+      const ang = Math.atan2(dy, dx);
+      const h = 20;
+      const p = document.createElementNS(SVG_NS, 'polygon');
+      p.setAttribute('points', `${m.x2},${m.y2} ${m.x2 - h*Math.cos(ang-0.4)},${m.y2 - h*Math.sin(ang-0.4)} ${m.x2 - h*Math.cos(ang+0.4)},${m.y2 - h*Math.sin(ang+0.4)}`);
+      p.setAttribute('fill', '#FF5A3C');
+      reblogMarksSvg.appendChild(p);
+    }
+    const dot = document.createElement('div');
+    dot.className = 'mark-dot-editable';
+    dot.textContent = i + 1;
+    dot.style.left = (m.anchor.x / 400 * 100) + '%';
+    dot.style.top = (m.anchor.y / 500 * 100) + '%';
+    dot.onclick = (e) => { e.stopPropagation(); openReblogNote(i); };
+    reblogMarksDots.appendChild(dot);
+  });
+}
+
+function openReblogNote(idx) {
+  reblogEditIdx = idx;
+  document.getElementById('rn-num').textContent = idx + 1;
+  document.getElementById('rn-input').value = reblogMarks[idx].noteText || '';
+  document.getElementById('reblog-note-sheet').classList.add('on');
+  setTimeout(() => document.getElementById('rn-input').focus(), 100);
+}
+function closeReblogNote(save) {
+  if (save && reblogEditIdx >= 0) {
+    reblogMarks[reblogEditIdx].noteText = document.getElementById('rn-input').value.trim();
+  }
+  document.getElementById('reblog-note-sheet').classList.remove('on');
+  reblogEditIdx = -1;
+}
+document.querySelectorAll('#reblog-note-sheet .n-method-tabs button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#reblog-note-sheet .n-method-tabs button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+  };
+});
+
+function undoReblogMark() { reblogMarks.pop(); renderReblogMarks(); }
+function clearReblogMarks() { reblogMarks = []; renderReblogMarks(); }
+
+function rpDown(e) {
+  if (!reblogMarking) return;
+  if (e.target.closest('.mark-dot-editable')) return;
+  if (e.target.closest('.mark-toolbar')) return;
+  if (document.getElementById('reblog-note-sheet').classList.contains('on')) return;
+  e.preventDefault();
+  const p = reblogPos(e);
+  if (reblogTool === 'tap') {
+    reblogMarks.push({ type: 'dot', anchor: p, noteText: null });
+    renderReblogMarks();
+    openReblogNote(reblogMarks.length - 1);
+    return;
+  }
+  reblogDrawing = true;
+  reblogDragStart = p;
+}
+function rpMove(e) {
+  if (!reblogDrawing) return;
+  e.preventDefault();
+  const p = reblogPos(e);
+  reblogMarksSvg.querySelectorAll('.preview').forEach(el => el.remove());
+  if (reblogTool === 'circle') {
+    const el = document.createElementNS(SVG_NS, 'ellipse');
+    const cx = (reblogDragStart.x + p.x) / 2, cy = (reblogDragStart.y + p.y) / 2;
+    el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+    el.setAttribute('rx', Math.max(Math.abs(p.x - reblogDragStart.x) / 2, 24));
+    el.setAttribute('ry', Math.max(Math.abs(p.y - reblogDragStart.y) / 2, 24));
+    el.setAttribute('fill', 'none'); el.setAttribute('stroke', '#FF5A3C');
+    el.setAttribute('stroke-width', '4'); el.setAttribute('opacity', '0.65');
+    el.classList.add('preview');
+    reblogMarksSvg.appendChild(el);
+  } else if (reblogTool === 'arrow') {
+    const line = document.createElementNS(SVG_NS, 'line');
+    line.setAttribute('x1', reblogDragStart.x); line.setAttribute('y1', reblogDragStart.y);
+    line.setAttribute('x2', p.x); line.setAttribute('y2', p.y);
+    line.setAttribute('stroke', '#FF5A3C'); line.setAttribute('stroke-width', '4');
+    line.setAttribute('stroke-linecap', 'round'); line.setAttribute('opacity', '0.65');
+    line.classList.add('preview');
+    reblogMarksSvg.appendChild(line);
+  }
+}
+function rpUp(e) {
+  if (!reblogDrawing) return;
+  reblogDrawing = false;
+  reblogMarksSvg.querySelectorAll('.preview').forEach(el => el.remove());
+  const p = reblogPos(e);
+  const dx = Math.abs(p.x - reblogDragStart.x), dy = Math.abs(p.y - reblogDragStart.y);
+  if (dx < 8 && dy < 8) return;
+  let m = null;
+  if (reblogTool === 'circle') {
+    m = { type: 'circle', x1: reblogDragStart.x, y1: reblogDragStart.y, x2: p.x, y2: p.y, anchor: { x: (reblogDragStart.x + p.x) / 2, y: (reblogDragStart.y + p.y) / 2 }, noteText: null };
+  } else if (reblogTool === 'arrow') {
+    m = { type: 'arrow', x1: reblogDragStart.x, y1: reblogDragStart.y, x2: p.x, y2: p.y, anchor: { x: p.x, y: p.y }, noteText: null };
+  }
+  if (m) {
+    reblogMarks.push(m);
+    renderReblogMarks();
+    openReblogNote(reblogMarks.length - 1);
+  }
+}
+reblogImage.addEventListener('mousedown', rpDown);
+reblogImage.addEventListener('touchstart', rpDown, { passive: false });
+reblogImage.addEventListener('mousemove', rpMove);
+reblogImage.addEventListener('touchmove', rpMove, { passive: false });
+window.addEventListener('mouseup', rpUp);
+window.addEventListener('touchend', rpUp);
+</script>
+
+</body>
+</html>
