@@ -5,143 +5,510 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ari — Studio (mobile)</title>
 <style>
-/* ================================================================
-   ari shared design tokens + components — v1206.2
-   Copy this block verbatim into every prototype file.
-   ================================================================ */
-:root{
-  --bg:#FFFFFF;
-  --surface:#F2F2F2;
-  --ink:#111111;
-  --soft:#8A8A8E;
-  --line:#ECECEC;
-  --accent:linear-gradient(135deg,#A0A4F0,#E6A9C9);
-  --r-pill:999px;
-  --r-card:20px;
-  --r-img:6px;
-  --shadow-float:0 8px 30px rgba(0,0,0,.12);
-  --shadow-card:0 2px 14px rgba(0,0,0,.06);
+:root {
+  --bg: #FFFFFF;
+  --surface: #F2F2F2;
+  --ink: #111111;
+  --soft: #8A8A8E;
+  --line: #ECECEC;
+  --mark: #FF5A3C;
+  --r-pill: 999px;
+  --r-card: 20px;
+  --r-img: 6px;
+  --shadow-float: 0 8px 30px rgba(0,0,0,.12);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{
-  font-family:-apple-system,"SF Pro Text","Inter","Helvetica Neue",sans-serif;
-  background:#ECEAE6;color:var(--ink);
-  display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px 0;
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
+  background: #ECEAE6; color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px 0;
+  -webkit-font-smoothing: antialiased;
 }
-button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
-input,textarea{font:inherit;border:0;outline:none;background:transparent;color:var(--ink);width:100%}
-.phone{
-  width:390px;height:844px;background:var(--bg);border-radius:48px;
-  box-shadow:0 24px 80px rgba(0,0,0,.25),0 0 0 10px #111,0 0 0 12px #3a3a3a;
-  overflow:hidden;position:relative;flex:none;
-}
-@media (max-width:440px){
-  body{padding:0;background:var(--bg)}
-  .phone{width:100vw;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
-}
-.statusbar{height:48px;display:flex;align-items:center;justify-content:space-between;
-  padding:10px 28px 0;font-size:14px;font-weight:600;position:relative;z-index:30}
-.statusbar .sicons{display:flex;gap:5px;align-items:center;font-size:11px;letter-spacing:1px}
-.app{position:absolute;top:48px;left:0;right:0;bottom:0}
-.screen{position:absolute;inset:0;background:var(--bg);overflow-y:auto;overflow-x:hidden;
-  display:none;scrollbar-width:none;padding-bottom:110px}
-.screen::-webkit-scrollbar{display:none}
-.screen.active{display:block}
-.screen.active.centered{display:flex;flex-direction:column;justify-content:center;padding-bottom:0}
-.h1{font-size:24px;font-weight:700;letter-spacing:-.4px}
-.h2{font-size:17px;font-weight:700;letter-spacing:-.2px}
-.body{font-size:14.5px;line-height:1.55}
-.sec{font-size:13.5px;color:var(--soft)}
-.micro{font-size:12px;color:var(--soft)}
-.wordmark{font-size:23px;font-weight:800;letter-spacing:-.8px;line-height:1}
-.pill{border-radius:var(--r-pill);padding:11px 22px;font-size:14.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;justify-content:center}
-.pill.dark{background:var(--ink);color:#fff}
-.pill.dark:disabled{background:#C9C9CC;cursor:default}
-.pill.outline{border:1.5px solid var(--line);background:var(--bg)}
-.seg{display:inline-flex;background:var(--surface);border-radius:var(--r-pill);padding:3px}
-.seg button{border-radius:var(--r-pill);padding:7px 18px;font-size:13.5px;font-weight:600;color:var(--soft)}
-.seg button.on{background:var(--bg);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.kw{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-pill);background:var(--surface);padding:8px 14px;font-size:13.5px;font-weight:500;margin:0 6px 8px 0}
-.kw.on{background:var(--ink);color:#fff}
-.kw:active{opacity:.8}
-.ph{width:100%;border-radius:var(--r-img);display:block}
-.g0{background:linear-gradient(160deg,#1d3a5f,#6f93b4)}
-.g1{background:linear-gradient(165deg,#dfe8ee,#9fb6c6)}
-.g2{background:linear-gradient(150deg,#c9a36a,#eadfca)}
-.g3{background:linear-gradient(160deg,#2b2b2e,#6e6e74)}
-.g4{background:linear-gradient(155deg,#5c6b52,#cfd6c0)}
-.g5{background:linear-gradient(150deg,#a3543d,#e8c3b2)}
-.g6{background:linear-gradient(160deg,#10182b,#3c4f7a)}
-.g7{background:linear-gradient(160deg,#efece6,#cfc8ba)}
-.g8{background:linear-gradient(160deg,#7fa8a0,#dcebe6)}
-.g9{background:linear-gradient(160deg,#5a5a86,#cdaec6)}
-.av{width:30px;height:30px;border-radius:50%;background:var(--accent);flex:none;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
-.dethead{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:20}
-.backbtn{width:38px;height:38px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:16px}
-.excard{border:1px solid var(--line);border-radius:var(--r-card);padding:16px;box-shadow:var(--shadow-card)}
-.callout{border-radius:16px;background:var(--surface);padding:14px 16px;font-size:13.5px;line-height:1.5}
-.optcard{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:18px;padding:15px 16px;margin-top:10px}
-.optcard:active{background:var(--surface)}
-.sheetwrap{position:absolute;inset:0;z-index:60;display:none}
-.sheetwrap.open{display:block}
-.scrim{position:absolute;inset:0;background:rgba(0,0,0,.35)}
-.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 0 0;padding:20px 22px 34px;max-height:82%;overflow-y:auto}
-.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 16px}
-.toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(8px);background:var(--ink);color:#fff;
-  font-size:13.5px;font-weight:500;border-radius:var(--r-pill);padding:10px 18px;opacity:0;pointer-events:none;transition:.25s;z-index:80;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.searchpill{display:flex;align-items:center;gap:9px;background:var(--surface);border-radius:var(--r-pill);padding:12px 16px;font-size:14.5px;color:var(--soft)}
-.hr{height:1px;background:var(--line);margin:18px 0}
-.bottomnav{
-  position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
-  background:rgba(255,255,255,.95);backdrop-filter:blur(14px);
-  border-radius:var(--r-pill);box-shadow:var(--shadow-float);
-  display:flex;align-items:center;gap:4px;padding:8px 10px;z-index:40;
-}
-.bottomnav button{width:50px;height:44px;border-radius:var(--r-pill);display:grid;place-items:center}
-.bottomnav button.on{background:var(--ink);color:#fff}
-.masonry{columns:2;column-gap:8px;padding:12px 18px}
-.tile{break-inside:avoid;margin-bottom:8px;position:relative;border-radius:var(--r-img);overflow:hidden;width:100%}
+button { font: inherit; border: 0; background: none; cursor: pointer; color: inherit; }
+input, textarea { font: inherit; border: 0; outline: none; background: transparent; color: var(--ink); width: 100%; }
 
-.chiprow{display:flex;gap:8px;overflow-x:auto;padding:10px 18px 4px;scrollbar-width:none}
-.chiprow::-webkit-scrollbar{display:none}
-.chip{flex:none;border-radius:var(--r-pill);background:var(--surface);padding:8px 15px;font-size:13.5px;font-weight:500;color:var(--ink)}
-.chip.on{background:var(--ink);color:#fff}
+.phone {
+  width: 390px; height: 844px; background: var(--bg); border-radius: 48px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.25), 0 0 0 10px #111, 0 0 0 12px #3a3a3a;
+  overflow: hidden; position: relative; flex: none;
+}
+@media (max-width: 440px) {
+  body { padding: 0; background: var(--bg); }
+  .phone { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
+}
+.statusbar {
+  height: 48px; display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 28px 0; font-size: 14px; font-weight: 600;
+  position: relative; z-index: 30;
+}
+.statusbar .sicons { display: flex; gap: 5px; align-items: center; font-size: 11px; letter-spacing: 1px; }
+.statusbar.dark { color: white; }
 
-/* ---- studio-specific ---- */
-.steplabel{font-size:12px;color:var(--soft);font-weight:700;letter-spacing:.5px}
-.field{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:8px;font-size:14.5px}
-.field:focus-within{border-color:#bbb}
-.dropslot{border:1.5px dashed #D8D8DC;border-radius:18px;height:240px;display:grid;place-items:center;text-align:center;margin-top:12px;width:100%}
-.dropslot.filled{border:0;padding:0;height:auto;display:block}
-.scanwrap{position:relative;border-radius:18px;overflow:hidden;margin-top:12px}
-.scanline{position:absolute;left:0;right:0;height:3px;background:rgba(255,255,255,.85);box-shadow:0 0 18px rgba(255,255,255,.9);animation:scan 1.4s ease-in-out infinite}
-@keyframes scan{0%{top:6%}50%{top:92%}100%{top:6%}}
-.overlaymeta{position:absolute;left:0;right:0;bottom:0;padding:36px 16px 14px;color:#fff;
-  background:linear-gradient(180deg,transparent,rgba(0,0,0,.55));font-size:13.5px;font-weight:600;border-radius:0 0 18px 18px}
-.ripplebox{position:relative;height:190px;display:grid;place-items:center;margin-top:8px}
-.ripplebox .ring{position:absolute;width:60px;height:60px;border-radius:50%;border:2px solid #9DB6C9;opacity:0;animation:ripple 2.2s ease-out infinite}
-.ripplebox .ring:nth-child(2){animation-delay:.55s}
-.ripplebox .ring:nth-child(3){animation-delay:1.1s}
-@keyframes ripple{0%{transform:scale(.5);opacity:.8}100%{transform:scale(3.2);opacity:0}}
-.belongrow{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:flex-start}
-.belongrow .ic{width:34px;height:34px;border-radius:12px;background:var(--surface);display:grid;place-items:center;flex:none;font-size:15px}
-.libgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
-.libgrid button{height:96px;border-radius:10px;overflow:hidden}
-.upbar{height:6px;border-radius:3px;background:var(--surface);margin-top:12px;overflow:hidden}
-.upbar div{height:100%;width:0;background:var(--ink);border-radius:3px;transition:width .15s linear}
-.linkpreview{border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:14px;box-shadow:var(--shadow-card)}
-.suggestbox{border:1px solid var(--line);border-radius:14px;margin-top:6px;overflow:hidden}
-.suggestbox button{display:block;width:100%;text-align:left;padding:11px 13px;font-size:14px;border-bottom:1px solid var(--line)}
-.suggestbox button:last-child{border-bottom:0}
-.suggestbox button:active{background:var(--surface)}
+.app { position: absolute; top: 48px; left: 0; right: 0; bottom: 0; }
+.screen { position: absolute; inset: 0; background: var(--bg); display: none; overflow: hidden; }
+.screen.active { display: block; }
+.screen.dark { background: #0f0f0f; color: white; }
+
+.wordmark { font-size: 23px; font-weight: 800; letter-spacing: -.8px; line-height: 1; }
+.iconbtn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 17px; }
+.iconbtn:active { background: var(--surface); }
+.backbtn { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-size: 16px; }
+
+.pill { border-radius: var(--r-pill); padding: 11px 22px; font-size: 14.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 7px; justify-content: center; }
+.pill.dark { background: var(--ink); color: #fff; }
+.pill.outline { border: 1.5px solid var(--line); background: var(--bg); }
+
+.g0 { background: linear-gradient(160deg, #1d3a5f, #6f93b4); }
+.g1 { background: linear-gradient(165deg, #d8c9a8, #a58c66); }
+.g2 { background: linear-gradient(150deg, #c9a36a, #eadfca); }
+.g3 { background: linear-gradient(160deg, #2b2b2e, #6e6e74); }
+.g4 { background: linear-gradient(155deg, #5c6b52, #cfd6c0); }
+.g5 { background: linear-gradient(150deg, #a3543d, #e8c3b2); }
+.g6 { background: linear-gradient(160deg, #10182b, #3c4f7a); }
+.g7 { background: linear-gradient(160deg, #efece6, #cfc8ba); }
+.g8 { background: linear-gradient(160deg, #7fa8a0, #dcebe6); }
+.g9 { background: linear-gradient(160deg, #5a5a86, #cdaec6); }
+
+/* ============ LANDING (no home, just entry choices) ============ */
+.landing-head { padding: 40px 26px 12px; }
+.landing-head h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.6px; }
+.landing-head p { color: var(--soft); font-size: 14px; margin-top: 8px; line-height: 1.55; }
+
+.landing-choices { padding: 24px 20px 0; display: flex; flex-direction: column; gap: 12px; }
+.landing-card {
+  width: 100%;
+  padding: 20px 22px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  display: flex; align-items: center; gap: 18px;
+  text-align: left;
+}
+.landing-card:active { background: var(--surface); }
+.landing-card .icn {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--surface); display: grid; place-items: center;
+  font-size: 24px; flex-shrink: 0;
+}
+.landing-card .txt { flex: 1; }
+.landing-card .t1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+.landing-card .t2 { font-size: 13px; color: var(--soft); margin-top: 4px; line-height: 1.4; }
+.landing-card .chev { color: var(--soft); font-size: 22px; }
+
+.landing-foot { padding: 24px 26px; font-size: 12px; color: var(--soft); line-height: 1.5; }
+.landing-foot b { color: var(--ink); font-weight: 600; }
+
+/* bottom nav */
+.bottomnav {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  background: rgba(255,255,255,.95); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill); box-shadow: var(--shadow-float);
+  display: flex; align-items: center; gap: 4px; padding: 8px 10px; z-index: 40;
+}
+.bottomnav button {
+  width: 50px; height: 44px; border-radius: var(--r-pill);
+  display: grid; place-items: center;
+  color: var(--soft);
+}
+.bottomnav button.on { background: var(--ink); color: #fff; }
+.bottomnav .plus { background: var(--ink); color: white; }
+.bottomnav svg { width: 22px; height: 22px; }
+
+/* ============ CAMERA ============ */
+.cam-head { padding: 8px 20px 0; display: flex; justify-content: space-between; align-items: center; }
+.cam-head .backbtn { background: rgba(255,255,255,0.14); color: white; }
+.viewfinder {
+  margin: 12px 16px 0;
+  aspect-ratio: 3/4;
+  border-radius: 12px;
+  position: relative; overflow: hidden;
+  background: radial-gradient(120% 90% at 30% 25%, #efe5d1 0%, #cbbfa5 55%, #7a6e58 100%);
+}
+.viewfinder .grid-lines {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to right, rgba(255,255,255,0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.15) 1px, transparent 1px);
+  background-size: 33.33% 33.33%;
+  opacity: 0.5;
+}
+.cam-controls {
+  position: absolute; bottom: 40px; left: 0; right: 0;
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cam-controls .roll { width: 44px; height: 44px; border-radius: 8px; background: linear-gradient(160deg, #dfe8ee, #9fb6c6); border: 2px solid rgba(255,255,255,0.4); }
+.shutter { width: 74px; height: 74px; border-radius: 100px; background: white; border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 0 0 3px rgba(0,0,0,0.4); transition: transform 0.08s; }
+.shutter:active { transform: scale(0.94); }
+.cam-controls .flip { width: 44px; height: 44px; border-radius: 100px; background: rgba(255,255,255,0.14); color: white; display: grid; place-items: center; font-size: 18px; }
+.cam-hint { position: absolute; bottom: 140px; left: 0; right: 0; text-align: center; font-size: 11.5px; color: rgba(255,255,255,0.65); }
+.flash-overlay { position: absolute; inset: 0; background: white; opacity: 0; pointer-events: none; z-index: 25; }
+.flash-overlay.on { animation: flash 0.28s ease-out; }
+@keyframes flash { 0% { opacity: 0; } 30% { opacity: 0.85; } 100% { opacity: 0; } }
+
+/* ============ LIBRARY ============ */
+.lib-head { padding: 10px 20px 12px; display: flex; align-items: center; justify-content: space-between; }
+.lib-head h2 { font-size: 17px; font-weight: 700; }
+.lib-tabs { padding: 0 20px 12px; display: flex; gap: 8px; }
+.lib-tab { padding: 5px 12px; border-radius: var(--r-pill); background: var(--surface); font-size: 12.5px; font-weight: 600; color: var(--soft); }
+.lib-tab.on { background: var(--ink); color: white; }
+.lib-grid-wrap { position: absolute; top: 100px; left: 0; right: 0; bottom: 82px; overflow-y: auto; scrollbar-width: none; }
+.lib-grid-wrap::-webkit-scrollbar { display: none; }
+.lib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 0 3px 20px; }
+.lib-cell { aspect-ratio: 1/1; position: relative; cursor: pointer; overflow: hidden; }
+.lib-cell .sel {
+  position: absolute; top: 6px; right: 6px;
+  width: 22px; height: 22px; border-radius: 100px;
+  background: rgba(0,0,0,0.35); border: 1.5px solid white;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 11px; font-weight: 700;
+}
+.lib-cell.selected .sel { background: var(--ink); }
+.lib-cell.selected::after { content: ''; position: absolute; inset: 0; border: 3px solid var(--ink); }
+
+.lib-cta {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 14px 20px 22px;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  display: flex; gap: 10px;
+}
+.lib-cta .cancel { padding: 13px 22px; border-radius: var(--r-pill); border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 14.5px; font-weight: 600; }
+.lib-cta .next { flex: 1; padding: 13px 22px; border-radius: var(--r-pill); border: 0; background: var(--ink); color: white; font-size: 14.5px; font-weight: 600; }
+.lib-cta .next.disabled { background: #C7C7CC; }
+
+/* ============ URL PASTE ============ */
+.url-head { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+.url-body { padding: 20px 22px; }
+.url-body h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 8px; }
+.url-body p { color: var(--soft); font-size: 13.5px; line-height: 1.5; margin-bottom: 22px; }
+.url-input-field {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: white;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+}
+.url-input-field .ic { font-size: 18px; color: var(--soft); }
+.url-input-field input { flex: 1; font-family: -apple-system, "SF Mono", monospace; font-size: 13.5px; }
+.url-paste-btn {
+  width: 100%; padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: transparent;
+  font-size: 13px; color: var(--soft); font-weight: 600;
+  margin-bottom: 24px;
+}
+.url-og-preview {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: white;
+  margin-bottom: 20px;
+  display: none;
+}
+.url-og-preview.on { display: block; animation: slideIn 0.3s ease-out; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.url-og-preview .og-img { width: 100%; aspect-ratio: 4/3; }
+.url-og-preview .og-body { padding: 14px 16px; }
+.url-og-preview .og-t { font-size: 15px; font-weight: 700; line-height: 1.35; margin-bottom: 4px; letter-spacing: -0.1px; }
+.url-og-preview .og-s { font-size: 12px; color: var(--soft); }
+.url-cta {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 12px 20px 22px;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+}
+.url-cta button {
+  width: 100%; padding: 13px;
+  border: 0; background: var(--ink); color: white;
+  border-radius: var(--r-pill);
+  font-size: 14.5px; font-weight: 600;
+}
+.url-cta button.disabled { background: #C7C7CC; }
+
+/* ============ REVIEW ============ */
+.rev-head {
+  padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0;
+  background: rgba(255,255,255,.94); backdrop-filter: blur(12px); z-index: 20;
+}
+.rev-progress {
+  padding: 0 18px 12px; display: flex; gap: 6px; align-items: center;
+}
+.rev-progress .d { width: 24px; height: 3px; background: var(--line); border-radius: 100px; }
+.rev-progress .d.on { background: var(--ink); }
+.rev-progress .d.done { background: rgba(0,0,0,0.3); }
+.rev-progress .lbl { font-size: 11.5px; color: var(--soft); margin-left: auto; font-weight: 600; }
+
+.rev-image-wrap { padding: 0 18px 14px; }
+.rev-image {
+  width: 100%; aspect-ratio: 4/5;
+  border-radius: 14px; overflow: hidden;
+  position: relative;
+  touch-action: pan-y;
+}
+.rev-image svg.marks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.rev-image.marking { touch-action: none; cursor: crosshair; }
+.mark-dot {
+  position: absolute; width: 22px; height: 22px;
+  border-radius: 100px; background: var(--mark);
+  color: white; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transform: translate(-50%,-50%);
+  pointer-events: auto; cursor: pointer;
+}
+.mark-start-cue {
+  position: absolute; bottom: 12px; left: 12px; right: 12px;
+  padding: 10px 14px;
+  background: rgba(15,15,15,0.72); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill);
+  color: white; font-size: 12.5px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+}
+.mark-start-cue .msg { color: rgba(255,255,255,0.9); }
+.mark-start-cue button { padding: 6px 14px; border-radius: var(--r-pill); background: white; color: var(--ink); font-size: 12.5px; font-weight: 700; }
+.mark-toolbar {
+  position: absolute; bottom: 12px; left: 12px; right: 12px;
+  padding: 4px 5px;
+  background: rgba(15,15,15,0.78); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill);
+  display: flex; align-items: center; gap: 2px;
+  justify-content: space-between;
+}
+.mark-toolbar .group { display: flex; align-items: center; gap: 2px; }
+.mark-toolbar button {
+  height: 32px;
+  padding: 0 10px; border-radius: var(--r-pill);
+  color: rgba(255,255,255,0.85);
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 3px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.mark-toolbar button.on { background: var(--mark); color: white; }
+.mark-toolbar .util { color: rgba(255,255,255,0.7); font-weight: 600; padding: 0 8px; font-size: 15px; }
+.mark-toolbar .divider { width: 1px; height: 18px; background: rgba(255,255,255,0.2); margin: 0 3px; flex-shrink: 0; }
+.mark-toolbar .done-btn { background: white; color: var(--ink); font-weight: 700; padding: 0 12px; font-size: 12.5px; }
+
+.rev-body { position: absolute; top: 60px; bottom: 0; left: 0; right: 0; overflow-y: auto; scrollbar-width: none; padding-bottom: 120px; }
+.rev-body::-webkit-scrollbar { display: none; }
+
+.field-h {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 20px;
+  font-size: 11px; color: var(--soft);
+  letter-spacing: 0.6px; text-transform: uppercase;
+  font-weight: 700; margin: 14px 0 8px;
+}
+.field-h .private-note { color: var(--soft); font-weight: 500; font-size: 10.5px; letter-spacing: 0; text-transform: none; margin-left: 4px; }
+.field-h .ic { font-size: 12px; }
+
+.method-tabs {
+  margin: 0 20px 10px;
+  display: flex; gap: 4px;
+  background: var(--surface); border-radius: var(--r-pill); padding: 3px;
+  width: fit-content;
+}
+.method-tabs button {
+  padding: 6px 12px; border-radius: var(--r-pill);
+  font-size: 12px; font-weight: 600; color: var(--soft);
+  display: flex; align-items: center; gap: 5px;
+}
+.method-tabs button.on { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+.method-state { display: none; margin: 0 20px; }
+.method-state.on { display: block; }
+
+.field-group {
+  background: white; border: 1px solid var(--line); border-radius: 14px;
+  overflow: hidden;
+}
+.field-row {
+  display: flex; align-items: baseline;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.field-row:last-child { border-bottom: 0; }
+.field-row .lbl { width: 70px; flex-shrink: 0; font-size: 12px; color: var(--soft); font-weight: 600; }
+.field-row input { font-size: 15px; }
+
+.ocr-hint {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: rgba(255,90,60,0.08);
+  color: var(--mark);
+  border-radius: 12px;
+  font-size: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.ocr-hint .ic { font-size: 14px; }
+
+/* label photo state */
+.label-photo-state {
+  padding: 20px 16px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  text-align: center;
+}
+.label-photo-state.empty .attach-btn {
+  padding: 14px 20px; border-radius: var(--r-pill);
+  background: var(--ink); color: white;
+  font-size: 14px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 10px auto 0;
+}
+.label-photo-state.empty .attach-btn:active { opacity: 0.85; }
+.label-photo-state.empty .lp-icn { font-size: 32px; margin-bottom: 4px; }
+.label-photo-state.empty .lp-hint { font-size: 12px; color: var(--soft); margin-top: 8px; line-height: 1.5; }
+.label-photo-state.processing {
+  background: white; border-style: solid;
+}
+.label-photo-state.processing .lp-thumb {
+  width: 68px; height: 88px; border-radius: 10px;
+  margin: 0 auto 12px;
+  background: linear-gradient(160deg, #10182b, #3c4f7a);
+}
+.label-photo-state.processing .lp-status { font-size: 14px; font-weight: 700; }
+.label-photo-state.processing .lp-sub { font-size: 12px; color: var(--soft); margin-top: 4px; }
+.label-photo-state.processing .spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid var(--line); border-top-color: var(--ink);
+  border-radius: 100px;
+  animation: spin 0.9s linear infinite;
+  margin-right: 6px; vertical-align: -2px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* voice input */
+.voice-input { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--surface); border-radius: 14px; }
+.voice-input .btn { width: 48px; height: 48px; border-radius: 100px; background: var(--mark); color: white; display: grid; place-items: center; font-size: 20px; flex-shrink: 0; user-select: none; }
+.voice-input.rec .btn { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.voice-input .center { flex: 1; }
+.voice-input .status { font-size: 13.5px; font-weight: 600; }
+.voice-input .status b { color: var(--mark); }
+.voice-input .wave { display: flex; align-items: center; gap: 2px; height: 20px; margin-top: 4px; }
+.voice-input .wave span { width: 2px; background: var(--soft); border-radius: 100px; opacity: 0.4; }
+.voice-input.rec .wave span { background: var(--mark); animation: wv 0.9s ease-in-out infinite; opacity: 1; }
+.voice-input .wave span:nth-child(1) { height: 8px; }
+.voice-input .wave span:nth-child(2) { height: 14px; animation-delay: 0.05s !important; }
+.voice-input .wave span:nth-child(3) { height: 10px; animation-delay: 0.1s !important; }
+.voice-input .wave span:nth-child(4) { height: 18px; animation-delay: 0.15s !important; }
+.voice-input .wave span:nth-child(5) { height: 12px; animation-delay: 0.2s !important; }
+.voice-input .wave span:nth-child(6) { height: 16px; animation-delay: 0.25s !important; }
+.voice-input .wave span:nth-child(7) { height: 8px; animation-delay: 0.3s !important; }
+.voice-input .wave span:nth-child(8) { height: 14px; animation-delay: 0.35s !important; }
+.voice-input .wave span:nth-child(9) { height: 10px; animation-delay: 0.4s !important; }
+@keyframes wv { 0%, 100% { transform: scaleY(0.6); } 50% { transform: scaleY(1.3); } }
+
+.chip-input {
+  margin: 0 20px;
+  border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 12px 10px;
+  background: white;
+  display: flex; flex-wrap: wrap; gap: 6px;
+  min-height: 62px; align-items: flex-start;
+}
+.chip-input:focus-within { border-color: #bbb; }
+.note-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--ink); color: white;
+  padding: 5px 10px 5px 12px;
+  border-radius: var(--r-pill);
+  font-size: 13px; font-weight: 500;
+}
+.note-chip .x { opacity: 0.55; margin-left: 3px; cursor: pointer; font-size: 15px; line-height: 1; }
+.chip-input input { flex: 1; min-width: 100px; font-size: 14.5px; padding: 4px 0; }
+
+.notes-hint { padding: 8px 24px 0; font-size: 11.5px; color: var(--soft); }
+
+.saveto-list { padding: 0 20px; display: flex; gap: 6px; flex-wrap: wrap; }
+.saveto-list button {
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line);
+  background: white;
+  font-size: 13px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 5px;
+  color: var(--ink);
+}
+.saveto-list button.on { background: var(--ink); color: white; border-color: var(--ink); }
+.saveto-list button .vis { font-size: 10px; opacity: 0.7; }
+
+.rev-cta {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 12px 20px 22px;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  display: flex; gap: 8px; z-index: 15;
+}
+.rev-cta .later { padding: 13px 18px; border-radius: var(--r-pill); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--soft); }
+.rev-cta .save { flex: 1; padding: 13px 18px; border-radius: var(--r-pill); border: 0; background: var(--ink); color: white; font-size: 14.5px; font-weight: 600; }
+
+/* mark note bottom sheet */
+.note-sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--bg);
+  border-radius: 26px 26px 0 0;
+  padding: 14px 22px 26px;
+  z-index: 50;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.14);
+  display: none;
+  animation: slideup 0.26s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes slideup { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.note-sheet.on { display: block; }
+.note-sheet .grab { width: 38px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 14px; }
+.note-sheet .h { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 12px; }
+.note-sheet .h .num { width: 24px; height: 24px; background: var(--mark); color: white; border-radius: 100px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.note-sheet .h .lbl { font-weight: 700; font-size: 14px; }
+.note-sheet .n-method-tabs { display: flex; gap: 4px; margin-bottom: 12px; background: var(--surface); border-radius: var(--r-pill); padding: 3px; width: fit-content; }
+.note-sheet .n-method-tabs button { padding: 6px 12px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; color: var(--soft); display: flex; align-items: center; gap: 5px; }
+.note-sheet .n-method-tabs button.on { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.note-sheet .n-txt-wrap, .note-sheet .n-voice-wrap { display: none; }
+.note-sheet .n-txt-wrap.on, .note-sheet .n-voice-wrap.on { display: block; }
+.note-sheet input.n-txt { border-bottom: 1px solid var(--line); font-size: 15px; padding: 10px 0; margin-bottom: 14px; }
+.note-sheet input.n-txt:focus { border-bottom-color: var(--ink); }
+.note-sheet .n-voice-wrap { padding-bottom: 4px; }
+.note-sheet .actions { display: flex; gap: 8px; }
+.note-sheet .actions button { padding: 12px 18px; border-radius: var(--r-pill); font-size: 13.5px; font-weight: 600; }
+.note-sheet .actions .skip { border: 1px solid var(--line); color: var(--soft); }
+.note-sheet .actions .save { flex: 1; background: var(--ink); color: white; }
+
+/* saved */
+.center-scr { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; gap: 16px; }
+.check-lg { width: 76px; height: 76px; border-radius: 100px; background: var(--ink); color: white; display: grid; place-items: center; font-size: 32px; }
+.center-scr .msg { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; line-height: 1.3; }
+.center-scr .sub { font-size: 13.5px; color: var(--soft); line-height: 1.5; max-width: 280px; }
+.center-scr .actions { display: flex; gap: 10px; margin-top: 12px; }
+.center-scr .bell { display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: var(--surface); border-radius: var(--r-pill); font-size: 13px; }
+
+/* toast */
+.toast {
+  position: absolute; left: 50%; bottom: 100px;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--ink); color: #fff;
+  font-size: 13.5px; font-weight: 500;
+  border-radius: var(--r-pill);
+  padding: 10px 18px;
+  opacity: 0; pointer-events: none;
+  transition: .25s; z-index: 80; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
 <div class="phone">
-  <div class="statusbar">
+
+  <div class="statusbar" id="statusbar">
     <span>9:41</span>
     <span class="sicons">
       <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7.5" width="3" height="3.5" rx="1"/><rect x="5" y="5" width="3" height="6" rx="1"/><rect x="10" y="2.5" width="3" height="8.5" rx="1"/><rect x="15" y="0" width="3" height="11" rx="1"/></svg>
@@ -149,682 +516,733 @@ input,textarea{font:inherit;border:0;outline:none;background:transparent;color:v
       <span style="display:inline-flex;align-items:center"><span style="border:1.3px solid currentColor;border-radius:3px;width:22px;height:11px;display:inline-block;position:relative;opacity:.9"><span style="position:absolute;inset:1.5px;background:currentColor;border-radius:1px"></span></span></span>
     </span>
   </div>
+
   <div class="app">
 
-    <!-- ============ S1 · UPLOAD ============ -->
-    <section class="screen active" id="sec-upload">
-
-      <!-- home: the session starts here, from the + on the nav -->
-      <div id="u-home">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0">
-          <span class="wordmark">ari</span>
-          <div style="display:flex;gap:22px;font-size:16.5px;font-weight:600">
-            <span style="border-bottom:2.5px solid var(--ink);padding-bottom:4px">Plops</span>
-            <span style="color:var(--soft)">Ponds</span>
+    <!-- ============ LANDING (Studio entry choices, no home) ============ -->
+    <section class="screen active" id="scr-landing">
+      <div style="padding: 8px 20px 4px; display: flex; align-items: center; justify-content: space-between;">
+        <div class="wordmark">ari</div>
+        <span style="font-size:12.5px;color:var(--soft);font-weight:600">Studio</span>
+      </div>
+      <div class="landing-head">
+        <h1>Drop what caught you.</h1>
+        <p>Snap, pick, or paste — the image saves right away. Captions and notes come next.</p>
+      </div>
+      <div class="landing-choices">
+        <button class="landing-card" onclick="go('scr-camera')">
+          <div class="icn">📷</div>
+          <div class="txt">
+            <div class="t1">Camera</div>
+            <div class="t2">Snap what's in front of you.</div>
           </div>
-          <span style="width:38px"></span>
-        </div>
-        <div class="chiprow">
-          <button class="chip on" onclick="homeChip(this)">All</button>
-          <button class="chip" onclick="homeChip(this)">Recent</button>
-          <button class="chip" onclick="homeChip(this)">⚡ Spark</button>
-          <button class="chip" onclick="homeChip(this)">Following</button>
-        </div>
-        <div class="masonry" id="u-homefeed"></div>
-      </div>
-
-      <!-- shared step header -->
-      <div class="dethead" id="u-tophead" style="display:none;position:absolute;left:0;right:0;top:0;z-index:25">
-        <button class="backbtn" onclick="stepBack()">←</button>
-        <span class="h2" id="u-stephead">Drop a plop</span>
-        <span style="width:38px"></span>
-      </div>
-
-      <!-- step 1 · image -->
-      <div id="u-step1" style="padding:24px 24px 30px;display:none">
-        <p class="steplabel">1 · YOUR IMAGE</p>
-        <button class="dropslot" id="u-imgslot" onclick="openSheet('lib-sheet')">
-          <div><p style="font-weight:700">Add your photo</p>
-          <p class="sec" style="margin-top:4px">tap to choose from your library</p></div>
+          <span class="chev">›</span>
         </button>
-        <div class="upbar" id="u-upbar" style="display:none"><div id="u-upfill"></div></div>
-        <p class="micro" id="u-upstatus" style="margin-top:8px"></p>
-        <div id="u-views" style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap"></div>
-        <button class="pill dark" id="u-next1" style="width:100%;margin-top:16px" disabled onclick="setStep('u-step2')">Next</button>
+        <button class="landing-card" onclick="go('scr-library')">
+          <div class="icn">🖼</div>
+          <div class="txt">
+            <div class="t1">Photo library</div>
+            <div class="t2">Pick from your camera roll · each becomes its own plop.</div>
+          </div>
+          <span class="chev">›</span>
+        </button>
+        <button class="landing-card" onclick="go('scr-url')">
+          <div class="icn">🔗</div>
+          <div class="txt">
+            <div class="t1">Paste a URL</div>
+            <div class="t2">From instagram, a website, anywhere on the web.</div>
+          </div>
+          <span class="chev">›</span>
+        </button>
+      </div>
+      <div class="landing-foot">
+        <b>Missing captions or notes?</b> Check <b>Alerts</b> in Discover · you'll see everything waiting for you.
       </div>
 
-      <!-- link branch · paste -->
-      <div id="u-l1" style="padding:24px 24px 30px;display:none">
-        <p class="steplabel">1 · ADD BY LINK</p>
-        <p class="sec" style="margin-top:6px">Paste a source URL. We keep a thumbnail and link back to the original.</p>
-        <div class="field"><input id="u-linkurl" placeholder="https://…"></div>
-        <button class="pill dark" style="width:100%;margin-top:14px" onclick="fetchLink()">Fetch the page</button>
-        <p class="micro" style="margin-top:10px">We read the page once and keep a static preview: a thumbnail and the text around it.</p>
+      <div class="bottomnav">
+        <button title="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V11z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+        <button class="plus on" title="Add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></button>
+        <button title="Alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke-linecap="round"/></svg></button>
       </div>
+    </section>
 
-      <!-- link branch · reading -->
-      <div id="u-l2" style="padding:18px 24px;display:none">
-        <p class="steplabel">READING THE PAGE</p>
-        <div class="scanwrap"><div class="ph g7" style="height:220px;border-radius:18px"></div><div class="scanline"></div></div>
-        <p class="h2" style="text-align:center;margin-top:18px">Reading the page…</p>
-        <p class="sec" style="text-align:center;margin-top:6px" id="u-l2url"></p>
+    <!-- ============ CAMERA ============ -->
+    <section class="screen dark" id="scr-camera">
+      <div class="cam-head">
+        <button class="backbtn" onclick="go('scr-landing')">←</button>
+        <span style="color:rgba(255,255,255,0.65);font-size:13px">Camera</span>
+        <div style="width:38px"></div>
       </div>
+      <div class="viewfinder">
+        <div class="grid-lines"></div>
+      </div>
+      <div class="cam-hint">Shutter saves the image · caption & notes later</div>
+      <div class="cam-controls">
+        <div class="roll"></div>
+        <button class="shutter" onclick="captureShot()"></button>
+        <button class="flip">⟲</button>
+      </div>
+      <div class="flash-overlay" id="flash"></div>
+    </section>
 
-      <!-- link branch · extracted preview -->
-      <div id="u-l3" style="padding:18px 24px;display:none">
-        <p class="steplabel">FOUND ON THE PAGE</p>
-        <div class="linkpreview">
-          <div class="ph g0" style="height:190px;border-radius:0" id="u-l3img"></div>
-          <div style="padding:13px 15px">
-            <p style="font-weight:700;font-size:15px" id="u-l3title">Thumbnail + source found</p>
-            <p class="sec" style="margin-top:3px" id="u-l3src">we keep a thumbnail and link back to the original</p>
+    <!-- ============ LIBRARY ============ -->
+    <section class="screen" id="scr-library">
+      <div class="lib-head">
+        <button style="color:var(--ink);font-size:14.5px;font-weight:600" onclick="go('scr-landing')">Cancel</button>
+        <h2>Photos</h2>
+        <div style="width:60px"></div>
+      </div>
+      <div class="lib-tabs">
+        <div class="lib-tab on">All</div>
+        <div class="lib-tab">Favorites</div>
+        <div class="lib-tab">Screenshots</div>
+      </div>
+      <div class="lib-grid-wrap">
+        <div class="lib-grid" id="lib-grid">
+          <div class="lib-cell g1" data-idx="0"><div class="sel"></div></div>
+          <div class="lib-cell g2" data-idx="1"><div class="sel"></div></div>
+          <div class="lib-cell g3" data-idx="2"><div class="sel"></div></div>
+          <div class="lib-cell g4" data-idx="3"><div class="sel"></div></div>
+          <div class="lib-cell g5" data-idx="4"><div class="sel"></div></div>
+          <div class="lib-cell g6" data-idx="5"><div class="sel"></div></div>
+          <div class="lib-cell g7" data-idx="6"><div class="sel"></div></div>
+          <div class="lib-cell g8" data-idx="7"><div class="sel"></div></div>
+          <div class="lib-cell g9" data-idx="8"><div class="sel"></div></div>
+          <div class="lib-cell g0" data-idx="9"><div class="sel"></div></div>
+          <div class="lib-cell g1" data-idx="10"><div class="sel"></div></div>
+          <div class="lib-cell g2" data-idx="11"><div class="sel"></div></div>
+          <div class="lib-cell g5" data-idx="12"><div class="sel"></div></div>
+          <div class="lib-cell g7" data-idx="13"><div class="sel"></div></div>
+          <div class="lib-cell g8" data-idx="14"><div class="sel"></div></div>
+        </div>
+      </div>
+      <div class="lib-cta">
+        <button class="cancel" onclick="go('scr-landing')">Cancel</button>
+        <button class="next disabled" id="lib-next" onclick="libNext()"><span id="lib-next-txt">Select photos</span></button>
+      </div>
+    </section>
+
+    <!-- ============ URL PASTE ============ -->
+    <section class="screen" id="scr-url">
+      <div class="url-head">
+        <button class="backbtn" onclick="go('scr-landing')">←</button>
+        <span style="font-size:13px;color:var(--soft)">Paste a URL</span>
+        <div style="width:38px"></div>
+      </div>
+      <div class="url-body">
+        <h2>Where did you find it?</h2>
+        <p>An instagram post, a portfolio site, a museum page. I'll pull the image and caption automatically.</p>
+        <div class="url-input-field">
+          <span class="ic">🔗</span>
+          <input placeholder="https://..." id="url-input">
+        </div>
+        <button class="url-paste-btn" onclick="pasteUrl()">📋 Paste from clipboard (demo)</button>
+
+        <div class="url-og-preview" id="url-og">
+          <div class="og-img g4"></div>
+          <div class="og-body">
+            <div class="og-t">"Wearing a duvet"</div>
+            <div class="og-s">@studio.yumi · instagram.com</div>
           </div>
         </div>
-        <p class="sec" style="margin-top:12px">✓ We pulled a thumbnail and the source link. Add your caption next.</p>
-        <button class="pill dark" style="width:100%;margin-top:14px" onclick="fromLink()">Looks right, continue</button>
-        <button class="micro" style="font-weight:600;margin-top:12px;display:block;margin-left:auto;margin-right:auto" onclick="setStep('u-l1')">Try a different link</button>
+      </div>
+      <div class="url-cta">
+        <button class="disabled" id="url-continue" onclick="urlContinue()">Continue</button>
+      </div>
+    </section>
+
+    <!-- ============ REVIEW ============ -->
+    <section class="screen" id="scr-review">
+      <div class="rev-head">
+        <button class="backbtn" onclick="reviewBack()">←</button>
+        <span style="font-size:13px;color:var(--soft)" id="rev-title">Review</span>
+        <button class="iconbtn" onclick="toast('More options')">⋯</button>
+      </div>
+      <div class="rev-progress" id="rev-progress" style="display:none">
+        <span class="d on"></span>
+        <span class="d"></span>
+        <span class="d"></span>
+        <span class="lbl">1 of 3</span>
       </div>
 
-      <!-- step 2 · caption + title + creator + link -->
-      <div id="u-step2" style="padding:24px 24px 30px;display:none">
-        <p class="steplabel">2 · CAPTION</p>
-        <p class="sec" style="margin-top:6px">What moved you? If it's someone's work, credit them.</p>
+      <div class="rev-body" id="rev-scroll">
 
-        <div id="u-capmode-wrap">
-          <div style="display:flex;justify-content:center;margin-top:14px">
-            <div class="seg">
-              <button id="u-cap-write" class="on" onclick="setCapMode('write')">Write</button>
-              <button id="u-cap-scan" onclick="setCapMode('scan')">Scan a label</button>
+        <div class="rev-image-wrap">
+          <div class="rev-image g1" id="rev-image">
+            <svg class="marks" id="marks-svg" viewBox="0 0 400 500"></svg>
+            <div id="marks-dots"></div>
+            <div class="mark-start-cue" id="mark-cue">
+              <span class="msg">Mark what stopped you.</span>
+              <button onclick="startMarking()">✎ Mark</button>
+            </div>
+            <div class="mark-toolbar" id="mark-toolbar" style="display:none">
+              <div class="group">
+                <button class="on" data-tool="tap">· Tap</button>
+                <button data-tool="circle">◯ Circle</button>
+                <button data-tool="arrow">↗ Arrow</button>
+              </div>
+              <div class="group">
+                <button class="util" onclick="undoMark()" title="Undo">↶</button>
+                <button class="util" onclick="clearMarks()" title="Clear">✕</button>
+                <div class="divider"></div>
+                <button class="done-btn" onclick="stopMarking()">Done</button>
+              </div>
             </div>
           </div>
-          <div id="u-scanlabelbox" style="display:none">
-            <button class="dropslot" id="u-labelslot" style="height:130px;margin-top:14px" onclick="scanLabel()">
-              <div><p style="font-weight:700">Add a photo of the label</p>
-              <p class="sec" style="margin-top:4px">wall text or handout — we read the title and creator</p></div>
-            </button>
+        </div>
+
+        <div class="field-h"><span class="ic">👁</span> Caption <span class="private-note">— shown on ari</span></div>
+        <div class="method-tabs" id="cap-method-tabs">
+          <button class="on" data-method="type">⌨ Type</button>
+          <button data-method="photo">📷 Label photo</button>
+          <button data-method="voice">🎙 Voice</button>
+        </div>
+
+        <div class="method-state on" data-state="type">
+          <div class="field-group" id="type-fields">
+            <div class="field-row"><div class="lbl">Title</div><input placeholder="e.g. Moon jar" id="fld-title"></div>
+            <div class="field-row"><div class="lbl">Artist</div><input placeholder="e.g. Unknown, Joseon" id="fld-artist"></div>
+            <div class="field-row"><div class="lbl">Year</div><input placeholder="e.g. 17th c." id="fld-year"></div>
+            <div class="field-row"><div class="lbl">Source</div><input placeholder="e.g. National Museum of Korea" id="fld-source"></div>
+          </div>
+          <div class="ocr-hint" id="ocr-hint" style="display:none">
+            <span class="ic">✎</span>
+            <span>I read this from your label photo. Edit if anything's wrong.</span>
           </div>
         </div>
 
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 6px">Caption</p>
-        <div class="field"><textarea id="u-caption" rows="3" placeholder="The way the white forms curl against the brick…">Met this at the back of the show — the room hummed.</textarea></div>
+        <div class="method-state" data-state="photo">
+          <div class="label-photo-state empty" id="lp-empty">
+            <div class="lp-icn">📷</div>
+            <button class="attach-btn" onclick="attachLabelPhoto()">Take label photo</button>
+            <div class="lp-hint">I'll read the label text and fill Title, Artist, Year, Source automatically.<br>You can fix anything I get wrong.</div>
+          </div>
+          <div class="label-photo-state processing" id="lp-processing" style="display:none">
+            <div class="lp-thumb"></div>
+            <div class="lp-status"><span class="spinner"></span>Reading label…</div>
+            <div class="lp-sub">Extracting title, artist, year, source.</div>
+          </div>
+        </div>
 
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Title <span class="sec" style="font-weight:400">(optional)</span></p>
-        <div class="field"><input id="u-title" placeholder="e.g. Tide Ledger IV" value="Tide Ledger IV"></div>
+        <div class="method-state" data-state="voice">
+          <div class="voice-input" id="cap-voice">
+            <div class="btn" id="cap-voice-btn">🎙</div>
+            <div class="center">
+              <div class="status"><span id="cap-voice-status">Hold to record</span><span id="cap-voice-time"></span></div>
+              <div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
 
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Creator / source <span class="sec" style="font-weight:400">(if it's someone's work)</span></p>
-        <div class="field"><input id="u-creator" placeholder="e.g. Ava Teetsel" autocomplete="off" oninput="renderCreatorSuggest()" value="Haneul Jung"></div>
-        <div id="u-creator-suggest"></div>
-        <p class="micro" id="u-creator-hint" style="margin-top:8px"></p>
+        <div class="field-h" style="margin-top:22px"><span class="ic">🔒</span> Notes <span class="private-note">— only you can see these</span></div>
+        <div class="chip-input" id="notes-input" onclick="focusNotes()">
+          <input placeholder="Type a word or phrase · enter to add" id="notes-txt" onkeydown="handleNoteKey(event)">
+        </div>
+        <p class="notes-hint">Words or short phrases. Bundled behind the scenes to find connected works. Never shared.</p>
 
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 6px">Original link <span class="sec" style="font-weight:400">(optional)</span></p>
-        <div class="field"><input id="u-link" placeholder="https://…" value="haneuljung.kr/tide"></div>
+        <div class="field-h" style="margin-top:22px">Save to</div>
+        <div class="saveto-list" id="saveto-list">
+          <button class="on" data-tab="Public"><span>Public</span><span class="vis">👁</span></button>
+          <button data-tab="Digs"><span>Digs</span><span class="vis">🔒</span></button>
+        </div>
+        <p class="notes-hint">Choose one of your tabs. Add more tabs from your profile (PRO).</p>
 
-        <button class="pill dark" style="width:100%;margin-top:20px" onclick="toRefine()">Next</button>
       </div>
 
-      <!-- step 3 · finding keywords -->
-      <div id="u-step3" style="padding:60px 24px;display:none;text-align:center">
-        <div class="ripplebox"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span style="font-size:26px;color:var(--soft)">〜</span></div>
-        <p class="h2" style="margin-top:8px">Finding keywords…</p>
-        <p class="sec" style="margin-top:6px">reading your caption</p>
+      <div class="rev-cta">
+        <button class="later" onclick="saveImageOnly()">Image only</button>
+        <button class="save" onclick="saveAll()">Save</button>
       </div>
 
-      <!-- step 4 · refine -->
-      <div id="u-step4" style="padding:24px 24px 30px;display:none">
-        <p class="steplabel">REFINE</p>
-        <div style="position:relative;margin-top:12px">
-          <div class="ph g0" id="u-r-img" style="height:260px;border-radius:18px"></div>
-          <div class="overlaymeta" id="u-r-meta"></div>
+      <div class="note-sheet" id="mark-note-sheet">
+        <div class="grab"></div>
+        <div class="h">
+          <span class="num" id="mn-num">1</span>
+          <span class="lbl">Mark note</span>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--soft)">private</span>
         </div>
-        <p class="sec" style="margin-top:10px" id="u-conf"></p>
-        <p class="micro" id="u-r-title" style="margin-top:6px"></p>
-        <p class="body" id="u-r-caption" style="margin-top:6px;color:#333"></p>
-
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 8px">Keywords — tap to toggle</p>
-        <div id="u-kws"></div>
-        <div class="field" style="display:flex;gap:8px;align-items:center">
-          <input id="u-newkw" placeholder="+ add a keyword">
-          <button style="font-weight:700" onclick="addKeyword()">Add</button>
+        <div class="n-method-tabs">
+          <button class="on" data-nm="text">⌨ Text</button>
+          <button data-nm="voice">🎙 Voice</button>
         </div>
-        <p class="micro" style="margin-top:6px">Each keyword becomes a pond. Your creator credit becomes a pond too.</p>
-
-        <button class="pill dark" style="width:100%;margin-top:22px;font-size:16px" onclick="doPlop()">PLOP — drop it</button>
+        <div class="n-txt-wrap on" data-nw="text">
+          <input class="n-txt" id="mn-input" placeholder="What caught your eye here?">
+        </div>
+        <div class="n-voice-wrap" data-nw="voice">
+          <div class="voice-input" id="mn-voice">
+            <div class="btn" id="mn-voice-btn">🎙</div>
+            <div class="center">
+              <div class="status"><span id="mn-voice-status">Hold to record</span><span id="mn-voice-time"></span></div>
+              <div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="skip" onclick="closeMarkNote(false)">Skip</button>
+          <button class="save" onclick="closeMarkNote(true)">Save note</button>
+        </div>
       </div>
 
-      <!-- step 5 · done -->
-      <div id="u-step5" style="padding:40px 24px 18px;display:none;text-align:center">
-        <div class="ripplebox">
-          <span class="ring"></span><span class="ring"></span><span class="ring"></span>
-          <span style="font-size:30px;font-weight:800;letter-spacing:-.5px">PLOP</span>
-        </div>
-        <p class="body" style="color:#333" id="u-done-line"></p>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px">
-          <button class="pill outline" onclick="setView('organize')">✎ Edit this plop</button>
-          <button class="micro" style="font-weight:600;margin-top:6px" onclick="resetUpload()">Drop another</button>
+    </section>
+
+    <!-- ============ SAVED ============ -->
+    <section class="screen" id="scr-saved">
+      <div class="center-scr">
+        <div class="check-lg">✓</div>
+        <div class="msg" id="saved-msg">Saved.</div>
+        <div class="sub" id="saved-sub">Caption is on ari · notes stay with you.</div>
+        <div class="bell" id="saved-bell" style="display:none">🔔 I'll ping you in Alerts</div>
+        <div class="actions">
+          <button class="pill outline" onclick="go('scr-landing')">Add another</button>
+          <button class="pill dark" onclick="toast('Would go to Discover in the real app')">Done</button>
         </div>
       </div>
     </section>
 
-    <!-- ============ S2 · ORGANIZE ============ -->
-    <section class="screen" id="sec-organize">
-      <div class="dethead">
-        <button class="backbtn" onclick="setView('upload')">←</button>
-        <span class="h2">Edit plop</span>
-        <span style="width:38px"></span>
-      </div>
-      <div style="padding:8px 24px" id="org-edit">
-        <div class="ph g0" id="org-img" style="height:150px;border-radius:18px"></div>
-        <p class="sec" style="font-weight:600;color:var(--ink);margin-top:14px">Caption</p>
-        <div class="field"><textarea id="org-caption" rows="3" placeholder="What moved you…" oninput="UPL.caption=this.value"></textarea></div>
-        <p class="sec" style="font-weight:600;color:var(--ink);margin-top:12px">Title <span class="sec" style="font-weight:400">(optional)</span></p>
-        <div class="field"><input id="org-title" placeholder="e.g. Tide Ledger IV" oninput="UPL.title=this.value"></div>
-        <p class="sec" style="font-weight:600;color:var(--ink);margin-top:12px">Creator / source <span class="sec" style="font-weight:400">(if it's someone's work)</span></p>
-        <div class="field"><input id="org-creator-in" placeholder="e.g. Haneul Jung" oninput="UPL.creator=this.value"></div>
-        <p class="sec" style="font-weight:600;color:var(--ink);margin-top:16px">Keywords → ponds <span class="micro" style="font-weight:500">tap ✕ to pull it out</span></p>
-        <div style="margin-top:8px" id="org-kws"></div>
-        <button class="pill outline" style="width:100%;margin-top:12px" onclick="openSheet('org-sheet')">+ Add keywords</button>
-        <button class="pill dark" style="width:100%;margin-top:10px" onclick="finishOrganize()">Done</button>
-      </div>
-      <div style="padding:8px 24px;display:none;text-align:center" id="org-done">
-        <p class="wordmark" style="font-size:30px;margin-top:40px">ari</p>
-        <h2 class="h1" style="margin-top:18px">Saved.</h2>
-        <p class="body" style="color:#333;margin-top:12px" id="org-doneline"></p>
-        <button class="pill dark" style="width:100%;margin-top:26px" onclick="setView('plopview')">View the plop →</button>
-        <button class="micro" style="font-weight:600;margin-top:14px" onclick="resetUpload()">Drop another</button>
-      </div>
-    </section>
-
-    <!-- ============ PLOP VIEW (where you land after organising) ============ -->
-    <section class="screen" id="sec-plopview">
-      <div class="dethead">
-        <button class="backbtn" onclick="setView('upload');setStep('u-home')">←</button>
-        <button class="micro" style="font-weight:600" onclick="toast('Opens in the Discover prototype')">Open in Pool ↗</button>
-      </div>
-      <div style="padding:8px 18px">
-        <div class="ph g0" id="pv-img" style="height:380px;border-radius:14px"></div>
-        <div id="pv-views" style="display:none;gap:6px;align-items:center;margin-top:8px"></div>
-      </div>
-      <div style="padding:8px 24px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="av">YOU</span><span style="font-weight:700;font-size:15.5px">You · just now</span>
-        </div>
-        <p class="body" style="margin-top:14px;font-weight:700;display:none" id="pv-title"></p>
-        <p class="body" style="margin-top:6px" id="pv-caption"></p>
-        <p class="sec" style="margin-top:8px" id="pv-credit"></p>
-        <button class="micro" id="pv-source" style="font-weight:600;margin-top:6px;display:none;color:var(--ink)" onclick="toast('Opens the original source')">View source ↗</button>
-        <div style="margin-top:14px"><span class="kw" style="background:var(--surface);font-weight:500;color:var(--soft)">Quiet for now — ⚡ sparks when saves cluster.</span></div>
-        <p class="sec" style="font-weight:600;color:var(--ink);margin:18px 0 8px">Keywords — its ponds</p>
-        <div id="pv-kws"></div>
-        <p class="micro" style="margin-top:16px">On your profile · save counts are owner-only.</p>
-      </div>
-    </section>
-
-
-  </div><!-- /app -->
-
-  <!-- floating bottom nav (home view only) -->
-  <div class="bottomnav" id="bnav">
-    <button class="on" onclick="setView('upload');setStep('u-home')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3z"/></svg>
-    </button>
-    <button onclick="toast('Search lives in the Discover prototype')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-    </button>
-    <button onclick="openSheet('create-sheet')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-    </button>
-    <button onclick="toast('Profile lives in the Discover prototype')"><span class="av" style="width:30px;height:30px"></span></button>
-  </div>
-
-  <!-- create sheet: the session starts here -->
-  <div class="sheetwrap" id="create-sheet">
-    <div class="scrim" onclick="closeSheet('create-sheet')"></div>
-    <div class="sheet">
-      <div class="grab"></div>
-      <p class="micro" style="font-weight:700">DROP A PLOP</p>
-      <h2 class="h1" style="margin-top:6px">What inspired you?</h2>
-      <button class="optcard" onclick="closeSheet('create-sheet');setStep('u-step1')">
-        <b>Your photo</b>
-        <p class="sec" style="margin-top:3px">a photo you took</p>
-      </button>
-      <button class="optcard" onclick="closeSheet('create-sheet');setStep('u-l1')">
-        <b>Add by link</b>
-        <p class="sec" style="margin-top:3px">paste a source URL</p>
-      </button>
-      <p class="micro" style="margin-top:14px">Post your own photos. For someone else's work, credit the creator and add the source link.</p>
-    </div>
-  </div>
-
-  <!-- photo library sheet -->
-  <div class="sheetwrap" id="lib-sheet">
-    <div class="scrim" onclick="closeSheet('lib-sheet')"></div>
-    <div class="sheet">
-      <div class="grab"></div>
-      <p class="h2">Your library</p>
-      <p class="micro" style="margin-top:4px">Recents</p>
-      <div class="libgrid" id="lib-grid"></div>
-      <div id="lib-actions"></div>
-    </div>
-  </div>
-
-  <!-- organize sheet -->
-  <div class="sheetwrap" id="org-sheet">
-    <div class="scrim" onclick="closeSheet('org-sheet')"></div>
-    <div class="sheet">
-      <div class="grab"></div>
-      <p class="h2">Add keywords</p>
-      <p class="micro" style="margin-top:6px">Keywords are public tags that spread to search &amp; ponds.</p>
-      <p class="sec" style="font-weight:600;color:var(--ink);margin:16px 0 8px">Keywords — tap to toggle</p>
-      <div id="orgsheet-kws"></div>
-      <div class="field" style="display:flex;gap:8px;align-items:center">
-        <input id="orgsheet-newkw" placeholder="+ add a keyword">
-        <button style="font-weight:700" onclick="addKeywordFromSheet()">Add</button>
-      </div>
-      <button class="pill dark" style="width:100%;margin-top:16px" onclick="closeSheet('org-sheet');renderOrganize();toast('Ponds updated')">Done</button>
-    </div>
   </div>
 
   <div class="toast" id="toast"></div>
+
 </div>
 
 <script>
-/* ================= state ================= */
-var DEMO={caption:"Met this at the back of the show — the room hummed.",title:"Tide Ledger IV",creator:"Haneul Jung",link:"haneuljung.kr/tide"};
-var UPL={
-  img:"g0", imgs:[], cover:0, uploaded:false, viaLink:false,
-  caption:DEMO.caption, title:DEMO.title, creator:DEMO.creator, link:DEMO.link,
-  kws:{"pattern":true,"wood":true,"weathered":true,"symmetry":false}
-};
-var CREATORS=[
-  {name:"Ava Teetsel",n:12},
-  {name:"Antonio Lopez",n:31},
-  {name:"Satish Gujral",n:8},
-  {name:"Haneul Jung",n:5}
-];
-var HOMEFEED=[["g1",170],["g5",200],["g8",150],["g3",210],["g7",160],["g4",190],["g9",150],["g2",180]];
-
-/* ================= views & steps ================= */
-var STEPS=["u-home","u-step1","u-step2","u-step3","u-step4","u-step5","u-l1","u-l2","u-l3"];
-function setView(v){
-  ["upload","organize","plopview"].forEach(function(s){
-    document.getElementById("sec-"+s).classList.toggle("active",s===v);
-  });
-  if(v==="organize")renderOrganize();
-  if(v==="plopview")renderPlopView();
-  updateNav();
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('statusbar').classList.toggle('dark', id === 'scr-camera');
 }
-var curStep="u-home";
-var HEADSTEPS={"u-step1":"Drop a plop","u-l1":"Add by link","u-l3":"Add by link","u-step2":"Caption","u-step4":"Refine"};
-var BACKMAP={"u-step1":"u-home","u-l1":"u-home","u-l2":"u-l1","u-l3":"u-l1","u-step3":"u-step2","u-step4":"u-step2","u-step5":"u-step4"};
-function setStep(id){
-  curStep=id;
-  STEPS.forEach(function(s){
-    var el=document.getElementById(s);
-    if(el)el.style.display=s===id?"block":"none";
-  });
-  var th=document.getElementById("u-tophead");
-  if(HEADSTEPS[id]){th.style.display="flex";document.getElementById("u-stephead").textContent=HEADSTEPS[id];}
-  else th.style.display="none";
-  if(id==="u-step2"){
-    var wrap=document.getElementById("u-capmode-wrap");
-    if(wrap){wrap.style.display=UPL.viaLink?"none":"block";if(!UPL.viaLink)setCapMode("write");}
-  }
-  var su=document.getElementById("sec-upload");
-  su.classList.toggle("centered",id!=="u-home");
-  su.scrollTop=0;
-  updateNav();
-}
-function stepBack(){
-  if(curStep==="u-step2"){setStep(UPL.viaLink?"u-l3":"u-step1");return;}
-  setStep(BACKMAP[curStep]||"u-home");
-}
-function updateNav(){
-  var onHome=document.getElementById("sec-upload").classList.contains("active")&&curStep==="u-home";
-  document.getElementById("bnav").style.display=onHome?"flex":"none";
-}
-function homeChip(btn){
-  var row=btn.parentNode;
-  for(var i=0;i<row.children.length;i++)row.children[i].classList.remove("on");
-  btn.classList.add("on");
-}
-function buildHomeFeed(){
-  var f=document.getElementById("u-homefeed");f.innerHTML="";
-  HOMEFEED.forEach(function(t){
-    var d=document.createElement("div");d.className="tile";
-    d.innerHTML='<div class="ph '+t[0]+'" style="height:'+t[1]+'px"></div>';
-    f.appendChild(d);
-  });
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 1600);
 }
 
-/* ================= image pick + upload moment ================= */
-function buildLibrary(){libSel=[];renderLibrary();}
-var libSel=[];
-function renderLibrary(){
-  var g=document.getElementById("lib-grid");g.innerHTML="";
-  ["g0","g6","g1","g5","g3","g7","g8","g2","g4"].forEach(function(cls){
-    var idx=libSel.indexOf(cls);
-    var b=document.createElement("button");b.style.position="relative";
-    b.innerHTML='<div class="ph '+cls+'" style="height:86px;border-radius:10px'+(idx>=0?";outline:2.5px solid var(--ink);outline-offset:-2px":"")+'"></div>'+
-      (idx>=0?'<span style="position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center">'+(idx+1)+'</span>':'');
-    b.onclick=function(){toggleLibSel(cls)};
-    g.appendChild(b);
-  });
-  var a=document.getElementById("lib-actions");
-  var room=5-UPL.imgs.length;
-  a.innerHTML="";
-  var btn=document.createElement("button");btn.className="pill dark";btn.style.cssText="width:100%;margin-top:14px";
-  btn.disabled=!libSel.length;
-  btn.textContent=libSel.length?"Add "+libSel.length+(libSel.length===1?" image":" images"):"Select up to "+room;
-  btn.onclick=confirmLibSel;
-  a.appendChild(btn);
-  var note=document.createElement("p");note.className="micro";note.style.marginTop="8px";
-  note.textContent="Several images, one plop — the first you pick becomes the cover.";
-  a.appendChild(note);
+// ============ camera ============
+function captureShot() {
+  const f = document.getElementById('flash');
+  f.classList.remove('on'); void f.offsetWidth; f.classList.add('on');
+  setTimeout(() => {
+    toast('Image saved');
+    reviewQueue = [0];
+    reviewIdx = 0;
+    reviewSource = 'camera';
+    openReviewFlow();
+  }, 260);
 }
-function toggleLibSel(cls){
-  var i=libSel.indexOf(cls);
-  if(i>=0)libSel.splice(i,1);
-  else{
-    if(UPL.imgs.length+libSel.length>=5){toast("Five views is the limit");return}
-    if(UPL.imgs.indexOf(cls)>=0){toast("Already added");return}
-    libSel.push(cls);
-  }
-  renderLibrary();
-}
-function confirmLibSel(){
-  if(!libSel.length)return;
-  var batch=libSel.slice();libSel=[];
-  closeSheet("lib-sheet");
-  batchUpload(batch);
-}
-var upInt=null;
-function batchUpload(batch){
-  UPL.uploaded=false;
-  var slot=document.getElementById("u-imgslot");
-  slot.className="dropslot filled";
-  slot.innerHTML='<div class="ph '+batch[0]+'" style="height:280px;border-radius:18px;opacity:.45" id="u-imgpreview"></div>';
-  var bar=document.getElementById("u-upbar");bar.style.display="block";
-  var fill=document.getElementById("u-upfill");fill.style.width="0";
-  var status=document.getElementById("u-upstatus");
-  var p=0;
-  clearInterval(upInt);
-  upInt=setInterval(function(){
-    p=Math.min(100,p+9);
-    fill.style.width=p+"%";
-    status.textContent="Uploading "+batch.length+(batch.length===1?" image… ":" images… ")+p+"%";
-    if(p>=100){
-      clearInterval(upInt);
-      UPL.uploaded=true;
-      batch.forEach(function(cls){UPL.imgs.push(cls)});
-      if(UPL.imgs.length===batch.length){UPL.cover=0;UPL.img=UPL.imgs[0]}
-      refreshSlot();renderViews();
-      status.textContent="✓ "+UPL.imgs.length+(UPL.imgs.length===1?" image":" images")+" uploaded — the first is the cover; tap a view to change it.";
-      document.getElementById("u-next1").disabled=false;
+
+// ============ library ============
+const selected = new Set();
+document.querySelectorAll('.lib-cell').forEach(cell => {
+  cell.onclick = () => {
+    const i = cell.dataset.idx;
+    if (selected.has(i)) { selected.delete(i); cell.classList.remove('selected'); }
+    else { selected.add(i); cell.classList.add('selected'); }
+    let n = 1;
+    document.querySelectorAll('.lib-cell.selected').forEach(c => { c.querySelector('.sel').textContent = n++; });
+    document.querySelectorAll('.lib-cell:not(.selected) .sel').forEach(s => s.textContent = '');
+    const nextBtn = document.getElementById('lib-next');
+    const nextTxt = document.getElementById('lib-next-txt');
+    if (selected.size > 0) {
+      nextBtn.classList.remove('disabled');
+      nextTxt.textContent = 'Save ' + selected.size + ' · review one by one';
+    } else {
+      nextBtn.classList.add('disabled');
+      nextTxt.textContent = 'Select photos';
     }
-  },90);
+  };
+});
+function libNext() {
+  if (selected.size === 0) return;
+  reviewQueue = Array.from(selected).map(Number);
+  reviewIdx = 0;
+  reviewSource = 'library';
+  selected.clear();
+  document.querySelectorAll('.lib-cell.selected').forEach(c => { c.classList.remove('selected'); c.querySelector('.sel').textContent = ''; });
+  document.getElementById('lib-next').classList.add('disabled');
+  document.getElementById('lib-next-txt').textContent = 'Select photos';
+  openReviewFlow();
 }
-function refreshSlot(){
-  var slot=document.getElementById("u-imgslot");
-  slot.className="dropslot filled";
-  slot.innerHTML='<div class="ph '+UPL.img+'" style="height:280px;border-radius:18px" id="u-imgpreview"></div>';
+
+// ============ url ============
+function pasteUrl() {
+  document.getElementById('url-input').value = 'https://www.instagram.com/p/CxYzWx4L2mQ/';
+  document.getElementById('url-og').classList.add('on');
+  document.getElementById('url-continue').classList.remove('disabled');
 }
-function renderViews(){
-  var w=document.getElementById("u-views");w.innerHTML="";
-  if(!UPL.imgs.length)return;
-  UPL.imgs.forEach(function(g,i){
-    var b=document.createElement("button");b.style.position="relative";
-    b.innerHTML='<div class="ph '+g+'" style="height:44px;width:60px;border-radius:6px"></div>'+
-      (i===UPL.cover?'<span style="position:absolute;top:2px;left:2px;background:var(--ink);color:#fff;font-size:9px;border-radius:999px;padding:1px 6px">Cover</span>':'');
-    b.onclick=function(){UPL.cover=i;UPL.img=UPL.imgs[i];refreshSlot();renderViews();toast("Cover updated")};
-    w.appendChild(b);
-  });
-  if(UPL.imgs.length<5){
-    var add=document.createElement("button");add.className="kw";add.textContent="+ add";
-    add.onclick=function(){openSheet('lib-sheet')};
-    w.appendChild(add);
+document.getElementById('url-input').addEventListener('input', e => {
+  if (e.target.value.startsWith('http')) {
+    document.getElementById('url-og').classList.add('on');
+    document.getElementById('url-continue').classList.remove('disabled');
+  } else {
+    document.getElementById('url-og').classList.remove('on');
+    document.getElementById('url-continue').classList.add('disabled');
   }
-  var lab=document.createElement("span");lab.className="micro";lab.textContent=UPL.imgs.length+" of 5 · views of one plop";
-  w.appendChild(lab);
+});
+function urlContinue() {
+  if (document.getElementById('url-continue').classList.contains('disabled')) return;
+  reviewQueue = [3];
+  reviewIdx = 0;
+  reviewSource = 'url';
+  openReviewFlow();
 }
 
-/* ================= link branch ================= */
-function fetchLink(){
-  var v=document.getElementById("u-linkurl").value.trim()||"avateetsel.com/paper";
-  document.getElementById("u-l2url").textContent=v.replace(/^https?:\/\//,"");
-  setStep("u-l2");
-  setTimeout(function(){
-    document.getElementById("u-l3img").className="ph g7";
-    setStep("u-l3");
-  },1500);
+// ============ review flow ============
+let reviewQueue = [];
+let reviewIdx = 0;
+let reviewSource = 'camera';
+const gradients = ['g1','g2','g3','g4','g5','g6','g7','g8','g9','g0'];
+
+function openReviewFlow() {
+  const image = document.getElementById('rev-image');
+  const grad = gradients[reviewQueue[reviewIdx] % gradients.length];
+  image.className = 'rev-image ' + grad;
+  document.getElementById('marks-svg').innerHTML = '';
+  document.getElementById('marks-dots').innerHTML = '';
+  marks = [];
+  stopMarking();
+
+  // reset caption to Type + blank
+  document.querySelectorAll('#cap-method-tabs button').forEach(b => b.classList.remove('on'));
+  document.querySelector('#cap-method-tabs button[data-method="type"]').classList.add('on');
+  document.querySelectorAll('.method-state').forEach(s => s.classList.remove('on'));
+  document.querySelector('.method-state[data-state="type"]').classList.add('on');
+
+  // prefill for URL flow
+  if (reviewSource === 'url') {
+    document.getElementById('fld-title').value = '"Wearing a duvet"';
+    document.getElementById('fld-artist').value = '@studio.yumi';
+    document.getElementById('fld-year').value = '2024';
+    document.getElementById('fld-source').value = 'instagram.com';
+    document.getElementById('ocr-hint').style.display = 'flex';
+    document.getElementById('ocr-hint').querySelector('span:last-child').textContent = 'From the link. Edit if anything\'s wrong.';
+  } else {
+    document.querySelectorAll('#type-fields input').forEach(i => i.value = '');
+    document.getElementById('ocr-hint').style.display = 'none';
+  }
+
+  // reset chips
+  document.querySelectorAll('#notes-input .note-chip').forEach(c => c.remove());
+
+  // reset label photo
+  document.getElementById('lp-empty').style.display = 'block';
+  document.getElementById('lp-processing').style.display = 'none';
+
+  if (reviewQueue.length > 1) {
+    document.getElementById('rev-progress').style.display = 'flex';
+    updateRevProgress();
+  } else {
+    document.getElementById('rev-progress').style.display = 'none';
+  }
+
+  go('scr-review');
+  document.getElementById('rev-scroll').scrollTop = 0;
 }
-function fromLink(){
-  UPL.viaLink=true;UPL.img="g7";UPL.imgs=["g7"];UPL.cover=0;UPL.uploaded=true;
-  UPL.link=document.getElementById("u-l2url").textContent||"";
-  UPL.title="Tide Ledger IV";
-  UPL.caption="Single-channel video, 2025. Pulled from the page.";
-  setStep("u-step2");
-  setTimeout(function(){
-    document.getElementById("u-link").value=UPL.link;
-    document.getElementById("u-title").value=UPL.title;
-    document.getElementById("u-caption").value=UPL.caption;
-    pickCreator("Haneul Jung");
-    toast("Pulled the title, creator and text from the page");
-  },0);
+function updateRevProgress() {
+  const dots = document.querySelectorAll('#rev-progress .d');
+  const total = reviewQueue.length;
+  dots.forEach((d, i) => {
+    d.classList.remove('on', 'done');
+    if (i >= total) d.style.display = 'none';
+    else d.style.display = 'block';
+    if (i < reviewIdx) d.classList.add('done');
+    if (i === reviewIdx) d.classList.add('on');
+  });
+  document.querySelector('#rev-progress .lbl').textContent = (reviewIdx + 1) + ' of ' + total;
+}
+function reviewBack() {
+  if (reviewIdx > 0) { reviewIdx--; openReviewFlow(); }
+  else { go('scr-landing'); }
 }
 
-/* ================= caption / creator / scan / refine ================= */
-function renderCreatorSuggest(){
-  var q=document.getElementById("u-creator").value.trim();
-  var w=document.getElementById("u-creator-suggest");w.innerHTML="";
-  document.getElementById("u-creator-hint").textContent="";
-  UPL.creator="";
-  if(!q)return;
-  var box=document.createElement("div");box.className="suggestbox";
-  CREATORS.filter(function(c){return c.name.toLowerCase().indexOf(q.toLowerCase())>=0}).forEach(function(c){
-    var r=document.createElement("button");
-    r.innerHTML='<span style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">'+c.name+'</span><span class="micro">existing pond · '+c.n+'</span></span>';
-    r.onclick=function(){pickCreator(c.name)};
-    box.appendChild(r);
-  });
-  var nr=document.createElement("button");
-  nr.style.color="#3a3a3a";
-  nr.textContent='+ Create new creator “'+q+'”';
-  nr.onclick=function(){pickCreator(q)};
-  box.appendChild(nr);
-  w.appendChild(box);
+function saveImageOnly() {
+  const isMulti = reviewQueue.length > 1;
+  if (isMulti && reviewIdx < reviewQueue.length - 1) {
+    reviewIdx++; openReviewFlow(); return;
+  }
+  document.getElementById('saved-msg').textContent = 'Image saved.';
+  document.getElementById('saved-sub').textContent = "Head to Alerts in Discover to add caption and notes when you're ready.";
+  document.getElementById('saved-bell').style.display = 'flex';
+  go('scr-saved');
 }
-function pickCreator(name){
-  document.getElementById("u-creator").value=name;
-  UPL.creator=name;
-  document.getElementById("u-creator-suggest").innerHTML="";
-  document.getElementById("u-creator-hint").innerHTML='→ joins the <b>'+name+'</b> pond';
-}
-function setCapMode(m){
-  document.getElementById("u-cap-write").classList.toggle("on",m==="write");
-  document.getElementById("u-cap-scan").classList.toggle("on",m==="scan");
-  document.getElementById("u-scanlabelbox").style.display=m==="scan"?"block":"none";
-}
-function scanLabel(){
-  var s=document.getElementById("u-labelslot");
-  s.className="dropslot filled";
-  s.innerHTML='<div class="ph g3" style="height:180px;border-radius:14px;position:relative;overflow:hidden;display:grid;place-items:center"><div class="scanline"></div><span style="color:#fff;font-weight:600;font-size:13px;z-index:2">Reading the label…</span></div>';
-  setTimeout(function(){
-    s.innerHTML='<div class="ph g3" style="height:120px;border-radius:14px;display:grid;place-items:center"><span style="color:#fff;font-weight:600;font-size:13px">✓ Title and creator read</span></div>';
-    document.getElementById("u-title").value="Tide Ledger IV";
-    if(!document.getElementById("u-caption").value)document.getElementById("u-caption").value="Single-channel video at the back of the show.";
-    pickCreator("Haneul Jung");
-    flashField("u-title");flashField("u-creator");
-    toast("Pulled the title and creator from the label");
-  },1700);
-}
-function flashField(id){
-  var e=document.getElementById(id);if(!e)return;
-  var f=e.parentNode;
-  f.style.transition="border-color .25s";f.style.borderColor="#111";
-  setTimeout(function(){f.style.borderColor=""},800);
-}
-function toRefine(){
-  UPL.caption=document.getElementById("u-caption").value.trim();
-  UPL.title=document.getElementById("u-title").value.trim();
-  if(!UPL.creator)UPL.creator=document.getElementById("u-creator").value.trim();
-  UPL.link=document.getElementById("u-link").value.trim();
-  setStep("u-step3");
-  setTimeout(function(){buildRefine();setStep("u-step4")},1200);
-}
-function buildRefine(){
-  document.getElementById("u-r-img").className="ph "+UPL.img;
-  document.getElementById("u-r-meta").textContent=UPL.creator?("Credit · "+UPL.creator):"Your capture";
-  document.getElementById("u-conf").textContent="✓ Keywords proposed from your caption — tap to refine.";
-  document.getElementById("u-r-title").textContent=UPL.title?("Title · "+UPL.title):"";
-  document.getElementById("u-r-caption").textContent=UPL.caption||"";
-  renderKws();
-}
-function renderKws(){
-  var w=document.getElementById("u-kws");w.innerHTML="";
-  Object.keys(UPL.kws).forEach(function(k){
-    var b=document.createElement("button");
-    b.className="kw"+(UPL.kws[k]?" on":"");b.textContent=k;
-    b.onclick=function(){UPL.kws[k]=!UPL.kws[k];renderKws()};
-    w.appendChild(b);
-  });
-}
-function addKeyword(){
-  var inp=document.getElementById("u-newkw");
-  var v=inp.value.trim();if(!v)return;
-  UPL.kws[v]=true;inp.value="";renderKws();
-  toast("“"+v+"” — its pond now exists");
-}
-function doPlop(){
-  UPL.caption=document.getElementById("u-caption").value||UPL.caption;
-  var on=Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]});
-  var ponds=on.slice();
-  if(UPL.creator)ponds.push(UPL.creator);
-  document.getElementById("u-done-line").innerHTML=
-    "Dropped into your profile and the Pool.<br>Joined the <b>"+(ponds.join("</b> · <b>")||"none")+"</b> ponds.";
-  setStep("u-step5");
-}
-function resetUpload(){
-  UPL.kws={"pattern":true,"wood":true,"weathered":true,"symmetry":false};
-  UPL.caption=DEMO.caption;UPL.title=DEMO.title;UPL.creator=DEMO.creator;UPL.link=DEMO.link;UPL.uploaded=false;UPL.viaLink=false;
-  UPL.img="g0";UPL.imgs=[];UPL.cover=0;
-  document.getElementById("u-views").innerHTML="";
-  document.getElementById("u-caption").value=DEMO.caption;
-  document.getElementById("u-title").value=DEMO.title;
-  document.getElementById("u-creator").value=DEMO.creator;
-  document.getElementById("u-link").value=DEMO.link;
-  ["u-newkw","u-linkurl"].forEach(function(id){var e=document.getElementById(id);if(e)e.value=""});
-  document.getElementById("u-creator-suggest").innerHTML="";
-  document.getElementById("u-creator-hint").textContent="";
-  setCapMode("write");
-  var ls=document.getElementById("u-labelslot");
-  if(ls){ls.className="dropslot";ls.style.height="130px";ls.innerHTML='<div><p style="font-weight:700">Add a photo of the label</p><p class="sec" style="margin-top:4px">wall text or handout — we read the title and creator</p></div>';}
-  var slot=document.getElementById("u-imgslot");
-  slot.className="dropslot";
-  slot.innerHTML='<div><p style="font-weight:700">Add your photo</p><p class="sec" style="margin-top:4px">tap to choose from your library</p></div>';
-  document.getElementById("u-upbar").style.display="none";
-  document.getElementById("u-upstatus").textContent="";
-  document.getElementById("u-next1").disabled=true;
-  document.getElementById("org-edit").style.display="block";
-  document.getElementById("org-done").style.display="none";
-  setView("upload");setStep("u-home");
+function saveAll() {
+  const isMulti = reviewQueue.length > 1;
+  if (isMulti && reviewIdx < reviewQueue.length - 1) {
+    reviewIdx++; openReviewFlow(); return;
+  }
+  document.getElementById('saved-msg').textContent = 'Saved.';
+  document.getElementById('saved-sub').textContent = 'Caption is on ari · notes stay with you.';
+  document.getElementById('saved-bell').style.display = 'none';
+  go('scr-saved');
 }
 
-/* ================= organize ================= */
-function renderOrganize(){
-  document.getElementById("org-img").className="ph "+UPL.img;
-  document.getElementById("org-caption").value=UPL.caption||"";
-  document.getElementById("org-title").value=UPL.title||"";
-  document.getElementById("org-creator-in").value=UPL.creator||"";
-  var kk=document.getElementById("org-kws");kk.innerHTML="";
-  Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]}).forEach(function(k){
-    var b=document.createElement("button");b.className="kw on";b.textContent=k+" ✕";
-    b.onclick=function(){UPL.kws[k]=false;renderOrganize();toast("Removed — it leaves the “"+k+"” pond")};
-    kk.appendChild(b);
-  });
-  if(!kk.children.length)kk.innerHTML='<p class="sec">No keywords — it floats free. Add at least one so people can find it.</p>';
-}
-function finishOrganize(){
-  UPL.caption=document.getElementById("org-caption").value.trim();
-  UPL.title=document.getElementById("org-title").value.trim();
-  UPL.creator=document.getElementById("org-creator-in").value.trim();
-  var ponds=Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]});
-  var all=ponds.slice();if(UPL.creator)all.push(UPL.creator);
-  document.getElementById("org-doneline").innerHTML=
-    "This plop now lives in:<br>ponds — <b>"+(all.join("</b> · <b>")||"none")+"</b><br>"+
-    "profile — <b>you</b>";
-  document.getElementById("org-edit").style.display="none";
-  document.getElementById("org-done").style.display="block";
-  document.getElementById("sec-organize").scrollTop=0;
-}
-function renderOrgSheet(){
-  var w=document.getElementById("orgsheet-kws");w.innerHTML="";
-  Object.keys(UPL.kws).forEach(function(k){
-    var b=document.createElement("button");b.className="kw"+(UPL.kws[k]?" on":"");b.textContent=k;
-    b.onclick=function(){UPL.kws[k]=!UPL.kws[k];renderOrgSheet()};
-    w.appendChild(b);
-  });
-}
-function addKeywordFromSheet(){
-  var inp=document.getElementById("orgsheet-newkw");
-  var v=inp.value.trim();if(!v)return;
-  UPL.kws[v]=true;inp.value="";renderOrgSheet();
-  toast("“"+v+"” — its pond now exists");
+// ============ caption methods ============
+document.querySelectorAll('#cap-method-tabs button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#cap-method-tabs button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    document.querySelectorAll('.method-state').forEach(s => s.classList.remove('on'));
+    document.querySelector(`.method-state[data-state="${b.dataset.method}"]`).classList.add('on');
+  };
+});
+
+// ============ label photo OCR ============
+function attachLabelPhoto() {
+  document.getElementById('lp-empty').style.display = 'none';
+  document.getElementById('lp-processing').style.display = 'block';
+  setTimeout(() => {
+    // switch to Type tab with prefilled fields
+    document.querySelectorAll('#cap-method-tabs button').forEach(x => x.classList.remove('on'));
+    document.querySelector('#cap-method-tabs button[data-method="type"]').classList.add('on');
+    document.querySelectorAll('.method-state').forEach(s => s.classList.remove('on'));
+    document.querySelector('.method-state[data-state="type"]').classList.add('on');
+    document.getElementById('fld-title').value = 'Moon jar';
+    document.getElementById('fld-artist').value = 'Unknown, Joseon';
+    document.getElementById('fld-year').value = '17th c.';
+    document.getElementById('fld-source').value = 'National Museum of Korea';
+    document.getElementById('ocr-hint').style.display = 'flex';
+    document.getElementById('ocr-hint').querySelector('span:last-child').textContent = "I read this from your label photo. Edit if anything's wrong.";
+    document.getElementById('lp-empty').style.display = 'block';
+    document.getElementById('lp-processing').style.display = 'none';
+    toast('Label read · fields filled');
+  }, 1800);
 }
 
-/* ================= plop view (after organising) ================= */
-function renderPlopView(){
-  document.getElementById("pv-img").className="ph "+UPL.img;
-  var vv=document.getElementById("pv-views");vv.innerHTML="";
-  if(UPL.imgs.length>1){
-    vv.style.display="flex";
-    UPL.imgs.forEach(function(g,i){
-      var b=document.createElement("button");
-      b.innerHTML='<div class="ph '+g+'" style="height:36px;width:52px;border-radius:3px"></div>';
-      b.style.cssText=i===UPL.cover?"outline:2px solid var(--ink);outline-offset:2px;border-radius:3px":"opacity:.7";
-      b.onclick=function(){
-        document.getElementById("pv-img").className="ph "+g;
-        for(var j=0;j<vv.children.length-1;j++){vv.children[j].style.cssText=j===i?"outline:2px solid var(--ink);outline-offset:2px;border-radius:3px":"opacity:.7"}
-      };
-      vv.appendChild(b);
-    });
-    var lab=document.createElement("span");lab.className="micro";lab.style.marginLeft="6px";lab.textContent=UPL.imgs.length+" views · one plop";
-    vv.appendChild(lab);
-  }else vv.style.display="none";
-  var pt=document.getElementById("pv-title");
-  if(UPL.title){pt.textContent=UPL.title;pt.style.display="block"}else pt.style.display="none";
-  document.getElementById("pv-caption").textContent=UPL.caption||"";
-  var cr=document.getElementById("pv-credit");
-  cr.innerHTML=UPL.creator?("Credit · <b>"+UPL.creator+"</b>"):"";
-  var ps=document.getElementById("pv-source");
-  if(ps)ps.style.display=UPL.link?"block":"none";
-  var w=document.getElementById("pv-kws");w.innerHTML="";
-  Object.keys(UPL.kws).filter(function(k){return UPL.kws[k]}).forEach(function(k){
-    var b=document.createElement("button");b.className="kw";b.textContent=k;
-    b.onclick=function(){toast("Opens the “"+k+"” pond — Discover prototype")};
-    w.appendChild(b);
-  });
-  if(UPL.creator){
-    var cb=document.createElement("button");cb.className="kw";cb.textContent=UPL.creator+" · Creator";
-    cb.onclick=function(){toast("Opens the "+UPL.creator+" creator pond — Discover prototype")};
-    w.appendChild(cb);
+// ============ voice hold ============
+function makeVoice(root, btn, statusEl, timeEl) {
+  let iv = null; let sec = 0;
+  const start = e => {
+    e.preventDefault();
+    root.classList.add('rec');
+    statusEl.innerHTML = '<b>Recording</b>';
+    sec = 0;
+    iv = setInterval(() => { sec += 0.1; timeEl.textContent = ' · ' + sec.toFixed(1) + 's'; }, 100);
+  };
+  const stop = () => {
+    if (!iv) return;
+    root.classList.remove('rec');
+    statusEl.innerHTML = 'Hold to record';
+    timeEl.textContent = '';
+    clearInterval(iv); iv = null;
+  };
+  btn.addEventListener('mousedown', start);
+  btn.addEventListener('touchstart', start, { passive: false });
+  window.addEventListener('mouseup', stop);
+  window.addEventListener('touchend', stop);
+}
+makeVoice(document.getElementById('cap-voice'), document.getElementById('cap-voice-btn'), document.getElementById('cap-voice-status'), document.getElementById('cap-voice-time'));
+makeVoice(document.getElementById('mn-voice'), document.getElementById('mn-voice-btn'), document.getElementById('mn-voice-status'), document.getElementById('mn-voice-time'));
+
+// ============ note chips ============
+function focusNotes() { document.getElementById('notes-txt').focus(); }
+function handleNoteKey(e) {
+  const inp = e.target;
+  if (e.key === 'Enter' && inp.value.trim()) {
+    e.preventDefault();
+    const chip = document.createElement('span');
+    chip.className = 'note-chip';
+    chip.innerHTML = inp.value.trim() + ' <span class="x" onclick="removeChip(this,event)">×</span>';
+    inp.parentElement.insertBefore(chip, inp);
+    inp.value = '';
+  } else if (e.key === 'Backspace' && !inp.value) {
+    const chips = document.querySelectorAll('#notes-input .note-chip');
+    if (chips.length) chips[chips.length - 1].remove();
   }
 }
+function removeChip(x, e) { e.stopPropagation(); x.parentElement.remove(); }
 
-/* ================= sheets / toast ================= */
-function openSheet(id){
-  document.getElementById(id).classList.add("open");
-  if(id==="org-sheet")renderOrgSheet();
-  if(id==="lib-sheet")buildLibrary();
+// ============ save to tabs ============
+document.querySelectorAll('#saveto-list button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#saveto-list button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+  };
+});
+
+// ============ marking ============
+let markingActive = false;
+let currentTool = 'tap';
+let marks = [];
+let editingMarkIdx = -1;
+let drawing = false;
+let dragStart = null;
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const revImage = document.getElementById('rev-image');
+const marksSvg = document.getElementById('marks-svg');
+const marksDots = document.getElementById('marks-dots');
+
+function startMarking() {
+  markingActive = true;
+  document.getElementById('mark-cue').style.display = 'none';
+  document.getElementById('mark-toolbar').style.display = 'flex';
+  revImage.classList.add('marking');
 }
-function closeSheet(id){document.getElementById(id).classList.remove("open")}
-var toastTimer=null;
-function toast(msg){
-  var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
-  clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove("show")},1900);
+function stopMarking() {
+  markingActive = false;
+  document.getElementById('mark-cue').style.display = 'flex';
+  document.getElementById('mark-toolbar').style.display = 'none';
+  revImage.classList.remove('marking');
+}
+document.querySelectorAll('#mark-toolbar button[data-tool]').forEach(b => {
+  b.onclick = (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('#mark-toolbar button[data-tool]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    currentTool = b.dataset.tool;
+  };
+});
+
+function pos(e) {
+  const rect = revImage.getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+  return { x: (p.clientX - rect.left) / rect.width * 400, y: (p.clientY - rect.top) / rect.height * 500 };
 }
 
-/* ================= init ================= */
-buildHomeFeed();setStep("u-home");
+function renderMarks() {
+  marksSvg.innerHTML = '';
+  marksDots.innerHTML = '';
+  marks.forEach((m, i) => {
+    if (m.type === 'circle') {
+      const el = document.createElementNS(SVG_NS, 'ellipse');
+      const cx = (m.x1 + m.x2) / 2, cy = (m.y1 + m.y2) / 2;
+      el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+      el.setAttribute('rx', Math.max(Math.abs(m.x2 - m.x1) / 2, 24));
+      el.setAttribute('ry', Math.max(Math.abs(m.y2 - m.y1) / 2, 24));
+      el.setAttribute('fill', 'none');
+      el.setAttribute('stroke', '#FF5A3C');
+      el.setAttribute('stroke-width', '4');
+      marksSvg.appendChild(el);
+    } else if (m.type === 'arrow') {
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.setAttribute('x1', m.x1); line.setAttribute('y1', m.y1);
+      line.setAttribute('x2', m.x2); line.setAttribute('y2', m.y2);
+      line.setAttribute('stroke', '#FF5A3C');
+      line.setAttribute('stroke-width', '4');
+      line.setAttribute('stroke-linecap', 'round');
+      marksSvg.appendChild(line);
+      const dx = m.x2 - m.x1, dy = m.y2 - m.y1;
+      const ang = Math.atan2(dy, dx);
+      const h = 20;
+      const p = document.createElementNS(SVG_NS, 'polygon');
+      p.setAttribute('points', `${m.x2},${m.y2} ${m.x2 - h*Math.cos(ang-0.4)},${m.y2 - h*Math.sin(ang-0.4)} ${m.x2 - h*Math.cos(ang+0.4)},${m.y2 - h*Math.sin(ang+0.4)}`);
+      p.setAttribute('fill', '#FF5A3C');
+      marksSvg.appendChild(p);
+    }
+    const dot = document.createElement('div');
+    dot.className = 'mark-dot';
+    dot.textContent = i + 1;
+    dot.style.left = (m.anchor.x / 400 * 100) + '%';
+    dot.style.top = (m.anchor.y / 500 * 100) + '%';
+    dot.onclick = (e) => { e.stopPropagation(); openMarkNote(i); };
+    marksDots.appendChild(dot);
+  });
+}
+
+function openMarkNote(idx) {
+  editingMarkIdx = idx;
+  document.getElementById('mn-num').textContent = idx + 1;
+  document.getElementById('mn-input').value = marks[idx].noteText || '';
+  document.querySelectorAll('.note-sheet .n-method-tabs button').forEach(b => b.classList.remove('on'));
+  document.querySelector('.note-sheet .n-method-tabs button[data-nm="text"]').classList.add('on');
+  document.querySelectorAll('.note-sheet [data-nw]').forEach(n => n.classList.remove('on'));
+  document.querySelector('.note-sheet [data-nw="text"]').classList.add('on');
+  document.getElementById('mark-note-sheet').classList.add('on');
+  setTimeout(() => document.getElementById('mn-input').focus(), 100);
+}
+function closeMarkNote(save) {
+  if (save && editingMarkIdx >= 0) {
+    marks[editingMarkIdx].noteText = document.getElementById('mn-input').value.trim();
+  }
+  document.getElementById('mark-note-sheet').classList.remove('on');
+  editingMarkIdx = -1;
+}
+document.querySelectorAll('.note-sheet .n-method-tabs button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('.note-sheet .n-method-tabs button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    document.querySelectorAll('.note-sheet [data-nw]').forEach(n => n.classList.remove('on'));
+    document.querySelector(`.note-sheet [data-nw="${b.dataset.nm}"]`).classList.add('on');
+  };
+});
+
+function undoMark() { marks.pop(); renderMarks(); }
+function clearMarks() { marks = []; renderMarks(); }
+
+function pDown(e) {
+  if (!markingActive) return;
+  if (e.target.closest('.mark-dot')) return;
+  if (e.target.closest('.mark-toolbar')) return;
+  if (document.getElementById('mark-note-sheet').classList.contains('on')) return;
+  e.preventDefault();
+  const p = pos(e);
+  if (currentTool === 'tap') {
+    marks.push({ type: 'dot', anchor: p, noteText: null });
+    renderMarks();
+    openMarkNote(marks.length - 1);
+    return;
+  }
+  drawing = true;
+  dragStart = p;
+}
+function pMove(e) {
+  if (!drawing) return;
+  e.preventDefault();
+  const p = pos(e);
+  marksSvg.querySelectorAll('.preview').forEach(el => el.remove());
+  if (currentTool === 'circle') {
+    const el = document.createElementNS(SVG_NS, 'ellipse');
+    const cx = (dragStart.x + p.x) / 2, cy = (dragStart.y + p.y) / 2;
+    el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+    el.setAttribute('rx', Math.max(Math.abs(p.x - dragStart.x) / 2, 24));
+    el.setAttribute('ry', Math.max(Math.abs(p.y - dragStart.y) / 2, 24));
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', '#FF5A3C');
+    el.setAttribute('stroke-width', '4');
+    el.setAttribute('opacity', '0.65');
+    el.classList.add('preview');
+    marksSvg.appendChild(el);
+  } else if (currentTool === 'arrow') {
+    const line = document.createElementNS(SVG_NS, 'line');
+    line.setAttribute('x1', dragStart.x); line.setAttribute('y1', dragStart.y);
+    line.setAttribute('x2', p.x); line.setAttribute('y2', p.y);
+    line.setAttribute('stroke', '#FF5A3C');
+    line.setAttribute('stroke-width', '4');
+    line.setAttribute('stroke-linecap', 'round');
+    line.setAttribute('opacity', '0.65');
+    line.classList.add('preview');
+    marksSvg.appendChild(line);
+  }
+}
+function pUp(e) {
+  if (!drawing) return;
+  drawing = false;
+  marksSvg.querySelectorAll('.preview').forEach(el => el.remove());
+  const p = pos(e);
+  const dx = Math.abs(p.x - dragStart.x), dy = Math.abs(p.y - dragStart.y);
+  if (dx < 8 && dy < 8) return;
+  let m = null;
+  if (currentTool === 'circle') {
+    m = { type: 'circle', x1: dragStart.x, y1: dragStart.y, x2: p.x, y2: p.y, anchor: { x: (dragStart.x + p.x) / 2, y: (dragStart.y + p.y) / 2 }, noteText: null };
+  } else if (currentTool === 'arrow') {
+    m = { type: 'arrow', x1: dragStart.x, y1: dragStart.y, x2: p.x, y2: p.y, anchor: { x: p.x, y: p.y }, noteText: null };
+  }
+  if (m) {
+    marks.push(m);
+    renderMarks();
+    openMarkNote(marks.length - 1);
+  }
+}
+revImage.addEventListener('mousedown', pDown);
+revImage.addEventListener('touchstart', pDown, { passive: false });
+revImage.addEventListener('mousemove', pMove);
+revImage.addEventListener('touchmove', pMove, { passive: false });
+window.addEventListener('mouseup', pUp);
+window.addEventListener('touchend', pUp);
 </script>
+
 </body>
 </html>

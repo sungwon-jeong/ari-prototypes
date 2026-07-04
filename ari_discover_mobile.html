@@ -5,191 +5,469 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ari — Discover (mobile)</title>
 <style>
-/* ================================================================
-   ari shared design tokens + components — v1206.2
-   Copy this block verbatim into every prototype file.
-   ================================================================ */
-:root{
-  --bg:#FFFFFF;
-  --surface:#F2F2F2;
-  --ink:#111111;
-  --soft:#8A8A8E;
-  --line:#ECECEC;
-  --accent:linear-gradient(135deg,#A0A4F0,#E6A9C9);
-  --r-pill:999px;
-  --r-card:20px;
-  --r-img:6px;
-  --shadow-float:0 8px 30px rgba(0,0,0,.12);
-  --shadow-card:0 2px 14px rgba(0,0,0,.06);
+:root {
+  --bg: #FFFFFF;
+  --surface: #F2F2F2;
+  --ink: #111111;
+  --soft: #8A8A8E;
+  --line: #ECECEC;
+  --mark: #FF5A3C;
+  --amber: #E39B3A;
+  --r-pill: 999px;
+  --r-card: 20px;
+  --r-img: 6px;
+  --shadow-float: 0 8px 30px rgba(0,0,0,.12);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{
-  font-family:-apple-system,"SF Pro Text","Inter","Helvetica Neue",sans-serif;
-  background:#ECEAE6;color:var(--ink);
-  display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px 0;
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
+  background: #ECEAE6; color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px 0;
+  -webkit-font-smoothing: antialiased;
 }
-button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
-input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink);width:100%}
+button { font: inherit; border: 0; background: none; cursor: pointer; color: inherit; }
+input, textarea { font: inherit; border: 0; outline: none; background: transparent; color: var(--ink); width: 100%; }
 
-/* ---- phone frame ---- */
-.phone{
-  width:390px;height:844px;background:var(--bg);border-radius:48px;
-  box-shadow:0 24px 80px rgba(0,0,0,.25),0 0 0 10px #111,0 0 0 12px #3a3a3a;
-  overflow:hidden;position:relative;flex:none;
+.phone {
+  width: 390px; height: 844px; background: var(--bg); border-radius: 48px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.25), 0 0 0 10px #111, 0 0 0 12px #3a3a3a;
+  overflow: hidden; position: relative; flex: none;
 }
-@media (max-width:440px){
-  body{padding:0;background:var(--bg)}
-  .phone{width:100vw;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+@media (max-width: 440px) {
+  body { padding: 0; background: var(--bg); }
+  .phone { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
 }
-.statusbar{
-  height:48px;display:flex;align-items:center;justify-content:space-between;
-  padding:10px 28px 0;font-size:14px;font-weight:600;position:relative;z-index:30;
+
+.statusbar {
+  height: 48px; display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 28px 0; font-size: 14px; font-weight: 600;
+  position: relative; z-index: 30;
 }
-.statusbar .sicons{display:flex;gap:5px;align-items:center;font-size:11px;letter-spacing:1px}
+.statusbar .sicons { display: flex; gap: 5px; align-items: center; font-size: 11px; letter-spacing: 1px; }
 
-/* ---- screens ---- */
-.app{position:absolute;top:48px;left:0;right:0;bottom:0}
-.screen{position:absolute;inset:0;background:var(--bg);overflow-y:auto;overflow-x:hidden;
-  display:none;scrollbar-width:none;padding-bottom:110px}
-.screen::-webkit-scrollbar{display:none}
-.screen.active{display:block}
+.app { position: absolute; top: 48px; left: 0; right: 0; bottom: 0; }
+.screen { position: absolute; inset: 0; background: var(--bg); display: none; overflow: hidden; }
+.screen.active { display: block; }
+.scrollpage { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding-bottom: 120px; }
+.scrollpage::-webkit-scrollbar { display: none; }
 
-/* ---- type ---- */
-.h1{font-size:24px;font-weight:700;letter-spacing:-.4px}
-.h2{font-size:17px;font-weight:700;letter-spacing:-.2px}
-.body{font-size:14.5px;line-height:1.55}
-.sec{font-size:13.5px;color:var(--soft)}
-.micro{font-size:12px;color:var(--soft)}
-.wordmark{font-size:23px;font-weight:800;letter-spacing:-.8px;line-height:1}
+.h1 { font-size: 24px; font-weight: 700; letter-spacing: -.4px; }
+.h2 { font-size: 17px; font-weight: 700; letter-spacing: -.2px; }
+.body { font-size: 14.5px; line-height: 1.55; }
+.sec { font-size: 13.5px; color: var(--soft); }
+.micro { font-size: 12px; color: var(--soft); }
+.wordmark { font-size: 23px; font-weight: 800; letter-spacing: -.8px; line-height: 1; }
 
-/* ---- top bar (feed) ---- */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 4px;position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);z-index:20}
-.tabs{display:flex;gap:22px}
-.tab{font-size:16.5px;font-weight:600;color:var(--soft);padding:6px 0;position:relative}
-.tab.on{color:var(--ink)}
-.tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2.5px;background:var(--ink);border-radius:2px}
-.iconbtn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:17px}
-.iconbtn:active{background:var(--surface)}
-
-/* ---- pills, chips, buttons ---- */
-.pill{border-radius:var(--r-pill);padding:11px 22px;font-size:14.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;justify-content:center}
-.pill.dark{background:var(--ink);color:#fff}
-.pill.outline{border:1.5px solid var(--line);background:var(--bg)}
-.pill.outline.saved{border-color:var(--ink)}
-.seg{display:inline-flex;background:var(--surface);border-radius:var(--r-pill);padding:3px}
-.seg button{border-radius:var(--r-pill);padding:7px 18px;font-size:13.5px;font-weight:600;color:var(--soft)}
-.seg button.on{background:var(--bg);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.chiprow{display:flex;gap:8px;overflow-x:auto;padding:10px 18px 4px;scrollbar-width:none}
-.chiprow::-webkit-scrollbar{display:none}
-.chip{flex:none;border-radius:var(--r-pill);background:var(--surface);padding:8px 15px;font-size:13.5px;font-weight:500;color:var(--ink)}
-.chip.on{background:var(--ink);color:#fff}
-.kw{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-pill);background:var(--surface);padding:8px 14px;font-size:13.5px;font-weight:500;margin:0 6px 8px 0}
-.kw:active{background:#e6e6e6}
-
-/* ---- masonry ---- */
-.masonry{columns:2;column-gap:8px;padding:12px 18px}
-.tile{break-inside:avoid;margin-bottom:8px;position:relative;border-radius:var(--r-img);overflow:hidden}
-.tile:active{opacity:.85}
-.ph{width:100%;border-radius:var(--r-img);display:block}
-.bolt-badge{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;
-  background:rgba(255,255,255,.9);display:grid;place-items:center;font-size:12px;box-shadow:0 1px 5px rgba(0,0,0,.15)}
-
-/* ---- gradient placeholder palette ---- */
-.g0{background:linear-gradient(160deg,#1d3a5f,#6f93b4)}
-.g1{background:linear-gradient(165deg,#dfe8ee,#9fb6c6)}
-.g2{background:linear-gradient(150deg,#c9a36a,#eadfca)}
-.g3{background:linear-gradient(160deg,#2b2b2e,#6e6e74)}
-.g4{background:linear-gradient(155deg,#5c6b52,#cfd6c0)}
-.g5{background:linear-gradient(150deg,#a3543d,#e8c3b2)}
-.g6{background:linear-gradient(160deg,#10182b,#3c4f7a)}
-.g7{background:linear-gradient(160deg,#efece6,#cfc8ba)}
-.g8{background:linear-gradient(160deg,#7fa8a0,#dcebe6)}
-.g9{background:linear-gradient(160deg,#5a5a86,#cdaec6)}
-
-/* ---- floating bottom nav ---- */
-.bottomnav{
-  position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
-  background:rgba(255,255,255,.95);backdrop-filter:blur(14px);
-  border-radius:var(--r-pill);box-shadow:var(--shadow-float);
-  display:flex;align-items:center;gap:4px;padding:8px 10px;z-index:40;
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 20px 4px;
+  position: sticky; top: 0;
+  background: rgba(255,255,255,.94); backdrop-filter: blur(12px); z-index: 20;
 }
-.bottomnav button{width:50px;height:44px;border-radius:var(--r-pill);display:grid;place-items:center}
-.bottomnav button.on{background:var(--ink);color:#fff}
-.av{width:30px;height:30px;border-radius:50%;background:var(--accent);flex:none;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
-.av.lg{width:76px;height:76px;font-size:26px}
-.av.sm{width:24px;height:24px;font-size:10px}
+.iconbtn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 17px; }
+.iconbtn:active { background: var(--surface); }
+.iconbtn svg { width: 20px; height: 20px; }
+.backbtn { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-size: 16px; }
+.dethead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  position: sticky; top: 0;
+  background: rgba(255,255,255,.94); backdrop-filter: blur(12px); z-index: 20;
+}
 
-/* ---- pond cards (feed, Ponds lens) ---- */
-.pondcard{margin:0 18px 14px;border:1px solid var(--line);border-radius:var(--r-card);padding:14px;box-shadow:var(--shadow-card)}
-.pondcard .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;border-radius:12px;overflow:hidden;margin-bottom:12px}
-.pondcard .strip div{height:74px}
-.pondrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.typechip{font-size:11.5px;font-weight:600;color:var(--soft);border:1px solid var(--line);border-radius:var(--r-pill);padding:3px 9px}
-.rise{font-size:12.5px;font-weight:600;color:#3d7a5c}
+.pill { border-radius: var(--r-pill); padding: 11px 22px; font-size: 14.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 7px; justify-content: center; }
+.pill.dark { background: var(--ink); color: #fff; }
+.pill.outline { border: 1.5px solid var(--line); background: var(--bg); }
+.seg { display: inline-flex; background: var(--surface); border-radius: var(--r-pill); padding: 3px; }
+.seg button { border-radius: var(--r-pill); padding: 7px 18px; font-size: 13.5px; font-weight: 600; color: var(--soft); }
+.seg button.on { background: var(--bg); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
 
-/* ---- detail screens ---- */
-.dethead{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);z-index:20}
-.backbtn{width:38px;height:38px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:16px}
-.detimg{margin:4px 18px;border-radius:14px;overflow:hidden}
-.detbody{padding:16px 22px}
-.artistrow{display:flex;align-items:center;gap:10px}
-.bolt-line{display:inline-flex;align-items:center;gap:7px;border-radius:var(--r-pill);padding:8px 14px;font-size:13px;font-weight:600;background:#FFF7E0}
-.bolt-line.off{background:var(--surface);color:var(--soft);font-weight:500}
-.callout{margin:14px 18px 0;border-radius:16px;background:var(--surface);padding:14px 16px;font-size:13.5px;line-height:1.5}
-.excard{margin:14px 18px 0;border:1px solid var(--line);border-radius:var(--r-card);padding:16px;box-shadow:var(--shadow-card)}
-.avrow{display:flex}
-.avrow .av{margin-right:-8px;border:2px solid #fff}
-.exgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px}
-.exgrid .micro{margin-bottom:3px}
-.mapph{height:118px;border-radius:14px;background:linear-gradient(160deg,#E9EEF2,#DBE4EA);display:grid;place-items:center;font-size:24px;margin-top:8px}
-.optcard{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:18px;padding:15px 16px;margin-top:10px}
-.optcard:active{background:var(--surface)}
+.masonry { columns: 2; column-gap: 8px; padding: 12px 18px 40px; }
+.tile { break-inside: avoid; margin-bottom: 8px; position: relative; border-radius: var(--r-img); overflow: hidden; cursor: pointer; }
+.tile:active { opacity: .85; }
+.ph { width: 100%; border-radius: var(--r-img); display: block; position: relative; }
+.tile .cap { padding: 6px 4px 4px; font-size: 12px; color: var(--ink); font-weight: 500; }
+.tile .cap .h { color: var(--soft); font-size: 10.5px; font-weight: 400; margin-top: 1px; }
 
-/* ---- profile ---- */
-.cover{height:92px;background:linear-gradient(135deg,#EFEDE9,#E3E6EC)}
-.profhead{padding:0 22px;margin-top:-38px;position:relative}
-.vchip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;border-radius:var(--r-pill);background:var(--surface);padding:4px 10px;vertical-align:3px;margin-left:8px}
-.quote{font-size:15px;margin-top:12px;letter-spacing:-.1px}
-.proftabs{display:flex;gap:24px;padding:6px 22px 0;border-bottom:1px solid var(--line);margin-top:18px}
-.proftab{font-size:15px;font-weight:600;color:var(--soft);padding:10px 0;position:relative;display:inline-flex;align-items:center}
-.proftab.on{color:var(--ink)}
-.proftab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2.5px;background:var(--ink);border-radius:2px}
-.proftab .cnt{font-size:11.5px;font-weight:700;background:var(--surface);border-radius:var(--r-pill);padding:2px 8px;margin-left:6px;color:var(--soft)}
-.proftab.on .cnt{background:var(--ink);color:#fff}
-.fingerprint{padding:26px 22px 8px}
-.fingerprint .w{font-weight:700;letter-spacing:-.5px;line-height:1.18;display:block}
-.listitem{display:flex;justify-content:space-between;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line);font-size:14.5px}
-.listitem span{color:var(--soft);font-size:13px;flex:none;margin-left:14px}
-.workcard{break-inside:avoid;margin-bottom:18px;width:100%;text-align:left;display:block}
-.workcard .wt{font-size:14px;font-weight:700;margin-top:8px;letter-spacing:-.1px}
-.workcard .wm{font-size:12px;color:var(--soft);margin-top:2px}
-.workcard .wd{font-size:12.5px;color:#444;line-height:1.45;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.workcard .read{font-size:12px;font-weight:600;text-decoration:underline;color:var(--ink)}
-.idxrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 0;border-bottom:1px solid var(--line)}
-.idxrow:active{background:var(--surface)}
-.idxrow .nm{font-size:14.5px;font-weight:600;letter-spacing:-.1px}
-.idxrow .mt{font-size:12px;color:var(--soft);margin-top:2px}
-.idxrow .live{color:#3d7a5c;font-weight:600}
+.g0 { background: linear-gradient(160deg, #1d3a5f, #6f93b4); }
+.g1 { background: linear-gradient(165deg, #d8c9a8, #a58c66); }
+.g2 { background: linear-gradient(150deg, #c9a36a, #eadfca); }
+.g3 { background: linear-gradient(160deg, #2b2b2e, #6e6e74); }
+.g4 { background: linear-gradient(155deg, #5c6b52, #cfd6c0); }
+.g5 { background: linear-gradient(150deg, #a3543d, #e8c3b2); }
+.g6 { background: linear-gradient(160deg, #10182b, #3c4f7a); }
+.g7 { background: linear-gradient(160deg, #efece6, #cfc8ba); }
+.g8 { background: linear-gradient(160deg, #7fa8a0, #dcebe6); }
+.g9 { background: linear-gradient(160deg, #5a5a86, #cdaec6); }
 
-/* ---- sheets / modals / toast ---- */
-.sheetwrap{position:absolute;inset:0;z-index:60;display:none}
-.sheetwrap.open{display:block}
-.scrim{position:absolute;inset:0;background:rgba(0,0,0,.35)}
-.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 0 0;padding:20px 22px 34px;max-height:82%;overflow-y:auto}
-.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 16px}
-.toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(8px);background:var(--ink);color:#fff;
-  font-size:13.5px;font-weight:500;border-radius:var(--r-pill);padding:10px 18px;opacity:0;pointer-events:none;transition:.25s;z-index:80;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.searchpill{display:flex;align-items:center;gap:9px;background:var(--surface);border-radius:var(--r-pill);padding:12px 16px;font-size:14.5px;color:var(--soft)}
-.field{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:8px;font-size:14.5px}
-.field:focus-within{border-color:#bbb}
-.bscard{margin:14px 18px 0;border:1px solid var(--line);border-radius:var(--r-card);padding:18px;box-shadow:var(--shadow-card)}
-.star{font-size:18px;position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 1px 5px rgba(0,0,0,.15)}
-.selgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.selgrid button{position:relative;border-radius:var(--r-img);overflow:hidden}
-.hr{height:1px;background:var(--line);margin:18px 0}
-.demoseg{position:sticky;top:0;z-index:21;display:flex;justify-content:center;padding:6px 0 2px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px)}
+/* ---- bottom nav (with clear icons) ---- */
+.bottomnav {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  background: rgba(255,255,255,.95); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill); box-shadow: var(--shadow-float);
+  display: flex; align-items: center; gap: 4px; padding: 8px 10px; z-index: 40;
+}
+.bottomnav button {
+  width: 50px; height: 44px; border-radius: var(--r-pill);
+  display: grid; place-items: center;
+  color: var(--soft); position: relative;
+}
+.bottomnav button.on { background: var(--ink); color: #fff; }
+.bottomnav .plus { background: var(--ink); color: white; }
+.bottomnav svg { width: 22px; height: 22px; }
+.bottomnav .badge {
+  position: absolute; top: 6px; right: 10px;
+  width: 8px; height: 8px; border-radius: 100px;
+  background: var(--mark); border: 1.5px solid white;
+}
+
+.av { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #A0A4F0, #E6A9C9); display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+.av.lg { width: 84px; height: 84px; font-size: 28px; border: 4px solid white; }
+.av.sm { width: 24px; height: 24px; font-size: 10px; }
+.av.g1 { background: linear-gradient(135deg, #ffb37b, #e88e6f); }
+.av.g2 { background: linear-gradient(135deg, #7cb0a5, #a5c8b8); }
+.av.g3 { background: linear-gradient(135deg, #b09fd7, #8c8cd4); }
+.av.g4 { background: linear-gradient(135deg, #d4a173, #b47552); }
+
+/* plop detail */
+.plop-poster { display: flex; align-items: center; gap: 9px; padding: 6px 20px 10px; cursor: pointer; }
+.plop-poster .n { font-weight: 600; font-size: 14px; }
+.plop-poster .h { color: var(--soft); font-size: 12.5px; margin-left: 2px; }
+
+.detimg { margin: 4px 18px; border-radius: 14px; overflow: hidden; position: relative; }
+.detimg .marks-vis {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.28s ease-out;
+}
+.detimg.show-marks .marks-vis { opacity: 1; }
+.detimg .mark-dot {
+  position: absolute; width: 22px; height: 22px;
+  border-radius: 100px; background: var(--mark);
+  color: white; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transform: translate(-50%,-50%);
+  opacity: 0;
+  transition: opacity 0.28s ease-out;
+}
+.detimg.show-marks .mark-dot { opacity: 1; }
+
+.marks-pill {
+  position: absolute; top: 12px; right: 12px;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.55); color: white;
+  border-radius: 100px; font-size: 12px; font-weight: 600;
+  backdrop-filter: blur(8px);
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer;
+  z-index: 5;
+}
+.marks-pill .dot { width: 6px; height: 6px; background: var(--mark); border-radius: 50%; border: 1.5px solid white; }
+.marks-pill.hiding { display: none; }
+
+.detbody { padding: 14px 22px 4px; }
+.det-cap { font-size: 16px; font-weight: 600; letter-spacing: -0.2px; }
+.det-sub { font-size: 13.5px; color: var(--soft); margin-top: 3px; }
+
+.kept-by {
+  padding: 12px 20px; background: var(--surface); border-radius: 14px;
+  margin: 10px 20px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.kept-by .avs { display: flex; }
+.kept-by .avs .av { border: 2px solid white; margin-right: -8px; }
+.kept-by .txt { font-size: 13px; }
+.kept-by .txt b { font-weight: 600; }
+
+.notes-strip {
+  padding: 14px 16px;
+  margin: 10px 20px 0;
+  border: 1px dashed rgba(0,0,0,0.14); border-radius: 14px;
+}
+.notes-strip .lbl {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--soft);
+  letter-spacing: 0.5px; text-transform: uppercase;
+  font-weight: 700; margin-bottom: 10px;
+}
+.notes-strip .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.notes-strip .chip {
+  background: var(--ink); color: white;
+  padding: 5px 12px; border-radius: var(--r-pill);
+  font-size: 12.5px; font-weight: 500;
+}
+
+.reco-section-h {
+  padding: 22px 20px 12px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 15.5px; font-weight: 700; letter-spacing: -0.2px;
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+}
+.reco-section-h .why-badge {
+  padding: 3px 10px;
+  background: var(--surface); color: var(--soft);
+  border-radius: var(--r-pill);
+  font-size: 10.5px; font-weight: 600;
+  margin-left: auto; text-transform: none; letter-spacing: 0;
+}
+.reco-slider { display: flex; gap: 10px; padding: 0 20px 8px; overflow-x: auto; scrollbar-width: none; }
+.reco-slider::-webkit-scrollbar { display: none; }
+.reco-card { flex-shrink: 0; width: 148px; cursor: pointer; }
+.reco-card .rc-img { width: 100%; aspect-ratio: 4/5; border-radius: 10px; margin-bottom: 8px; position: relative; }
+.reco-card .rc-why { font-size: 11.5px; color: var(--soft); line-height: 1.4; padding: 0 2px; }
+.reco-card .rc-why b { color: var(--ink); font-weight: 600; }
+
+/* keep CTA */
+.keep-cta-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 14px 20px 22px;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  z-index: 40;
+}
+.keep-cta-bar button {
+  width: 100%; padding: 13px; border-radius: var(--r-pill);
+  background: var(--ink); color: white;
+  font-size: 14.5px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+/* reblog */
+.repost-attr {
+  padding: 10px 14px; background: var(--surface); border-radius: 12px;
+  font-size: 12.5px; color: var(--soft);
+  display: flex; align-items: center; gap: 10px;
+  margin: 8px 20px 12px;
+}
+.repost-attr .av { width: 24px; height: 24px; font-size: 10px; }
+.repost-attr .txt { flex: 1; }
+.repost-attr .txt b { color: var(--ink); }
+
+.rev-image-wrap { padding: 0 18px 14px; }
+.rev-image {
+  width: 100%; aspect-ratio: 4/5;
+  border-radius: 14px; position: relative; overflow: hidden;
+  touch-action: pan-y;
+}
+.rev-image svg.marks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.rev-image.marking { touch-action: none; cursor: crosshair; }
+.mark-dot-editable {
+  position: absolute; width: 22px; height: 22px;
+  border-radius: 100px; background: var(--mark);
+  color: white; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transform: translate(-50%,-50%);
+  pointer-events: auto; cursor: pointer;
+}
+.mark-start-cue {
+  position: absolute; bottom: 12px; left: 12px; right: 12px;
+  padding: 10px 14px;
+  background: rgba(15,15,15,0.72); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill);
+  color: white; font-size: 12.5px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+}
+.mark-start-cue .msg { color: rgba(255,255,255,0.9); }
+.mark-start-cue button { padding: 6px 14px; border-radius: var(--r-pill); background: white; color: var(--ink); font-size: 12.5px; font-weight: 700; }
+.mark-toolbar {
+  position: absolute; bottom: 12px; left: 12px; right: 12px;
+  padding: 4px 5px;
+  background: rgba(15,15,15,0.78); backdrop-filter: blur(14px);
+  border-radius: var(--r-pill);
+  display: flex; align-items: center; gap: 2px;
+  justify-content: space-between;
+}
+.mark-toolbar .group { display: flex; align-items: center; gap: 2px; }
+.mark-toolbar button {
+  height: 32px; padding: 0 10px; border-radius: var(--r-pill);
+  color: rgba(255,255,255,0.85);
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 3px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.mark-toolbar button.on { background: var(--mark); color: white; }
+.mark-toolbar .util { color: rgba(255,255,255,0.7); font-weight: 600; padding: 0 8px; font-size: 15px; }
+.mark-toolbar .divider { width: 1px; height: 18px; background: rgba(255,255,255,0.2); margin: 0 3px; flex-shrink: 0; }
+.mark-toolbar .done-btn { background: white; color: var(--ink); font-weight: 700; padding: 0 12px; font-size: 12.5px; }
+
+.rev-body { position: absolute; top: 60px; bottom: 0; left: 0; right: 0; overflow-y: auto; scrollbar-width: none; padding-bottom: 100px; }
+.rev-body::-webkit-scrollbar { display: none; }
+
+.field-h { display: flex; align-items: center; gap: 6px; padding: 0 20px; font-size: 11px; color: var(--soft); letter-spacing: 0.6px; text-transform: uppercase; font-weight: 700; margin: 14px 0 8px; }
+.field-h .private-note { color: var(--soft); font-weight: 500; font-size: 10.5px; letter-spacing: 0; text-transform: none; margin-left: 4px; }
+.field-h .ic { font-size: 12px; }
+
+.field { margin: 0 20px 10px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: white; }
+.field.readonly { background: var(--surface); border-color: var(--line); color: var(--soft); }
+.field input { font-size: 15px; padding: 2px 0; }
+
+.chip-input { margin: 0 20px 6px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 10px; background: white; display: flex; flex-wrap: wrap; gap: 6px; min-height: 62px; align-items: flex-start; }
+.chip-input:focus-within { border-color: #bbb; }
+.note-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--ink); color: white; padding: 5px 10px 5px 12px; border-radius: var(--r-pill); font-size: 13px; font-weight: 500; }
+.note-chip .x { opacity: 0.55; margin-left: 3px; cursor: pointer; font-size: 15px; line-height: 1; }
+.chip-input input { flex: 1; min-width: 100px; font-size: 14.5px; padding: 4px 0; }
+
+.saveto-list { padding: 0 20px; display: flex; gap: 6px; flex-wrap: wrap; }
+.saveto-list button { padding: 8px 14px; border-radius: var(--r-pill); border: 1px solid var(--line); background: white; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; color: var(--ink); }
+.saveto-list button.on { background: var(--ink); color: white; border-color: var(--ink); }
+.saveto-list button .vis { font-size: 10px; opacity: 0.7; }
+
+.rev-cta { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 20px 22px; background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: flex; gap: 8px; z-index: 15; }
+.rev-cta .later { padding: 13px 18px; border-radius: var(--r-pill); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--soft); }
+.rev-cta .save { flex: 1; padding: 13px 18px; border-radius: var(--r-pill); border: 0; background: var(--ink); color: white; font-size: 14.5px; font-weight: 600; }
+
+.note-sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--bg); border-radius: 26px 26px 0 0;
+  padding: 14px 22px 26px; z-index: 50;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.14);
+  display: none;
+  animation: slideup 0.26s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes slideup { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.note-sheet.on { display: block; }
+.note-sheet .grab { width: 38px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 14px; }
+.note-sheet .h { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 12px; }
+.note-sheet .h .num { width: 24px; height: 24px; background: var(--mark); color: white; border-radius: 100px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.note-sheet .h .lbl { font-weight: 700; font-size: 14px; }
+.note-sheet .n-method-tabs { display: flex; gap: 4px; margin-bottom: 12px; background: var(--surface); border-radius: var(--r-pill); padding: 3px; width: fit-content; }
+.note-sheet .n-method-tabs button { padding: 6px 12px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; color: var(--soft); display: flex; align-items: center; gap: 5px; }
+.note-sheet .n-method-tabs button.on { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.note-sheet input.n-txt { border-bottom: 1px solid var(--line); font-size: 15px; padding: 10px 0; margin-bottom: 14px; }
+.note-sheet input.n-txt:focus { border-bottom-color: var(--ink); }
+.note-sheet .actions { display: flex; gap: 8px; }
+.note-sheet .actions button { padding: 12px 18px; border-radius: var(--r-pill); font-size: 13.5px; font-weight: 600; }
+.note-sheet .actions .skip { border: 1px solid var(--line); color: var(--soft); }
+.note-sheet .actions .save { flex: 1; background: var(--ink); color: white; }
+
+/* profile */
+.cover { height: 92px; background: linear-gradient(135deg, #EFEDE9, #E3E6EC); }
+.profhead { padding: 0 22px; margin-top: -42px; position: relative; }
+.profname { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-top: 10px; }
+.profhandle { font-size: 13px; color: var(--soft); margin-top: 3px; }
+.profcounts { font-size: 12.5px; color: var(--soft); margin-top: 8px; line-height: 1.5; }
+.profcounts b { color: var(--ink); font-weight: 600; }
+
+.proftabs {
+  display: flex; gap: 24px; padding: 6px 22px 0;
+  border-bottom: 1px solid var(--line); margin-top: 20px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.proftabs::-webkit-scrollbar { display: none; }
+.proftab {
+  font-size: 15px; font-weight: 600; color: var(--soft);
+  padding: 10px 0; position: relative;
+  display: inline-flex; align-items: center; gap: 6px;
+  white-space: nowrap; cursor: pointer;
+}
+.proftab.on { color: var(--ink); }
+.proftab.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2.5px; background: var(--ink); border-radius: 2px; }
+.proftab .cnt { font-size: 11.5px; font-weight: 700; background: var(--surface); border-radius: var(--r-pill); padding: 2px 7px; color: var(--soft); }
+.proftab.on .cnt { background: var(--ink); color: #fff; }
+.proftab .vis { font-size: 10px; color: var(--soft); font-weight: 500; }
+.proftab.on .vis { color: var(--ink); }
+.proftab.add { color: var(--soft); font-weight: 500; display: inline-flex; align-items: center; gap: 5px; }
+.proftab.add .pro-badge { padding: 1px 6px; background: var(--ink); color: white; border-radius: var(--r-pill); font-size: 9px; letter-spacing: 0.4px; font-weight: 700; }
+
+.tab-toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 22px 12px; border-bottom: 1px solid var(--line); }
+.tab-toolbar .hint { font-size: 11.5px; color: var(--soft); flex: 1; line-height: 1.4; }
+.tab-toolbar button { padding: 5px 10px; border-radius: var(--r-pill); background: var(--surface); font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; color: var(--ink); }
+
+/* alerts */
+.alerts-head { padding: 8px 22px 4px; display: flex; justify-content: space-between; align-items: center; }
+.alerts-head h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+.alerts-head .filter { display: flex; gap: 4px; margin-top: 10px; padding: 0 22px 14px; overflow-x: auto; scrollbar-width: none; }
+.alerts-head .filter::-webkit-scrollbar { display: none; }
+.alerts-head .filter button { padding: 6px 12px; border-radius: var(--r-pill); background: var(--surface); font-size: 12.5px; font-weight: 600; color: var(--soft); white-space: nowrap; }
+.alerts-head .filter button.on { background: var(--ink); color: white; }
+
+.alert-section {
+  padding: 18px 22px 8px;
+  font-size: 11px; color: var(--soft);
+  letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700;
+}
+
+.alert-card {
+  margin: 0 18px 8px;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  display: flex; gap: 14px; align-items: flex-start;
+  cursor: pointer;
+}
+.alert-card:active { background: var(--surface); }
+.alert-card .thumb { width: 60px; height: 74px; border-radius: 8px; flex-shrink: 0; position: relative; }
+.alert-card .thumb .status-dot {
+  position: absolute; top: 4px; right: 4px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--amber); border: 2px solid white;
+}
+.alert-card .body { flex: 1; padding-top: 2px; }
+.alert-card .title { font-size: 13.5px; font-weight: 700; letter-spacing: -0.1px; line-height: 1.3; }
+.alert-card .msg { font-size: 12px; color: var(--soft); margin-top: 4px; line-height: 1.4; }
+.alert-card .cta {
+  margin-top: 10px; padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--ink); color: white;
+  font-size: 12px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+
+.alert-social {
+  display: flex; align-items: center; gap: 12px;
+}
+.alert-social .body { font-size: 13.5px; line-height: 1.4; }
+.alert-social .body b { font-weight: 700; }
+.alert-social .body .m { color: var(--soft); font-size: 11.5px; margin-top: 3px; display: block; }
+.alert-social .side-thumb { width: 44px; height: 54px; border-radius: 6px; flex-shrink: 0; }
+
+/* sheets */
+.sheetwrap { position: absolute; inset: 0; z-index: 60; display: none; }
+.sheetwrap.open { display: block; }
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.35); }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--bg); border-radius: 26px 26px 0 0; padding: 18px 22px 32px; max-height: 82%; overflow-y: auto; animation: slideup 0.26s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.grab { width: 38px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 14px; }
+.sheet-h { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.sheet-p { font-size: 12.5px; color: var(--soft); margin-bottom: 16px; line-height: 1.5; }
+.sheet-field { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+.sheet-field .lbl { font-size: 11px; color: var(--soft); font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 4px; }
+.sheet-field input { font-size: 15px; }
+.sheet-row-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border: 1px solid var(--line);
+  border-radius: 14px; margin-bottom: 10px;
+}
+.sheet-row-toggle .l { font-size: 14px; font-weight: 600; }
+.sheet-row-toggle .l .sub { font-size: 11.5px; color: var(--soft); font-weight: 500; margin-top: 2px; display: block; }
+.toggle-sw { width: 46px; height: 26px; background: var(--ink); border-radius: 100px; position: relative; cursor: pointer; flex-shrink: 0; }
+.toggle-sw::after { content: ''; position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; background: white; border-radius: 100px; transition: all 0.15s; }
+.toggle-sw.off { background: #D1D1D6; }
+.toggle-sw.off::after { right: auto; left: 3px; }
+.sheet-cta { display: flex; gap: 8px; margin-top: 16px; }
+.sheet-cta .delete { padding: 13px 18px; border-radius: var(--r-pill); border: 1px solid var(--line); font-size: 13.5px; font-weight: 600; color: #d9463c; }
+.sheet-cta .save { flex: 1; padding: 13px; background: var(--ink); color: white; border-radius: var(--r-pill); font-size: 14.5px; font-weight: 600; }
+.pro-block { margin-top: 16px; padding: 14px; background: var(--surface); border-radius: 12px; font-size: 12.5px; color: var(--ink); }
+.pro-block a { color: var(--ink); font-weight: 700; text-decoration: underline; margin-left: 4px; }
+
+.pro-sheet-body { text-align: center; padding: 8px 4px 0; }
+.pro-sheet-body .icn { width: 60px; height: 60px; border-radius: 100px; background: var(--ink); color: white; display: grid; place-items: center; font-size: 24px; margin: 0 auto 14px; }
+.pro-sheet-body h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; }
+.pro-sheet-body p { font-size: 13px; color: var(--soft); margin-top: 8px; line-height: 1.5; padding: 0 12px; }
+.pro-features { text-align: left; padding: 18px 0 0; }
+.pro-features .row { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+.pro-features .row:last-child { border: 0; }
+.pro-features .row .c { color: var(--soft); font-size: 15px; }
+
+.toast { position: absolute; left: 50%; bottom: 100px; transform: translateX(-50%) translateY(8px); background: var(--ink); color: #fff; font-size: 13.5px; font-weight: 500; border-radius: var(--r-pill); padding: 10px 18px; opacity: 0; pointer-events: none; transition: .25s; z-index: 80; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -205,1159 +483,836 @@ input{font:inherit;border:0;outline:none;background:transparent;color:var(--ink)
     </span>
   </div>
 
-  <div class="app" id="app">
+  <div class="app">
 
-    <!-- ============ D1 · FEED (Pool) ============ -->
+    <!-- ============ FEED ============ -->
     <section class="screen active" id="scr-feed">
-      <div class="topbar">
-        <div class="wordmark">ari</div>
-        <div class="tabs">
-          <button class="tab on" id="tab-plops" onclick="setLens('plops')">Plops</button>
-          <button class="tab" id="tab-ponds" onclick="setLens('ponds')">Ponds</button>
-        </div>
-        <div style="width:38px"></div>
-      </div>
-
-      <div class="chiprow" id="chips"></div>
-
-      <div id="feed-plops"><div class="masonry" id="plops-grid"></div></div>
-
-      <div id="feed-ponds" style="display:none">
-        <p class="micro" style="padding:8px 22px 10px">Currents — where the moment is gathering.</p>
-        <div id="ponds-list"></div>
-      </div>
-    </section>
-
-    <!-- ============ D2 · PLOP DETAIL ============ -->
-    <section class="screen" id="scr-plop">
-      <div class="dethead">
-        <button class="backbtn" onclick="goBack()">←</button>
-        <button class="iconbtn" onclick="toast('Link copied')">↗</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:9px;padding:0 20px 9px;cursor:pointer" onclick="openProfileFromPlop()">
-        <span class="av" id="plop-poster-av" style="width:30px;height:30px;font-size:11px"></span>
-        <span style="font-weight:600;font-size:14px" id="plop-poster-name"></span>
-        <span style="color:var(--soft);font-size:12.5px" id="plop-poster-handle"></span>
-      </div>
-      <div class="detimg"><div class="ph" id="plop-img" style="height:430px"></div></div>
-      <div id="plop-views" style="display:none;gap:6px;align-items:center;padding:8px 18px 0"></div>
-      <div class="detbody">
-        <p class="body" style="font-size:16px;color:#222" id="plop-caption"></p>
-        <div id="plop-credit" style="margin-top:12px"></div>
-
-        <div style="margin-top:16px" id="plop-bolt"></div>
-
-        <p class="sec" style="margin:22px 0 10px;font-weight:600;color:var(--ink)">Keywords — tap to enter the pond</p>
-        <div id="plop-kws"></div>
-
-        <div style="display:flex;gap:10px;margin-top:20px">
-          <button class="pill dark" id="plop-save" style="flex:1" onclick="toggleSavePlop()">Save</button>
-          <button class="pill outline" onclick="toast('Link copied')">Share</button>
-        </div>
-
-        <p class="micro" style="margin-top:20px" id="plop-foot"></p>
-      </div>
-      <p class="sec" style="font-weight:600;color:var(--ink);padding:6px 22px 0">Connected works — pulled by the same currents</p>
-      <div class="masonry" id="plop-related" style="padding-top:10px"></div>
-    </section>
-
-    <!-- ============ D3 · POND ============ -->
-    <section class="screen" id="scr-pond">
-      <div class="dethead">
-        <button class="backbtn" onclick="goBack()">←</button>
-        <button class="iconbtn" onclick="toast('Link copied')">↗</button>
-      </div>
-      <div style="padding:14px 22px 0">
-        <p class="micro" id="pond-typelabel"></p>
-        <h1 class="h1" style="font-size:30px;margin-top:6px" id="pond-name"></h1>
-        <p class="rise" style="margin-top:8px" id="pond-rise"></p>
-        <p class="sec" style="margin-top:12px" id="pond-poolline"></p>
-        <div style="display:flex;gap:10px;margin-top:14px">
-          <button class="pill dark" id="pond-save" style="flex:1" onclick="toggleSavePond()">Save this pond</button>
-          <button class="pill outline" onclick="toast('Link copied')">Share</button>
-        </div>
-      </div>
-      <div id="pond-typeblock"></div>
-      <div style="padding:22px 22px 0">
-        <p class="sec" style="font-weight:600;color:var(--ink);margin-bottom:10px">Nearby keywords — hop across the currents</p>
-        <div id="pond-nearby"></div>
-      </div>
-      <p class="sec" style="font-weight:600;color:var(--ink);padding:16px 22px 0" id="pond-gridlabel">This keyword's plops — by many people</p>
-      <div class="masonry" id="pond-grid" style="padding-top:10px"></div>
-    </section>
-
-    <!-- ============ D4 · PROFILE (someone else's) ============ -->
-    <section class="screen" id="scr-profile">
-      <div class="dethead" style="position:absolute;left:0;right:0;background:none;backdrop-filter:none">
-        <button class="backbtn" onclick="goBack()">←</button>
-        <button class="iconbtn" onclick="toast('Link copied')" style="background:var(--surface);border-radius:50%">↗</button>
-      </div>
-      <div class="cover"></div>
-      <div class="profhead">
-        <span class="av lg" id="pf-av"></span>
-        <h1 class="h1" style="margin-top:10px" id="pf-name"></h1>
-        <p class="sec" style="margin-top:3px" id="pf-handle"></p>
-        <p class="body" id="pf-bio" style="margin-top:10px"></p>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:13px">
-          <span class="sec" id="pf-counts" style="font-weight:600;color:var(--ink)"></span>
-          <span id="pf-links" style="display:flex;gap:14px;color:#555"></span>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:15px">
-          <button class="pill dark" id="pf-follow" style="flex:1" onclick="toggleFollow()">Follow</button>
-        </div>
-      </div>
-      <div class="proftabs" id="pf-tabs"></div>
-      <div id="pf-body"></div>
-    </section>
-
-    <!-- ============ D4 · OWN PROFILE ============ -->
-    <section class="screen" id="scr-me">
-      <div class="cover" style="margin-top:0"></div>
-      <div class="profhead">
-        <span class="av lg" id="me-av">SJ</span>
-        <h1 class="h1" style="margin-top:10px" id="me-name">Sungwon Jeong</h1>
-        <p class="sec" style="margin-top:3px" id="me-handle">@sjeong</p>
-        <p class="body" id="me-bio" style="margin-top:10px"></p>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:13px">
-          <span class="sec" id="me-counts" style="font-weight:600;color:var(--ink)"></span>
-          <span id="me-links" style="display:flex;gap:14px;color:#555"></span>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:15px">
-          <button class="pill outline" style="flex:1" onclick="toast('Edit profile — not in this prototype')">Edit profile</button>
-        </div>
-      </div>
-      <div class="proftabs" id="me-tabs"></div>
-      <div id="me-body"></div>
-    </section>
-
-    <!-- ============ D5 · ABOUT (artist portfolio) ============ -->
-    <section class="screen" id="scr-about" style="background:var(--bg)">
-      <div class="dethead">
-        <button class="backbtn" onclick="goBack()">←</button>
-        <button class="pill outline" style="padding:8px 16px;font-size:13px" onclick="toast('Portfolio link copied')">Share</button>
-      </div>
-      <div style="padding:8px 24px">
-        <p class="micro" style="font-weight:700;letter-spacing:.5px">ARTIST · ABOUT</p>
-        <h1 class="h1" style="font-size:28px;margin-top:6px" id="about-name"></h1>
-        <p class="sec" style="margin-top:5px" id="about-line"></p>
-        <p class="body" style="margin-top:16px;color:#333" id="about-bio"></p>
-        <button class="sec" id="about-readmore" style="font-weight:600;color:var(--ink);margin-top:6px" onclick="expandBio()">Read more</button>
-
-        <p class="h2" style="margin-top:28px">Selected works <span class="sec" id="about-count"></span></p>
-        <div class="masonry" id="about-works" style="padding:12px 0 0;columns:2"></div>
-
-        <p class="h2" style="margin-top:18px">Exhibitions</p>
-        <div id="about-ex"></div>
-
-        <p class="h2" style="margin-top:24px">Awards · selections</p>
-        <div id="about-awards"></div>
-
-        <p class="h2" style="margin-top:24px">Contact</p>
-        <p class="body" style="margin-top:8px;color:#333" id="about-contact"></p>
-        <div style="height:30px"></div>
-      </div>
-    </section>
-
-    <!-- ============ BACKSTAGE (your private studio) ============ -->
-    <section class="screen" id="scr-backstage" style="background:var(--bg)">
-      <div class="dethead">
-        <button class="backbtn" onclick="goBack()">←</button>
-        <span class="micro" style="font-weight:700">ONLY YOU CAN SEE THIS</span>
-      </div>
-      <div style="padding:8px 24px 0">
-        <p class="micro" style="font-weight:700">YOUR PROFILE · BACKSTAGE</p>
-        <h1 class="h1" style="font-size:28px;margin-top:6px">⚙ Backstage</h1>
-        <p class="sec" style="margin-top:4px">A screen only you can see.</p>
-      </div>
-
-      <!-- 1 · post an exhibition -->
-      <div class="bscard">
-        <p class="h2">Post an exhibition</p>
-        <div class="field"><input id="bs-exname" placeholder="Exhibition name"></div>
-        <div class="field"><input id="bs-exvenue" placeholder="Venue"></div>
-        <div class="field"><input id="bs-exdates" placeholder="Dates — e.g. 14–30 Aug 2026"></div>
-        <button class="pill dark" style="width:100%;margin-top:12px" onclick="postExhibition()">Post exhibition</button>
-        <p class="micro" style="margin-top:10px">The closer the opening, the more the exhibition pond fills (by days remaining).</p>
-        <p class="sec" style="margin-top:8px;font-weight:600;color:#3d7a5c" id="bs-exposted"></p>
-      </div>
-
-      <!-- 2 · dispatch -->
-      <div class="bscard">
-        <div style="display:flex;justify-content:space-between;align-items:baseline">
-          <p class="h2">Dispatch — to your followers</p>
-          <span class="micro" style="font-weight:700" id="bs-dispcount">2 left this month</span>
-        </div>
-        <div style="display:flex;justify-content:center;margin-top:12px">
-          <div class="seg">
-            <button id="bs-d-invite" class="on" onclick="setDispatch('invite')">Exhibition invite</button>
-            <button id="bs-d-studio" onclick="setDispatch('studio')">Studio share</button>
+      <div class="scrollpage">
+        <div class="topbar">
+          <div class="wordmark">ari</div>
+          <div style="display:flex;gap:6px">
+            <button class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+            <button class="iconbtn" onclick="go('scr-alerts')" style="position:relative">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--mark);border:1.5px solid white"></span>
+            </button>
           </div>
         </div>
-        <div class="field"><textarea id="bs-dmsg" rows="3" placeholder="A few lines — where, when, why it matters…"></textarea></div>
-        <button class="pill dark" style="width:100%;margin-top:12px" id="bs-dsend" onclick="sendDispatch()">Send dispatch — to 38 people</button>
-        <p class="micro" style="margin-top:10px">Exhibition invite = pull people into the real world · Studio share = a new piece or a studio shot, only your followers see it. The frequency limit keeps a dispatch precious.</p>
-      </div>
-
-      <!-- 3 · edit About page -->
-      <div class="bscard">
-        <div style="display:flex;justify-content:space-between;align-items:baseline">
-          <p class="h2">Your About page</p>
-          <button class="micro" style="font-weight:600" onclick="openAbout('Haneul Jung')">Preview ↗</button>
+        <div style="padding: 4px 20px 8px">
+          <p class="sec" style="font-size:13px">The pool — what people are keeping today.</p>
         </div>
-        <p class="micro" style="margin-top:4px">what galleries &amp; curators see</p>
-        <p class="micro" style="margin-top:12px;font-weight:700">STATUS LINE</p>
-        <div class="field" style="margin-top:6px"><input id="bs-quote" value="Lately I photograph the city where it’s sinking."></div>
-        <p class="micro" style="margin-top:12px;font-weight:700">BIO</p>
-        <div class="field" style="margin-top:6px"><textarea id="bs-bio" rows="3">Haneul Jung photographs water where it is least romantic — reservoirs, drainage canals, the flooded basements of buildings waiting for demolition.</textarea></div>
-        <p class="micro" style="margin-top:12px;font-weight:700">CONTACT · LINKS</p>
-        <div class="field" style="margin-top:6px"><input id="bs-contact" value="studio@haneuljung.kr"></div>
-        <div class="field"><input id="bs-site" value="haneuljung.kr"></div>
-        <div class="field"><input id="bs-insta" value="@haneul.studio"></div>
-        <button class="pill dark" style="width:100%;margin-top:14px" onclick="saveAbout()">Save About page</button>
-      </div>
-
-      <!-- 4 · what carries your work -->
-      <div class="bscard">
-        <p class="h2">What carries your work — only you see</p>
-        <p class="micro" style="margin-top:4px">the currents people keep your work from — read from saves, nobody writes a word</p>
-        <div style="margin-top:12px;line-height:1.5">
-          <span style="font-weight:800;font-size:26px;letter-spacing:-.5px">water</span>&nbsp;&nbsp;
-          <span style="font-weight:700;font-size:20px;color:#5a6b7c">memory</span>&nbsp;&nbsp;
-          <span style="font-weight:700;font-size:17px;color:#8a8a8e">demolition</span>&nbsp;&nbsp;
-          <span style="font-weight:700;font-size:15px;color:#8a8a8e">basements</span>
+        <div class="masonry">
+          <div class="tile" onclick="openMine()"><div class="ph g1" style="height:220px"></div><div class="cap">Moon jar<div class="h">Joseon · Nat'l Museum</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph g4" style="height:180px"></div><div class="cap">"Wearing a duvet"<div class="h">@studio.yumi</div></div></div>
+          <div class="tile" onclick="openMine()"><div class="ph g2" style="height:210px"></div><div class="cap">Brutalist stairs<div class="h">Hongdae</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g5','Moss brick wall','Seongbuk-dong')"><div class="ph g5" style="height:170px"></div><div class="cap">Moss brick wall<div class="h">Seongbuk-dong</div></div></div>
+          <div class="tile" onclick="openMine()"><div class="ph g7" style="height:190px"></div><div class="cap">Sign, Euljiro<div class="h">printing quarter</div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Coffee stain','morning')"><div class="ph g6" style="height:230px"></div><div class="cap">Coffee stain<div class="h">morning</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g8','Anni Albers · weaving','Tate catalogue')"><div class="ph g8" style="height:190px"></div><div class="cap">Anni Albers · weaving<div class="h">Tate catalogue</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g9','Kimsooja · Needle Woman','Leeum, 2020')"><div class="ph g9" style="height:210px"></div><div class="cap">Kimsooja · Needle Woman<div class="h">Leeum, 2020</div></div></div>
         </div>
-        <p class="sec" style="margin-top:10px">⚡ Recent spark: <b style="color:var(--ink)">Tide Ledger IV</b> — saves clustered this week.</p>
-        <p class="sec" style="margin-top:8px">38 followers · 5 new this week</p>
       </div>
-
-      <!-- 5 · selected works -->
-      <div class="bscard" style="margin-bottom:24px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline">
-          <p class="h2">Selected works — shown in About</p>
-          <span class="micro" style="font-weight:700" id="bs-selcount"></span>
-        </div>
-        <p class="micro" style="margin-top:4px">pick up to 5 · ★ toggles</p>
-        <div class="selgrid" id="bs-selgrid"></div>
+      <div class="bottomnav">
+        <button class="on" title="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V11z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+        <button class="plus" title="Add" onclick="window.location.href='ari_studio_mobile.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></button>
+        <button title="Alerts" onclick="go('scr-alerts')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="badge"></span>
+        </button>
+        <button title="Me" onclick="go('scr-my-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke-linecap="round"/></svg></button>
       </div>
     </section>
 
-  </div><!-- /app -->
+    <!-- ============ PLOP DETAIL (mine) — marking hidden by default ============ -->
+    <section class="screen" id="scr-plop-mine">
+      <div class="scrollpage" style="padding-bottom:60px">
+        <div class="dethead">
+          <button class="backbtn" onclick="go('scr-feed')">←</button>
+          <button class="iconbtn" onclick="toast('Link copied')">↗</button>
+        </div>
+        <div class="plop-poster">
+          <span class="av">S</span>
+          <span class="n">Sungwon</span>
+          <span class="h">@sungwon</span>
+          <span class="sec" style="margin-left:auto;font-size:12px">2h · in Public</span>
+        </div>
+        <div class="detimg" id="mine-detimg">
+          <div class="ph g1" style="height:430px">
+            <div class="marks-pill" id="marks-pill" onclick="toggleMarks()">
+              <span class="dot"></span>
+              <span id="marks-pill-txt">Show 3 marks</span>
+            </div>
+            <svg class="marks-vis" viewBox="0 0 400 500">
+              <ellipse cx="150" cy="180" rx="80" ry="90" fill="none" stroke="#FF5A3C" stroke-width="4"/>
+              <line x1="270" y1="120" x2="330" y2="80" stroke="#FF5A3C" stroke-width="4" stroke-linecap="round"/>
+              <polygon points="330,80 322,92 318,74" fill="#FF5A3C"/>
+            </svg>
+            <div class="mark-dot" style="left:37.5%;top:36%">1</div>
+            <div class="mark-dot" style="left:82.5%;top:16%">2</div>
+            <div class="mark-dot" style="left:60%;top:75%">3</div>
+          </div>
+        </div>
+        <div class="detbody">
+          <div class="det-cap">Moon jar · Joseon · 17th c.</div>
+          <div class="det-sub">National Museum of Korea</div>
+        </div>
 
-  <!-- floating bottom nav -->
-  <div class="bottomnav" id="bnav">
-    <button class="on" id="bn-home" onclick="navHome()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3z"/></svg>
-    </button>
-    <button id="bn-search" onclick="openSearch()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-    </button>
-    <button id="bn-create" onclick="openCreate()">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-    </button>
-    <button id="bn-me" onclick="navMe()"><span class="av" style="width:28px;height:28px;font-size:11px">SJ</span></button>
-  </div>
+        <div class="kept-by">
+          <div class="avs">
+            <span class="av sm g1"></span>
+            <span class="av sm g2"></span>
+            <span class="av sm g3"></span>
+          </div>
+          <div class="txt">Kept by <b>@hanuel</b>, <b>@jinyoung</b> and 12 more</div>
+        </div>
 
-  <!-- search sheet -->
-  <div class="sheetwrap" id="search-sheet">
-    <div class="scrim" onclick="closeSheet('search-sheet')"></div>
-    <div class="sheet">
-      <div class="grab"></div>
-      <div class="searchpill">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8A8A8E" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-        <input id="search-input" placeholder="Try 'water, boundary, migration…'" oninput="filterSearch()">
+        <div class="notes-strip">
+          <div class="lbl">🔒 Your notes · only you</div>
+          <div class="chips">
+            <span class="chip">materials</span>
+            <span class="chip">wood</span>
+            <span class="chip">everyday materials in art</span>
+            <span class="chip">ancestors</span>
+            <span class="chip">traditional fruits</span>
+          </div>
+        </div>
+
+        <div class="reco-section-h">
+          <span>Visually related</span>
+          <span class="why-badge">image similarity</span>
+        </div>
+        <div class="reco-slider">
+          <div class="reco-card"><div class="rc-img g6"></div><div class="rc-why"><b>Round form</b> and earthy tones</div></div>
+          <div class="reco-card"><div class="rc-img g8"></div><div class="rc-why"><b>Similar negative space</b></div></div>
+          <div class="reco-card"><div class="rc-img g3"></div><div class="rc-why"><b>Monochrome texture</b> matches</div></div>
+          <div class="reco-card"><div class="rc-img g7"></div><div class="rc-why"><b>Centred composition</b></div></div>
+          <div class="reco-card"><div class="rc-img g2"></div><div class="rc-why"><b>Warm neutral</b> palette</div></div>
+        </div>
+
+        <div class="reco-section-h">
+          <span>Threads from your notes</span>
+          <span class="why-badge">meaning</span>
+        </div>
+        <div class="reco-slider">
+          <div class="reco-card"><div class="rc-img g5"></div><div class="rc-why">You noted '<b>ancestors</b>' → another take on roots</div></div>
+          <div class="reco-card"><div class="rc-img g4"></div><div class="rc-why">Threads to '<b>traditional materials</b>'</div></div>
+          <div class="reco-card"><div class="rc-img g2"></div><div class="rc-why">'<b>everyday materials in art</b>' connection</div></div>
+          <div class="reco-card"><div class="rc-img g9"></div><div class="rc-why">'<b>wood · sculpture</b>' from your other notes</div></div>
+          <div class="reco-card"><div class="rc-img g8"></div><div class="rc-why">You often note '<b>grid · repetition</b>'</div></div>
+        </div>
+
+        <p class="micro" style="padding:20px 22px 4px;text-align:center;line-height:1.6">
+          Threads use your private notes — nobody else sees which words connected these.
+        </p>
       </div>
-      <p class="micro" style="margin:18px 0 10px">Currents right now</p>
-      <div id="search-kws"></div>
-      <p class="micro" style="margin:14px 0 10px">People</p>
-      <div id="search-people"></div>
-      <div class="hr"></div>
-      <button class="sec" style="font-weight:600;color:var(--ink)" onclick="closeSheet('search-sheet');openNominate()">Can’t find an artist? Nominate them →</button>
-    </div>
-  </div>
+    </section>
 
-  <!-- library index sheet (saved ponds / followed people at scale) -->
-  <div class="sheetwrap" id="index-sheet">
-    <div class="scrim" onclick="closeSheet('index-sheet')"></div>
-    <div class="sheet" style="height:82%;display:flex;flex-direction:column">
-      <div class="grab"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h2 class="h2" id="index-title"></h2>
-        <div class="seg">
-          <button id="index-sort-active" class="on" onclick="setIndexSort('active')">Active</button>
-          <button id="index-sort-az" onclick="setIndexSort('az')">A–Z</button>
+    <!-- ============ PLOP DETAIL (others) ============ -->
+    <section class="screen" id="scr-plop-others">
+      <div style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding-bottom:100px" id="others-scroll">
+        <div class="dethead">
+          <button class="backbtn" onclick="go('scr-feed')">←</button>
+          <button class="iconbtn" onclick="toast('Link copied')">↗</button>
+        </div>
+        <div class="plop-poster" onclick="go('scr-other-profile')">
+          <span class="av g1" id="op-av">H</span>
+          <span class="n" id="op-name">Hanuel</span>
+          <span class="h" id="op-handle">@hanuel</span>
+          <span class="sec" style="margin-left:auto;font-size:12px">5h · in Portfolio</span>
+        </div>
+        <div class="detimg">
+          <div class="ph" id="op-img" style="height:430px"></div>
+        </div>
+        <div class="detbody">
+          <div class="det-cap" id="op-cap">"Wearing a duvet"</div>
+          <div class="det-sub" id="op-sub">@studio.yumi · 2024</div>
+        </div>
+        <div class="kept-by">
+          <div class="avs"><span class="av sm g2"></span><span class="av sm g3"></span><span class="av sm g4"></span></div>
+          <div class="txt">Kept by <b>@jinyoung</b>, <b>@dahye</b> and 8 more</div>
+        </div>
+
+        <div class="reco-section-h">
+          <span>Visually related</span>
+          <span class="why-badge">image similarity</span>
+        </div>
+        <div class="reco-slider">
+          <div class="reco-card"><div class="rc-img g7"></div><div class="rc-why"><b>Translucent fabric</b></div></div>
+          <div class="reco-card"><div class="rc-img g2"></div><div class="rc-why"><b>Beige tones</b> match</div></div>
+          <div class="reco-card"><div class="rc-img g8"></div><div class="rc-why"><b>Draped textile</b></div></div>
+          <div class="reco-card"><div class="rc-img g5"></div><div class="rc-why"><b>Soft light</b></div></div>
+        </div>
+
+        <p class="micro" style="padding:24px 22px 4px;text-align:center;line-height:1.6">
+          Notes on someone else's plop stay private to them. When you keep this to your ari, you write your own.
+        </p>
+      </div>
+      <div class="keep-cta-bar">
+        <button onclick="go('scr-reblog')">✎ Keep to my ari</button>
+      </div>
+    </section>
+
+    <!-- ============ REBLOG ============ -->
+    <section class="screen" id="scr-reblog">
+      <div class="dethead">
+        <button class="backbtn" onclick="go('scr-plop-others')">←</button>
+        <span class="sec">Keeping to your ari</span>
+        <div style="width:38px"></div>
+      </div>
+      <div class="rev-body">
+        <div class="repost-attr">
+          <span class="av g1">H</span>
+          <div class="txt">Kept from <b>@hanuel</b>'s ari · they'll be notified</div>
+        </div>
+        <div class="rev-image-wrap">
+          <div class="rev-image g4" id="reblog-image">
+            <svg class="marks" id="reblog-marks-svg" viewBox="0 0 400 500"></svg>
+            <div id="reblog-marks-dots"></div>
+            <div class="mark-start-cue" id="reblog-mark-cue">
+              <span class="msg">Mark what caught your eye.</span>
+              <button onclick="startReblogMarking()">✎ Mark</button>
+            </div>
+            <div class="mark-toolbar" id="reblog-mark-toolbar" style="display:none">
+              <div class="group">
+                <button class="on" data-tool="tap">· Tap</button>
+                <button data-tool="circle">◯ Circle</button>
+                <button data-tool="arrow">↗ Arrow</button>
+              </div>
+              <div class="group">
+                <button class="util" onclick="undoReblogMark()">↶</button>
+                <button class="util" onclick="clearReblogMarks()">✕</button>
+                <div class="divider"></div>
+                <button class="done-btn" onclick="stopReblogMarking()">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-h"><span class="ic">👁</span> Caption <span class="private-note">— from the original</span></div>
+        <div class="field readonly">
+          <input value='"Wearing a duvet" · @studio.yumi · 2024' readonly>
+        </div>
+
+        <div class="field-h"><span class="ic">🔒</span> Your notes <span class="private-note">— private to you</span></div>
+        <div class="chip-input" id="reblog-notes-input" onclick="document.getElementById('reblog-notes-txt').focus()">
+          <span class="note-chip">textile <span class="x" onclick="event.target.parentElement.remove()">×</span></span>
+          <span class="note-chip">translucent <span class="x" onclick="event.target.parentElement.remove()">×</span></span>
+          <input placeholder="Type a word · enter to add" id="reblog-notes-txt" onkeydown="handleReblogNoteKey(event)">
+        </div>
+        <p class="micro" style="padding:6px 24px 12px">Neither @hanuel nor @studio.yumi see these.</p>
+
+        <div class="field-h">Save to</div>
+        <div class="saveto-list" id="reblog-saveto">
+          <button class="on" data-tab="Public"><span>Public</span><span class="vis">👁</span></button>
+          <button data-tab="Digs"><span>Digs</span><span class="vis">🔒</span></button>
         </div>
       </div>
-      <div class="searchpill" style="margin-top:12px;padding:10px 14px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8A8E" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-        <input id="index-search" placeholder="Search…" oninput="renderIndexList()">
-      </div>
-      <div id="index-list" style="flex:1;overflow-y:auto;margin-top:4px;scrollbar-width:none"></div>
-    </div>
-  </div>
 
-  <!-- create sheet (stub — full flow lives in the Studio file) -->
-  <div class="sheetwrap" id="create-sheet">
-    <div class="scrim" onclick="closeSheet('create-sheet')"></div>
-    <div class="sheet">
-      <div class="grab"></div>
-      <p class="micro" style="font-weight:700">DROP A PLOP</p>
-      <h2 class="h1" style="margin-top:6px">What are you dropping?</h2>
-      <button class="optcard" onclick="createStub()">
-        <b>Image</b>
-        <p class="sec" style="margin-top:3px">upload a photo of the work</p>
-      </button>
-      <button class="optcard" onclick="createStub()">
-        <b>Add by link</b>
-        <p class="sec" style="margin-top:3px">website · artist page · Instagram URL</p>
-      </button>
-      <p class="micro" style="margin-top:14px">Tag a keyword and it flows into that pond automatically.</p>
-    </div>
-  </div>
+      <div class="rev-cta">
+        <button class="later" onclick="doReblogSave(false)">Save without notes</button>
+        <button class="save" onclick="doReblogSave(true)">Save</button>
+      </div>
 
-  <!-- nominate an artist -->
-  <div class="sheetwrap" id="nominate-sheet">
-    <div class="scrim" onclick="closeSheet('nominate-sheet')"></div>
-    <div class="sheet">
-      <div class="grab"></div>
-      <div id="nom-form">
-        <p class="h2">Nominate an artist</p>
-        <p class="micro" style="margin-top:6px">Someone whose work belongs here — no need to know them. We look at every nomination; the invite, if it comes, goes out sealed from ari with your name on it. <b id="nom-left">3</b> left this month.</p>
-        <div class="field"><input id="nom-link" placeholder="Their work — Instagram · website"></div>
-        <div class="field"><input id="nom-why" placeholder="One line — why this work?"></div>
-        <button class="pill dark" style="width:100%;margin-top:14px" onclick="submitNomination()">Send the nomination</button>
-        <p class="micro" style="margin-top:10px">Nominations don’t spend your invite keys. Nothing of theirs is shown unless they say yes.</p>
-      </div>
-      <div id="nom-after" style="display:none;text-align:center">
-        <p class="wordmark" style="font-size:28px;margin-top:8px">ari</p>
-        <p class="body" style="color:#333;margin-top:14px" id="nom-line"></p>
-        <p class="sec" style="margin-top:8px">If it’s a yes, the sealed invite carries your name and your line.</p>
-        <button class="pill outline" style="width:100%;margin-top:16px" onclick="closeSheet('nominate-sheet')">Done</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- exhibition modal -->
-  <div class="sheetwrap" id="ex-sheet">
-    <div class="scrim" onclick="closeSheet('ex-sheet')"></div>
-    <div class="sheet">
-      <div class="grab"></div>
-      <p class="micro" style="font-weight:700">EXHIBITION</p>
-      <h2 class="h1" style="margin-top:6px">Euljiro Open Storage</h2>
-      <div class="exgrid">
-        <div><p class="micro">Dates</p><p style="font-weight:600;font-size:14px">12 – 28 Jun</p></div>
-        <div><p class="micro">Hours</p><p style="font-weight:600;font-size:14px">Tue–Sun 12–19</p></div>
-        <div><p class="micro">Admission</p><p style="font-weight:600;font-size:14px">Free</p></div>
-      </div>
-      <p class="micro" style="margin-top:16px">Venue</p>
-      <p style="font-weight:600;font-size:14px;margin-top:3px">Onsu Ground · Euljiro 3-ga, Jung-gu, Seoul</p>
-      <div class="mapph">📍</div>
-      <p class="micro" style="text-align:right;margin-top:6px;font-weight:600">View on map ↗</p>
-      <p class="micro" style="margin-top:14px">About</p>
-      <p class="body" style="color:#333;margin-top:4px">New works on water, storage and the memory of a district that keeps being rebuilt. Twelve pieces translating the traces of flooded basements into glass and light.</p>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:18px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div class="avrow"><span class="av sm"></span><span class="av sm"></span><span class="av sm"></span></div>
-          <span class="sec">people going</span>
+      <div class="note-sheet" id="reblog-note-sheet">
+        <div class="grab"></div>
+        <div class="h">
+          <span class="num" id="rn-num">1</span>
+          <span class="lbl">Mark note</span>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--soft)">private</span>
         </div>
-        <button class="pill dark" id="ex-going" style="padding:10px 20px;font-size:13.5px" onclick="toggleGoingEx()">I’ll go</button>
+        <div class="n-method-tabs">
+          <button class="on" data-nm="text">⌨ Text</button>
+          <button data-nm="voice">🎙 Voice</button>
+        </div>
+        <input class="n-txt" id="rn-input" placeholder="What caught your eye here?">
+        <div class="actions">
+          <button class="skip" onclick="closeReblogNote(false)">Skip</button>
+          <button class="save" onclick="closeReblogNote(true)">Save note</button>
+        </div>
       </div>
-      <button class="pill outline" style="width:100%;margin-top:14px" onclick="closeSheet('ex-sheet');openPond('Euljiro Open Storage')">Open the exhibition pond →</button>
+    </section>
+
+    <!-- ============ ALERTS ============ -->
+    <section class="screen" id="scr-alerts">
+      <div class="scrollpage" style="padding-bottom:120px">
+        <div class="dethead">
+          <button class="backbtn" onclick="go('scr-feed')">←</button>
+          <span style="font-size:15px;font-weight:700">Alerts</span>
+          <button class="iconbtn" onclick="toast('Cleared')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0v13a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V7"/></svg></button>
+        </div>
+        <div class="alerts-head" style="padding:16px 22px 4px">
+          <div>
+            <h1>Your alerts</h1>
+            <p class="sec" style="font-size:13px;margin-top:4px">Plops waiting for you · people keeping your plops.</p>
+          </div>
+        </div>
+        <div class="alerts-head" style="padding:0;flex-direction:column;align-items:stretch">
+          <div class="filter">
+            <button class="on">All</button>
+            <button>Needs caption</button>
+            <button>Needs notes</button>
+            <button>Kept your plop</button>
+          </div>
+        </div>
+
+        <div class="alert-section">Waiting for you</div>
+        <div class="alert-card" onclick="toast('Would open in Studio review')">
+          <div class="thumb g4"><div class="status-dot"></div></div>
+          <div class="body">
+            <div class="title">Needs a caption</div>
+            <div class="msg">Captured yesterday · 6:44pm · from Photo library</div>
+            <button class="cta">✎ Add caption</button>
+          </div>
+        </div>
+        <div class="alert-card" onclick="toast('Would open in Studio review')">
+          <div class="thumb g6"><div class="status-dot"></div></div>
+          <div class="body">
+            <div class="title">Needs a caption</div>
+            <div class="msg">Camera · 2 days ago · 3:12pm</div>
+            <button class="cta">✎ Add caption</button>
+          </div>
+        </div>
+        <div class="alert-card" onclick="toast('Would open in Studio review')">
+          <div class="thumb g5"><div class="status-dot"></div></div>
+          <div class="body">
+            <div class="title">Moss on brick wall — needs notes</div>
+            <div class="msg">Seongbuk-dong · 5 days ago</div>
+            <button class="cta">✎ Add notes</button>
+          </div>
+        </div>
+        <div class="alert-card" onclick="toast('Would open in Studio review')">
+          <div class="thumb g7"><div class="status-dot"></div></div>
+          <div class="body">
+            <div class="title">Sign, Euljiro — needs notes</div>
+            <div class="msg">Printing quarter · a week ago</div>
+            <button class="cta">✎ Add notes</button>
+          </div>
+        </div>
+
+        <div class="alert-section">People</div>
+        <div class="alert-card alert-social" onclick="go('scr-plop-mine')">
+          <span class="av g1">H</span>
+          <div class="body">
+            <b>@hanuel</b> kept your <b>Moon jar</b>
+            <span class="m">1 hour ago</span>
+          </div>
+          <div class="side-thumb g1"></div>
+        </div>
+        <div class="alert-card alert-social" onclick="go('scr-plop-mine')">
+          <span class="av g2">J</span>
+          <div class="body">
+            <b>@jinyoung</b> kept your <b>Brutalist stairs</b>
+            <span class="m">Yesterday</span>
+          </div>
+          <div class="side-thumb g2"></div>
+        </div>
+        <div class="alert-card alert-social">
+          <span class="av g3">D</span>
+          <div class="body">
+            <b>@dahye</b> started following you
+            <span class="m">2 days ago</span>
+          </div>
+        </div>
+      </div>
+      <div class="bottomnav">
+        <button title="Home" onclick="go('scr-feed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V11z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+        <button class="plus" title="Add" onclick="window.location.href='ari_studio_mobile.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></button>
+        <button class="on" title="Alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Me" onclick="go('scr-my-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke-linecap="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ============ OTHER PROFILE ============ -->
+    <section class="screen" id="scr-other-profile">
+      <div class="scrollpage" style="padding-bottom:40px">
+        <div class="dethead" style="position:absolute;background:none;backdrop-filter:none;left:0;right:0">
+          <button class="backbtn" onclick="go('scr-plop-others')">←</button>
+          <button class="iconbtn" onclick="toast('Link copied')" style="background:var(--surface)">↗</button>
+        </div>
+        <div class="cover"></div>
+        <div class="profhead">
+          <span class="av lg g1">H</span>
+          <div class="profname">Hanuel</div>
+          <div class="profhandle">@hanuel · Seoul</div>
+          <div class="profcounts"><b>124</b> plops in public tabs · Following <b>Sungwon</b> and 47 others</div>
+          <div style="margin-top: 12px;">
+            <button class="pill outline" style="padding: 8px 16px; font-size: 13px;">Follow</button>
+          </div>
+        </div>
+        <div class="proftabs" id="other-tabs">
+          <div class="proftab on">Portfolio <span class="cnt">42</span></div>
+          <div class="proftab">Refs <span class="cnt">78</span></div>
+          <div class="proftab">Ceramics <span class="cnt">14</span></div>
+        </div>
+        <div class="tab-toolbar">
+          <div class="hint">You see the tabs Hanuel marked public. Private tabs stay hidden.</div>
+        </div>
+        <div class="masonry">
+          <div class="tile"><div class="ph g4" style="height:210px"></div><div class="cap">"Wearing a duvet"<div class="h">@studio.yumi</div></div></div>
+          <div class="tile"><div class="ph g7" style="height:180px"></div><div class="cap">Draped light</div></div>
+          <div class="tile"><div class="ph g2" style="height:200px"></div><div class="cap">Ceramic study</div></div>
+          <div class="tile"><div class="ph g8" style="height:230px"></div><div class="cap">Weaving detail</div></div>
+          <div class="tile"><div class="ph g5" style="height:170px"></div><div class="cap">Studio, morning</div></div>
+          <div class="tile"><div class="ph g6" style="height:210px"></div><div class="cap">Old brochures</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MY PROFILE ============ -->
+    <section class="screen" id="scr-my-profile">
+      <div class="scrollpage" style="padding-bottom:120px">
+        <div class="dethead" style="position:absolute;background:none;backdrop-filter:none;left:0;right:0">
+          <button class="backbtn" onclick="go('scr-feed')">←</button>
+          <button class="iconbtn" onclick="toast('Settings')" style="background:var(--surface)">⚙</button>
+        </div>
+        <div class="cover"></div>
+        <div class="profhead">
+          <span class="av lg">S</span>
+          <div class="profname">Sungwon</div>
+          <div class="profhandle">@sungwon · Seoul</div>
+          <div class="profcounts"><b id="tab-total">78</b> plops total across <b id="tab-count">2</b> tabs · Free plan</div>
+          <div style="margin-top: 12px;">
+            <button class="pill outline" style="padding: 8px 16px; font-size: 13px;" onclick="openEditProfileSheet()">Edit profile</button>
+          </div>
+        </div>
+        <div class="proftabs" id="my-tabs"></div>
+        <div class="tab-toolbar">
+          <div class="hint" id="tab-hint"></div>
+          <button onclick="openEditTabSheet()">✎ Edit tab</button>
+        </div>
+        <div class="masonry" id="my-plops">
+          <div class="tile" onclick="openMine()"><div class="ph g1" style="height:220px"></div><div class="cap">Moon jar<div class="h">Joseon</div></div></div>
+          <div class="tile"><div class="ph g3" style="height:190px"></div><div class="cap">Brutalist stairs</div></div>
+          <div class="tile"><div class="ph g5" style="height:170px"></div><div class="cap">Moss brick wall</div></div>
+          <div class="tile"><div class="ph g7" style="height:210px"></div><div class="cap">Sign, Euljiro</div></div>
+          <div class="tile"><div class="ph g2" style="height:200px"></div><div class="cap">Coffee stain</div></div>
+          <div class="tile"><div class="ph g8" style="height:230px"></div><div class="cap">Weaving detail</div></div>
+        </div>
+      </div>
+      <div class="bottomnav">
+        <button title="Home" onclick="go('scr-feed')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V11z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/></svg></button>
+        <button class="plus" title="Add" onclick="window.location.href='ari_studio_mobile.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></button>
+        <button title="Alerts" onclick="go('scr-alerts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="on" title="Me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke-linecap="round"/></svg></button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- edit tab sheet -->
+  <div class="sheetwrap" id="tab-sheet">
+    <div class="scrim" onclick="closeTabSheet()"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <h2 class="sheet-h" id="tab-sheet-h">Edit tab</h2>
+      <p class="sheet-p" id="tab-sheet-p">Rename this tab and set whether the world can see it.</p>
+      <div class="sheet-field">
+        <div class="lbl">Tab name</div>
+        <input value="Public" id="tab-name-input">
+      </div>
+      <div class="sheet-row-toggle">
+        <div class="l">
+          <span id="tab-vis-lbl">👁 Public</span>
+          <div class="sub" id="tab-vis-sub">Anyone can see this tab on your profile.</div>
+        </div>
+        <div class="toggle-sw" id="tab-vis-toggle" onclick="toggleTabVis()"></div>
+      </div>
+      <div class="sheet-cta">
+        <button class="delete" id="tab-delete-btn" onclick="deleteTab()">Delete</button>
+        <button class="save" onclick="saveTab()">Save</button>
+      </div>
+      <div class="pro-block">Free plan: <b>2 tabs</b>. <a href="#" onclick="openProSheet(event)">Upgrade to PRO</a> for unlimited.</div>
     </div>
   </div>
 
-  <!-- work detail modal (About page) -->
-  <div class="sheetwrap" id="work-sheet">
-    <div class="scrim" onclick="closeSheet('work-sheet')"></div>
+  <div class="sheetwrap" id="editprof-sheet">
+    <div class="scrim" onclick="closeEditProfileSheet()"></div>
     <div class="sheet">
       <div class="grab"></div>
-      <div class="ph" id="work-img" style="height:230px;border-radius:14px"></div>
-      <h2 class="h2" style="margin-top:14px" id="work-title"></h2>
-      <p class="sec" style="margin-top:4px" id="work-meta"></p>
-      <p class="body" style="margin-top:12px;color:#333" id="work-desc"></p>
+      <h2 class="sheet-h">Edit profile</h2>
+      <p class="sheet-p">Change your name, handle, or avatar. Tabs are edited on the profile page.</p>
+      <div class="sheet-field"><div class="lbl">Display name</div><input value="Sungwon"></div>
+      <div class="sheet-field"><div class="lbl">Handle</div><input value="@sungwon"></div>
+      <div class="sheet-field"><div class="lbl">Location</div><input value="Seoul"></div>
+      <div class="sheet-cta"><button class="save" onclick="toast('Profile saved'); closeEditProfileSheet();">Save</button></div>
+    </div>
+  </div>
+
+  <div class="sheetwrap" id="pro-sheet">
+    <div class="scrim" onclick="closeProSheet()"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div class="pro-sheet-body">
+        <div class="icn">★</div>
+        <h3>Ari PRO</h3>
+        <p>Unlimited tabs · deeper thread searches · directly support the artists you keep.</p>
+        <div class="pro-features">
+          <div class="row"><span class="c">◯</span> Unlimited tabs (Free: 2)</div>
+          <div class="row"><span class="c">◯</span> Larger private capacity</div>
+          <div class="row"><span class="c">◯</span> Advanced threads across your notes</div>
+          <div class="row"><span class="c">◯</span> Support artists directly</div>
+        </div>
+      </div>
+      <div class="sheet-cta" style="margin-top:20px"><button class="save" onclick="toast('Coming soon'); closeProSheet();">Try PRO — free 14 days</button></div>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
+
 </div>
 
 <script>
-/* ================= data ================= */
-var ARTISTS = {
-  "Haneul Jung":{handle:"@haneuljung",init:"HJ",line:"b.1994, Seoul · photography, video, installation",
-    q:"“Lately I photograph the city where it’s sinking.”",
-    bio:"Haneul Jung photographs water where it is least romantic — reservoirs, drainage canals, the flooded basements of buildings waiting for demolition. Her recent work pairs long-exposure images with municipal records, asking what a city chooses to keep and what it lets evaporate.",
-    bio2:" She studied photography at Hongik University and runs a small risograph archive of demolition notices. Her work has been shown in Seoul, Busan and Yokohama.",
-    ex:[["Euljiro Open Storage — Onsu Ground, Seoul","2026"],["Tidal Records — d/p, Seoul","2025"],["Soft Infrastructure — WESS, Seoul","2024"]],
-    awards:[["SeMA Emerging Artist Grant","2025"],["Ilwoo Photography Prize — shortlist","2024"]],
-    contact:"studio@haneuljung.kr · Seoul",links:["haneuljung.kr","Instagram"],nowShowing:true},
-  "Mara Lindqvist":{handle:"@maralind",init:"ML",line:"b.1991, Gothenburg · painting, moving image",
-    q:"“Painting the sea from memory, mistakes included.”",
-    bio:"Mara Lindqvist paints the sea from memory only — never from photographs — and lets the errors accumulate across a series until the water becomes a fiction. Her slow video works document the same harbour over years of mornings.",bio2:"",
-    ex:[["Salt Horizon — Galleri Box, Gothenburg","2025"],["Standing Water — Index, Stockholm","2024"]],
-    awards:[["Maria Bonnier Dahlin Foundation — nominee","2025"]],contact:"hello@maralindqvist.se · Gothenburg",links:["maralindqvist.se","Instagram"]},
-  "Tomás Reyes":{handle:"@t_reyes",init:"TR",line:"b.1989, Valparaíso · installation, archive",
-    q:"“Paperwork is a landscape if you stack it high enough.”",
-    bio:"Tomás Reyes builds installations from the paperwork of movement — visas, ferry tickets, customs forms — folded and stacked until bureaucracy reads as landscape. He works between Valparaíso and Mexico City.",bio2:"",
-    ex:[["Crossing No.7 — Die Ecke, Santiago","2025"],["Paper Passport — Material, CDMX","2024"]],
-    awards:[["FONDART Visual Arts Grant","2024"]],contact:"t.reyes.studio@gmail.com · Valparaíso"},
-  "June Okafor":{handle:"@juneokafor",init:"JO",line:"b.1996, Lagos · text, sound",
-    q:"“Two languages in one room, played at once.”",
-    bio:"June Okafor records her grandmother's Igbo and her own London English in the same room and plays them back at the same time. The interference pattern is the work. She writes that translation is a form of weather.",bio2:"",
-    ex:[["Mother Tongue — South London Gallery, London","2025"]],awards:[["Jerwood New Work Fund","2025"]],contact:"juneokafor.studio@gmail.com · London"},
-  "Sena Park":{handle:"@senapark",init:"SP",line:"b.1993, Seoul · textile, performance",
-    q:"“The time of the weave is the wage of the weave.”",
-    bio:"Sena Park weaves with materials that are paid by the hour — work gloves, uniform fabric, delivery-bag nylon. Her looms are slow on purpose; the time of the weave is the wage of the weave.",bio2:"",
-    ex:[["Night Shift — Audio Visual Pavilion, Seoul","2026"],["Soft Border — Boan1942, Seoul","2024"]],
-    awards:[["Arts Council Korea — Young Artist","2025"]],contact:"senapark.txt@gmail.com · Seoul"},
-  "Dana Cho":{handle:"@danacho",init:"DC",line:"b.1995, Incheon · photography",
-    q:"“Re-staging my family’s letters, forty years late.”",
-    bio:"Dana Cho photographs the port city she grew up in through the letters her family sent from it — re-staging each described scene forty years later, at the same address, in the same light where possible.",bio2:"",
-    ex:[["Letters from Incheon — Space Beam, Incheon","2025"]],awards:[["Park Geon-hi Foundation Fellowship","2024"]],contact:"danacho.photo@gmail.com · Incheon"},
-  "Elio Marchetti":{handle:"@eliomarchetti",init:"EM",line:"b.1990, Torino · glass, sculpture",
-    q:"“Casting the census into glass.”",
-    bio:"Elio Marchetti casts statistical tables into hand-blown glass — census rows, income deciles — so the data bends light unevenly. The numbers are accurate; the reading of them never is.",bio2:"",
-    ex:[["Glass Census — Quartz Studio, Torino","2025"]],awards:[["Premio Cairo — finalist","2024"]],contact:"studio@eliomarchetti.it · Torino"},
-  "Yusuf Demir":{handle:"@yusufdemir",init:"YD",line:"b.1992, Istanbul · architecture, research",
-    q:"“Drafting the floors nobody photographs.”",
-    bio:"Yusuf Demir surveys the buildings that never get photographed — service corridors, night-cleaner floors, staff entrances — and drafts them at the same loving precision as facades. Architecture, he argues, is who it lets in at which door.",bio2:"",
-    ex:[["Quiet Floor — SALT Beyoğlu, Istanbul","2025"]],awards:[["Graham Foundation Grant","2025"]],contact:"y.demir.research@gmail.com · Istanbul"}
-};
-
-var PLOPS = [
-  {id:1,t:"Tide Ledger IV",a:"Haneul Jung",yr:"2025",m:"Single-channel video, 11 min",kw:["water","memory","Euljiro Open Storage"],spark:true,g:"g0",h:340,v:["g0","g6","g1"],
-   d:"A fixed camera watches a tidal gate through one full cycle; the soundtrack is the gate's own machinery, slowed until it reads as breathing."},
-  {id:2,t:"Salt Horizon",a:"Mara Lindqvist",yr:"2024",m:"Oil on linen, 160 × 130 cm",kw:["water","boundary"],spark:false,g:"g1",h:150,
-   d:"Painted from memory in a windowless studio; the horizon drifts a few degrees with each session and is left uncorrected."},
-  {id:3,t:"Crossing No.7",a:"Tomás Reyes",yr:"2025",m:"Stamped documents, steel shelving",kw:["migration","boundary"],spark:true,g:"g5",h:210,
-   d:"Seven years of one family's transit papers, stamped, folded and shelved in the order they were issued."},
-  {id:4,t:"Mother Tongue",a:"June Okafor",yr:"2025",m:"Two-channel sound, 8 min loop",kw:["migration","language"],spark:false,g:"g9",h:130,
-   d:"Two voices — a grandmother's Igbo, a granddaughter's English — recorded in the same room and played back at once."},
-  {id:5,t:"Soft Border",a:"Sena Park",yr:"2024",m:"Woven work gloves, 300 × 220 cm",kw:["boundary","textile"],spark:false,g:"g4",h:330,
-   d:"Three hundred pairs of used work gloves, unpicked and rewoven into a single bolt of cloth."},
-  {id:6,t:"Reservoir (Winter)",a:"Haneul Jung",yr:"2024",m:"Archival pigment print, 120 × 96 cm",kw:["water","infrastructure"],spark:false,g:"g6",h:175,
-   d:"The city's backup reservoir photographed at 4 a.m., lit only by its own maintenance lights."},
-  {id:7,t:"Letters from Incheon",a:"Dana Cho",yr:"2025",m:"C-print, found letters",kw:["migration","memory"],spark:false,g:"g7",h:260,
-   d:"Each photograph restages a scene described in a letter sent from the port in 1984 — same address, forty years later."},
-  {id:8,t:"Glass Census",a:"Elio Marchetti",yr:"2025",m:"Hand-blown glass, engraved data",kw:["inequality","glass"],spark:false,g:"g8",h:165,
-   d:"A census table cast in hand-blown glass; the rows distort as the glass cools, and the data with them."},
-  {id:9,t:"Night Shift",a:"Sena Park",yr:"2026",m:"Uniform fabric, time-lapse loom",kw:["inequality","labour"],spark:true,g:"g3",h:350,v:["g3","g7"],
-   d:"A loom that runs at the speed of a cleaner's shift; the cloth records the hours as rows."},
-  {id:10,t:"Currents Study II",a:"Mara Lindqvist",yr:"2025",m:"Video, 24 min, silent",kw:["water"],spark:false,g:"g1",h:120,
-   d:"Twenty-four silent minutes of the same harbour current, repainted one frame at a time."},
-  {id:11,t:"Paper Passport",a:"Tomás Reyes",yr:"2024",m:"Folded customs forms",kw:["migration"],spark:false,g:"g2",h:160,
-   d:"A passport folded from customs declarations, page for page."},
-  {id:12,t:"Quiet Floor",a:"Yusuf Demir",yr:"2025",m:"Graphite on mylar, survey set",kw:["inequality","architecture"],spark:false,g:"g3",h:170,
-   d:"Survey drawings of a museum's service floor, drafted to the same precision as its galleries."},
-  {id:13,t:"Basement, Pre-Demolition",a:"Haneul Jung",yr:"2026",m:"Archival pigment print",kw:["water","memory","Euljiro Open Storage"],spark:true,g:"g6",h:290,
-   d:"The flooded basement of a building scheduled for demolition, printed at architectural scale."},
-  {id:14,t:"Harbour, 214 Mornings",a:"Mara Lindqvist",yr:"2023",m:"Video stills, grid of 36",kw:["water","memory"],spark:false,g:"g8",h:145,
-   d:"Thirty-six stills from a video diary of the same harbour, one morning per frame."},
-  {id:15,t:"Drain Study",a:"Haneul Jung",yr:"2026",m:"Archival pigment print, strip of 52",kw:["water","infrastructure"],spark:false,g:"g1",h:320,
-   d:"A storm drain photographed weekly for a year; the series hangs as one continuous strip."},
-  {id:16,t:"Wallpaper, Flooded",a:"Haneul Jung",yr:"2025",m:"Found wallpaper, resin",kw:["water","memory","domestic"],spark:false,g:"g7",h:140,
-   d:"Wallpaper peeled from a flooded flat, sealed in resin mid-peel."},
-  {id:17,t:"Pump Room",a:"Haneul Jung",yr:"2024",m:"Single-channel video, 7 min",kw:["water","infrastructure"],spark:false,g:"g3",h:300,
-   d:"The basement pump room of a 1970s apartment block, lit only by its own warning lamps."},
-  {id:18,t:"High-Water Mark",a:"Haneul Jung",yr:"2026",m:"Graphite frottage on paper",kw:["water","memory"],spark:true,g:"g8",h:175,
-   d:"Rubbings taken from the high-water lines left on basement walls after the June rains."}
-];
-
-var POSTERS=[
-  {name:"Rama Duwaji",handle:"@rama",init:"RM"},
-  {name:"Theo Berg",handle:"@theob",init:"TB"},
-  {name:"Aiko Ito",handle:"@aiko",init:"AI"},
-  {name:"Lena Novak",handle:"@lenan",init:"LN"}
-];
-function posterFor(p){return POSTERS[p.id%POSTERS.length]}
-var OWN_PLOPS=[16];        /* demo: your own photo — no creator, no source */
-var SRC_PLOPS=[1,7,13];    /* demo: added by link — has View source */
-
-var PONDS = {
-  "water":{type:"Theme",plops:214,people:37,rise:"+18% this week",nearby:["boundary","memory","migration","infrastructure"]},
-  "migration":{type:"Theme",plops:178,people:41,rise:"+12% this week",nearby:["boundary","language","memory","water"]},
-  "boundary":{type:"Theme",plops:96,people:22,rise:"+9% this week",nearby:["water","migration","textile"]},
-  "memory":{type:"Theme",plops:121,people:26,rise:"+4% this week",nearby:["water","migration","language"]},
-  "inequality":{type:"Theme",plops:132,people:29,rise:"+7% this week",nearby:["labour","architecture","glass"]},
-  "Haneul Jung":{type:"Creator",plops:48,people:21,rise:"+15% this week",nearby:["water","memory","Euljiro Open Storage"]},
-  "Euljiro Open Storage":{type:"Theme",plops:42,people:19,rise:"+26% this week",nearby:["water","Haneul Jung","memory"]},
-  "paper":{type:"Material",plops:88,people:24,rise:"+9% this week",nearby:["resin","wool","texture"]},
-  "glass":{type:"Material",plops:51,people:17,rise:"+5% this week",nearby:["paper","steel","light"]},
-  "blue":{type:"Color",plops:130,people:33,rise:"+11% this week",nearby:["water","monochrome","glass"]},
-  "earth":{type:"Color",plops:74,people:21,rise:"+7% this week",nearby:["paper","clay","material"]},
-  "quiet":{type:"Mood",plops:54,people:18,rise:"+6% this week",nearby:["still","water","memory"]},
-  "tender":{type:"Mood",plops:38,people:14,rise:"+4% this week",nearby:["memory","quiet","care"]}
-};
-/* pond facets: Theme/Creator fixed; Material/Color/Mood rotate */
-var FACET={"paper":"Material","glass":"Material","wool":"Material","resin":"Material","concrete":"Material","textile":"Material","steel":"Material","blue":"Color","earth":"Color","monochrome":"Color","amber":"Color","green":"Color","clay":"Color","quiet":"Mood","tender":"Mood","still":"Mood","tense":"Mood","care":"Mood"};
-function facetOf(k){return ARTISTS[k]?"Creator":(FACET[k]||"Theme")}
-/* ponds auto-exist: any keyword without an entry gets one on first visit */
-function getPond(k){
-  if(!PONDS[k]){
-    var n=(k.length*7)%30+6;
-    PONDS[k]={type:facetOf(k),plops:n,people:Math.max(3,Math.round(n/3)),rise:"+2% this week",nearby:["water","migration","memory"]};
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // reset marks visibility on plop detail
+  if (id === 'scr-plop-mine') {
+    document.getElementById('mine-detimg').classList.remove('show-marks');
+    document.getElementById('marks-pill').classList.remove('hiding');
+    document.getElementById('marks-pill-txt').textContent = 'Show 3 marks';
   }
-  return PONDS[k];
+}
+function openMine() { go('scr-plop-mine'); }
+function openOthers(user, grad, cap, sub) {
+  document.getElementById('op-name').textContent = user.charAt(0).toUpperCase() + user.slice(1);
+  document.getElementById('op-handle').textContent = '@' + user;
+  document.getElementById('op-av').textContent = user.charAt(0).toUpperCase();
+  document.getElementById('op-img').className = 'ph ' + grad;
+  document.getElementById('op-cap').innerHTML = cap;
+  document.getElementById('op-sub').textContent = sub;
+  document.getElementById('reblog-image').className = 'rev-image ' + grad;
+  document.getElementById('others-scroll').scrollTop = 0;
+  go('scr-plop-others');
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 1600);
 }
 
-/* links: website first, socials after — text links, never icon rows */
-function linkRowHTML(links){
-  if(!links||!links.length)return"";
-  return links.map(function(l){
-    return '<button style="font-weight:600;color:var(--ink)" onclick="toast(\'Opens '+l.replace(/'/g,"")+' — external links are stubbed\')">'+l+' ↗</button>';
-  }).join(' <span style="color:var(--line)">·</span> ');
+// ============ marks reveal toggle ============
+function toggleMarks() {
+  const det = document.getElementById('mine-detimg');
+  const pill = document.getElementById('marks-pill');
+  const txt = document.getElementById('marks-pill-txt');
+  if (det.classList.contains('show-marks')) {
+    det.classList.remove('show-marks');
+    txt.textContent = 'Show 3 marks';
+  } else {
+    det.classList.add('show-marks');
+    txt.textContent = 'Hide marks';
+  }
 }
 
-var FOLLOWED=["Haneul Jung","Mara Lindqvist","Sena Park"];
-var savedPlops={}, savedPonds={}, followState={}, goingState={};
+// ============ my profile tabs state ============
+let myTabs = [
+  { name: 'Public', vis: 'public', count: 24 },
+  { name: 'Digs', vis: 'private', count: 54 }
+];
+let activeTabIdx = 0;
 
-/* ---- my archive (demo data for the Saved tab, at honest scale) ---- */
-var MY_SAVES=[1,2,5,9,13,14];
-var MY_PEOPLE=["Haneul Jung","Mara Lindqvist","Sena Park","Tomás Reyes","June Okafor","Dana Cho","Elio Marchetti","Yusuf Demir"];
-var lensFilter=null;
+function renderMyTabs() {
+  const el = document.getElementById('my-tabs');
+  el.innerHTML = myTabs.map((t, i) => `
+    <div class="proftab ${i === activeTabIdx ? 'on' : ''}" onclick="setActiveTab(${i})">
+      ${t.name} <span class="cnt">${t.count}</span><span class="vis">${t.vis === 'public' ? '👁' : '🔒'}</span>
+    </div>
+  `).join('') + `
+    <div class="proftab add" onclick="openNewTabSheet()">+ Tab <span class="pro-badge">PRO</span></div>
+  `;
+  document.getElementById('tab-count').textContent = myTabs.length;
+  document.getElementById('tab-total').textContent = myTabs.reduce((s, t) => s + t.count, 0);
+  const active = myTabs[activeTabIdx];
+  document.getElementById('tab-hint').innerHTML = `Tab <b style="color:var(--ink)">"${active.name}"</b> is ${active.vis === 'public' ? 'public (👁 anyone sees it)' : 'private (🔒 only you)'}.`;
+}
+function setActiveTab(i) { activeTabIdx = i; renderMyTabs(); }
+renderMyTabs();
 
-/* 64 saved ponds: the 6 core ones + a long tail, each with a liveness score */
-var EXTRA_KW=["glass","labour","language","textile","infrastructure","architecture","salt","archive","demolition","harbour","census","night work","tide","border towns","silence","repair","dust","monsoon","concrete","translation","care work","ruins","light leak","north wind","cartography","waiting rooms","domestic","fog","scaffolding","surveys","letters","storage","basements","currents","gloves","uniforms","ferries","customs","grandmothers","playback","interference","weather","precision","corridors","facades","thresholds","deciles","cooling","drift","horizon lines","windowless","sessions","mornings","diaries","frames","stains","wallpaper","evaporation"];
-var PONDS_SAVED=["water","boundary","Euljiro Open Storage","memory","migration","inequality"].concat(EXTRA_KW)
-  .map(function(k,i){
-    var pd=PONDS[k];
-    return {k:k,type:pd?pd.type:facetOf(k),plops:pd?pd.plops:((k.length*7)%30+6),act:(k.length*13+i*7)%100};
-  });
-var MY_PONDS=PONDS_SAVED; /* kept name for tab counts */
+let editingTabIdx = -1;
+let sheetTabVis = 'public';
 
-/* 102 followed people: 8 real + a generated long tail; days = days since last plop */
-var FIRST=["Mina","Jonas","Aiko","Pavel","Ruth","Kofi","Lena","Marco","Yuki","Amara","Theo","Sofia"];
-var LAST=["Okada","Berg","Castillo","Mensah","Novak","Ito","Albrecht","Duarte","Han","Keller","Moreau","Tan"];
-var PEOPLE_ALL=MY_PEOPLE.map(function(n,i){
-  return {name:n,handle:ARTISTS[n].handle,real:true,days:[1,3,0,6,12,2,20,8][i]};
+function openEditTabSheet() {
+  editingTabIdx = activeTabIdx;
+  const t = myTabs[activeTabIdx];
+  document.getElementById('tab-sheet-h').textContent = 'Edit tab';
+  document.getElementById('tab-sheet-p').textContent = 'Rename this tab and set whether the world can see it.';
+  document.getElementById('tab-name-input').value = t.name;
+  sheetTabVis = t.vis;
+  updateTabVisUI();
+  document.getElementById('tab-delete-btn').style.display = 'block';
+  document.getElementById('tab-sheet').classList.add('open');
+}
+function openNewTabSheet() {
+  if (myTabs.length >= 2) { openProSheet(); return; }
+  editingTabIdx = -1;
+  document.getElementById('tab-sheet-h').textContent = 'New tab';
+  document.getElementById('tab-sheet-p').textContent = 'Name it and choose whether it\'s public.';
+  document.getElementById('tab-name-input').value = '';
+  sheetTabVis = 'public';
+  updateTabVisUI();
+  document.getElementById('tab-delete-btn').style.display = 'none';
+  document.getElementById('tab-sheet').classList.add('open');
+}
+function closeTabSheet() { document.getElementById('tab-sheet').classList.remove('open'); }
+function updateTabVisUI() {
+  const t = document.getElementById('tab-vis-toggle');
+  const lbl = document.getElementById('tab-vis-lbl');
+  const sub = document.getElementById('tab-vis-sub');
+  if (sheetTabVis === 'private') {
+    t.classList.add('off');
+    lbl.textContent = '🔒 Private';
+    sub.textContent = 'Only you can see this tab.';
+  } else {
+    t.classList.remove('off');
+    lbl.textContent = '👁 Public';
+    sub.textContent = 'Anyone can see this tab on your profile.';
+  }
+}
+function toggleTabVis() {
+  sheetTabVis = sheetTabVis === 'public' ? 'private' : 'public';
+  updateTabVisUI();
+}
+function saveTab() {
+  const name = document.getElementById('tab-name-input').value.trim() || 'Tab';
+  if (editingTabIdx >= 0) {
+    myTabs[editingTabIdx].name = name;
+    myTabs[editingTabIdx].vis = sheetTabVis;
+  } else {
+    myTabs.push({ name, vis: sheetTabVis, count: 0 });
+    activeTabIdx = myTabs.length - 1;
+  }
+  renderMyTabs();
+  toast('Tab saved · ' + name);
+  closeTabSheet();
+}
+function deleteTab() {
+  if (editingTabIdx < 0 || myTabs.length <= 1) { toast('Need at least 1 tab'); return; }
+  const name = myTabs[editingTabIdx].name;
+  myTabs.splice(editingTabIdx, 1);
+  activeTabIdx = 0;
+  renderMyTabs();
+  toast('Deleted · ' + name);
+  closeTabSheet();
+}
+function openEditProfileSheet() { document.getElementById('editprof-sheet').classList.add('open'); }
+function closeEditProfileSheet() { document.getElementById('editprof-sheet').classList.remove('open'); }
+function openProSheet(e) { if (e) e.preventDefault(); closeTabSheet(); document.getElementById('pro-sheet').classList.add('open'); }
+function closeProSheet() { document.getElementById('pro-sheet').classList.remove('open'); }
+
+document.querySelectorAll('#other-tabs .proftab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('#other-tabs .proftab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+  };
 });
-(function(){
-  for(var i=0;i<94;i++){
-    var n=FIRST[i%12]+" "+LAST[Math.floor(i/12)%12];
-    PEOPLE_ALL.push({name:n,handle:"@"+n.toLowerCase().replace(/\s/g,""),real:false,days:(i*7)%45+1});
-  }
-})();
 
-/* the lens IS the index: keyword weights computed from what I've kept */
-function lensWeights(){
-  var counts={};
-  MY_SAVES.forEach(function(id){
-    var p=PLOPS.find(function(x){return x.id===id});if(!p)return;
-    p.kw.forEach(function(k){counts[k]=(counts[k]||0)+1});
-  });
-  return Object.keys(counts).map(function(k){return[k,counts[k]]})
-    .sort(function(a,b){return b[1]-a[1]}).slice(0,6);
-}
+// ============ alerts filter ============
+document.querySelectorAll('#scr-alerts .filter button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#scr-alerts .filter button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+  };
+});
 
-/* ================= navigation (back walks the dig path) ================= */
-var navStack=[{id:"scr-feed",fn:null}];
-function show(id){
-  document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active")});
-  var el=document.getElementById(id);
-  el.classList.add("active");el.scrollTop=0;
-  document.getElementById("bnav").style.display=(id==="scr-feed"||id==="scr-me")?"flex":"none";
-  document.getElementById("bn-home").classList.toggle("on",id==="scr-feed");
-  document.getElementById("bn-me").classList.toggle("on",id==="scr-me");
-}
-function push(id,fn){navStack.push({id:id,fn:fn});show(id)}
-function goBack(){
-  if(navStack.length>1){
-    navStack.pop();
-    var top=navStack[navStack.length-1];
-    if(top.fn)top.fn();
-    show(top.id);
+// ============ reblog ============
+function handleReblogNoteKey(e) {
+  const inp = e.target;
+  if (e.key === 'Enter' && inp.value.trim()) {
+    e.preventDefault();
+    const chip = document.createElement('span');
+    chip.className = 'note-chip';
+    chip.innerHTML = inp.value.trim() + ' <span class="x" onclick="event.target.parentElement.remove()">×</span>';
+    inp.parentElement.insertBefore(chip, inp);
+    inp.value = '';
+  } else if (e.key === 'Backspace' && !inp.value) {
+    const chips = document.querySelectorAll('#reblog-notes-input .note-chip');
+    if (chips.length) chips[chips.length - 1].remove();
   }
 }
-function navHome(){navStack=[{id:"scr-feed",fn:null}];show("scr-feed")}
-function navMe(){lensFilter=null;
-  meTab="Plops";
-  navStack=[{id:"scr-feed",fn:null},{id:"scr-me",fn:renderMe}];renderMe();show("scr-me")}
-
-/* ================= feed ================= */
-var lens="plops", plopChip="All", pondChip="All";
-function setLens(l){lens=l;
-  document.getElementById("tab-plops").classList.toggle("on",l==="plops");
-  document.getElementById("tab-ponds").classList.toggle("on",l==="ponds");
-  document.getElementById("feed-plops").style.display=l==="plops"?"block":"none";
-  document.getElementById("feed-ponds").style.display=l==="ponds"?"block":"none";
-  renderChips();renderFeed();}
-
-function renderChips(){
-  var wrap=document.getElementById("chips");wrap.innerHTML="";
-  var list=lens==="plops"?["All","Recent","Spark","Following"]:["All","Theme","Creator","Material","Color","Mood"];
-  var cur=lens==="plops"?plopChip:pondChip;
-  list.forEach(function(c){
-    var b=document.createElement("button");b.className="chip"+(c===cur?" on":"");
-    b.textContent=c==="Spark"?"⚡ Spark":((c==="Material"||c==="Color"||c==="Mood")?"↻ "+c:c);
-    b.onclick=function(){if(lens==="plops"){plopChip=c}else{pondChip=c}renderChips();renderFeed()};
-    wrap.appendChild(b);
-  });
+document.querySelectorAll('#reblog-saveto button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#reblog-saveto button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+  };
+});
+function doReblogSave(withNotes) {
+  const dest = document.querySelector('#reblog-saveto button.on').dataset.tab;
+  toast('Kept to ' + dest + (withNotes ? ' · notes saved' : ' · notes skipped'));
+  setTimeout(() => go('scr-feed'), 900);
 }
 
-function tileFor(p){
-  var t=document.createElement("button");t.className="tile";t.style.width="100%";
-  t.innerHTML='<div class="ph '+p.g+'" style="height:'+p.h+'px"></div>'+(p.spark?'<span class="bolt-badge">⚡</span>':'')+(p.v?'<span class="bolt-badge" style="right:auto;left:8px;width:auto;padding:0 8px;font-size:10px;font-weight:700">▣ '+p.v.length+'</span>':'');
-  t.onclick=function(){openPlop(p.id)};
-  return t;
-}
-function renderFeed(){
-  if(lens==="plops"){
-    var grid=document.getElementById("plops-grid");grid.innerHTML="";
-    var list=PLOPS.slice();
-    if(plopChip==="Spark")list=list.filter(function(p){return p.spark});
-    if(plopChip==="Recent")list=list.slice().sort(function(a,b){return parseInt(b.yr)-parseInt(a.yr)});
-    if(plopChip==="Following")list=list.filter(function(p){return FOLLOWED.indexOf(p.a)>=0});
-    list.forEach(function(p){grid.appendChild(tileFor(p))});
-  }else{
-    var wrap=document.getElementById("ponds-list");wrap.innerHTML="";
-    var keys=Object.keys(PONDS);
-    if(pondChip!=="All")keys=keys.filter(function(k){return getPond(k).type===pondChip});
-    if(!keys.length){wrap.innerHTML='<p class="sec" style="padding:30px 22px;text-align:center">Nothing here yet — save a pond and it gathers here.</p>';return}
-    keys.forEach(function(k){
-      var pd=PONDS[k];
-      var imgs=PLOPS.filter(function(p){return p.kw.indexOf(k)>=0});
-      var strip="";for(var i=0;i<4;i++){strip+='<div class="'+(imgs[i]?imgs[i].g:["g1","g7","g8","g2"][i])+'"></div>'}
-      var card=document.createElement("div");card.className="pondcard";
-      card.innerHTML='<button style="width:100%;text-align:left" onclick="openPond(\''+k.replace(/'/g,"\\'")+'\')">'+
-        '<div class="strip">'+strip+'</div>'+
-        '<div class="pondrow"><div><span style="font-weight:700;font-size:16px">'+k+'</span> <span class="typechip">'+pd.type+'</span>'+
-        '<p class="sec" style="margin-top:4px">'+pd.plops+' plops · '+pd.people+' people <span class="rise" style="margin-left:6px">⚡ '+pd.rise.split(" ")[0]+'</span></p></div></div></button>'+
-        '<div style="display:flex;justify-content:flex-end;margin-top:-30px"><button class="pill outline'+(savedPonds[k]?" saved":"")+'" style="padding:8px 18px;font-size:13px" onclick="quickSavePond(\''+k.replace(/'/g,"\\'")+'\',this)">'+(savedPonds[k]?"Saved":"Save")+'</button></div>';
-      wrap.appendChild(card);
-    });
-  }
-}
-function quickSavePond(k,btn){savedPonds[k]=!savedPonds[k];btn.textContent=savedPonds[k]?"Saved":"Save";btn.classList.toggle("saved",!!savedPonds[k]);toast(savedPonds[k]?"Pond saved":"Removed")}
+// ============ reblog marking ============
+let reblogMarking = false;
+let reblogTool = 'tap';
+let reblogMarks = [];
+let reblogDrawing = false;
+let reblogDragStart = null;
+let reblogEditIdx = -1;
 
-/* ================= plop detail ================= */
-var curPlop=null;
-function renderPlop(id){
-  var p=PLOPS.find(function(x){return x.id===id});if(!p)return;curPlop=p;
-  var ar=ARTISTS[p.a];
-  document.getElementById("plop-img").className="ph "+p.g;
-  /* views — one work, several images */
-  var pv=document.getElementById("plop-views");pv.innerHTML="";
-  if(p.v&&p.v.length>1){
-    pv.style.display="flex";
-    var mk=function(g,i){
-      var b=document.createElement("button");
-      b.innerHTML='<div class="ph '+g+'" style="height:40px;width:58px;border-radius:3px"></div>';
-      b.style.cssText=i===0?"outline:2px solid var(--ink);outline-offset:2px;border-radius:3px":"opacity:.7";
-      b.onclick=function(){
-        document.getElementById("plop-img").className="ph "+g;
-        for(var j=0;j<p.v.length;j++){pv.children[j].style.cssText=j===i?"outline:2px solid var(--ink);outline-offset:2px;border-radius:3px":"opacity:.7"}
-        document.getElementById("plop-viewlabel").textContent="View "+(i+1)+" of "+p.v.length;
-      };
-      pv.appendChild(b);
-    };
-    for(var vi=0;vi<p.v.length;vi++)mk(p.v[vi],vi);
-    var lab=document.createElement("span");lab.className="micro";lab.id="plop-viewlabel";
-    lab.style.marginLeft="8px";lab.textContent="View 1 of "+p.v.length;
-    pv.appendChild(lab);
-    document.getElementById("plop-img").className="ph "+p.v[0];
-  }else{pv.style.display="none"}
-  var poster=posterFor(p);
-  document.getElementById("plop-poster-av").textContent=poster.init;
-  document.getElementById("plop-poster-name").textContent=poster.name;
-  document.getElementById("plop-poster-handle").textContent=poster.handle;
-  document.getElementById("plop-caption").textContent=p.d;
-  var hasCreator=OWN_PLOPS.indexOf(p.id)<0;
-  var hasSource=SRC_PLOPS.indexOf(p.id)>=0 && !p.v;  /* multi-view = your own photos, never a source link */
-  var ch="";
-  var hasTitle=hasCreator&&p.t;
-  if(hasTitle)ch+='<div style="font-size:15px;font-weight:700;line-height:1.35">'+p.t+'</div>';
-  var line=[];
-  if(hasCreator)line.push((hasTitle?'by ':'')+'<button style="font-weight:600;color:var(--ink)" onclick="openCreatorPond()">'+p.a+' ↗</button>');
-  if(hasSource)line.push('<button style="font-weight:600;color:var(--ink)" onclick="toast(\'Opens the original source\')">View source ↗</button>');
-  if(line.length)ch+='<p class="sec" style="margin-top:'+(hasTitle?"5px":"0")+';line-height:1.7">'+line.join(' &nbsp;·&nbsp; ')+'</p>';
-  document.getElementById("plop-credit").innerHTML=ch;
-  document.getElementById("plop-bolt").innerHTML=p.spark
-    ?'<span class="bolt-line">⚡ Sparking now</span><p class="micro" style="margin-top:7px">Recent saves are clustering · fades soon.</p>'
-    :'<span class="bolt-line off">Quiet for now — ⚡ sparks when saves cluster.</span>';
-  var kwlist=p.kw.slice();var extra=["texture","light","memory","form","quiet","colour"];
-  for(var ei=0;kwlist.length<5&&ei<extra.length;ei++){if(kwlist.indexOf(extra[ei])<0)kwlist.push(extra[ei])}
-  var kws=document.getElementById("plop-kws");kws.innerHTML="";
-  kwlist.forEach(function(k){
-    var b=document.createElement("button");b.className="kw";b.textContent=k;
-    b.onclick=function(){openPond(k)};kws.appendChild(b);
-  });
-  var sv=document.getElementById("plop-save");sv.textContent=savedPlops[p.id]?"Saved ✓":"Save";
-  document.getElementById("plop-foot").textContent="Kept 2h ago · in the Pool · save counts are owner-only.";
-  /* connected works — the digging thread */
-  var rel=document.getElementById("plop-related");rel.innerHTML="";
-  PLOPS.filter(function(x){
-    if(x.id===p.id)return false;
-    return x.kw.some(function(k){return p.kw.indexOf(k)>=0});
-  }).slice(0,6).forEach(function(x){rel.appendChild(tileFor(x))});
-  if(!rel.children.length)rel.innerHTML='<p class="sec" style="padding:4px">Nothing connected yet.</p>';
-}
-function openPlop(id){renderPlop(id);push("scr-plop",function(){renderPlop(id)})}
-function toggleSavePlop(){if(!curPlop)return;savedPlops[curPlop.id]=!savedPlops[curPlop.id];
-  document.getElementById("plop-save").textContent=savedPlops[curPlop.id]?"Saved ✓":"Save";
-  toast(savedPlops[curPlop.id]?"Kept — it joins your eye":"Removed");}
-function openProfileFromPlop(){if(curPlop)openProfile(posterFor(curPlop).name)}
-function posterByName(n){for(var i=0;i<POSTERS.length;i++)if(POSTERS[i].name===n)return POSTERS[i];return null}
-function pfPlops(){if(pfIsArtist)return PLOPS.filter(function(p){return p.a===curArtist});return PLOPS.filter(function(p){return posterFor(p).name===curArtist})}
-function openCreatorPond(){if(curPlop)openPond(curPlop.a)}
-function openAboutFromPlop(){if(curPlop)openAbout(curPlop.a)}
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const reblogImage = document.getElementById('reblog-image');
+const reblogMarksSvg = document.getElementById('reblog-marks-svg');
+const reblogMarksDots = document.getElementById('reblog-marks-dots');
 
-/* ================= pond ================= */
-var curPond=null;
-function renderPond(k){
-  var pd=getPond(k);curPond=k;
-  var isCreator=pd.type==="Creator";
-  document.getElementById("pond-name").textContent=k;
-  document.getElementById("pond-typelabel").textContent=isCreator?"CREATOR POND":("KEYWORD · "+pd.type.toUpperCase());
-  document.getElementById("pond-rise").textContent="⚡ "+pd.rise;
-  document.getElementById("pond-poolline").textContent=isCreator
-    ?(pd.people+" people have credited "+k+" · "+pd.plops+" plops")
-    :(pd.people+" people are moving through this current · "+pd.plops+" plops");
-  document.getElementById("pond-save").textContent=savedPonds[k]?"Saved ✓":"Save this pond";
-  var gl=document.getElementById("pond-gridlabel");
-  if(gl)gl.textContent=isCreator?("Inspirations crediting "+k):"This keyword's plops — by many people";
-
-  var tb=document.getElementById("pond-typeblock");tb.innerHTML="";
-  if(isCreator){
-    tb.innerHTML='<div class="callout">Inspirations crediting <b>'+k+'</b>, saved by the community. A community pond, not the creator’s account.</div>';
-  }else if(pd.type==="Exhibition"&&pd.ex){
-    var avs="";for(var i=0;i<4;i++){avs+='<span class="av sm"></span>'}
-    tb.innerHTML='<div class="excard"><p style="font-weight:700;font-size:15.5px">'+k+'</p>'+
-      '<p class="sec" style="margin-top:4px">'+pd.ex.venue+' · '+pd.ex.dates+'</p>'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">'+
-      '<div style="display:flex;align-items:center;gap:10px"><div class="avrow">'+avs+'</div><span class="sec">people going</span></div>'+
-      '<button class="pill dark" id="pond-going" style="padding:9px 18px;font-size:13px" onclick="toggleGoing()">'+(goingState[k]?"Going ✓":"I’ll go")+'</button></div>'+
-      '<button class="micro" style="font-weight:600;margin-top:12px" onclick="openExModal()">Details ↗</button></div>';
-  }
-
-  var nb=document.getElementById("pond-nearby");nb.innerHTML="";
-  pd.nearby.forEach(function(n){
-    var b=document.createElement("button");b.className="kw";b.textContent=n;
-    b.onclick=function(){openPond(n)};nb.appendChild(b);
-  });
-
-  var grid=document.getElementById("pond-grid");grid.innerHTML="";
-  var list=isCreator?PLOPS.filter(function(p){return p.a===k}):PLOPS.filter(function(p){return p.kw.indexOf(k)>=0});
-  if(!list.length)list=PLOPS.slice(0,6);
-  list.forEach(function(p){grid.appendChild(tileFor(p))});
+function startReblogMarking() {
+  reblogMarking = true;
+  document.getElementById('reblog-mark-cue').style.display = 'none';
+  document.getElementById('reblog-mark-toolbar').style.display = 'flex';
+  reblogImage.classList.add('marking');
 }
-function openPond(k){renderPond(k);push("scr-pond",function(){renderPond(k)})}
-function toggleSavePond(){if(!curPond)return;savedPonds[curPond]=!savedPonds[curPond];
-  document.getElementById("pond-save").textContent=savedPonds[curPond]?"Saved ✓":"Save this pond";
-  toast(savedPonds[curPond]?"Pond saved":"Removed");}
-function toggleGoing(){goingState[curPond]=!goingState[curPond];
-  var b=document.getElementById("pond-going");if(b)b.textContent=goingState[curPond]?"Going ✓":"I’ll go";
-  toast(goingState[curPond]?"See you there — added to people going":"Removed");}
-
-/* ================= profile (others) ================= */
-var curArtist=null, pfTab="Plops", pfSavedSub="Plops", pfIsArtist=true;
-function renderProfile(name){
-  var ar=ARTISTS[name];
-  var po=ar?null:posterByName(name);
-  if(!ar&&!po)return;
-  curArtist=name;pfIsArtist=!!ar;
-  document.getElementById("pf-av").textContent=ar?ar.init:po.init;
-  document.getElementById("pf-name").textContent=name;
-  document.getElementById("pf-handle").textContent=ar?ar.handle:po.handle;
-  document.getElementById("pf-bio").textContent=ar?(ar.bio?ar.bio.split(". ")[0]+".":""):"Collects inspiration and ideas — plops what catches the eye.";
-  document.getElementById("pf-links").innerHTML=ar?iconLinksHTML():"";
-  document.getElementById("pf-counts").innerHTML="<b>"+((name.length*13)%180+40)+"</b> following · <b>"+((name.length*3)%4+1)+"."+((name.length*7)%9)+"k</b> followers";
-  document.getElementById("pf-follow").textContent=(followState[name]||FOLLOWED.indexOf(name)>=0)?"Following ✓":"Follow";
-  renderPfTabs();renderPfBody();
-}
-function openProfile(name){
-  if(!ARTISTS[name]&&!posterByName(name)){toast("Profile not in this prototype");return}
-  pfTab="Plops";pfSavedSub="Plops";
-  renderProfile(name);
-  push("scr-profile",function(){renderProfile(name)});
-}
-function renderPfTabs(){
-  var posted=pfPlops().length;
-  var tabs=[["Plops",posted],["Saved",7]];
-  var w=document.getElementById("pf-tabs");w.innerHTML="";
-  tabs.forEach(function(t){
-    var b=document.createElement("button");b.className="proftab"+(t[0]===pfTab?" on":"");
-    b.innerHTML=t[0]+'<span class="cnt">'+t[1]+'</span>';
-    b.onclick=function(){pfTab=t[0];renderPfTabs();renderPfBody()};w.appendChild(b);
-  });
-}
-function renderPfBody(){
-  var w=document.getElementById("pf-body");w.innerHTML="";
-  if(pfTab==="Plops"){
-    var g=document.createElement("div");g.className="masonry";
-    pfPlops().forEach(function(p){g.appendChild(tileFor(p))});
-    if(!g.children.length)g.innerHTML='<p class="sec" style="padding:20px 22px">No plops yet.</p>';
-    w.appendChild(g);
-  }else{
-    renderSavedView(w,"pf");
-  }
-}
-function toggleFollow(){if(!curArtist)return;
-  var on=!(followState[curArtist]||FOLLOWED.indexOf(curArtist)>=0);
-  followState[curArtist]=on;
-  if(!on&&FOLLOWED.indexOf(curArtist)>=0)FOLLOWED.splice(FOLLOWED.indexOf(curArtist),1);
-  document.getElementById("pf-follow").textContent=on?"Following ✓":"Follow";
-  toast(on?"Following — their new work joins your feed":"Unfollowed");}
-function openAboutFromProfile(){if(curArtist)openAbout(curArtist)}
-function openExModal(){document.getElementById("ex-sheet").classList.add("open");
-  document.getElementById("ex-going").textContent=goingState["Euljiro Open Storage"]?"Going ✓":"I’ll go";}
-function toggleGoingEx(){
-  goingState["Euljiro Open Storage"]=!goingState["Euljiro Open Storage"];
-  document.getElementById("ex-going").textContent=goingState["Euljiro Open Storage"]?"Going ✓":"I’ll go";
-  toast(goingState["Euljiro Open Storage"]?"See you there — added to people going":"Removed");
+function stopReblogMarking() {
+  reblogMarking = false;
+  document.getElementById('reblog-mark-cue').style.display = 'flex';
+  document.getElementById('reblog-mark-toolbar').style.display = 'none';
+  reblogImage.classList.remove('marking');
 }
 
-/* ================= own profile ================= */
-var meTab="Plops", meSavedSub="Plops";
-function iconLinksHTML(){
-  function ic(svg,label){return '<button onclick="toast(\''+label+' — external links are stubbed\')" style="color:#555;display:inline-flex;align-items:center">'+svg+'</button>'}
-  var globe='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg>';
-  var insta='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>';
-  var link='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10.5 13.5a4 4 0 0 0 5.7.3l2-2a4 4 0 0 0-5.7-5.7l-1.1 1.1"/><path d="M13.5 10.5a4 4 0 0 0-5.7-.3l-2 2a4 4 0 0 0 5.7 5.7l1.1-1.1"/></svg>';
-  return ic(globe,"Website")+ic(insta,"Instagram")+ic(link,"Link");
-}
-function renderMe(){
-  document.getElementById("me-name").textContent="Sungwon Jeong";
-  document.getElementById("me-handle").textContent="@sjeong";
-  document.getElementById("me-av").textContent="SJ";
-  document.getElementById("me-bio").textContent="collecting textures, thresholds, and quiet rooms";
-  document.getElementById("me-links").innerHTML=iconLinksHTML();
-  document.getElementById("me-counts").innerHTML="<b>128</b> following · <b>2.4k</b> followers";
-  var myPlops=PLOPS.filter(function(p){return p.a==="Haneul Jung"});
-  var tabs=[["Plops",myPlops.length],["Saved",MY_SAVES.length]];
-  if(tabs.map(function(t){return t[0]}).indexOf(meTab)<0)meTab=tabs[0][0];
-  var tw=document.getElementById("me-tabs");tw.innerHTML="";
-  tabs.forEach(function(t){
-    var b=document.createElement("button");b.className="proftab"+(t[0]===meTab?" on":"");
-    b.innerHTML=t[0]+'<span class="cnt">'+t[1]+'</span>';
-    b.onclick=function(){meTab=t[0];renderMe()};tw.appendChild(b);
-  });
-  var w=document.getElementById("me-body");w.innerHTML="";
-  if(meTab==="Plops"){
-    var g=document.createElement("div");g.className="masonry";
-    myPlops.forEach(function(p){g.appendChild(tileFor(p))});
-    w.appendChild(g);
-  }else{
-    renderSavedView(w,"me");
-  }
-}
-function renderSavedView(w,who){
-  var sub=(who==="me")?meSavedSub:pfSavedSub;
-  var sg=document.createElement("div");
-  sg.style.cssText="display:inline-flex;background:var(--surface);border-radius:var(--r-pill);padding:3px;margin:14px 22px 0";
-  ["Plops","Ponds"].forEach(function(t){
-    var on=(t===sub);
-    var b=document.createElement("button");
-    b.style.cssText="border-radius:var(--r-pill);padding:6px 18px;font-size:13px;font-weight:600;"+(on?"background:var(--bg);box-shadow:0 1px 4px rgba(0,0,0,.08);color:var(--ink)":"color:var(--soft)");
-    b.textContent=t;
-    b.onclick=function(){if(who==="me"){meSavedSub=t;renderMe()}else{pfSavedSub=t;renderProfile(curArtist)}};
-    sg.appendChild(b);
-  });
-  w.appendChild(sg);
-  if(sub==="Plops"){
-    var fh=document.createElement("p");fh.className="micro";fh.style.cssText="font-weight:700;letter-spacing:.4px;padding:16px 22px 8px";fh.textContent="FOLDERS";w.appendChild(fh);
-    var fr=document.createElement("div");fr.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 22px";
-    [["Brutalism","g3",42,false],["Mood · blue","g6",17,true],["Shows 2026","g2",31,false]].forEach(function(f){
-      var c=document.createElement("button");c.style.cssText="border:1px solid var(--line);border-radius:14px;padding:8px;text-align:left";
-      c.innerHTML='<div class="ph '+f[1]+'" style="height:60px;border-radius:8px;position:relative">'+(f[3]?'<span style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,.55);color:#fff;font-size:9px;border-radius:999px;padding:2px 7px">Private</span>':'')+'</div><p style="font-weight:600;font-size:13px;margin-top:6px">'+f[0]+'</p><p class="micro">'+f[2]+' saved</p>';
-      c.onclick=function(){toast("Opens the “"+f[0]+"” folder")};fr.appendChild(c);
-    });
-    var nf=document.createElement("button");nf.style.cssText="border:1.5px dashed #D8D8DC;border-radius:14px;display:grid;place-items:center;color:var(--soft);font-size:13px;font-weight:600;min-height:96px";nf.textContent="+ New folder";nf.onclick=function(){toast("New folder — not in this prototype")};fr.appendChild(nf);
-    w.appendChild(fr);
-    var ah=document.createElement("p");ah.className="micro";ah.style.cssText="font-weight:700;letter-spacing:.4px;padding:18px 22px 6px";ah.textContent="ALL SAVED PLOPS";w.appendChild(ah);
-    var g=document.createElement("div");g.className="masonry";
-    MY_SAVES.map(function(id){return PLOPS.find(function(x){return x.id===id})}).filter(Boolean).forEach(function(p){g.appendChild(tileFor(p))});
-    w.appendChild(g);
-  }else{
-    var ph=document.createElement("p");ph.className="micro";ph.style.cssText="font-weight:700;letter-spacing:.4px;padding:16px 22px 4px";ph.textContent="SAVED PONDS";w.appendChild(ph);
-    PONDS_SAVED.slice(0,8).forEach(function(pd){
-      var imgs=PLOPS.filter(function(p){return p.kw.indexOf(pd.k)>=0});
-      var strip="";for(var i=0;i<4;i++){strip+='<div class="'+(imgs[i]?imgs[i].g:["g1","g7","g8","g2"][i])+'"></div>'}
-      var typeLabel=pd.type==="Person"?"Creator":pd.type;
-      var card=document.createElement("div");card.className="pondcard";
-      card.innerHTML='<button style="width:100%;text-align:left" onclick="openPond(\''+pd.k.replace(/'/g,"\\'")+'\')"><div class="strip">'+strip+'</div><div class="pondrow"><div><span style="font-weight:700;font-size:16px">'+pd.k+'</span> <span class="typechip">'+typeLabel+'</span></div><span class="sec">'+pd.plops+' plops</span></div></button>';
-      w.appendChild(card);
-    });
-  }
-}
+document.querySelectorAll('#reblog-mark-toolbar button[data-tool]').forEach(b => {
+  b.onclick = (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('#reblog-mark-toolbar button[data-tool]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    reblogTool = b.dataset.tool;
+  };
+});
 
-/* ================= Saved tab — the lens is the index ================= */
-function rowHeader(label,total,onAll){
-  var h=document.createElement("div");
-  h.style.cssText="display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 10px";
-  var l=document.createElement("p");l.className="micro";l.textContent=label;h.appendChild(l);
-  var b=document.createElement("button");b.className="micro";b.style.fontWeight="600";b.style.color="var(--ink)";
-  b.textContent="All "+total+" →";
-  b.onclick=onAll;h.appendChild(b);
-  return h;
+function reblogPos(e) {
+  const rect = reblogImage.getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+  return { x: (p.clientX - rect.left) / rect.width * 400, y: (p.clientY - rect.top) / rect.height * 500 };
 }
-function renderSavedTab(w,withLens){
-  var weights=lensWeights();
-  if(withLens){
-    var f=document.createElement("div");f.className="fingerprint";
-    var cap=document.createElement("p");cap.className="micro";cap.style.marginBottom="12px";
-    cap.textContent="YOUR LENS — HOW YOU SEE · TAP A WORD TO FILTER";
-    f.appendChild(cap);
-    if(weights.length<3){
-      var low=document.createElement("p");low.className="sec";
-      low.textContent="Your lens is still forming — keep what stops you.";
-      f.appendChild(low);
+function renderReblogMarks() {
+  reblogMarksSvg.innerHTML = '';
+  reblogMarksDots.innerHTML = '';
+  reblogMarks.forEach((m, i) => {
+    if (m.type === 'circle') {
+      const el = document.createElementNS(SVG_NS, 'ellipse');
+      const cx = (m.x1 + m.x2) / 2, cy = (m.y1 + m.y2) / 2;
+      el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+      el.setAttribute('rx', Math.max(Math.abs(m.x2 - m.x1) / 2, 24));
+      el.setAttribute('ry', Math.max(Math.abs(m.y2 - m.y1) / 2, 24));
+      el.setAttribute('fill', 'none'); el.setAttribute('stroke', '#FF5A3C'); el.setAttribute('stroke-width', '4');
+      reblogMarksSvg.appendChild(el);
+    } else if (m.type === 'arrow') {
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.setAttribute('x1', m.x1); line.setAttribute('y1', m.y1);
+      line.setAttribute('x2', m.x2); line.setAttribute('y2', m.y2);
+      line.setAttribute('stroke', '#FF5A3C'); line.setAttribute('stroke-width', '4'); line.setAttribute('stroke-linecap', 'round');
+      reblogMarksSvg.appendChild(line);
+      const dx = m.x2 - m.x1, dy = m.y2 - m.y1;
+      const ang = Math.atan2(dy, dx);
+      const h = 20;
+      const p = document.createElementNS(SVG_NS, 'polygon');
+      p.setAttribute('points', `${m.x2},${m.y2} ${m.x2 - h*Math.cos(ang-0.4)},${m.y2 - h*Math.sin(ang-0.4)} ${m.x2 - h*Math.cos(ang+0.4)},${m.y2 - h*Math.sin(ang+0.4)}`);
+      p.setAttribute('fill', '#FF5A3C');
+      reblogMarksSvg.appendChild(p);
     }
-    var sizes=[34,29,26,23,21,19], cols=["var(--ink)","#5a6b7c","var(--ink)","#8a8a8e","#5a6b7c","#8a8a8e"];
-    weights.forEach(function(kv,i){
-      var b=document.createElement("button");b.className="w";
-      b.style.cssText="display:block;text-align:left;font-size:"+sizes[i]+"px;color:"+cols[i]+";font-weight:700;letter-spacing:-.5px;line-height:1.25";
-      b.textContent=kv[0];
-      if(lensFilter===kv[0]){b.style.textDecoration="underline";b.style.textUnderlineOffset="5px"}
-      b.onclick=function(){lensFilter=lensFilter===kv[0]?null:kv[0];renderMe()};
-      f.appendChild(b);
-    });
-    if(lensFilter){
-      var clr=document.createElement("button");clr.className="micro";
-      clr.style.cssText="font-weight:600;color:var(--ink);margin-top:10px";
-      clr.textContent="✕ Clear — show everything";
-      clr.onclick=function(){lensFilter=null;renderMe()};
-      f.appendChild(clr);
-    }
-    w.appendChild(f);
+    const dot = document.createElement('div');
+    dot.className = 'mark-dot-editable';
+    dot.textContent = i + 1;
+    dot.style.left = (m.anchor.x / 400 * 100) + '%';
+    dot.style.top = (m.anchor.y / 500 * 100) + '%';
+    dot.onclick = (e) => { e.stopPropagation(); openReblogNote(i); };
+    reblogMarksDots.appendChild(dot);
+  });
+}
+
+function openReblogNote(idx) {
+  reblogEditIdx = idx;
+  document.getElementById('rn-num').textContent = idx + 1;
+  document.getElementById('rn-input').value = reblogMarks[idx].noteText || '';
+  document.getElementById('reblog-note-sheet').classList.add('on');
+  setTimeout(() => document.getElementById('rn-input').focus(), 100);
+}
+function closeReblogNote(save) {
+  if (save && reblogEditIdx >= 0) {
+    reblogMarks[reblogEditIdx].noteText = document.getElementById('rn-input').value.trim();
   }
-  var d=document.createElement("div");d.style.padding=withLens?"4px 22px 0":"14px 22px 0";
-  /* ponds: shortlist ranked by liveness + "All N →" opens the index */
-  d.appendChild(rowHeader("Saved ponds — most alive",PONDS_SAVED.length,function(){openIndex("ponds")}));
-  var pr=document.createElement("div");
-  PONDS_SAVED.slice().sort(function(a,b){return b.act-a.act}).slice(0,3).forEach(function(p){
-    var b=document.createElement("button");b.className="kw";
-    b.textContent=p.k+(p.act>70?" ⚡":"");
-    b.onclick=function(){openPond(p.k)};pr.appendChild(b);
-  });
-  d.appendChild(pr);
-  /* people: shortlist ranked by recent activity + "All N →" opens the index */
-  d.appendChild(rowHeader("People you follow — active lately",PEOPLE_ALL.length,function(){openIndex("people")}));
-  var pe=document.createElement("div");
-  PEOPLE_ALL.slice().sort(function(a,b){return a.days-b.days}).slice(0,3).forEach(function(pp){
-    var b=document.createElement("button");b.className="kw";b.textContent=pp.handle;
-    b.onclick=function(){openProfile(pp.name)};pe.appendChild(b);
-  });
-  d.appendChild(pe);
-  /* saved plops, filtered by the lens word */
-  var ph=document.createElement("p");ph.className="micro";ph.style.margin="14px 0 0";
-  ph.textContent=lensFilter?"Saved plops — in “"+lensFilter+"”":"Saved plops";
-  d.appendChild(ph);
-  w.appendChild(d);
-  var g2=document.createElement("div");g2.className="masonry";
-  var list=MY_SAVES.map(function(id){return PLOPS.find(function(x){return x.id===id})}).filter(Boolean);
-  if(lensFilter)list=list.filter(function(p){return p.kw.indexOf(lensFilter)>=0});
-  list.forEach(function(p){g2.appendChild(tileFor(p))});
-  if(!list.length)g2.innerHTML='<p class="sec" style="padding:4px">Nothing kept under this word yet.</p>';
-  w.appendChild(g2);
+  document.getElementById('reblog-note-sheet').classList.remove('on');
+  reblogEditIdx = -1;
 }
+document.querySelectorAll('#reblog-note-sheet .n-method-tabs button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#reblog-note-sheet .n-method-tabs button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+  };
+});
 
-/* ================= About (artist portfolio) ================= */
-var bioExpanded=false, curAbout=null;
-function renderAbout(name){
-  var ar=ARTISTS[name];if(!ar)return;
-  curAbout=name;bioExpanded=false;
-  document.getElementById("about-name").textContent=name;
-  document.getElementById("about-line").textContent=ar.line;
-  document.getElementById("about-bio").textContent=ar.bio;
-  document.getElementById("about-readmore").style.display=ar.bio2?"inline":"none";
-  document.getElementById("about-readmore").textContent="Read more";
-  var works=document.getElementById("about-works");
-  works.style.cssText="padding:12px 0 0;display:flex;gap:8px;align-items:flex-start";works.innerHTML="";
-  var col1=document.createElement("div");col1.style.cssText="flex:1;min-width:0;display:flex;flex-direction:column";
-  var col2=col1.cloneNode(false);works.appendChild(col1);works.appendChild(col2);
-  var h1=0,h2=0;
-  var sel=PLOPS.filter(function(p){return p.a===name});
-  document.getElementById("about-count").textContent="· "+sel.length;
-  sel.slice(0,5).forEach(function(p){
-    var t=document.createElement("button");t.className="workcard";
-    t.innerHTML='<div class="ph '+p.g+'" style="height:'+(p.h-30)+'px"></div>'+
-      '<p class="wt">'+p.t+'</p>'+
-      '<p class="wm">'+p.yr+' · '+p.m+'</p>'+
-      '<p class="wd">'+p.d+'</p><span class="read">Read</span>';
-    t.onclick=function(){openWork(p)};
-    if(h1<=h2){col1.appendChild(t);h1+=p.h+96;}else{col2.appendChild(t);h2+=p.h+96;}
-  });
-  var ex=document.getElementById("about-ex");ex.innerHTML="";
-  ar.ex.forEach(function(e){ex.innerHTML+='<div class="listitem"><span style="color:var(--ink)">'+e[0]+'</span><span>'+e[1]+'</span></div>'});
-  var aw=document.getElementById("about-awards");aw.innerHTML="";
-  ar.awards.forEach(function(e){aw.innerHTML+='<div class="listitem"><span style="color:var(--ink)">'+e[0]+'</span><span>'+e[1]+'</span></div>'});
-  document.getElementById("about-contact").innerHTML=ar.contact+
-    '<br><span style="display:inline-block;margin-top:6px">'+linkRowHTML(ar.links||[ar.handle.replace("@","")+".com","Instagram"])+'</span>';
-}
-function openAbout(name){
-  if(!ARTISTS[name]){toast("Portfolio not in this prototype");return}
-  renderAbout(name);
-  push("scr-about",function(){renderAbout(name)});
-}
-function expandBio(){
-  var ar=ARTISTS[curAbout];bioExpanded=!bioExpanded;
-  document.getElementById("about-bio").textContent=bioExpanded?ar.bio+ar.bio2:ar.bio;
-  document.getElementById("about-readmore").textContent=bioExpanded?"Read less":"Read more";
-}
-function openWork(p){
-  document.getElementById("work-img").className="ph "+p.g;
-  document.getElementById("work-title").textContent=p.t;
-  document.getElementById("work-meta").textContent=p.m+" · "+p.yr;
-  document.getElementById("work-desc").textContent=p.d+" Part of an ongoing series; full documentation available on request.";
-  document.getElementById("work-sheet").classList.add("open");
-}
+function undoReblogMark() { reblogMarks.pop(); renderReblogMarks(); }
+function clearReblogMarks() { reblogMarks = []; renderReblogMarks(); }
 
-/* ================= library index (scales to 100+) ================= */
-var indexKind="ponds", indexSort="active";
-function openIndex(kind){
-  if(indexKind!==kind)indexSort="active"; /* sort survives re-opening the same list */
-  indexKind=kind;
-  document.getElementById("index-title").textContent=
-    indexKind==="ponds"?"Saved ponds · "+PONDS_SAVED.length:"People you follow · "+PEOPLE_ALL.length;
-  document.getElementById("index-search").value="";
-  document.getElementById("index-sort-active").classList.toggle("on",indexSort==="active");
-  document.getElementById("index-sort-az").classList.toggle("on",indexSort==="az");
-  renderIndexList();
-  document.getElementById("index-sheet").classList.add("open");
-}
-function setIndexSort(s){
-  indexSort=s;
-  document.getElementById("index-sort-active").classList.toggle("on",s==="active");
-  document.getElementById("index-sort-az").classList.toggle("on",s==="az");
-  renderIndexList();
-}
-function renderIndexList(){
-  var q=document.getElementById("index-search").value.toLowerCase();
-  var wrap=document.getElementById("index-list");wrap.innerHTML="";
-  if(indexKind==="ponds"){
-    var items=PONDS_SAVED.filter(function(p){return !q||p.k.toLowerCase().indexOf(q)>=0});
-    items.sort(indexSort==="active"
-      ?function(a,b){return b.act-a.act}
-      :function(a,b){return a.k.localeCompare(b.k)});
-    items.forEach(function(p){
-      var b=document.createElement("button");b.className="idxrow";
-      b.innerHTML='<div style="flex:1"><p class="nm">'+p.k+' <span class="typechip" style="margin-left:4px">'+p.type+'</span></p>'+
-        '<p class="mt">'+(p.act>70?'<span class="live">⚡ rising this week</span> · ':'')+p.plops+' plops</p></div><span class="sec">→</span>';
-      b.onclick=function(){closeSheet("index-sheet");openPond(p.k)};
-      wrap.appendChild(b);
-    });
-  }else{
-    var ppl=PEOPLE_ALL.filter(function(pp){return !q||pp.name.toLowerCase().indexOf(q)>=0||pp.handle.indexOf(q)>=0});
-    ppl.sort(indexSort==="active"
-      ?function(a,b){return a.days-b.days}
-      :function(a,b){return a.name.localeCompare(b.name)});
-    ppl.forEach(function(pp){
-      var init=pp.name.split(" ").map(function(x){return x[0]}).join("");
-      var act=pp.days<=7?'<span class="live">new plop · '+(pp.days===0?"today":pp.days+"d ago")+'</span>':'quiet · '+Math.round(pp.days/7)+'w';
-      var b=document.createElement("button");b.className="idxrow";
-      b.innerHTML='<span class="av">'+init+'</span><div style="flex:1"><p class="nm">'+pp.name+'</p>'+
-        '<p class="mt">'+pp.handle+' · '+act+'</p></div><span class="sec">→</span>';
-      b.onclick=function(){closeSheet("index-sheet");openProfile(pp.name)};
-      wrap.appendChild(b);
-    });
+function rpDown(e) {
+  if (!reblogMarking) return;
+  if (e.target.closest('.mark-dot-editable')) return;
+  if (e.target.closest('.mark-toolbar')) return;
+  if (document.getElementById('reblog-note-sheet').classList.contains('on')) return;
+  e.preventDefault();
+  const p = reblogPos(e);
+  if (reblogTool === 'tap') {
+    reblogMarks.push({ type: 'dot', anchor: p, noteText: null });
+    renderReblogMarks();
+    openReblogNote(reblogMarks.length - 1);
+    return;
   }
-  if(!wrap.children.length)wrap.innerHTML='<p class="sec" style="padding:20px 0;text-align:center">No match.</p>';
+  reblogDrawing = true;
+  reblogDragStart = p;
 }
-
-/* ================= search / create ================= */
-function openSearch(){
-  document.getElementById("search-sheet").classList.add("open");
-  document.getElementById("search-input").value="";
-  filterSearch();
-}
-function openCreate(){document.getElementById("create-sheet").classList.add("open")}
-function createStub(){closeSheet("create-sheet");toast("The full upload flow lives in the Studio prototype")}
-function closeSheet(id){document.getElementById(id).classList.remove("open")}
-function filterSearch(){
-  var q=document.getElementById("search-input").value.toLowerCase();
-  var kwrap=document.getElementById("search-kws");kwrap.innerHTML="";
-  Object.keys(PONDS).filter(function(k){return !q||k.toLowerCase().indexOf(q)>=0}).slice(0,8).forEach(function(k){
-    var b=document.createElement("button");b.className="kw";b.textContent=k;
-    b.onclick=function(){closeSheet("search-sheet");openPond(k)};kwrap.appendChild(b);
-  });
-  var pwrap=document.getElementById("search-people");pwrap.innerHTML="";
-  Object.keys(ARTISTS).filter(function(n){return !q||n.toLowerCase().indexOf(q)>=0||ARTISTS[n].handle.indexOf(q)>=0}).slice(0,5).forEach(function(n){
-    var b=document.createElement("button");b.className="kw";b.textContent=ARTISTS[n].handle+" · "+n;
-    b.onclick=function(){closeSheet("search-sheet");openProfile(n)};pwrap.appendChild(b);
-  });
-  if(!kwrap.children.length&&!pwrap.children.length)kwrap.innerHTML='<p class="sec">No current by that name yet — tag it on a plop and the pond appears by itself.</p>';
-}
-
-/* ================= nomination — champion a stranger's work ================= */
-var nomLeft=3;
-function openNominate(){
-  document.getElementById("nom-form").style.display="block";
-  document.getElementById("nom-after").style.display="none";
-  document.getElementById("nom-left").textContent=nomLeft;
-  document.getElementById("nominate-sheet").classList.add("open");
-}
-function submitNomination(){
-  var l=document.getElementById("nom-link").value.trim();
-  if(!l){toast("A link to their work — that’s all we need");return}
-  if(nomLeft<=0){toast("No nominations left this month");return}
-  nomLeft--;
-  document.getElementById("nom-line").textContent="Sent — we’ll look at "+l.replace(/^https?:\/\//,"")+" properly.";
-  document.getElementById("nom-form").style.display="none";
-  document.getElementById("nom-after").style.display="block";
-  document.getElementById("nom-link").value="";document.getElementById("nom-why").value="";
-}
-
-/* ================= backstage (your private studio) ================= */
-var dispatchLeft=2, dispatchKind="invite";
-var SELWORKS=[
-  {t:"Tide Ledger IV",g:"g0",sel:true},
-  {t:"Reservoir (Winter)",g:"g6",sel:true},
-  {t:"Basement, Pre-Demolition",g:"g6",sel:true},
-  {t:"Drain Study",g:"g1",sel:false},
-  {t:"Wallpaper, Flooded",g:"g7",sel:false},
-  {t:"Pump Room",g:"g3",sel:false}
-];
-function postExhibition(){
-  var n=document.getElementById("bs-exname").value.trim();
-  if(!n){toast("Give the exhibition a name");return}
-  var v=document.getElementById("bs-exvenue").value.trim()||"venue TBC";
-  document.getElementById("bs-exposted").textContent="Now showing — "+n+" · "+v+" · its pond is open.";
-  toast("Exhibition posted — pond created");
-}
-function setDispatch(k){
-  dispatchKind=k;
-  document.getElementById("bs-d-invite").classList.toggle("on",k==="invite");
-  document.getElementById("bs-d-studio").classList.toggle("on",k==="studio");
-}
-function sendDispatch(){
-  if(dispatchLeft<=0)return;
-  var msg=document.getElementById("bs-dmsg").value.trim();
-  if(!msg){toast("Write a few lines first");return}
-  dispatchLeft--;
-  document.getElementById("bs-dispcount").textContent=dispatchLeft+" left this month";
-  document.getElementById("bs-dmsg").value="";
-  toast(dispatchKind==="invite"?"Invite sent to 38 people":"Studio share sent to 38 people");
-  if(dispatchLeft<=0){
-    var b=document.getElementById("bs-dsend");
-    b.disabled=true;b.textContent="No dispatches left this month";
+function rpMove(e) {
+  if (!reblogDrawing) return;
+  e.preventDefault();
+  const p = reblogPos(e);
+  reblogMarksSvg.querySelectorAll('.preview').forEach(el => el.remove());
+  if (reblogTool === 'circle') {
+    const el = document.createElementNS(SVG_NS, 'ellipse');
+    const cx = (reblogDragStart.x + p.x) / 2, cy = (reblogDragStart.y + p.y) / 2;
+    el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+    el.setAttribute('rx', Math.max(Math.abs(p.x - reblogDragStart.x) / 2, 24));
+    el.setAttribute('ry', Math.max(Math.abs(p.y - reblogDragStart.y) / 2, 24));
+    el.setAttribute('fill', 'none'); el.setAttribute('stroke', '#FF5A3C');
+    el.setAttribute('stroke-width', '4'); el.setAttribute('opacity', '0.65');
+    el.classList.add('preview');
+    reblogMarksSvg.appendChild(el);
+  } else if (reblogTool === 'arrow') {
+    const line = document.createElementNS(SVG_NS, 'line');
+    line.setAttribute('x1', reblogDragStart.x); line.setAttribute('y1', reblogDragStart.y);
+    line.setAttribute('x2', p.x); line.setAttribute('y2', p.y);
+    line.setAttribute('stroke', '#FF5A3C'); line.setAttribute('stroke-width', '4');
+    line.setAttribute('stroke-linecap', 'round'); line.setAttribute('opacity', '0.65');
+    line.classList.add('preview');
+    reblogMarksSvg.appendChild(line);
   }
 }
-function saveAbout(){
-  toast("About updated — visible to galleries & curators");
+function rpUp(e) {
+  if (!reblogDrawing) return;
+  reblogDrawing = false;
+  reblogMarksSvg.querySelectorAll('.preview').forEach(el => el.remove());
+  const p = reblogPos(e);
+  const dx = Math.abs(p.x - reblogDragStart.x), dy = Math.abs(p.y - reblogDragStart.y);
+  if (dx < 8 && dy < 8) return;
+  let m = null;
+  if (reblogTool === 'circle') {
+    m = { type: 'circle', x1: reblogDragStart.x, y1: reblogDragStart.y, x2: p.x, y2: p.y, anchor: { x: (reblogDragStart.x + p.x) / 2, y: (reblogDragStart.y + p.y) / 2 }, noteText: null };
+  } else if (reblogTool === 'arrow') {
+    m = { type: 'arrow', x1: reblogDragStart.x, y1: reblogDragStart.y, x2: p.x, y2: p.y, anchor: { x: p.x, y: p.y }, noteText: null };
+  }
+  if (m) {
+    reblogMarks.push(m);
+    renderReblogMarks();
+    openReblogNote(reblogMarks.length - 1);
+  }
 }
-function renderSelGrid(){
-  var g=document.getElementById("bs-selgrid");g.innerHTML="";
-  var n=SELWORKS.filter(function(w){return w.sel}).length;
-  document.getElementById("bs-selcount").textContent=n+" / 5";
-  SELWORKS.forEach(function(wk){
-    var b=document.createElement("button");
-    b.innerHTML='<div class="ph '+wk.g+'" style="height:110px"></div><span class="star">'+(wk.sel?"★":"☆")+'</span>';
-    b.onclick=function(){
-      if(!wk.sel&&n>=5){toast("Five is the limit — unstar one first");return}
-      wk.sel=!wk.sel;renderSelGrid();
-    };
-    g.appendChild(b);
-  });
-}
-
-/* ================= toast ================= */
-var toastTimer=null;
-function toast(msg){
-  var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
-  clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove("show")},1900);
-}
-
-/* ================= init ================= */
-renderChips();renderFeed();
+reblogImage.addEventListener('mousedown', rpDown);
+reblogImage.addEventListener('touchstart', rpDown, { passive: false });
+reblogImage.addEventListener('mousemove', rpMove);
+reblogImage.addEventListener('touchmove', rpMove, { passive: false });
+window.addEventListener('mouseup', rpUp);
+window.addEventListener('touchend', rpUp);
 </script>
+
 </body>
 </html>
