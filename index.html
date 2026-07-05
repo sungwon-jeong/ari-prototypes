@@ -184,6 +184,180 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 }
 .ritual-scroll::-webkit-scrollbar { display: none; }
 
+/* ---- SPARK ⚡ ---- */
+/* Personal spark button (tappable on every plop) */
+.spark-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.94);
+  color: rgba(0,0,0,0.42);
+  display: grid; place-items: center;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer;
+  border: 0;
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(8px);
+  z-index: 3;
+}
+.spark-btn:active { transform: scale(0.9); }
+.spark-btn.on {
+  background: var(--amber);
+  color: white;
+  box-shadow: 0 3px 14px rgba(227,155,58,0.55);
+}
+.spark-btn.aggregate {
+  animation: sparkAggregate 2.4s ease-in-out infinite;
+}
+@keyframes sparkAggregate {
+  0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.18), 0 0 0 0 rgba(227,155,58,0); }
+  50% { box-shadow: 0 2px 8px rgba(0,0,0,0.18), 0 0 0 8px rgba(227,155,58,0.20); }
+}
+.spark-btn.on.aggregate {
+  animation: sparkAggregateOn 2.4s ease-in-out infinite;
+}
+@keyframes sparkAggregateOn {
+  0%, 100% { box-shadow: 0 3px 14px rgba(227,155,58,0.55), 0 0 0 0 rgba(227,155,58,0); }
+  50% { box-shadow: 0 3px 14px rgba(227,155,58,0.55), 0 0 0 8px rgba(227,155,58,0.24); }
+}
+.spark-btn.burst::after {
+  content: '';
+  position: absolute; inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(227,155,58,0.6);
+  animation: sparkBurstRing 0.5s ease-out;
+  pointer-events: none;
+}
+@keyframes sparkBurstRing {
+  from { transform: scale(0.6); opacity: 0.9; }
+  to { transform: scale(1.6); opacity: 0; }
+}
+
+/* Big personal spark button on detail */
+.spark-action-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px 10px 16px;
+  background: white;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-pill);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  margin: 12px 20px 0;
+  font-family: inherit;
+  position: relative;
+}
+.spark-action-btn:active { transform: scale(0.97); }
+.spark-action-btn .ic { font-size: 17px; }
+.spark-action-btn.on {
+  background: var(--amber);
+  color: white;
+  border-color: var(--amber);
+  box-shadow: 0 4px 16px rgba(227,155,58,0.42);
+}
+.spark-action-btn.burst::after {
+  content: '';
+  position: absolute; inset: -6px;
+  border-radius: var(--r-pill);
+  border: 2px solid rgba(227,155,58,0.6);
+  animation: sparkBurstRingBig 0.5s ease-out;
+  pointer-events: none;
+}
+@keyframes sparkBurstRingBig {
+  from { transform: scale(0.9); opacity: 0.9; }
+  to { transform: scale(1.15); opacity: 0; }
+}
+
+.spark-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 14px 9px 12px;
+  background: rgba(227,155,58,0.12);
+  border: 0;
+  border-radius: var(--r-pill);
+  font-size: 12.5px;
+  font-weight: 500;
+  margin: 12px 20px 0;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  font-family: inherit;
+  box-shadow: 0 2px 10px rgba(227,155,58,0.18), inset 0 0 0 1px rgba(227,155,58,0.16);
+  transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.spark-pill:active {
+  background: rgba(227,155,58,0.22);
+  transform: scale(0.97);
+  box-shadow: 0 1px 4px rgba(227,155,58,0.24);
+}
+.spark-pill .spark-icon { font-size: 15px; }
+.spark-pill b { color: var(--amber); font-weight: 700; }
+.spark-pill .chev {
+  color: var(--amber);
+  font-size: 17px;
+  font-weight: 700;
+  margin-left: 2px;
+  line-height: 1;
+}
+
+@keyframes sparkWiggle {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  15% { transform: translateX(-5px) rotate(-1deg); }
+  30% { transform: translateX(5px) rotate(1deg); }
+  45% { transform: translateX(-4px) rotate(-0.5deg); }
+  60% { transform: translateX(3px) rotate(0.5deg); }
+  75% { transform: translateX(-2px) rotate(0); }
+}
+.spark-pill.wiggle, .spark-action-btn.wiggle { animation: sparkWiggle 0.7s ease-in-out; }
+
+.spark-sheet-head {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 18px; font-weight: 800;
+  color: var(--amber);
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+.spark-sheet-sub {
+  font-size: 13px;
+  color: var(--soft);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.spark-sheet-sub b { color: var(--ink); font-weight: 600; }
+.spark-names-list {
+  display: flex; flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+.spark-name {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--line);
+}
+.spark-name .info { flex: 1; }
+.spark-name .info .nm { font-size: 14px; font-weight: 700; }
+.spark-name .info .m { font-size: 11.5px; color: var(--soft); margin-top: 2px; }
+.spark-more {
+  padding: 12px 4px 0;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--soft);
+  font-weight: 600;
+}
+.spark-volatile-hint {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: 10px;
+  font-size: 11.5px;
+  color: var(--soft);
+  line-height: 1.5;
+  text-align: center;
+}
+.spark-volatile-hint b { color: var(--ink); font-weight: 600; }
+
 .detbody { padding: 14px 22px 4px; }
 .det-cap { font-size: 16px; font-weight: 600; letter-spacing: -0.2px; }
 .det-sub { font-size: 13.5px; color: var(--soft); margin-top: 3px; }
@@ -533,14 +707,14 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         </div>
         <div style="padding: 4px 20px 8px"><p class="sec" style="font-size:13px">The pool — what people are keeping today.</p></div>
         <div class="masonry">
-          <div class="tile" onclick="openMine()"><div class="ph g1" style="height:220px"></div><div class="cap">Moon jar<div class="h">Joseon · Nat'l Museum</div></div></div>
-          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph g4" style="height:180px"></div><div class="cap">"Wearing a duvet"<div class="h">@studio.yumi</div></div></div>
-          <div class="tile" onclick="openMine()"><div class="ph g2" style="height:210px"></div><div class="cap">Brutalist stairs<div class="h">Hongdae</div></div></div>
-          <div class="tile" onclick="openOthers('jinyoung','g5','Moss brick wall','Seongbuk-dong')"><div class="ph g5" style="height:170px"></div><div class="cap">Moss brick wall<div class="h">Seongbuk-dong</div></div></div>
-          <div class="tile" onclick="openMine()"><div class="ph g7" style="height:190px"></div><div class="cap">Sign, Euljiro<div class="h">printing quarter</div></div></div>
-          <div class="tile" onclick="openOthers('dahye','g6','Coffee stain','morning')"><div class="ph g6" style="height:230px"></div><div class="cap">Coffee stain<div class="h">morning</div></div></div>
-          <div class="tile" onclick="openOthers('hanuel','g8','Anni Albers · weaving','Tate catalogue')"><div class="ph g8" style="height:190px"></div><div class="cap">Anni Albers · weaving<div class="h">Tate catalogue</div></div></div>
-          <div class="tile" onclick="openOthers('jinyoung','g9','Kimsooja · Needle Woman','Leeum, 2020')"><div class="ph g9" style="height:210px"></div><div class="cap">Kimsooja · Needle Woman<div class="h">Leeum, 2020</div></div></div>
+          <div class="tile" onclick="openMine()"><div class="ph g1" style="height:220px"><button class="spark-btn aggregate" data-plop="moon-jar" onclick="toggleSpark(event, this)">⚡</button></div><div class="cap">Moon jar<div class="h">Joseon · Nat'l Museum</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph g4" style="height:180px"><button class="spark-btn" data-plop="duvet" onclick="toggleSpark(event, this)">⚡</button></div><div class="cap">"Wearing a duvet"<div class="h">@studio.yumi</div></div></div>
+          <div class="tile" onclick="openMine()"><div class="ph g2" style="height:210px"><button class="spark-btn on" data-plop="stairs" onclick="toggleSpark(event, this)">⚡</button></div><div class="cap">Brutalist stairs<div class="h">Hongdae</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g5','Moss brick wall','Seongbuk-dong')"><div class="ph g5" style="height:170px"><button class="spark-btn" data-plop="moss" onclick="toggleSpark(event, this)">⚡</button></div><div class="cap">Moss brick wall<div class="h">Seongbuk-dong</div></div></div>
+          <div class="tile" onclick="openMine()"><div class="ph g7" style="height:190px"><button class="spark-btn" data-plop="sign" onclick="toggleSpark(event, this)">⚡</button></div><div class="cap">Sign, Euljiro<div class="h">printing quarter</div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Coffee stain','morning')"><div class="ph g6" style="height:230px"><button class="spark-btn" data-plop="coffee" onclick="toggleSpark(event, this)">⚡</button></div><div class="cap">Coffee stain<div class="h">morning</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g8','Anni Albers · weaving','Tate catalogue')"><div class="ph g8" style="height:190px"><button class="spark-btn aggregate" data-plop="anni" onclick="toggleSpark(event, this)">⚡</button></div><div class="cap">Anni Albers · weaving<div class="h">Tate catalogue</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g9','Kimsooja · Needle Woman','Leeum, 2020')"><div class="ph g9" style="height:210px"><button class="spark-btn on aggregate" data-plop="kimsooja" onclick="toggleSpark(event, this)">⚡</button></div><div class="cap">Kimsooja · Needle Woman<div class="h">Leeum, 2020</div></div></div>
         </div>
       </div>
       <div class="bottomnav">
@@ -575,6 +749,8 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           </div>
         </div>
         <div class="detbody"><div class="det-cap">Moon jar · Joseon · 17th c.</div><div class="det-sub">National Museum of Korea</div></div>
+        <button class="spark-action-btn" id="detail-spark-btn" onclick="toggleDetailSpark()"><span class="ic">⚡</span><span id="detail-spark-label">Spark</span></button>
+        <button class="spark-pill" onclick="openSparkSheet()"><span class="spark-icon">⚡</span><span><b>Sparking now</b> · tap to see who</span><span class="chev">›</span></button>
         <div class="kept-by"><div class="avs"><span class="av sm g1"></span><span class="av sm g2"></span><span class="av sm g3"></span></div><div class="txt">Kept by <b>@hanuel</b>, <b>@jinyoung</b> and 12 more</div></div>
         <div class="notes-strip">
           <div class="lbl">🔒 Your notes · only you</div>
@@ -909,11 +1085,11 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <div class="field-h" style="margin-top:22px"><span class="ic">🔒</span> Notes <span class="private-note">— only you</span></div>
         <div class="chip-input" id="notes-input" onclick="focusNotes()">
           <div class="chip-typing" style="flex:1;width:100%;display:flex;gap:6px">
-            <input placeholder="Type a word · enter, space, or +" id="notes-txt" autocomplete="off" autocorrect="off" autocapitalize="none">
+            <input placeholder="Type a word or phrase · enter or +" id="notes-txt" autocomplete="off" autocorrect="off" autocapitalize="none">
             <button class="chip-add-btn" id="chip-add-btn" onclick="commitNote(event)">+ Add</button>
           </div>
         </div>
-        <p class="notes-hint">Words or phrases. Enter, space, or the + button adds a chip. Bundled behind the scenes.</p>
+        <p class="notes-hint">Words or full phrases. Enter, comma, or the + button adds a chip. Space just types a space, so "everyday materials in art" stays as one.</p>
 
         <div class="field-h" style="margin-top:22px">Save to</div>
         <div class="saveto-list" id="saveto-list">
@@ -969,7 +1145,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <span class="note-chip">textile <span class="x" onclick="event.target.parentElement.remove()">×</span></span>
           <span class="note-chip">translucent <span class="x" onclick="event.target.parentElement.remove()">×</span></span>
           <div class="chip-typing" style="flex:1;display:flex;gap:6px">
-            <input placeholder="Type a word · enter, space, or +" id="reblog-notes-txt" autocomplete="off">
+            <input placeholder="Type a word or phrase · enter or +" id="reblog-notes-txt" autocomplete="off">
             <button class="chip-add-btn" id="reblog-add-btn" onclick="commitReblogNote(event)">+ Add</button>
           </div>
         </div>
@@ -1080,6 +1256,41 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
     </div>
   </div>
 
+  <!-- SPARK SHEET -->
+  <div class="sheetwrap" id="spark-sheet">
+    <div class="scrim" onclick="closeSparkSheet()"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div class="spark-sheet-head">
+        <span>⚡</span>
+        <span>Sparking now</span>
+      </div>
+      <div class="spark-sheet-sub">People keeping <b>Moon jar</b> in the last hour.</div>
+      <div class="spark-names-list">
+        <div class="spark-name">
+          <span class="av sm g1">H</span>
+          <div class="info"><div class="nm">@hanuel</div><div class="m">12 min ago</div></div>
+        </div>
+        <div class="spark-name">
+          <span class="av sm g2">J</span>
+          <div class="info"><div class="nm">@jinyoung</div><div class="m">28 min ago</div></div>
+        </div>
+        <div class="spark-name">
+          <span class="av sm g3">D</span>
+          <div class="info"><div class="nm">@dahye</div><div class="m">31 min ago</div></div>
+        </div>
+        <div class="spark-name">
+          <span class="av sm g4">L</span>
+          <div class="info"><div class="nm">@lore</div><div class="m">42 min ago</div></div>
+        </div>
+      </div>
+      <div class="spark-more">+ 4 more this hour</div>
+      <div class="spark-volatile-hint">
+        <b>Sparks come and go.</b> This may quiet down by tomorrow — that's the point. No permanent count. Just a signal something is happening right now.
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
 </div>
@@ -1096,6 +1307,21 @@ function render() {
   if (id === 'scr-plop-mine') {
     document.getElementById('mine-detimg').classList.remove('show-marks');
     document.getElementById('marks-pill-txt').textContent = 'Show 3 marks';
+    // nudge both the spark button (personal action) and the aggregate pill
+    const sb = document.getElementById('detail-spark-btn');
+    const sp = document.querySelector('#scr-plop-mine .spark-pill');
+    if (sb) {
+      sb.classList.remove('wiggle');
+      void sb.offsetWidth;
+      setTimeout(() => sb.classList.add('wiggle'), 300);
+      setTimeout(() => sb.classList.remove('wiggle'), 1000);
+    }
+    if (sp) {
+      sp.classList.remove('wiggle');
+      void sp.offsetWidth;
+      setTimeout(() => sp.classList.add('wiggle'), 850);
+      setTimeout(() => sp.classList.remove('wiggle'), 1550);
+    }
   }
   window.scrollTo(0, 0);
 }
@@ -1392,9 +1618,8 @@ function handleChipInput(e, inputId, containerId) {
   const addBtn = document.getElementById(containerId).querySelector('.chip-add-btn');
   if (val.trim()) addBtn.classList.add('on');
   else addBtn.classList.remove('on');
-  // check trailing space / comma at end
-  const last = val.slice(-1);
-  if ((last === ' ' || last === ',') && val.trim()) {
+  // only comma commits — space stays as a space so phrases work
+  if (val.endsWith(',') && val.trim().replace(/,+$/, '').trim()) {
     inp.value = val.trim().replace(/,+$/, '').trim();
     addChipTo(inputId, containerId);
   }
@@ -1799,8 +2024,43 @@ document.addEventListener('click', e => {
 const _renderOrig = render;
 render = function() {
   hideMarkPopover();
+  closeSparkSheet();
   _renderOrig();
 };
+
+// ============ Spark sheet ============
+function openSparkSheet() { document.getElementById('spark-sheet').classList.add('open'); }
+function closeSparkSheet() {
+  const s = document.getElementById('spark-sheet');
+  if (s) s.classList.remove('open');
+}
+
+// ============ Spark action (toggle personal spark) ============
+function toggleSpark(e, btn) {
+  e.stopPropagation();
+  const wasOn = btn.classList.contains('on');
+  btn.classList.toggle('on');
+  // burst ring on activation
+  if (!wasOn) {
+    btn.classList.remove('burst');
+    void btn.offsetWidth;
+    btn.classList.add('burst');
+    setTimeout(() => btn.classList.remove('burst'), 500);
+  }
+}
+function toggleDetailSpark() {
+  const btn = document.getElementById('detail-spark-btn');
+  const lbl = document.getElementById('detail-spark-label');
+  const wasOn = btn.classList.contains('on');
+  btn.classList.toggle('on');
+  lbl.textContent = wasOn ? 'Spark' : 'Sparked · 24h';
+  if (!wasOn) {
+    btn.classList.remove('burst');
+    void btn.offsetWidth;
+    btn.classList.add('burst');
+    setTimeout(() => btn.classList.remove('burst'), 500);
+  }
+}
 </script>
 
 </body>
