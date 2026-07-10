@@ -51,6 +51,8 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   .screen .scrollpage, .screen [id$="-scroll"], .screen [style*="overflow-y:auto"] {
     padding-bottom: calc(100px + env(safe-area-inset-bottom, 0)) !important;
   }
+  /* Draft screen has no bottomnav — Save plop button is the natural end */
+  #rev-scroll, .rev-body { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0)) !important; }
 }
 
 .statusbar {
@@ -1227,7 +1229,6 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <div class="rc" data-type="visual"><div class="rc-img g7" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Round celadon bowl</div><div class="rc-author">Goryeo · Nat'l Museum</div></div></div>
           <div class="rc note-based" data-type="notes"><div class="rc-img g9" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div><div class="rc-body"><div class="rc-title">Carved rice bowl</div><div class="rc-author">@sena · your "everyday materials"</div></div></div>
         </div>
-        <p class="micro" style="padding:8px 22px 20px;text-align:center;line-height:1.6">Notes threads use your private annotations — no one else sees the connection.</p>
       </div>
     </section>
 
@@ -1278,7 +1279,6 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <div class="rc" data-type="visual"><div class="rc-img g5" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Bedsheet composition</div><div class="rc-author">@lore</div></div></div>
           <div class="rc" data-type="visual"><div class="rc-img g6" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Cotton batting</div><div class="rc-author">@junok</div></div></div>
         </div>
-        <p class="micro" style="padding:8px 22px 20px;text-align:center;line-height:1.6">Your notes connect to any plop — even ones you haven't kept yet.</p>
       </div>
     </section>
 
