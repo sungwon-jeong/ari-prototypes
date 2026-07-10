@@ -43,8 +43,14 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   overflow: hidden; position: relative; flex: none;
 }
 @media (max-width: 440px) {
-  body { padding: 0; background: var(--bg); }
+  body { padding: 0; margin: 0; background: var(--bg); }
   .phone { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
+  .statusbar { display: none; }
+  .app { top: env(safe-area-inset-top, 0); }
+  .bottomnav { bottom: calc(12px + env(safe-area-inset-bottom, 0)); }
+  .screen .scrollpage, .screen [id$="-scroll"], .screen [style*="overflow-y:auto"] {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0)) !important;
+  }
 }
 
 .statusbar {
@@ -673,6 +679,21 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .rev-image { width: 100%; aspect-ratio: 4/5; border-radius: 14px; overflow: hidden; position: relative; touch-action: pan-y; }
 .rev-image svg.marks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .rev-image.marking { touch-action: none; cursor: crosshair; box-shadow: inset 0 0 0 2px var(--mark); }
+
+.mark-note-sheet-body { padding: 18px 22px 24px; }
+.mark-note-sheet-body .mnp-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.mark-note-sheet-body .mnp-num { width: 26px; height: 26px; border-radius: 100px; background: var(--mark); color: white; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+.mark-note-sheet-body .mnp-lbl { font-size: 15.5px; font-weight: 700; flex: 1; }
+.mark-note-sheet-body .mnp-cancel { width: 36px; height: 36px; border-radius: 100px; background: var(--surface); color: var(--soft); display: grid; place-items: center; }
+.mark-note-sheet-body .mnp-cancel i.ti { font-size: 16px; }
+.mark-note-sheet-body .mnp-input-row { display: flex; align-items: center; gap: 8px; background: var(--surface); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
+.mark-note-sheet-body .mnp-input { flex: 1; font-size: 16px; border: none; background: transparent; padding: 0; }
+.mark-note-sheet-body .mnp-input:focus { outline: none; }
+.mark-note-sheet-body .mnp-mic { width: 36px; height: 36px; border-radius: 100px; background: white; color: var(--ink); display: grid; place-items: center; }
+.mark-note-sheet-body .mnp-mic i.ti { font-size: 16px; }
+.mark-note-sheet-body .mnp-actions { display: flex; gap: 8px; }
+.mark-note-sheet-body .mnp-skip { flex: 0 0 auto; padding: 14px 18px; border-radius: var(--r-pill); background: var(--surface); color: var(--ink); font-size: 14.5px; font-weight: 600; }
+.mark-note-sheet-body .mnp-save { flex: 1; padding: 14px 20px; border-radius: var(--r-pill); background: var(--ink); color: white; font-size: 14.5px; font-weight: 700; }
 .rev-image .mark-dot { position: absolute; width: 22px; height: 22px; border-radius: 100px; background: var(--mark); color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4); transform: translate(-50%,-50%); pointer-events: auto; cursor: pointer; }
 
 .mark-start-cue { position: absolute; bottom: 12px; left: 12px; right: 12px; padding: 10px 14px; background: rgba(15,15,15,0.72); backdrop-filter: blur(14px); border-radius: var(--r-pill); color: white; font-size: 12.5px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -970,6 +991,21 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .masonry .tile.hidden { display: none; }
 .masonry .empty-msg { padding: 40px 0; text-align: center; color: var(--soft); font-size: 13px; }
 
+.feed-filter-tabs { display: flex; gap: 8px; padding: 8px 20px 12px; border-bottom: 1px solid var(--line); }
+.feed-filter-tabs button { padding: 6px 14px; border-radius: var(--r-pill); background: white; border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink); }
+.feed-filter-tabs button.on { background: var(--ink); color: white; border-color: var(--ink); }
+
+.following-strip { margin-top: 18px; padding: 0 22px; }
+.following-strip .fs-label-mine { font-size: 11px; color: var(--soft); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+.following-strip .fs-list { display: flex; gap: 6px; flex-wrap: wrap; }
+.following-strip .fl-item { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; background: var(--surface); border-radius: var(--r-pill); font-size: 12.5px; }
+.following-strip .fl-item .av.sm { width: 20px; height: 20px; font-size: 9px; }
+.following-strip .fl-item .fl-name { font-weight: 700; color: var(--ink); }
+.following-strip .fl-item .fl-handle { color: var(--soft); font-weight: 500; }
+.following-strip .fl-empty { font-size: 12.5px; color: var(--soft); }
+
+.follow-btn.on { background: var(--surface); border-color: var(--line); color: var(--ink); }
+
 .pond-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 12px; border-bottom: 1px solid var(--line); }
 .pond-selector { display: inline-flex; align-items: center; gap: 8px; padding: 0; background: transparent; }
 .pond-selector .ps-name { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: var(--ink); }
@@ -1105,7 +1141,8 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .ph.img .save-actions, .ph.img .save-actions * { z-index: 3; }
 .ph.img .marks-pill, .ph.img .marks-vis, .ph.img [id$="marks-dots"], .ph.img .mark-popover { z-index: 2; }
 .rev-image.img { position: relative; }
-.rev-image.img > img.reblog-real { display: block; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.rev-image.img > img.reblog-real,
+.rev-image.img > img.rev-real { display: block; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
 </style>
 </head>
 <body>
@@ -1132,8 +1169,12 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
             <button class="iconbtn" onclick="go('scr-alerts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge"></span></button>
           </div>
         </div>
+        <div class="feed-filter-tabs" id="feed-filter-tabs">
+          <button class="on" data-filter="all" onclick="setFeedFilter('all')">All</button>
+          <button data-filter="following" onclick="setFeedFilter('following')">Following</button>
+        </div>
         <div class="masonry">
-          <div class="tile" onclick="openMine()"><div class="ph img" style="height:220px"><img data-img="buffer-1" alt="Rose garden" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Noted"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rose garden</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Studio wall</div></div></div>
+          <div class="tile" onclick="openMine('Rose garden')"><div class="ph img" style="height:220px"><img data-img="buffer-1" alt="Rose garden" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Noted"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rose garden</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Studio wall</div></div></div>
           <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph img" style="height:180px"><img data-img="wearing-duvet" alt="Wearing a duvet" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">"Wearing a duvet"</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">@studio.yumi</div></div></div>
           <div class="tile" onclick="openOthers('junok','g2','Backward stairs','Hongdae · 2024')"><div class="ph img" style="height:210px"><img data-img="backward-stairs" alt="Backward stairs" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Backward stairs</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Paris atrium</div></div></div>
           <div class="tile" onclick="openOthers('jinyoung','g5','Moss on bark','forest floor')"><div class="ph img" style="height:170px"><img data-img="moss-wall" alt="Moss on bark" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Moss on bark</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">forest floor</div></div></div>
@@ -1143,7 +1184,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <div class="tile" onclick="openOthers('jinyoung','g9','Rainbow light','chapel floor')"><div class="ph img" style="height:210px"><img data-img="rainbow-light" alt="Rainbow light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rainbow light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">chapel floor</div></div></div>
           <div class="tile" onclick="openOthers('dahye','g6','Pinault collection','Tadao Ando concrete')"><div class="ph img" style="height:200px"><img data-img="pinault-collection" alt="Pinault collection" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Pinault collection</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Tadao Ando concrete</div></div></div>
           <div class="tile" onclick="openOthers('junok','g4','Tracy Emin studio pool','empty pool')"><div class="ph img" style="height:220px"><img data-img="tracy-emin" alt="Tracy Emin studio pool" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Tracy Emin studio pool</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">empty pool</div></div></div>
-          <div class="tile" onclick="openMine()"><div class="ph img" style="height:180px"><img data-img="buffer-2" alt="Sconce at dusk" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Noted"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sconce at dusk</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">hallway light</div></div></div>
+          <div class="tile" onclick="openMine('Sconce at dusk')"><div class="ph img" style="height:180px"><img data-img="buffer-2" alt="Sconce at dusk" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Noted"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sconce at dusk</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">hallway light</div></div></div>
         </div>
       </div>
       <div class="bottomnav">
@@ -1164,41 +1205,28 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <div class="plop-poster"><span class="av">S</span><span class="n">Sungwon</span><span class="h">@sungwon</span><span class="sec" style="margin-left:auto;font-size:12px">2h · in Public</span></div>
         <div class="detimg" id="mine-detimg">
           <div class="ph img" style="height:430px">
-            <img data-img="buffer-1" alt="Rose garden" loading="lazy">
-            <div class="marks-pill" id="marks-pill" onclick="toggleMarks()"><span class="dot"></span><span id="marks-pill-txt">Show 3 marks</span></div>
-            <svg class="marks-vis" viewBox="0 0 400 500">
-              <!-- Free-draw squiggle around flower cluster (dot 1) -->
-              <path d="M 175 200 C 175 175, 245 175, 250 220 C 253 258, 235 285, 210 285 C 180 285, 160 262, 160 235 C 160 218, 168 205, 175 200 Z" fill="none" stroke="#FF5A3C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-              <!-- Arrow pointing to butterflies (dot 2) -->
-              <line x1="130" y1="260" x2="176" y2="218" stroke="#FF5A3C" stroke-width="4" stroke-linecap="round"/>
-              <polygon points="182,214 165,213 175,232" fill="#FF5A3C"/>
-            </svg>
-            <div class="mark-dot" style="left:52%;top:47%" data-note="The flowers rise as if the vase gave them its own light.">1</div>
-            <div class="mark-dot" style="left:44%;top:43%" data-note="Butterflies at all heights — chaos with purpose.">2</div>
-            <div class="mark-dot" style="left:55%;top:78%" data-note="The lily pad becomes a stage.">3</div>
+            <img id="mine-img" alt="" loading="lazy">
+            <div class="marks-pill" id="marks-pill" onclick="toggleMarks()" style="display:none"><span class="dot"></span><span id="marks-pill-txt">Show marks</span></div>
+            <svg class="marks-vis" id="mine-marks-svg" viewBox="0 0 400 500"></svg>
+            <div id="mine-marks-dots"></div>
             <div class="mark-popover" id="mark-popover"></div>
           </div>
         </div>
         <div class="action-row">
           <button class="act spark-act" onclick="toggleAction(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button>
           <button class="act keep-act" onclick="toggleAction(event, this)" aria-label="Keep"><i class="ti ti-bookmark"></i></button>
-          <button class="act keep-act" onclick="go('scr-review')" aria-label="Note"><i class="ti ti-pencil"></i></button>
+          <button class="act keep-act" onclick="editMineInStudio()" aria-label="Edit notes & marks"><i class="ti ti-pencil"></i></button>
           <button class="act share-act" onclick="toast('Link copied')" aria-label="Share"><i class="ti ti-share-3"></i></button>
         </div>
         <div class="detbody">
-          <div class="det-title">Rose garden</div>
-          <div class="det-meta">Studio wall</div>
-          <div class="det-desc">A painted garden — flowers rising from a small vase in a dreamed-up landscape. Butterflies in air, lizards in the roots. The kind of picture that keeps talking.</div>
+          <div class="det-title" id="mine-title">Rose garden</div>
+          <div class="det-meta" id="mine-meta">Studio wall</div>
+          <div class="det-desc" id="mine-desc"></div>
         </div>
-        <div class="kept-by clickable" onclick="openKeptBySheet('Rose garden')"><div class="avs"><span class="av sm g1"></span><span class="av sm g2"></span><span class="av sm g3"></span></div><div class="txt">Kept by <b>@hanuel</b>, <b>@jinyoung</b> and 12 more</div><span class="chev">›</span></div>
-        <div class="mine-notes">
+        <div class="kept-by clickable" id="mine-keptby" onclick="openKeptBySheet(document.getElementById('mine-title').textContent)"><div class="avs"><span class="av sm g1"></span><span class="av sm g2"></span><span class="av sm g3"></span></div><div class="txt" id="mine-keptby-txt">Kept by <b>@hanuel</b>, <b>@jinyoung</b> and 12 more</div><span class="chev">›</span></div>
+        <div class="mine-notes" id="mine-notes-section" style="display:none">
           <div class="mine-notes-lbl"><i class="ti ti-lock" style="font-size:12px"></i> Your notes <span class="dim">· only you</span></div>
-          <div class="notes-list mine-notes-list">
-            <div class="note-item ro"><span class="num">1</span><span class="ntxt">The flowers rise as if the vase gave them its own light.</span></div>
-            <div class="note-item ro"><span class="num">2</span><span class="ntxt">Butterflies at all heights — chaos with purpose.</span></div>
-            <div class="note-item ro"><span class="num">3</span><span class="ntxt">The lily pad becomes a stage.</span></div>
-            <div class="note-item plain ro"><span class="num"></span><span class="ntxt">Reminds me of my grandmother's garden after rain.</span></div>
-          </div>
+          <div class="notes-list mine-notes-list" id="mine-notes-list"></div>
         </div>
         <div class="reco-section-h" style="border-top: 1px solid var(--line); margin-top: 18px;"><span>Discoveries from this plop</span></div>
         <div class="reco-filter">
@@ -1336,14 +1364,14 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         </div>
 
         <div class="alert-section" data-cat="kept">People</div>
-        <div class="alert-card alert-social" data-cat="kept" onclick="openMine()">
+        <div class="alert-card alert-social" data-cat="kept" onclick="openMine('Rose garden')">
           <span class="av g1">H</span>
           <div class="body"><b>@hanuel</b> kept your <b>Rose garden</b><span class="m">1 hour ago</span></div>
           <div class="side-thumb g1"></div>
         </div>
-        <div class="alert-card alert-social" data-cat="kept" onclick="openMine()">
+        <div class="alert-card alert-social" data-cat="kept" onclick="openMine('Sconce at dusk')">
           <span class="av g2">J</span>
-          <div class="body"><b>@jinyoung</b> kept your <b>Brutalist stairs</b><span class="m">Yesterday</span></div>
+          <div class="body"><b>@jinyoung</b> kept your <b>Sconce at dusk</b><span class="m">Yesterday</span></div>
           <div class="side-thumb g2"></div>
         </div>
         <div class="alert-card alert-social" data-cat="follows">
@@ -1385,6 +1413,10 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <div class="profactions">
             <button class="pill outline" onclick="openEditProfileSheet()">Edit profile</button>
             <button class="pill outline" onclick="toast('Link copied')">Share</button>
+          </div>
+          <div class="following-strip">
+            <div class="fs-label-mine">Following</div>
+            <div class="fs-list" id="my-following-list"></div>
           </div>
         </div>
         <div class="pond-header">
@@ -1433,7 +1465,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
             <a href="#" onclick="event.preventDefault();toast('@hanuel on Instagram')"><i class="ti ti-brand-instagram"></i>@hanuel</a>
           </div>
           <div class="profactions">
-            <button class="pill outline">Follow</button>
+            <button class="pill outline follow-btn" id="op-follow-btn" onclick="toggleFollow(document.getElementById('op-handle').textContent, this)">Follow</button>
             <button class="pill outline" onclick="toast('Link copied')">Share</button>
           </div>
         </div>
@@ -1683,6 +1715,27 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
     </div>
   </div>
 
+  <!-- MARK NOTE POPUP (after tap/drag) -->
+  <div class="sheetwrap" id="mark-note-popup">
+    <div class="scrim" onclick="cancelMarkNote()"></div>
+    <div class="sheet mark-note-sheet-body">
+      <div class="grab"></div>
+      <div class="mnp-head">
+        <span class="mnp-num" id="mnp-num">1</span>
+        <span class="mnp-lbl">Mark note</span>
+        <button class="mnp-cancel" onclick="cancelMarkNote()" title="Remove mark"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="mnp-input-row">
+        <input class="mnp-input" id="mnp-input" placeholder="What caught your eye? (optional)" autocomplete="off">
+        <button class="mnp-mic" onclick="openVoiceSheet('mark-popup')" title="Voice memo"><i class="ti ti-microphone"></i></button>
+      </div>
+      <div class="mnp-actions">
+        <button class="mnp-skip" onclick="commitMarkNote(false)">Save mark only</button>
+        <button class="mnp-save" onclick="commitMarkNote(true)">Save with note</button>
+      </div>
+    </div>
+  </div>
+
   <!-- VOICE SHEET (transcribes to text) -->
   <div class="sheetwrap" id="voice-sheet">
     <div class="scrim" onclick="closeVoiceSheet()"></div>
@@ -1908,7 +1961,99 @@ function openAddSheet() { document.getElementById('add-sheet').classList.add('op
 function closeAddSheet() { document.getElementById('add-sheet').classList.remove('open'); }
 
 // ============ plop opens ============
-function openMine() { go('scr-plop-mine'); }
+let currentMineTitle = 'Rose garden';
+function openMine(title) {
+  currentMineTitle = title || 'Rose garden';
+  renderMineDetail(currentMineTitle);
+  go('scr-plop-mine');
+}
+function renderMineDetail(title) {
+  const p = findMyPlop(title);
+  if (!p) return;
+  const src = imgFor(p.title);
+  const imgEl = document.getElementById('mine-img');
+  if (imgEl) imgEl.src = src || '';
+  document.getElementById('mine-title').textContent = p.title;
+  document.getElementById('mine-meta').textContent = p.meta || '';
+  const descEl = document.getElementById('mine-desc');
+  if (descEl) { descEl.textContent = p.desc || ''; descEl.style.display = p.desc ? 'block' : 'none'; }
+  // kept-by
+  const kbSection = document.getElementById('mine-keptby');
+  if (kbSection) {
+    if (p.keptBy) {
+      kbSection.style.display = 'flex';
+      const avs = kbSection.querySelector('.avs');
+      if (avs) avs.innerHTML = p.keptBy.avs.map(g => `<span class="av sm ${g}"></span>`).join('');
+      document.getElementById('mine-keptby-txt').innerHTML = p.keptBy.txt;
+    } else {
+      kbSection.style.display = 'none';
+    }
+  }
+  // notes list
+  const notesSection = document.getElementById('mine-notes-section');
+  const notesList = document.getElementById('mine-notes-list');
+  if (notesSection && notesList) {
+    if (p.notes && p.notes.length > 0) {
+      notesSection.style.display = 'block';
+      let markCount = 0;
+      notesList.innerHTML = p.notes.map(n => {
+        const isPlain = !n.mark;
+        if (!isPlain) markCount++;
+        const label = isPlain ? '' : String(markCount);
+        return `<div class="note-item ro${isPlain ? ' plain' : ''}"><span class="num">${label}</span><span class="ntxt">${esc(n.text)}</span></div>`;
+      }).join('');
+    } else {
+      notesSection.style.display = 'none';
+    }
+  }
+  // marks on image
+  renderMineImageMarks(p.notes || []);
+}
+function renderMineImageMarks(notes) {
+  const svg = document.getElementById('mine-marks-svg');
+  const dots = document.getElementById('mine-marks-dots');
+  const detImg = document.getElementById('mine-detimg');
+  const pill = document.getElementById('marks-pill');
+  const pillTxt = document.getElementById('marks-pill-txt');
+  if (!svg || !dots) return;
+  svg.innerHTML = '';
+  dots.innerHTML = '';
+  const withMarks = notes.filter(n => n.mark && n.mark.anchor);
+  if (withMarks.length === 0) {
+    if (pill) pill.style.display = 'none';
+    detImg && detImg.classList.remove('show-marks');
+    return;
+  }
+  withMarks.forEach((n, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'mark-dot';
+    dot.textContent = i + 1;
+    dot.style.left = (n.mark.anchor.x / 400 * 100) + '%';
+    dot.style.top = (n.mark.anchor.y / 500 * 100) + '%';
+    dot.dataset.note = n.text;
+    const showFn = e => {
+      e.stopPropagation(); e.preventDefault();
+      showMarkPopover(dot, document.getElementById('mark-popover'));
+    };
+    dot.addEventListener('click', showFn);
+    dot.addEventListener('touchend', showFn);
+    dots.appendChild(dot);
+  });
+  if (pill) {
+    pill.style.display = 'flex';
+    pillTxt.textContent = 'Show ' + withMarks.length + ' mark' + (withMarks.length === 1 ? '' : 's');
+  }
+  if (detImg) detImg.classList.remove('show-marks');
+}
+function editMineInStudio() {
+  const p = findMyPlop(currentMineTitle);
+  if (!p) { go('scr-review'); return; }
+  reviewQueue = [0]; reviewIdx = 0; reviewSource = 'edit-mine';
+  // signal openReviewFlow to pre-populate from this plop
+  editingMinePlop = p;
+  openReviewFlow();
+}
+let editingMinePlop = null;
 const OTHERS_DESC = {
   '"Wearing a duvet"': "A hairy, fibrous sculpture pooling on the floor. Something inside it — a stone, a bone. It looks like grief, worn.",
   'Moss on bark': "Moss on the belly of a fallen log. Sun found a pocket where nothing else grew.",
@@ -1940,6 +2085,8 @@ function openOthers(user, grad, title, meta, desc) {
   document.getElementById('op-name').textContent = user.charAt(0).toUpperCase() + user.slice(1);
   document.getElementById('op-handle').textContent = '@' + user;
   document.getElementById('op-av').textContent = user.charAt(0).toUpperCase();
+  const followBtn = document.getElementById('op-follow-btn');
+  if (followBtn) updateFollowButton(followBtn, '@' + user);
   const cleanTitle = title.replace(/&quot;/g, '"').replace(/<[^>]+>/g, '');
   const src = imgFor(cleanTitle);
   const opImg = document.getElementById('op-img');
@@ -2158,8 +2305,25 @@ const gradients = ['g1','g2','g3','g4','g5','g6','g7','g8','g9','g0'];
 
 function openReviewFlow(mode) {
   const image = document.getElementById('rev-image');
-  const grad = gradients[reviewQueue[reviewIdx] % gradients.length];
-  image.className = 'rev-image ' + grad;
+  // clear any existing real image
+  const existingRealImg = image.querySelector('img.rev-real');
+  if (existingRealImg) existingRealImg.remove();
+  // if editing mine plop, use its image; else use gradient
+  if (reviewSource === 'edit-mine' && editingMinePlop) {
+    const src = imgFor(editingMinePlop.title);
+    if (src) {
+      image.className = 'rev-image img';
+      const img = document.createElement('img');
+      img.className = 'rev-real';
+      img.src = src;
+      image.insertBefore(img, image.firstChild);
+    } else {
+      image.className = 'rev-image ' + gradients[reviewQueue[reviewIdx] % gradients.length];
+    }
+  } else {
+    const grad = gradients[reviewQueue[reviewIdx] % gradients.length];
+    image.className = 'rev-image ' + grad;
+  }
   document.getElementById('marks-svg').innerHTML = '';
   document.getElementById('marks-dots').innerHTML = '';
   items = [];
@@ -2179,7 +2343,18 @@ function openReviewFlow(mode) {
     if (inp) inp.value = '';
   });
 
-  if (reviewSource === 'url') {
+  if (reviewSource === 'edit-mine' && editingMinePlop) {
+    const p = editingMinePlop;
+    // pre-populate image, caption fields, and notes/marks
+    document.getElementById('fld-description').value = p.desc || '';
+    revealField('title'); document.getElementById('fld-title').value = p.title;
+    // pre-populate items with existing notes + marks
+    items = (p.notes || []).map(n => ({ text: n.text, mark: n.mark && n.mark.anchor ? { type: n.mark.type || 'dot', anchor: { x: n.mark.anchor.x, y: n.mark.anchor.y } } : null }));
+    renderAll();
+    document.getElementById('ocr-hint').style.display = 'none';
+    updateCapClearLink();
+    editingMinePlop = null;
+  } else if (reviewSource === 'url') {
     revealField('title'); document.getElementById('fld-title').value = '"Wearing a duvet"';
     revealField('artist'); document.getElementById('fld-artist').value = '@studio.yumi';
     revealField('year'); document.getElementById('fld-year').value = '2024';
@@ -2398,6 +2573,9 @@ function commitVoice() {
     renderNotesList();
     voiceTargetIdx = -1;
     toast('Voice note added');
+  } else if (voiceTarget === 'mark-popup') {
+    const inp = document.getElementById('mnp-input');
+    if (inp) inp.value = (inp.value ? inp.value + ' ' : '') + voiceTranscript;
   }
   closeVoiceSheet();
 }
@@ -2638,8 +2816,55 @@ function renderMarks() {
   });
 }
 
-// inline editing: no sheet — just focus the newly created item's input
-function openMarkNote(idx) { focusItem(idx); }
+// existing plain notes: focus inline input
+function openMarkNote(idx) {
+  const it = items[idx];
+  if (it && it.mark) {
+    // for marked notes, open the popup to edit
+    openMarkNotePopup(idx, false);
+  } else {
+    focusItem(idx);
+  }
+}
+// popup: after a mark is placed, prompt for note text with Save/Skip/Cancel
+let popupMarkIdx = -1;
+let popupIsNew = false;
+function openMarkNotePopup(idx, isNew) {
+  popupMarkIdx = idx;
+  popupIsNew = !!isNew;
+  const it = items[idx];
+  if (!it) return;
+  const num = markNumberOfItem(idx);
+  document.getElementById('mnp-num').textContent = num || '·';
+  document.getElementById('mnp-input').value = it.text || '';
+  document.getElementById('mark-note-popup').classList.add('open');
+  setTimeout(() => document.getElementById('mnp-input').focus(), 220);
+}
+function commitMarkNote(withText) {
+  if (popupMarkIdx < 0) { closeMarkNotePopup(); return; }
+  const val = document.getElementById('mnp-input').value.trim();
+  if (withText) {
+    items[popupMarkIdx].text = val || null;
+  } else if (popupIsNew && !items[popupMarkIdx].text) {
+    // "Save mark only" — keep mark, no text
+    items[popupMarkIdx].text = null;
+  }
+  closeMarkNotePopup();
+  renderAll();
+}
+function cancelMarkNote() {
+  // if this was a newly created mark and user cancels → remove the mark
+  if (popupIsNew && popupMarkIdx >= 0) {
+    items.splice(popupMarkIdx, 1);
+  }
+  closeMarkNotePopup();
+  renderAll();
+}
+function closeMarkNotePopup() {
+  document.getElementById('mark-note-popup').classList.remove('open');
+  popupMarkIdx = -1;
+  popupIsNew = false;
+}
 let voiceTargetIdx = -1;
 function openVoiceSheetForItem(idx) {
   voiceTargetIdx = idx;
@@ -2662,18 +2887,15 @@ let freePoints = [];
 function pDown(e) {
   if (currentScreen() !== 'scr-review') return;
   if (!currentTool) return; // inert until user picks a tool
+  if (document.getElementById('mark-note-popup').classList.contains('open')) return; // popup blocks image
   if (e.target.closest('.mark-dot')) return;
   if (e.target.closest('.mark-toolbar')) return;
   e.preventDefault();
   const p = pos(e);
   if (currentTool === 'tap') {
-    // seed note text from the composer input if present
-    const seedInput = document.getElementById('notes-txt-new');
-    const seed = seedInput ? seedInput.value.trim() : '';
-    items.push({ text: seed || null, mark: { type: 'dot', anchor: p } });
-    if (seedInput) seedInput.value = '';
+    items.push({ text: null, mark: { type: 'dot', anchor: p } });
     renderAll();
-    openMarkNote(items.length - 1);
+    openMarkNotePopup(items.length - 1, true);
     return;
   }
   drawing = true;
@@ -2722,12 +2944,9 @@ function pUp(e) {
     freePoints = [];
   }
   if (m) {
-    const seedInput = document.getElementById('notes-txt-new');
-    const seed = seedInput ? seedInput.value.trim() : '';
-    items.push({ text: seed || null, mark: m });
-    if (seedInput) seedInput.value = '';
+    items.push({ text: null, mark: m });
     renderAll();
-    openMarkNote(items.length - 1);
+    openMarkNotePopup(items.length - 1, true);
   }
 }
 // element-level listeners for touch (more reliable on iOS)
@@ -2805,43 +3024,123 @@ function imgFor(title) {
 }
 const MY_PLOPS = [
   { title: 'Rose garden', meta: 'Studio wall', grad: 'g1', tab: 'inspiration',
+    desc: "A painted garden — flowers rising from a small vase in a dreamed-up landscape. Butterflies in air, lizards in the roots. The kind of picture that keeps talking.",
+    keptBy: { avs: ['g1','g2','g3'], txt: 'Kept by <b>@hanuel</b>, <b>@jinyoung</b> and 12 more' },
     notes: [
-      { text: 'The flowers rise as if the vase gave them its own light.', mark: {type:'dot'} },
-      { text: 'Butterflies at all heights — chaos with purpose.', mark: {type:'dot'} },
-      { text: 'The lily pad becomes a stage.', mark: {type:'dot'} },
+      { text: 'The flowers rise as if the vase gave them its own light.', mark: {type:'dot', anchor:{x:207, y:236}} },
+      { text: 'Butterflies at all heights — chaos with purpose.', mark: {type:'dot', anchor:{x:176, y:215}} },
+      { text: 'The lily pad becomes a stage.', mark: {type:'dot', anchor:{x:222, y:390}} },
       { text: "Reminds me of my grandmother's garden after rain.", mark: null }
     ]
   },
   { title: 'Sconce at dusk', meta: 'hallway light', grad: 'g2', tab: 'inspiration',
+    desc: "A brass sconce glowing warm against a dim wall. The bulb reflects on the shade, doubling the light.",
+    keptBy: { avs: ['g4','g2'], txt: 'Kept by <b>@maralind</b> and 3 more' },
     notes: [
-      { text: 'The bulb and its double — glass makes two of everything.', mark: {type:'dot'} },
+      { text: 'The bulb and its double — glass makes two of everything.', mark: {type:'dot', anchor:{x:190, y:300}} },
       { text: 'Warm enough to feel time slowing.', mark: null }
     ]
   },
   { title: 'Light', meta: 'gallery wall', grad: 'g2', tab: 'digs',
+    desc: "A wall sconce like a small planet. Its glow radiates like sun spokes onto the plaster.",
+    keptBy: null,
     notes: [
       { text: 'The way it falls at this hour, only here.', mark: null },
-      { text: 'Reminded me of my grandmother\'s kitchen at dawn.', mark: null }
+      { text: "Reminded me of my grandmother's kitchen at dawn.", mark: null }
     ]
   },
   { title: 'Sign, Euljiro', meta: 'street posters', grad: 'g7', tab: 'inspiration',
+    desc: "Torn street posters layered over years. Hearts, initials, a spray of graffiti bleeding down the wall.",
+    keptBy: null,
     notes: [
       { text: 'Letters carry weight, not just shape.', mark: null }
     ]
   },
   { title: 'Phương Nguyễn', meta: 'reference', grad: 'g8', tab: 'inspiration',
+    desc: "A pink weaving stretched inside a wooden frame, with a small painting nested in the middle.",
+    keptBy: null,
     notes: [
-      { text: 'The frame breathes right at the corner — tension breaks.', mark: {type:'dot'} },
-      { text: 'This pink weaves through every row.', mark: {type:'dot'} },
+      { text: 'The frame breathes right at the corner — tension breaks.', mark: {type:'dot', anchor:{x:165, y:195}} },
+      { text: 'This pink weaves through every row.', mark: {type:'dot', anchor:{x:200, y:305}} },
       { text: 'Reminds me of pixel art, but slower.', mark: null }
     ]
   },
-  { title: 'Backward stairs', meta: 'Paris atrium', grad: 'g3', tab: 'digs', notes: [] },
-  { title: 'Rainbow light', meta: 'chapel floor', grad: 'g9', tab: 'inspiration', notes: [] },
-  { title: 'Moss on bark', meta: 'forest floor', grad: 'g5', tab: 'digs', notes: [] },
-  { title: 'Pinault collection', meta: 'Tadao Ando concrete', grad: 'g6', tab: 'digs', notes: [] },
-  { title: 'Tracy Emin studio pool', meta: 'empty pool', grad: 'g4', tab: 'inspiration', notes: [] }
+  { title: 'Backward stairs', meta: 'Paris atrium', grad: 'g3', tab: 'digs',
+    desc: "Wooden stairs descending from the ceiling — an upside-down music. Every tread hovers over air.",
+    keptBy: null, notes: [] },
+  { title: 'Rainbow light', meta: 'chapel floor', grad: 'g9', tab: 'inspiration',
+    desc: "Stained glass painting rainbow puddles across a chapel floor. The wooden pews wait.",
+    keptBy: null, notes: [] },
+  { title: 'Moss on bark', meta: 'forest floor', grad: 'g5', tab: 'digs',
+    desc: "Moss on the belly of a fallen log. Sun found a pocket where nothing else grew.",
+    keptBy: null, notes: [] },
+  { title: 'Pinault collection', meta: 'Tadao Ando concrete', grad: 'g6', tab: 'digs',
+    desc: "A single gold sphere on Tadao Ando's concrete grid. Reflection folds the whole room.",
+    keptBy: null, notes: [] },
+  { title: 'Tracy Emin studio pool', meta: 'empty pool', grad: 'g4', tab: 'inspiration',
+    desc: "An empty swimming pool, tiled and quiet. Two blue lines run under skylight ribs.",
+    keptBy: null, notes: [] }
 ];
+function findMyPlop(title) {
+  const clean = (title || '').replace(/&quot;/g, '"');
+  return MY_PLOPS.find(p => p.title === clean);
+}
+
+// ============ Follow state ============
+let myFollowing = ['@hanuel', '@dahye', '@jinyoung']; // people I follow (starts with a few for demo)
+const OTHERS_ATTR = { // handle → owner of each feed tile
+  'Rose garden': '@sungwon', 'Sconce at dusk': '@sungwon',
+  '"Wearing a duvet"': '@hanuel', 'Backward stairs': '@junok', 'Moss on bark': '@jinyoung',
+  'Sign, Euljiro': '@typewell', 'Light': '@dahye', 'Phương Nguyễn': '@hanuel',
+  'Rainbow light': '@jinyoung', 'Pinault collection': '@dahye', 'Tracy Emin studio pool': '@junok'
+};
+const OTHERS_NAMES = { '@hanuel': 'Hanuel', '@dahye': 'Dahye', '@jinyoung': 'Jinyoung', '@junok': 'Junok', '@typewell': 'Typewell', '@studio.yumi': 'Studio Yumi', '@maralind': 'Mara Lindqvist' };
+function isFollowing(handle) { return myFollowing.includes(handle); }
+function toggleFollow(handle, btn) {
+  if (isFollowing(handle)) {
+    myFollowing = myFollowing.filter(h => h !== handle);
+    toast('Unfollowed ' + handle);
+  } else {
+    myFollowing.push(handle);
+    toast('Following ' + handle);
+  }
+  if (btn) updateFollowButton(btn, handle);
+  applyFeedFilter();
+  renderFollowingList();
+}
+function updateFollowButton(btn, handle) {
+  const on = isFollowing(handle);
+  btn.classList.toggle('on', on);
+  btn.textContent = on ? 'Following' : 'Follow';
+}
+let feedFilter = 'all'; // 'all' | 'following'
+function setFeedFilter(f) {
+  feedFilter = f;
+  document.querySelectorAll('#feed-filter-tabs button').forEach(b => b.classList.toggle('on', b.dataset.filter === f));
+  applyFeedFilter();
+}
+function applyFeedFilter() {
+  document.querySelectorAll('#scr-feed .masonry .tile').forEach(t => {
+    const title = (t.querySelector('.cap .t')?.textContent || '').trim();
+    const owner = OTHERS_ATTR[title] || (t.getAttribute('onclick')?.match(/openOthers\('([^']+)'/) ? '@' + t.getAttribute('onclick').match(/openOthers\('([^']+)'/)[1] : '@sungwon');
+    let show = true;
+    if (feedFilter === 'following') show = isFollowing(owner) || owner === '@sungwon';
+    t.style.display = show ? '' : 'none';
+  });
+}
+function renderFollowingList() {
+  const el = document.getElementById('my-following-list');
+  if (!el) return;
+  if (myFollowing.length === 0) {
+    el.innerHTML = '<div class="fl-empty">Not following anyone yet.</div>';
+    return;
+  }
+  el.innerHTML = myFollowing.map(h => {
+    const name = OTHERS_NAMES[h] || h;
+    const initial = name[0];
+    return `<div class="fl-item"><span class="av sm g1">${initial}</span><span class="fl-name">${name}</span><span class="fl-handle">${h}</span></div>`;
+  }).join('');
+}
 const MY_NOTED = {};
 MY_PLOPS.forEach(p => { if (p.notes.length > 0) MY_NOTED[p.title] = p.notes; });
 
@@ -2876,7 +3175,7 @@ function renderProfileGrid(filterFn, searchQuery) {
     const src = imgFor(p.title);
     const phInner = src ? `<img src="${src}" alt="${esc2(p.title)}" loading="lazy">${peek}` : peek;
     const phClass = src ? 'ph img' : `ph ${p.grad}`;
-    return `<div class="tile" data-title="${esc2(p.title)}" onclick="openMine()"><div class="${phClass}">${phInner}</div></div>`;
+    return `<div class="tile" data-title="${esc2(p.title)}" onclick="openMine('${p.title.replace(/'/g,"\\'")}')"><div class="${phClass}">${phInner}</div></div>`;
   }).join('');
 }
 
@@ -3038,6 +3337,7 @@ function pickSaveto(name) {
 
 renderPondHeader();
 applyProfileFilter();
+renderFollowingList();
 
 let editingTabIdx = -1;
 let sheetTabVis = 'public';
@@ -3149,6 +3449,19 @@ function pickFeedChip(term) {
   if (inp) { inp.value = term; inp.focus(); }
   applyFeedSearch();
 }
+function searchableTextFor(title) {
+  const parts = [title];
+  const mine = (typeof MY_PLOPS !== 'undefined') ? MY_PLOPS.find(p => p.title === title) : null;
+  if (mine) {
+    if (mine.desc) parts.push(mine.desc);
+    (mine.notes || []).forEach(n => { if (n.text) parts.push(n.text); });
+  }
+  if (typeof OTHERS_DESC === 'object' && OTHERS_DESC[title]) parts.push(OTHERS_DESC[title]);
+  if (typeof OTHERS_NOTES === 'object' && OTHERS_NOTES[title]) {
+    OTHERS_NOTES[title].forEach(n => { if (n.text) parts.push(n.text); });
+  }
+  return parts.join(' ').toLowerCase();
+}
 function applyFeedSearch() {
   const inp = document.getElementById('feed-search-input');
   const q = (inp ? inp.value : '').trim().toLowerCase();
@@ -3159,7 +3472,8 @@ function applyFeedSearch() {
     const title = (t.querySelector('.cap .t')?.textContent || '').trim();
     const meta = (t.querySelector('.cap .h')?.textContent || '').trim();
     const attr = t.getAttribute('onclick') || '';
-    const hay = (title + ' ' + meta + ' ' + attr).toLowerCase();
+    const noteHay = searchableTextFor(title);
+    const hay = (title + ' ' + meta + ' ' + attr + ' ' + noteHay).toLowerCase();
     if (hay.includes(q)) {
       const img = t.querySelector('img');
       results.push({ title, meta, src: img?.getAttribute('src') || '', click: attr });
