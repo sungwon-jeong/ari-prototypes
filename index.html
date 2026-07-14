@@ -40,7 +40,8 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .phone {
   width: 390px; height: 844px; background: var(--bg); border-radius: 48px;
   box-shadow: 0 24px 80px rgba(0,0,0,.25), 0 0 0 10px #111, 0 0 0 12px #3a3a3a;
-  overflow: hidden; position: relative; flex: none;
+  overflow: hidden; flex: none;
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
 }
 @media (max-width: 440px) {
   body { padding: 0; margin: 0; background: var(--bg); }
@@ -199,6 +200,48 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 }
 .ritual-scroll::-webkit-scrollbar { display: none; }
 
+/* Feed reflection banner (evening) */
+.feed-reflection-banner {
+  margin: 12px 16px 14px;
+  padding: 14px 16px;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+  cursor: pointer;
+}
+.feed-reflection-banner.hidden { display: none; }
+.feed-reflection-banner .frb-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.feed-reflection-banner .frb-body { flex: 1; min-width: 0; padding-right: 20px; }
+.feed-reflection-banner .frb-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; letter-spacing: -0.1px; }
+.feed-reflection-banner .frb-sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 10px; }
+.feed-reflection-banner .frb-cta {
+  font-size: 12.5px; font-weight: 600;
+  padding: 7px 14px;
+  background: #fff; color: #111;
+  border: 0; border-radius: 100px;
+  cursor: pointer;
+}
+.feed-reflection-banner .frb-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.55);
+  background: none; border: 0;
+  font-size: 18px; line-height: 1;
+  cursor: pointer;
+}
+.feed-reflection-banner .frb-close:active { color: rgba(255,255,255,0.9); }
+
 /* ---- FEED TILE — SAVE BUTTONS (top-right) + SPARK (inline with title) ---- */
 .tile .save-actions {
   position: absolute;
@@ -241,6 +284,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   from { transform: scale(0.65); opacity: 0.85; }
   to { transform: scale(1.5); opacity: 0; }
 }
+/* Note button — matches Save's black-filled active language for consistency */
 
 .tile .cap .title-row {
   display: flex; align-items: center; justify-content: space-between;
@@ -724,6 +768,25 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .marks-card .notes-list .note-item { padding: 8px 4px; }
 .marks-card .notes-input-row { margin: 8px 0 0; border: none; background: var(--surface); }
 .marks-card .notes-list:empty + .notes-input-row { margin-top: 8px; }
+/* Mark chip strip — quick navigation between marks placed on the image */
+.mark-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 4px 0 10px; align-items: center; margin: 0 -2px; }
+.mark-chips::-webkit-scrollbar { display: none; }
+.mark-chips .mchip {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,90,60,0.14);
+  color: #B03937;
+  border: 1px solid rgba(255,90,60,0.32);
+  font-size: 12px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.18s;
+}
+.mark-chips .mchip:active { transform: scale(0.92); }
+.mark-chips .mchip.active {
+  width: 28px; height: 28px;
+  background: #FF5A3C; color: white; border-color: #FF5A3C;
+  box-shadow: 0 2px 8px rgba(255,90,60,0.4);
+}
 
 .cap-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .cap-chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; border-radius: var(--r-pill); border: 1px solid var(--line); background: white; font-size: 12.5px; font-weight: 600; color: var(--ink); }
@@ -859,10 +922,17 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .saveto-list button.add-tab { border-style: dashed; color: var(--soft); background: transparent; }
 .saveto-list button.add-tab i.ti { font-size: 14px; }
 
-.rev-cta { margin: 32px 20px 24px; padding: 0; background: transparent; border: 0; display: flex; gap: 8px; transition: opacity 0.2s; }
+.rev-cta { margin: 10px 20px 6px; padding: 0; background: transparent; border: 0; display: flex; gap: 8px; transition: opacity 0.2s; }
 .rev-cta.dim { opacity: 0.35; pointer-events: none; }
 .rev-cta .later { padding: 13px 18px; border-radius: var(--r-pill); border: 1px solid var(--line); background: white; font-size: 14.5px; font-weight: 600; color: var(--ink); }
-.rev-cta .save { flex: 1; padding: 13px 18px; border-radius: var(--r-pill); border: 0; background: var(--ink); color: white; font-size: 14.5px; font-weight: 600; }
+.rev-cta .save { flex: 1; padding: 14px 18px; border-radius: var(--r-pill); border: 0; background: var(--ink); color: white; font-size: 15px; font-weight: 600; }
+.rev-cta .save.save-unified:disabled,
+.rev-cta .save.save-unified.is-disabled { background: #d8d5cd; color: rgba(0,0,0,0.4); cursor: not-allowed; }
+.saveto-row { display: flex; align-items: center; justify-content: space-between; width: calc(100% - 40px); margin: 24px 20px 10px; padding: 12px 16px; background: white; border: 1px solid var(--line); border-radius: var(--r-pill); cursor: pointer; }
+.saveto-row .saveto-lbl { font-size: 12.5px; color: var(--soft); }
+.saveto-row .saveto-val { display: inline-flex; align-items: center; gap: 5px; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.saveto-row .saveto-val i.ti { font-size: 14px; color: var(--soft); }
+.saveto-row:active { background: var(--surface); }
 
 .note-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: var(--bg); border-radius: 26px 26px 0 0; padding: 14px 22px 26px; z-index: 50; box-shadow: 0 -8px 24px rgba(0,0,0,0.14); display: none; animation: slideup 0.26s cubic-bezier(0.2, 0.9, 0.3, 1); }
 @keyframes slideup { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -912,9 +982,11 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .ritual-actions button { padding: 12px 18px; border-radius: var(--r-pill); font-size: 13.5px; font-weight: 600; }
 .ritual-actions .skip { border: 1px solid var(--line); color: var(--soft); }
 .ritual-actions .next { flex: 1; background: var(--ink); color: white; }
-.ritual-progress { display: flex; gap: 6px; justify-content: center; padding-bottom: 20px; }
-.ritual-progress span { width: 22px; height: 3px; background: var(--line); border-radius: 100px; }
+.ritual-progress { display: flex; gap: 5px; align-items: center; }
+.ritual-progress span { width: 18px; height: 3px; background: var(--line); border-radius: 100px; transition: background 0.2s; }
 .ritual-progress span.on { background: var(--ink); }
+.ritual-progress span.done { background: var(--soft); }
+.ritual-dethead { justify-content: space-between; }
 .ritual-progress span.done { background: var(--soft); }
 
 /* ALERTS */
@@ -926,6 +998,31 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .alerts-filter button { padding: 6px 14px; border-radius: var(--r-pill); background: white; border: 1px solid var(--line); font-size: 12.5px; font-weight: 600; color: var(--ink); white-space: nowrap; }
 .alerts-filter button.on { background: var(--ink); color: white; border-color: var(--ink); }
 .alert-section { padding: 18px 22px 8px; font-size: 11px; color: var(--soft); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; }
+.alert-card.drafts-extra { display: none; }
+.alert-card.drafts-extra.on { display: flex; }
+.drafts-toggle {
+  display: block; margin: 4px 22px 4px;
+  padding: 10px 0;
+  background: none; border: 0;
+  font-size: 13px; font-weight: 500;
+  color: var(--soft);
+  text-align: left;
+  cursor: pointer;
+  letter-spacing: -0.05px;
+}
+.drafts-toggle:active { color: var(--ink); }
+.drafts-toggle::after { content: ' ›'; display: inline; margin-left: 2px; }
+.drafts-toggle.expanded::after { content: ''; }
+.discard-draft-link {
+  display: block; margin: 24px auto 8px;
+  padding: 8px 14px;
+  background: none; border: 0;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--soft);
+  cursor: pointer;
+  letter-spacing: -0.05px;
+}
+.discard-draft-link:active { color: #E24B4A; }
 .alert-card { margin: 0 18px 8px; padding: 14px; background: white; border: 1px solid var(--line); border-radius: var(--r-card); display: flex; gap: 14px; align-items: flex-start; cursor: pointer; }
 .alert-card:active { background: var(--surface); }
 .alert-card .thumb { width: 60px; height: 74px; border-radius: 8px; flex-shrink: 0; position: relative; overflow: hidden; }
@@ -1032,20 +1129,20 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .profile-grid .tile .ph { aspect-ratio: 4/5; height: auto !important; border-radius: 0; position: relative; overflow: hidden; }
 .profile-grid .tile .cap { display: none; }
 
-.profile-grid .tile .note-peek {
-  position: absolute; inset: 0; background: rgba(15,15,15,0.86); color: white;
-  padding: 10px 8px; opacity: 0; transition: opacity 0.2s;
-  pointer-events: none; display: flex; flex-direction: column; gap: 5px;
-  font-size: 10.5px; line-height: 1.35; overflow: hidden;
+/* Persistent note marker on profile tile — shown when the plop has notes */
+.profile-grid .tile .note-mark {
+  position: absolute; top: 8px; right: 8px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #BA7517;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+  z-index: 2;
 }
-.profile-grid .tile:hover .note-peek,
-.profile-grid .tile.peek-on .note-peek { opacity: 1; }
-.profile-grid .tile .np-item { display: flex; gap: 5px; align-items: flex-start; }
-.profile-grid .tile .np-num { flex-shrink: 0; width: 14px; height: 14px; border-radius: 100px; background: var(--mark); color: white; font-size: 8.5px; font-weight: 700; display: grid; place-items: center; margin-top: 1px; }
-.profile-grid .tile .np-plain { flex-shrink: 0; width: 14px; height: 14px; border-radius: 100px; border: 1.5px solid var(--mark); position: relative; margin-top: 1px; }
-.profile-grid .tile .np-plain::after { content: ''; position: absolute; width: 4px; height: 4px; border-radius: 100px; background: var(--mark); top: 50%; left: 50%; transform: translate(-50%,-50%); }
-.profile-grid .tile .np-text { color: rgba(255,255,255,0.92); word-break: break-word; }
-.profile-grid .tile .np-more { color: rgba(255,255,255,0.65); font-size: 10px; margin-top: 2px; }
+.profile-grid .tile .note-mark::after {
+  content: ''; position: absolute; inset: 5px;
+  border-radius: 50%; background: #FAEEDA;
+}
+/* Legacy peek styles kept as no-ops in case of stale markup */
+.profile-grid .tile .note-peek { display: none; }
 
 .notes-tab-view { padding: 12px 20px 60px; }
 .notes-keywords { padding: 12px 0 16px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
@@ -1155,21 +1252,30 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <div class="topbar">
           <div class="wordmark">ari</div>
           <div style="display:flex;gap:6px">
-            <button class="iconbtn" onclick="go('scr-alerts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge"></span></button>
+            <button class="iconbtn bell-btn" onclick="openAlerts(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge"></span></button>
           </div>
         </div>
+        <div class="feed-reflection-banner" id="feed-reflection-banner" onclick="startRitual()">
+          <div class="frb-icon">🌙</div>
+          <div class="frb-body">
+            <div class="frb-title">Reflect on today</div>
+            <div class="frb-sub">3 plops from today waiting.</div>
+            <button class="frb-cta" onclick="event.stopPropagation(); startRitual();">Start reflection</button>
+          </div>
+          <button class="frb-close" onclick="event.stopPropagation(); dismissFeedReflection();" aria-label="Dismiss">×</button>
+        </div>
         <div class="masonry">
-          <div class="tile" onclick="openMine('Rose garden')"><div class="ph img" style="height:220px"><img data-img="buffer-1" alt="Rose garden" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="editFromFeed(this, event)" aria-label="Edit note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rose garden</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Studio wall</div></div></div>
-          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph img" style="height:180px"><img data-img="wearing-duvet" alt="Wearing a duvet" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="editFromFeed(this, event)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">"Wearing a duvet"</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">@studio.yumi</div></div></div>
-          <div class="tile" onclick="openOthers('junok','g2','Backward stairs','Hongdae · 2024')"><div class="ph img" style="height:210px"><img data-img="backward-stairs" alt="Backward stairs" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="editFromFeed(this, event)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Backward stairs</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Paris atrium</div></div></div>
-          <div class="tile" onclick="openOthers('jinyoung','g5','Moss on bark','forest floor')"><div class="ph img" style="height:170px"><img data-img="moss-wall" alt="Moss on bark" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="editFromFeed(this, event)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Moss on bark</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">forest floor</div></div></div>
-          <div class="tile" onclick="openOthers('typewell','g7','Sign, Euljiro','printing quarter')"><div class="ph img" style="height:190px"><img data-img="sign-euljiro" alt="Sign, Euljiro" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="editFromFeed(this, event)" aria-label="Edit note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sign, Euljiro</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">street posters</div></div></div>
-          <div class="tile" onclick="openOthers('dahye','g6','Light','morning')"><div class="ph img" style="height:230px"><img data-img="light" alt="Light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="editFromFeed(this, event)" aria-label="Edit note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">morning</div></div></div>
-          <div class="tile" onclick="openOthers('hanuel','g8','Phương Nguyễn','reference')"><div class="ph img" style="height:190px"><img data-img="phuong-nguyen" alt="Phương Nguyễn" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="editFromFeed(this, event)" aria-label="Edit note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Phương Nguyễn</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">reference</div></div></div>
-          <div class="tile" onclick="openOthers('jinyoung','g9','Rainbow light','chapel floor')"><div class="ph img" style="height:210px"><img data-img="rainbow-light" alt="Rainbow light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="editFromFeed(this, event)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rainbow light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">chapel floor</div></div></div>
-          <div class="tile" onclick="openOthers('dahye','g6','Pinault collection','Tadao Ando concrete')"><div class="ph img" style="height:200px"><img data-img="pinault-collection" alt="Pinault collection" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn" onclick="editFromFeed(this, event)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Pinault collection</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Tadao Ando concrete</div></div></div>
-          <div class="tile" onclick="openOthers('junok','g4','Tracy Emin studio pool','empty pool')"><div class="ph img" style="height:220px"><img data-img="tracy-emin" alt="Tracy Emin studio pool" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Keep with note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Tracy Emin studio pool</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">empty pool</div></div></div>
-          <div class="tile" onclick="openMine('Sconce at dusk')"><div class="ph img" style="height:180px"><img data-img="buffer-2" alt="Sconce at dusk" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn on" onclick="editFromFeed(this, event)" aria-label="Edit note"><i class="ti ti-pencil"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sconce at dusk</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">hallway light</div></div></div>
+          <div class="tile" onclick="openMine('Rose garden')"><div class="ph img" style="height:220px"><img data-img="buffer-1" alt="Rose garden" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rose garden</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Studio wall</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph img" style="height:180px"><img data-img="wearing-duvet" alt="Wearing a duvet" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">"Wearing a duvet"</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">@studio.yumi</div></div></div>
+          <div class="tile" onclick="openOthers('junok','g2','Backward stairs','Hongdae · 2024')"><div class="ph img" style="height:210px"><img data-img="backward-stairs" alt="Backward stairs" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Backward stairs</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Paris atrium</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g5','Moss on bark','forest floor')"><div class="ph img" style="height:170px"><img data-img="moss-wall" alt="Moss on bark" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Moss on bark</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">forest floor</div></div></div>
+          <div class="tile" onclick="openOthers('typewell','g7','Sign, Euljiro','printing quarter')"><div class="ph img" style="height:190px"><img data-img="sign-euljiro" alt="Sign, Euljiro" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sign, Euljiro</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">street posters</div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Light','morning')"><div class="ph img" style="height:230px"><img data-img="light" alt="Light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">morning</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g8','Phương Nguyễn','reference')"><div class="ph img" style="height:190px"><img data-img="phuong-nguyen" alt="Phương Nguyễn" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Phương Nguyễn</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">reference</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g9','Rainbow light','chapel floor')"><div class="ph img" style="height:210px"><img data-img="rainbow-light" alt="Rainbow light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rainbow light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">chapel floor</div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Pinault collection','Tadao Ando concrete')"><div class="ph img" style="height:200px"><img data-img="pinault-collection" alt="Pinault collection" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Pinault collection</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Tadao Ando concrete</div></div></div>
+          <div class="tile" onclick="openOthers('junok','g4','Tracy Emin studio pool','empty pool')"><div class="ph img" style="height:220px"><img data-img="tracy-emin" alt="Tracy Emin studio pool" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Tracy Emin studio pool</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">empty pool</div></div></div>
+          <div class="tile" onclick="openMine('Sconce at dusk')"><div class="ph img" style="height:180px"><img data-img="buffer-2" alt="Sconce at dusk" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sconce at dusk</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">hallway light</div></div></div>
         </div>
       </div>
       <div class="bottomnav">
@@ -1288,29 +1394,9 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <div class="dethead">
           <button class="backbtn" onclick="back()">←</button>
           <span style="font-size:15px;font-weight:700">Alerts</span>
-          <button class="iconbtn" onclick="toast('Cleared')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0v13a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V7"/></svg></button>
+          <div style="width:38px"></div>
         </div>
-        <div class="alerts-head" style="padding:16px 22px 4px">
-          <h1>Your alerts</h1>
-        </div>
-        <div class="alerts-filter">
-          <button class="on" data-filter="all">All</button>
-          <button data-filter="waiting">Waiting</button>
-          <button data-filter="kept">Kept</button>
-          <button data-filter="follows">Follows</button>
-        </div>
-
-        <div class="alert-section" data-cat="waiting">Now</div>
-        <div class="alert-card ritual" data-cat="waiting" onclick="startRitual()">
-          <div class="icon-moon">🌙</div>
-          <div class="body">
-            <div class="title">Reflect on today</div>
-            <div class="msg">3 plops from today waiting.</div>
-            <button class="cta">Start reflection</button>
-          </div>
-        </div>
-
-        <div class="alert-section" data-cat="waiting">Drafts</div>
+        <div class="alert-section" data-cat="waiting" style="padding-top:22px">Drafts</div>
         <div class="alert-card" data-cat="waiting" onclick="openReviewFromAlert('g4','need-caption','Photo library · yesterday 6:44pm')">
           <div class="thumb img"><img data-img="tracy-emin" alt="" loading="lazy"><div class="status-dot"></div></div>
           <div class="body">
@@ -1336,7 +1422,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
             <button class="cta">Continue <i class="ti ti-chevron-right"></i></button>
           </div>
         </div>
-        <div class="alert-card" data-cat="waiting" onclick="openReviewFromAlert('g7','need-notes','Sign, Euljiro · a week ago')">
+        <div class="alert-card drafts-extra" data-cat="waiting" onclick="openReviewFromAlert('g7','need-notes','Sign, Euljiro · a week ago')">
           <div class="thumb img"><img data-img="sign-euljiro" alt="Sign, Euljiro" loading="lazy"><div class="status-dot"></div></div>
           <div class="body">
             <div class="title">Draft</div>
@@ -1345,8 +1431,9 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
             <button class="cta">Continue <i class="ti ti-chevron-right"></i></button>
           </div>
         </div>
+        <button class="drafts-toggle" id="drafts-toggle" onclick="toggleDrafts(this)">Show 1 more draft</button>
 
-        <div class="alert-section" data-cat="kept">People</div>
+        <div class="alert-section" data-cat="kept">Activity</div>
         <div class="alert-card alert-social" data-cat="kept" onclick="openMine('Rose garden')">
           <span class="av g1">H</span>
           <div class="body"><b>@hanuel</b> kept your <b>Rose garden</b><span class="m">1 hour ago</span></div>
@@ -1373,8 +1460,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
     <!-- MY PROFILE -->
     <section class="screen" id="scr-my-profile">
       <div class="scrollpage" style="padding-bottom:120px">
-        <div class="dethead" style="position:absolute;background:none;backdrop-filter:none;left:0;right:0">
-          <button class="backbtn" onclick="back()">←</button>
+        <div class="dethead" style="position:absolute;background:none;backdrop-filter:none;left:0;right:0;justify-content:flex-end">
           <div style="display:flex;gap:8px">
             <button class="iconbtn" onclick="toggleProfileSearch()" style="background:var(--surface)"><i class="ti ti-search"></i></button>
             <button class="iconbtn" onclick="toast('Settings')" style="background:var(--surface)"><i class="ti ti-settings"></i></button>
@@ -1528,11 +1614,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
       <div class="dethead draft-head">
         <button class="backbtn" onclick="reviewBack()">←</button>
         <span style="font-size:13px;color:var(--soft)" id="rev-title">Draft</span>
-        <button class="saveto-picker" onclick="openSavetoSheet()">
-          <span class="lbl">Save to</span>
-          <span class="val" id="saveto-name">Inspiration</span>
-          <i class="ti ti-chevron-down"></i>
-        </button>
+        <div style="width:38px"></div>
       </div>
       <div class="rev-progress" id="rev-progress" style="display:none">
         <span class="d on"></span><span class="d"></span><span class="d"></span>
@@ -1579,7 +1661,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         </div>
 
         <!-- CAPTION (public zone) -->
-        <div class="field-h cap-h" style="margin-top:22px">Caption <span class="cap-check" id="cap-check" style="display:none"><i class="ti ti-check"></i></span> <span class="cap-autosave">· Autosaves as you type</span></div>
+        <div class="field-h cap-h" style="margin-top:22px">Caption <span class="cap-check" id="cap-check" style="display:none"><i class="ti ti-check"></i></span> <span class="cap-autosave">· Describe what and where</span></div>
         <div class="cap-wrap">
           <div class="field-group" id="cap-field-group">
             <div class="field-row" data-fld="description"><div class="lbl">Description</div><input placeholder="What is it?" id="fld-description"></div>
@@ -1600,17 +1682,21 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
             <span class="spinner"></span><span>Reading label…</span>
           </div>
           <div class="cap-actions">
-            <button class="cap-chip" onclick="openLabelSourceSheet()"><i class="ti ti-camera"></i> Label</button>
+            <button class="cap-chip" onclick="openLabelSourceSheet()"><i class="ti ti-camera"></i> Scan info</button>
             <button class="cap-chip" onclick="openVoiceSheet('caption')"><i class="ti ti-microphone"></i> Voice</button>
             <button class="cap-chip dashed" id="add-more-btn" onclick="openMoreSheet()"><i class="ti ti-plus"></i> Add more info</button>
             <a href="#" class="cap-clear-link" id="cap-clear-link" onclick="clearAllCaption(event)" style="display:none">Clear all</a>
           </div>
         </div>
 
+        <button class="saveto-row" onclick="openSavetoSheet()" aria-label="Choose destination pond">
+          <span class="saveto-lbl">Saving to</span>
+          <span class="saveto-val"><span id="saveto-name">Inspiration</span><i class="ti ti-chevron-down"></i></span>
+        </button>
         <div class="rev-cta" id="rev-cta">
-          <button class="later" onclick="saveImageOnly()">Image only</button>
-          <button class="save" onclick="saveAll()">Save plop</button>
+          <button class="save save-unified" onclick="saveAll()">Save</button>
         </div>
+        <button class="discard-draft-link" onclick="discardDraft()">Discard draft</button>
 
       </div>
 
@@ -1661,7 +1747,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 
     <!-- RITUAL -->
     <section class="screen" id="scr-ritual">
-      <div class="dethead"><button class="backbtn" onclick="back()">←</button><div style="width:38px"></div><div style="width:38px"></div></div>
+      <div class="dethead ritual-dethead"><button class="backbtn" onclick="back()">←</button><div class="ritual-progress" id="ritual-dots"><span class="on"></span><span></span><span></span></div><div style="width:38px"></div></div>
       <div class="ritual-scroll">
         <div class="ritual-head">
           <h1 id="ritual-h1">Evening reflection</h1>
@@ -1675,8 +1761,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
             <div class="ritual-cap" id="ritual-cap"></div>
           </div>
         </div>
-        <div class="ritual-actions"><button class="skip" onclick="ritualNext()">Skip</button><button class="next" onclick="ritualNext()">Next →</button></div>
-        <div class="ritual-progress" id="ritual-dots"><span class="on"></span><span></span><span></span></div>
+        <div class="ritual-actions"><button class="skip" onclick="ritualSkip()">Not today</button><button class="next" onclick="ritualNext()">Next →</button></div>
         <div style="height:60px"></div>
       </div>
     </section>
@@ -1696,7 +1781,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   </div>
 
   <!-- MARK NOTE POPUP (after tap/drag) -->
-  <div class="sheetwrap" id="mark-note-popup">
+  <div class="sheetwrap" id="mark-note-popup" style="display:none">
     <div class="scrim" onclick="cancelMarkNote()"></div>
     <div class="sheet mark-note-sheet-body">
       <div class="grab"></div>
@@ -1746,7 +1831,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
     <div class="scrim" onclick="closeLabelSourceSheet()"></div>
     <div class="sheet">
       <div class="grab"></div>
-      <h2 class="sheet-h">Label photo</h2>
+      <h2 class="sheet-h">Scan info from a label</h2>
       <button class="optcard" onclick="pickLabelSource('camera')"><div class="icn"><i class="ti ti-camera"></i></div><div class="txt"><div class="t1">Take a photo</div></div><span class="chev">›</span></button>
       <button class="optcard" onclick="pickLabelSource('library')"><div class="icn"><i class="ti ti-photo"></i></div><div class="txt"><div class="t1">Choose from library</div></div><span class="chev">›</span></button>
     </div>
@@ -2695,7 +2780,25 @@ function focusItem(idx) {
     if (inp) { inp.focus(); inp.select && inp.select(); }
   }, 60);
 }
-function renderAll() { renderMarks(); renderNotesList(); }
+let activeMarkIdx = -1;
+function renderMarkChips() {
+  const el = document.getElementById('mark-chips');
+  if (!el) return;
+  const marks = items.map((it, i) => ({ it, i })).filter(x => x.it.mark);
+  if (marks.length === 0) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'flex';
+  el.innerHTML = marks.map(({ it, i }) => {
+    const num = markNumberOfItem(i);
+    const active = i === activeMarkIdx ? ' active' : '';
+    return `<button class="mchip${active}" data-idx="${i}" onclick="setActiveMark(${i})">${num}</button>`;
+  }).join('');
+}
+function setActiveMark(idx) {
+  activeMarkIdx = idx;
+  renderMarkChips();
+  focusItem(idx);
+}
+function renderAll() { renderMarks(); renderMarkChips(); renderNotesList(); }
 
 // ============ save to (reblog only — draft uses top picker) ============
 document.querySelectorAll('#reblog-saveto button').forEach(b => {
@@ -2826,15 +2929,13 @@ function renderMarks() {
   });
 }
 
-// existing plain notes: focus inline input
+// Tap on any item (mark or plain) → focus its inline input in the notes list.
 function openMarkNote(idx) {
-  const it = items[idx];
-  if (it && it.mark) {
-    // for marked notes, open the popup to edit
-    openMarkNotePopup(idx, false);
-  } else {
-    focusItem(idx);
+  if (items[idx] && items[idx].mark) {
+    activeMarkIdx = idx;
+    renderMarkChips();
   }
+  focusItem(idx);
 }
 // popup: after a mark is placed, prompt for note text with Save/Skip/Cancel
 let popupMarkIdx = -1;
@@ -2897,15 +2998,15 @@ let freePoints = [];
 function pDown(e) {
   if (currentScreen() !== 'scr-review') return;
   if (!currentTool) return; // inert until user picks a tool
-  if (document.getElementById('mark-note-popup').classList.contains('open')) return; // popup blocks image
   if (e.target.closest('.mark-dot')) return;
   if (e.target.closest('.mark-toolbar')) return;
   e.preventDefault();
   const p = pos(e);
   if (currentTool === 'tap') {
     items.push({ text: null, mark: { type: 'dot', anchor: p } });
+    activeMarkIdx = items.length - 1;
     renderAll();
-    openMarkNotePopup(items.length - 1, true);
+    focusItem(activeMarkIdx);
     return;
   }
   drawing = true;
@@ -2955,8 +3056,9 @@ function pUp(e) {
   }
   if (m) {
     items.push({ text: null, mark: m });
+    activeMarkIdx = items.length - 1;
     renderAll();
-    openMarkNotePopup(items.length - 1, true);
+    focusItem(activeMarkIdx);
   }
 }
 // element-level listeners for touch (more reliable on iOS)
@@ -2972,9 +3074,9 @@ window.addEventListener('mouseup', pUp);
 // Cards can have a caption or not. If no caption, show image only.
 let ritualIdx = 0;
 const ritualData = [
-  { img: IMG_DATA['moss-wall'], g: 'g5', q: 'What made you stop here?', cap: '"Moss on the belly of a fallen log — sun found a pocket where nothing else grew."' },
+  { img: IMG_DATA['moss-wall'], g: 'g5', q: 'What made you stop here?', cap: '' },
   { img: IMG_DATA['rainbow-light'], g: 'g9', q: 'What made you stop here?', cap: '' },
-  { img: IMG_DATA['tracy-emin'], g: 'g4', q: 'What made you stop here?', cap: '"An empty tiled pool. Two blue lines run under skylight ribs."' }
+  { img: IMG_DATA['tracy-emin'], g: 'g4', q: 'What made you stop here?', cap: '' }
 ];
 function renderRitualCard(idx) {
   const data = ritualData[idx];
@@ -3002,10 +3104,52 @@ function startRitual() {
   go('scr-ritual');
 }
 function ritualNext() {
+  // Save whatever the user wrote (even blank) and advance.
   ritualIdx++;
   if (ritualIdx >= ritualData.length) {
     document.getElementById('saved-msg').textContent = 'Reflection saved.';
     document.getElementById('saved-sub').textContent = 'The notes are in · see you tomorrow.';
+    document.getElementById('saved-bell').style.display = 'none';
+    ritualIdx = 0;
+    go('scr-saved');
+    return;
+  }
+  renderRitualCard(ritualIdx);
+}
+function openAlerts(btn) {
+  // Clear unread badge on all bell buttons when Alerts is opened.
+  document.querySelectorAll('.bell-btn .badge').forEach(b => b.style.display = 'none');
+  go('scr-alerts');
+}
+function discardDraft() {
+  if (!confirm('Discard this draft? This can\'t be undone.')) return;
+  toast('Draft discarded');
+  goHome();
+}
+function toggleDrafts(btn) {
+  const extras = document.querySelectorAll('#scr-alerts .drafts-extra');
+  const isExpanded = btn.classList.contains('expanded');
+  if (isExpanded) {
+    extras.forEach(e => e.classList.remove('on'));
+    btn.classList.remove('expanded');
+    const n = extras.length;
+    btn.textContent = 'Show ' + n + (n === 1 ? ' more draft' : ' more drafts');
+  } else {
+    extras.forEach(e => e.classList.add('on'));
+    btn.classList.add('expanded');
+    btn.textContent = 'Show less';
+  }
+}
+function dismissFeedReflection() {
+  const b = document.getElementById('feed-reflection-banner');
+  if (b) b.classList.add('hidden');
+}
+function ritualSkip() {
+  // Mark this plop as "not today" — ask again tomorrow. Prototype: advance without saving.
+  ritualIdx++;
+  if (ritualIdx >= ritualData.length) {
+    document.getElementById('saved-msg').textContent = "See you tomorrow.";
+    document.getElementById('saved-sub').textContent = "I'll ask again then.";
     document.getElementById('saved-bell').style.display = 'none';
     ritualIdx = 0;
     go('scr-saved');
@@ -3118,17 +3262,9 @@ function renderProfileGrid(filterFn, searchQuery) {
     return true;
   });
   grid.innerHTML = items.map((p, i) => {
-    let peek = '';
-    if (p.notes.length > 0) {
-      peek = `<div class="note-peek">${p.notes.slice(0, 4).map((n) => {
-        const idx = p.notes.indexOf(n);
-        const num = markNumberIn(p.notes, idx);
-        const badge = num ? `<span class="np-num">${num}</span>` : `<span class="np-plain"></span>`;
-        return `<div class="np-item">${badge}<span class="np-text">${esc2(n.text)}</span></div>`;
-      }).join('')}${p.notes.length > 4 ? `<div class="np-more">+ ${p.notes.length - 4} more</div>` : ''}</div>`;
-    }
+    const marker = p.notes.length > 0 ? '<span class="note-mark" aria-label="Has notes"></span>' : '';
     const src = imgFor(p.title);
-    const phInner = src ? `<img src="${src}" alt="${esc2(p.title)}" loading="lazy">${peek}` : peek;
+    const phInner = src ? `<img src="${src}" alt="${esc2(p.title)}" loading="lazy">${marker}` : marker;
     const phClass = src ? 'ph img' : `ph ${p.grad}`;
     return `<div class="tile" data-title="${esc2(p.title)}" onclick="openMine('${p.title.replace(/'/g,"\\'")}')"><div class="${phClass}">${phInner}</div></div>`;
   }).join('');
@@ -3192,28 +3328,10 @@ function applyProfileFilter() {
     renderProfileGrid(x => x.tab === pondName, q);
   }
 }
-// wire search input + long-press peek on grid tiles
+// wire search input
 setTimeout(() => {
   const inp = document.querySelector('#profile-search input');
   if (inp) inp.addEventListener('input', applyProfileFilter);
-  const grid = document.getElementById('my-plops');
-  if (grid) {
-    let lp = null; let peekOn = null;
-    grid.addEventListener('touchstart', e => {
-      const tile = e.target.closest('.tile');
-      if (!tile || !tile.querySelector('.note-peek')) return;
-      lp = setTimeout(() => {
-        document.querySelectorAll('.tile.peek-on').forEach(t => t.classList.remove('peek-on'));
-        tile.classList.add('peek-on');
-        peekOn = tile;
-      }, 380);
-    }, { passive: true });
-    grid.addEventListener('touchend', () => { if (lp) { clearTimeout(lp); lp = null; } });
-    grid.addEventListener('touchmove', () => { if (lp) { clearTimeout(lp); lp = null; } });
-    document.addEventListener('touchstart', e => {
-      if (peekOn && !e.target.closest('.tile.peek-on')) { peekOn.classList.remove('peek-on'); peekOn = null; }
-    }, { passive: true });
-  }
 }, 0);
 
 // ============ profile ponds state ============
@@ -3471,16 +3589,6 @@ document.querySelectorAll('#other-tabs .proftab').forEach(t => {
   t.onclick = () => {
     document.querySelectorAll('#other-tabs .proftab').forEach(x => x.classList.remove('on'));
     t.classList.add('on');
-  };
-});
-document.querySelectorAll('#scr-alerts .alerts-filter button').forEach(b => {
-  b.onclick = () => {
-    document.querySelectorAll('#scr-alerts .alerts-filter button').forEach(x => x.classList.remove('on'));
-    b.classList.add('on');
-    const f = b.dataset.filter;
-    document.querySelectorAll('#scr-alerts [data-cat]').forEach(item => {
-      item.style.display = (f === 'all' || item.dataset.cat === f) ? '' : 'none';
-    });
   };
 });
 
