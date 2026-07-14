@@ -826,7 +826,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .field-row { display: flex; align-items: baseline; padding: 12px 14px; border-bottom: 1px solid var(--line); }
 .field-row:last-child { border-bottom: 0; }
 .field-row .lbl { width: 70px; flex-shrink: 0; font-size: 12px; color: var(--soft); font-weight: 600; }
-.field-row input { font-size: 12px; color: var(--ink); font-weight: 500; }
+.field-row input { font-size: 16px; color: var(--ink); font-weight: 500; }
 
 .ocr-hint { margin-top: 8px; padding: 10px 14px; background: rgba(255,90,60,0.08); color: var(--mark); border-radius: 12px; font-size: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ocr-hint .ic { font-size: 14px; }
@@ -899,7 +899,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 
 .notes-input-row { margin: 0 20px; display: flex; align-items: center; gap: 6px; background: white; border: 1px solid var(--line); border-radius: 14px; padding: 8px 8px 8px 14px; }
 .notes-input-row:focus-within { border-color: #bbb; }
-.notes-input-row input { flex: 1; font-size: 12px; padding: 4px 0; border: none; background: transparent; }
+.notes-input-row input { flex: 1; font-size: 16px; padding: 4px 0; border: none; background: transparent; }
 .notes-input-row input:focus { outline: none; }
 .notes-input-row .ni-btn { width: 40px; height: 40px; border-radius: 100px; background: var(--surface); color: var(--ink); display: grid; place-items: center; flex-shrink: 0; }
 .notes-input-row .ni-btn i.ti { font-size: 18px; }
@@ -1141,6 +1141,25 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   content: ''; position: absolute; inset: 5px;
   border-radius: 50%; background: #FAEEDA;
 }
+/* Attribution avatar — shown when the plop was kept from another user */
+.profile-grid .tile .tile-attrib {
+  position: absolute; bottom: 8px; left: 8px;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 10px; font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  border: 1.5px solid rgba(255,255,255,0.85);
+  z-index: 2;
+}
+.profile-grid .tile .tile-attrib.g1 { background: linear-gradient(135deg, #A0A4F0, #E6A9C9); }
+.profile-grid .tile .tile-attrib.g2 { background: linear-gradient(135deg, #86c8b8, #4d9689); }
+.profile-grid .tile .tile-attrib.g3 { background: linear-gradient(135deg, #F5A9A9, #D67878); }
+.profile-grid .tile .tile-attrib.g4 { background: linear-gradient(135deg, #ffb37b, #e88e6f); }
+.profile-grid .tile .tile-attrib.g5 { background: linear-gradient(135deg, #b9d68c, #6da236); }
+.profile-grid .tile .tile-attrib.g6 { background: linear-gradient(135deg, #dfe0e2, #98a3a8); }
+.profile-grid .tile .tile-attrib.g7 { background: linear-gradient(135deg, #f3d78f, #c9a24e); }
+.profile-grid .tile .tile-attrib.g8 { background: linear-gradient(135deg, #d5bfec, #9a72d4); }
+.profile-grid .tile .tile-attrib.g9 { background: linear-gradient(135deg, #a4d8f0, #518fbb); }
 /* Legacy peek styles kept as no-ops in case of stale markup */
 .profile-grid .tile .note-peek { display: none; }
 
@@ -1265,17 +1284,17 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <button class="frb-close" onclick="event.stopPropagation(); dismissFeedReflection();" aria-label="Dismiss">×</button>
         </div>
         <div class="masonry">
-          <div class="tile" onclick="openMine('Rose garden')"><div class="ph img" style="height:220px"><img data-img="buffer-1" alt="Rose garden" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rose garden</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Studio wall</div></div></div>
-          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph img" style="height:180px"><img data-img="wearing-duvet" alt="Wearing a duvet" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">"Wearing a duvet"</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">@studio.yumi</div></div></div>
-          <div class="tile" onclick="openOthers('junok','g2','Backward stairs','Hongdae · 2024')"><div class="ph img" style="height:210px"><img data-img="backward-stairs" alt="Backward stairs" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Backward stairs</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Paris atrium</div></div></div>
-          <div class="tile" onclick="openOthers('jinyoung','g5','Moss on bark','forest floor')"><div class="ph img" style="height:170px"><img data-img="moss-wall" alt="Moss on bark" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Moss on bark</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">forest floor</div></div></div>
-          <div class="tile" onclick="openOthers('typewell','g7','Sign, Euljiro','printing quarter')"><div class="ph img" style="height:190px"><img data-img="sign-euljiro" alt="Sign, Euljiro" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sign, Euljiro</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">street posters</div></div></div>
-          <div class="tile" onclick="openOthers('dahye','g6','Light','morning')"><div class="ph img" style="height:230px"><img data-img="light" alt="Light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">morning</div></div></div>
-          <div class="tile" onclick="openOthers('hanuel','g8','Phương Nguyễn','reference')"><div class="ph img" style="height:190px"><img data-img="phuong-nguyen" alt="Phương Nguyễn" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Phương Nguyễn</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">reference</div></div></div>
-          <div class="tile" onclick="openOthers('jinyoung','g9','Rainbow light','chapel floor')"><div class="ph img" style="height:210px"><img data-img="rainbow-light" alt="Rainbow light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rainbow light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">chapel floor</div></div></div>
-          <div class="tile" onclick="openOthers('dahye','g6','Pinault collection','Tadao Ando concrete')"><div class="ph img" style="height:200px"><img data-img="pinault-collection" alt="Pinault collection" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Pinault collection</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Tadao Ando concrete</div></div></div>
-          <div class="tile" onclick="openOthers('junok','g4','Tracy Emin studio pool','empty pool')"><div class="ph img" style="height:220px"><img data-img="tracy-emin" alt="Tracy Emin studio pool" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Tracy Emin studio pool</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">empty pool</div></div></div>
-          <div class="tile" onclick="openMine('Sconce at dusk')"><div class="ph img" style="height:180px"><img data-img="buffer-2" alt="Sconce at dusk" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-note"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sconce at dusk</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">hallway light</div></div></div>
+          <div class="tile" onclick="openMine('Rose garden')"><div class="ph img" style="height:220px"><img data-img="buffer-1" alt="Rose garden" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rose garden</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Studio wall</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph img" style="height:180px"><img data-img="wearing-duvet" alt="Wearing a duvet" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">"Wearing a duvet"</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">@studio.yumi</div></div></div>
+          <div class="tile" onclick="openOthers('junok','g2','Backward stairs','Hongdae · 2024')"><div class="ph img" style="height:210px"><img data-img="backward-stairs" alt="Backward stairs" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Backward stairs</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Paris atrium</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g5','Moss on bark','forest floor')"><div class="ph img" style="height:170px"><img data-img="moss-wall" alt="Moss on bark" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Moss on bark</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">forest floor</div></div></div>
+          <div class="tile" onclick="openOthers('typewell','g7','Sign, Euljiro','printing quarter')"><div class="ph img" style="height:190px"><img data-img="sign-euljiro" alt="Sign, Euljiro" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sign, Euljiro</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">street posters</div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Light','morning')"><div class="ph img" style="height:230px"><img data-img="light" alt="Light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">morning</div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g8','Phương Nguyễn','reference')"><div class="ph img" style="height:190px"><img data-img="phuong-nguyen" alt="Phương Nguyễn" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Phương Nguyễn</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">reference</div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g9','Rainbow light','chapel floor')"><div class="ph img" style="height:210px"><img data-img="rainbow-light" alt="Rainbow light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rainbow light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">chapel floor</div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Pinault collection','Tadao Ando concrete')"><div class="ph img" style="height:200px"><img data-img="pinault-collection" alt="Pinault collection" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Pinault collection</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Tadao Ando concrete</div></div></div>
+          <div class="tile" onclick="openOthers('junok','g4','Tracy Emin studio pool','empty pool')"><div class="ph img" style="height:220px"><img data-img="tracy-emin" alt="Tracy Emin studio pool" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Tracy Emin studio pool</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">empty pool</div></div></div>
+          <div class="tile" onclick="openMine('Sconce at dusk')"><div class="ph img" style="height:180px"><img data-img="buffer-2" alt="Sconce at dusk" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sconce at dusk</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">hallway light</div></div></div>
         </div>
       </div>
       <div class="bottomnav">
@@ -1306,7 +1325,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <div class="action-row">
           <button class="act spark-act" onclick="toggleAction(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button>
           <button class="act keep-act" onclick="toggleAction(event, this)" aria-label="Keep"><i class="ti ti-bookmark"></i></button>
-          <button class="act keep-act" onclick="editMineInStudio()" aria-label="Edit notes & marks"><i class="ti ti-pencil"></i></button>
+          <button class="act keep-act" onclick="editMineInStudio()" aria-label="Edit notes & marks"><i class="ti ti-scribble"></i></button>
           <button class="act share-act" onclick="toast('Link copied')" aria-label="Share"><i class="ti ti-share-3"></i></button>
         </div>
         <div class="detbody">
@@ -1357,7 +1376,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <div class="action-row">
           <button class="act spark-act" onclick="toggleAction(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button>
           <button class="act keep-act" onclick="toggleAction(event, this)" aria-label="Keep"><i class="ti ti-bookmark"></i></button>
-          <button class="act keep-act" onclick="editOthersInStudio(document.getElementById('op-cap').textContent, document.getElementById('op-handle').textContent.replace('@',''))" aria-label="Edit notes & marks"><i class="ti ti-pencil"></i></button>
+          <button class="act keep-act" onclick="editOthersInStudio(document.getElementById('op-cap').textContent, document.getElementById('op-handle').textContent.replace('@',''))" aria-label="Edit notes & marks"><i class="ti ti-scribble"></i></button>
           <button class="act share-act" onclick="toast('Link copied')" aria-label="Share"><i class="ti ti-share-3"></i></button>
         </div>
         <div class="detbody">
@@ -3178,6 +3197,7 @@ function imgFor(title) {
 }
 const MY_PLOPS = [
   { title: 'Rose garden', meta: 'Studio wall', grad: 'g1', tab: 'inspiration',
+    keptFrom: null,
     desc: "A painted garden — flowers rising from a small vase in a dreamed-up landscape. Butterflies in air, lizards in the roots. The kind of picture that keeps talking.",
     keptBy: { avs: ['g1','g2','g3'], txt: 'Kept by <b>@hanuel</b>, <b>@jinyoung</b> and 12 more' },
     notes: [
@@ -3188,6 +3208,7 @@ const MY_PLOPS = [
     ]
   },
   { title: 'Sconce at dusk', meta: 'hallway light', grad: 'g2', tab: 'inspiration',
+    keptFrom: null,
     desc: "A brass sconce glowing warm against a dim wall. The bulb reflects on the shade, doubling the light.",
     keptBy: { avs: ['g4','g2'], txt: 'Kept by <b>@maralind</b> and 3 more' },
     notes: [
@@ -3196,6 +3217,7 @@ const MY_PLOPS = [
     ]
   },
   { title: 'Light', meta: 'gallery wall', grad: 'g2', tab: 'digs',
+    keptFrom: { handle: 'dahye', grad: 'g6' },
     desc: "A wall sconce like a small planet. Its glow radiates like sun spokes onto the plaster.",
     keptBy: null,
     notes: [
@@ -3204,6 +3226,7 @@ const MY_PLOPS = [
     ]
   },
   { title: 'Sign, Euljiro', meta: 'street posters', grad: 'g7', tab: 'inspiration',
+    keptFrom: { handle: 'typewell', grad: 'g7' },
     desc: "Torn street posters layered over years. Hearts, initials, a spray of graffiti bleeding down the wall.",
     keptBy: null,
     notes: [
@@ -3211,6 +3234,7 @@ const MY_PLOPS = [
     ]
   },
   { title: 'Phương Nguyễn', meta: 'reference', grad: 'g8', tab: 'inspiration',
+    keptFrom: { handle: 'hanuel', grad: 'g4' },
     desc: "A pink weaving stretched inside a wooden frame, with a small painting nested in the middle.",
     keptBy: null,
     notes: [
@@ -3220,18 +3244,23 @@ const MY_PLOPS = [
     ]
   },
   { title: 'Backward stairs', meta: 'Paris atrium', grad: 'g3', tab: 'digs',
+    keptFrom: { handle: 'junok', grad: 'g2' },
     desc: "Wooden stairs descending from the ceiling — an upside-down music. Every tread hovers over air.",
     keptBy: null, notes: [] },
   { title: 'Rainbow light', meta: 'chapel floor', grad: 'g9', tab: 'inspiration',
+    keptFrom: { handle: 'jinyoung', grad: 'g5' },
     desc: "Stained glass painting rainbow puddles across a chapel floor. The wooden pews wait.",
     keptBy: null, notes: [] },
   { title: 'Moss on bark', meta: 'forest floor', grad: 'g5', tab: 'digs',
+    keptFrom: { handle: 'jinyoung', grad: 'g5' },
     desc: "Moss on the belly of a fallen log. Sun found a pocket where nothing else grew.",
     keptBy: null, notes: [] },
   { title: 'Pinault collection', meta: 'Tadao Ando concrete', grad: 'g6', tab: 'digs',
+    keptFrom: { handle: 'dahye', grad: 'g6' },
     desc: "A single gold sphere on Tadao Ando's concrete grid. Reflection folds the whole room.",
     keptBy: null, notes: [] },
   { title: 'Tracy Emin studio pool', meta: 'empty pool', grad: 'g4', tab: 'inspiration',
+    keptFrom: { handle: 'junok', grad: 'g2' },
     desc: "An empty swimming pool, tiled and quiet. Two blue lines run under skylight ribs.",
     keptBy: null, notes: [] }
 ];
@@ -3263,8 +3292,11 @@ function renderProfileGrid(filterFn, searchQuery) {
   });
   grid.innerHTML = items.map((p, i) => {
     const marker = p.notes.length > 0 ? '<span class="note-mark" aria-label="Has notes"></span>' : '';
+    const attrib = p.keptFrom
+      ? `<span class="tile-attrib ${p.keptFrom.grad}" aria-label="Kept from @${p.keptFrom.handle}">${p.keptFrom.handle.charAt(0).toUpperCase()}</span>`
+      : '';
     const src = imgFor(p.title);
-    const phInner = src ? `<img src="${src}" alt="${esc2(p.title)}" loading="lazy">${marker}` : marker;
+    const phInner = src ? `<img src="${src}" alt="${esc2(p.title)}" loading="lazy">${marker}${attrib}` : `${marker}${attrib}`;
     const phClass = src ? 'ph img' : `ph ${p.grad}`;
     return `<div class="tile" data-title="${esc2(p.title)}" onclick="openMine('${p.title.replace(/'/g,"\\'")}')"><div class="${phClass}">${phInner}</div></div>`;
   }).join('');
