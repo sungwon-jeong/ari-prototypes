@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>ari — beta prototype</title>
 <style>
 /*!
@@ -880,7 +880,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .notes-list .note-item.plain .num::after { content: ''; position: absolute; width: 6px; height: 6px; border-radius: 100px; background: var(--mark); top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .notes-list .note-item .ntxt { flex: 1; font-size: 14px; line-height: 1.5; color: var(--ink); word-break: break-word; }
 .notes-list .note-item .ntxt.empty { color: var(--soft); font-style: italic; }
-.notes-list .note-item .ntxt-input { flex: 1; font-size: 16px; line-height: 1.5; color: var(--ink); background: transparent; border: none; padding: 2px 0; font-family: inherit; min-width: 0; }
+.notes-list .note-item .ntxt-input { flex: 1; font-size: 15.5px; line-height: 1.5; color: var(--ink); background: transparent; border: none; padding: 2px 0; font-family: inherit; min-width: 0; }
 .notes-list .note-item .ntxt-input:focus { outline: none; }
 .notes-list .note-item .ntxt-input::placeholder { color: var(--soft); }
 .notes-list .note-item .mic { color: var(--soft); background: transparent; padding: 2px 4px; opacity: 0.55; display: grid; place-items: center; }
@@ -1800,7 +1800,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   </div>
 
   <!-- MARK NOTE POPUP (after tap/drag) -->
-  <div class="sheetwrap" id="mark-note-popup" style="display:none">
+  <div class="sheetwrap" id="mark-note-popup">
     <div class="scrim" onclick="cancelMarkNote()"></div>
     <div class="sheet mark-note-sheet-body">
       <div class="grab"></div>
@@ -2948,13 +2948,14 @@ function renderMarks() {
   });
 }
 
-// Tap on any item (mark or plain) → focus its inline input in the notes list.
+// Existing plain notes: focus inline input. Marked notes: open popup for editing.
 function openMarkNote(idx) {
-  if (items[idx] && items[idx].mark) {
-    activeMarkIdx = idx;
-    renderMarkChips();
+  const it = items[idx];
+  if (it && it.mark) {
+    openMarkNotePopup(idx, false);
+  } else {
+    focusItem(idx);
   }
-  focusItem(idx);
 }
 // popup: after a mark is placed, prompt for note text with Save/Skip/Cancel
 let popupMarkIdx = -1;
@@ -3017,15 +3018,15 @@ let freePoints = [];
 function pDown(e) {
   if (currentScreen() !== 'scr-review') return;
   if (!currentTool) return; // inert until user picks a tool
+  if (document.getElementById('mark-note-popup').classList.contains('open')) return; // popup blocks image
   if (e.target.closest('.mark-dot')) return;
   if (e.target.closest('.mark-toolbar')) return;
   e.preventDefault();
   const p = pos(e);
   if (currentTool === 'tap') {
     items.push({ text: null, mark: { type: 'dot', anchor: p } });
-    activeMarkIdx = items.length - 1;
     renderAll();
-    focusItem(activeMarkIdx);
+    openMarkNotePopup(items.length - 1, true);
     return;
   }
   drawing = true;
@@ -3075,9 +3076,8 @@ function pUp(e) {
   }
   if (m) {
     items.push({ text: null, mark: m });
-    activeMarkIdx = items.length - 1;
     renderAll();
-    focusItem(activeMarkIdx);
+    openMarkNotePopup(items.length - 1, true);
   }
 }
 // element-level listeners for touch (more reliable on iOS)
