@@ -89,6 +89,9 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .pill { border-radius: var(--r-pill); padding: 11px 22px; font-size: 14.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 7px; justify-content: center; }
 .pill.dark { background: var(--ink); color: #fff; }
 .pill.outline { border: 1.5px solid var(--line); background: var(--bg); }
+#op-follow-btn { background: var(--ink); color: #fff; border: 1.5px solid var(--ink); }
+#op-follow-btn.following { background: var(--bg); color: var(--ink); border-color: var(--line); }
+#op-follow-btn.following::before { content: '\ea5e'; font-family: 'tabler-icons'; font-size: 16px; margin-right: 4px; }
 .seg { display: inline-flex; background: var(--surface); border-radius: var(--r-pill); padding: 3px; }
 .seg button { border-radius: var(--r-pill); padding: 7px 18px; font-size: 13.5px; font-weight: 600; color: var(--soft); }
 .seg button.on { background: var(--bg); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
@@ -202,45 +205,75 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 
 /* Feed reflection banner (evening) */
 .feed-reflection-banner {
-  margin: 12px 16px 14px;
-  padding: 14px 16px;
+  margin: 10px 16px 14px;
+  padding: 10px 12px 10px 12px;
   background: #1a1a1a;
   color: #fff;
   border-radius: 14px;
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
   position: relative;
   cursor: pointer;
 }
 .feed-reflection-banner.hidden { display: none; }
 .feed-reflection-banner .frb-icon {
-  width: 40px; height: 40px;
-  border-radius: 10px;
+  width: 34px; height: 34px;
+  border-radius: 8px;
   background: rgba(255,255,255,0.08);
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 20px; flex-shrink: 0;
+  flex-shrink: 0;
 }
-.feed-reflection-banner .frb-body { flex: 1; min-width: 0; padding-right: 20px; }
-.feed-reflection-banner .frb-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; letter-spacing: -0.1px; }
-.feed-reflection-banner .frb-sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 10px; }
+.feed-reflection-banner .frb-body { flex: 1; min-width: 0; padding-right: 4px; }
+.feed-reflection-banner .frb-title { font-size: 13px; font-weight: 600; letter-spacing: -0.1px; }
+.feed-reflection-banner .frb-sub { font-size: 11.5px; color: rgba(255,255,255,0.68); margin-top: 1px; }
 .feed-reflection-banner .frb-cta {
-  font-size: 12.5px; font-weight: 600;
-  padding: 7px 14px;
+  font-size: 12px; font-weight: 600;
+  padding: 6px 12px;
   background: #fff; color: #111;
   border: 0; border-radius: 100px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 .feed-reflection-banner .frb-close {
-  position: absolute; top: 10px; right: 10px;
-  width: 24px; height: 24px;
+  width: 22px; height: 22px;
   display: inline-flex; align-items: center; justify-content: center;
   color: rgba(255,255,255,0.55);
   background: none; border: 0;
-  font-size: 18px; line-height: 1;
+  font-size: 16px; line-height: 1;
   cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 2px;
 }
 .feed-reflection-banner .frb-close:active { color: rgba(255,255,255,0.9); }
+
+/* Feed filter badge — appears when search is applied */
+.feed-filter-badge {
+  margin: 8px 20px 14px;
+  padding: 7px 8px 7px 14px;
+  background: var(--surface);
+  border-radius: 100px;
+  display: inline-flex; align-items: center; gap: 8px;
+  max-width: calc(100% - 40px);
+}
+.feed-filter-badge .ffb-label { font-size: 12px; color: var(--soft); flex-shrink: 0; }
+.feed-filter-badge .ffb-term { font-size: 13px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.feed-filter-badge .ffb-clear {
+  width: 26px; height: 26px; border-radius: 50%; background: #fff;
+  display: grid; place-items: center; flex-shrink: 0; padding: 0; border: 0;
+}
+.feed-filter-badge .ffb-clear i.ti { font-size: 13px; color: var(--soft); }
+.feed-filter-badge .ffb-clear:active { background: rgba(0,0,0,0.06); }
+
+/* Empty state when search returns nothing */
+.feed-empty-state { padding: 40px 32px 60px; text-align: center; grid-column: 1 / -1; }
+.feed-empty-state .fes-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--ink); letter-spacing: -0.2px; }
+.feed-empty-state .fes-sub { font-size: 13px; color: var(--soft); margin-bottom: 16px; }
+.feed-empty-state .fes-suggestions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 28px; }
+.feed-empty-state .fes-suggestions .fes-chip { padding: 6px 12px; background: var(--surface); border-radius: 100px; font-size: 13px; font-weight: 500; color: var(--ink); border: 0; cursor: pointer; }
+.feed-empty-state .fes-suggestions .fes-chip:active { background: #e8e4dc; }
+.feed-empty-state .fes-cta { padding: 12px 20px; background: var(--ink); color: #fff; border: 0; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; }
+.feed-empty-state .fes-cta:active { background: #333; }
 
 /* ---- FEED TILE — SAVE BUTTONS (top-right) + SPARK (inline with title) ---- */
 .tile .save-actions {
@@ -291,32 +324,6 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   gap: 6px;
 }
 .tile .cap .title-row .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.spark-inline {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  display: grid; place-items: center;
-  color: var(--soft);
-  background: transparent; border: 0;
-  cursor: pointer; flex-shrink: 0;
-  transition: color 0.2s, transform 0.15s;
-  padding: 0;
-  position: relative;
-}
-.spark-inline i { font-size: 15px; line-height: 1; }
-.spark-inline:active { transform: scale(0.88); }
-.spark-inline.on {
-  background: var(--amber);
-  color: white;
-  box-shadow: 0 2px 6px rgba(227, 155, 58, 0.4);
-}
-.spark-inline.burst::after {
-  content: '';
-  position: absolute; inset: -3px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(227,155,58,0.55);
-  animation: saveBurstRing 0.45s ease-out;
-  pointer-events: none;
-}
 
 /* ---- DETAIL — ACTION ROW (Instagram style, icons only) ---- */
 .action-row {
@@ -338,11 +345,6 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 }
 .action-row .act:active { transform: scale(0.9); }
 .action-row .act i { font-size: 26px; line-height: 1; }
-.action-row .act.spark-act.on {
-  background: var(--amber);
-  color: white;
-  box-shadow: 0 3px 10px rgba(227, 155, 58, 0.42);
-}
 .action-row .act.keep-act.on {
   background: var(--ink);
   color: white;
@@ -470,37 +472,6 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 }
 
 /* Big personal spark button on detail */
-.spark-action-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 10px 20px 10px 16px;
-  background: white;
-  border: 1.5px solid var(--line);
-  border-radius: var(--r-pill);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
-  cursor: pointer;
-  transition: transform 0.15s, background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
-  margin: 12px 20px 0;
-  font-family: inherit;
-  position: relative;
-}
-.spark-action-btn:active { transform: scale(0.97); }
-.spark-action-btn .ic { font-size: 17px; }
-.spark-action-btn.on {
-  background: var(--amber);
-  color: white;
-  border-color: var(--amber);
-  box-shadow: 0 4px 16px rgba(227,155,58,0.42);
-}
-.spark-action-btn.burst::after {
-  content: '';
-  position: absolute; inset: -6px;
-  border-radius: var(--r-pill);
-  border: 2px solid rgba(227,155,58,0.6);
-  animation: sparkBurstRingBig 0.5s ease-out;
-  pointer-events: none;
-}
 @keyframes sparkBurstRingBig {
   from { transform: scale(0.9); opacity: 0.9; }
   to { transform: scale(1.15); opacity: 0; }
@@ -545,8 +516,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   60% { transform: translateX(3px) rotate(0.5deg); }
   75% { transform: translateX(-2px) rotate(0); }
 }
-.spark-pill.wiggle, .spark-action-btn.wiggle { animation: sparkWiggle 0.7s ease-in-out; }
-
+.spark-pill.wiggle, 
 .spark-sheet-head {
   display: flex; align-items: center; gap: 8px;
   font-size: 18px; font-weight: 800;
@@ -715,11 +685,11 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .url-cta button.disabled { background: #C7C7CC; }
 
 /* REVIEW */
-.rev-progress { padding: 0 18px 12px; display: flex; gap: 6px; align-items: center; }
+.rev-progress { padding: 10px 20px 12px; display: flex; gap: 6px; align-items: center; background: #fff; border-bottom: 1px solid var(--line); }
 .rev-progress .d { width: 24px; height: 3px; background: var(--line); border-radius: 100px; }
 .rev-progress .d.on { background: var(--ink); }
 .rev-progress .d.done { background: rgba(0,0,0,0.3); }
-.rev-progress .lbl { font-size: 11.5px; color: var(--soft); margin-left: auto; font-weight: 600; }
+.rev-progress .lbl { font-size: 12px; color: var(--soft); margin-left: auto; font-weight: 600; }
 
 .rev-image-wrap { padding: 0 18px 14px; }
 .rev-image { width: 100%; aspect-ratio: 4/5; border-radius: 14px; overflow: hidden; position: relative; touch-action: pan-y; }
@@ -998,6 +968,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .alerts-filter button { padding: 6px 14px; border-radius: var(--r-pill); background: white; border: 1px solid var(--line); font-size: 12.5px; font-weight: 600; color: var(--ink); white-space: nowrap; }
 .alerts-filter button.on { background: var(--ink); color: white; border-color: var(--ink); }
 .alert-section { padding: 18px 22px 8px; font-size: 11px; color: var(--soft); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; }
+.activity-time-label { padding: 12px 22px 6px; font-size: 12px; color: var(--soft); font-weight: 600; letter-spacing: -0.05px; }
 .alert-card.drafts-extra { display: none; }
 .alert-card.drafts-extra.on { display: flex; }
 .drafts-toggle {
@@ -1023,6 +994,19 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   letter-spacing: -0.05px;
 }
 .discard-draft-link:active { color: #E24B4A; }
+
+/* Discard confirm modal (center) */
+.modalwrap { position: absolute; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; padding: 24px; }
+.modalwrap.open { display: flex; }
+.modal-scrim { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+.modal-card { position: relative; background: #fff; border-radius: 16px; padding: 24px 20px 16px; width: 100%; max-width: 320px; box-shadow: 0 10px 40px rgba(0,0,0,0.25); }
+.modal-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px; text-align: center; }
+.modal-sub { font-size: 13.5px; color: var(--soft); text-align: center; line-height: 1.5; margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 8px; }
+.modal-actions button { flex: 1; padding: 13px 16px; border-radius: var(--r-pill); font-size: 14.5px; font-weight: 600; }
+.modal-cancel { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+.modal-discard { background: #E24B4A; color: #fff; border: 0; }
+.modal-discard:active { background: #c53c3c; }
 .alert-card { margin: 0 18px 8px; padding: 14px; background: white; border: 1px solid var(--line); border-radius: var(--r-card); display: flex; gap: 14px; align-items: flex-start; cursor: pointer; }
 .alert-card:active { background: var(--surface); }
 .alert-card .thumb { width: 60px; height: 74px; border-radius: 8px; flex-shrink: 0; position: relative; overflow: hidden; }
@@ -1063,9 +1047,11 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .profactions { display: flex; gap: 8px; margin-top: 14px; }
 .profactions .pill { padding: 8px 18px; font-size: 13px; font-weight: 600; }
 
-.profile-search { max-height: 0; overflow: hidden; transition: max-height 0.28s ease; padding: 0 20px; position: relative; z-index: 5; }
-.profile-search.open { max-height: 60px; padding-top: 60px; padding-bottom: 8px; }
-.profile-search .ps-inner { display: flex; align-items: center; gap: 8px; background: white; border: 1px solid var(--line); border-radius: var(--r-pill); padding: 8px 14px; }
+.profile-search { display: none; position: absolute; top: 0; left: 0; right: 0; z-index: 30; background: #fff; padding: 8px 14px 10px; border-bottom: 1px solid var(--line); }
+.profile-search.open { display: flex; align-items: center; gap: 8px; }
+.profile-search .ps-back { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; flex-shrink: 0; cursor: pointer; border: 0; }
+.profile-search .ps-back i.ti { font-size: 16px; color: var(--ink); }
+.profile-search .ps-inner { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--surface); border-radius: var(--r-pill); padding: 9px 16px; }
 .profile-search .ps-inner i.ti { font-size: 16px; color: var(--soft); }
 .profile-search .ps-inner input { flex: 1; font-size: 16px; border: none; background: transparent; padding: 0; }
 .profile-search .ps-inner input:focus { outline: none; }
@@ -1213,6 +1199,37 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
 .sheet-cta { display: flex; gap: 8px; margin-top: 16px; }
 .sheet-cta .delete { padding: 13px 18px; border-radius: var(--r-pill); border: 1px solid var(--line); font-size: 13.5px; font-weight: 600; color: #d9463c; }
 .sheet-cta .save { flex: 1; padding: 13px; background: var(--ink); color: white; border-radius: var(--r-pill); font-size: 14.5px; font-weight: 600; }
+/* Edit profile — avatar row */
+.edit-profile-sheet .ep-avatar-row { display: flex; justify-content: center; margin: 4px 0 16px; }
+.edit-profile-sheet .ep-avatar-wrap { position: relative; }
+.edit-profile-sheet .ep-avatar-wrap .av.lg { width: 84px; height: 84px; font-size: 32px; }
+.edit-profile-sheet .ep-avatar-edit {
+  position: absolute; bottom: 0; right: 0;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ink); color: #fff;
+  display: grid; place-items: center;
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+.edit-profile-sheet .ep-avatar-edit i.ti { font-size: 14px; }
+.edit-profile-sheet .sheet-field { margin-bottom: 8px; }
+
+/* Settings screen */
+.settings-body { padding: 8px 0 20px; }
+.settings-group-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--soft); letter-spacing: 0.5px; padding: 22px 22px 8px; }
+.settings-group { background: white; margin: 0 20px; border-radius: 14px; border: 1px solid var(--line); overflow: hidden; }
+.settings-group.danger { margin-top: 22px; }
+.settings-row { display: flex; align-items: center; gap: 10px; padding: 14px 16px; width: 100%; text-align: left; border: 0; background: transparent; border-bottom: 1px solid var(--line); cursor: pointer; }
+.settings-row:last-child { border-bottom: none; }
+.settings-row .sr-label { flex: 1; font-size: 14.5px; color: var(--ink); font-weight: 500; }
+.settings-row .sr-value { font-size: 13px; color: var(--soft); }
+.settings-row i.ti { font-size: 16px; color: var(--soft); }
+.settings-row:active { background: var(--surface); }
+.settings-row.danger-row .sr-label { color: #E24B4A; }
+.sr-toggle { width: 44px; height: 26px; background: var(--line); border-radius: 100px; position: relative; transition: background 0.2s; }
+.sr-toggle .knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: left 0.2s; }
+.sr-toggle.on { background: var(--ink); }
+.sr-toggle.on .knob { left: 21px; }
 .pro-block { margin-top: 16px; padding: 14px; background: var(--surface); border-radius: 12px; font-size: 12.5px; color: var(--ink); }
 .pro-block a { color: var(--ink); font-weight: 700; text-decoration: underline; margin-left: 4px; }
 .pro-sheet-body { text-align: center; padding: 8px 4px 0; }
@@ -1274,27 +1291,38 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
             <button class="iconbtn bell-btn" onclick="openAlerts(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge"></span></button>
           </div>
         </div>
+        <div class="feed-filter-badge" id="feed-filter-badge" style="display:none">
+          <span class="ffb-label">Filtering by</span>
+          <span class="ffb-term" id="feed-filter-term"></span>
+          <button class="ffb-clear" onclick="clearFeedFilter()" aria-label="Clear filter"><i class="ti ti-x"></i></button>
+        </div>
         <div class="feed-reflection-banner" id="feed-reflection-banner" onclick="startRitual()">
-          <div class="frb-icon">🌙</div>
+          <div class="frb-icon"><i class="ti ti-moon" style="font-size:18px;color:#FFC94D;"></i></div>
           <div class="frb-body">
             <div class="frb-title">Reflect on today</div>
             <div class="frb-sub">3 plops from today waiting.</div>
-            <button class="frb-cta" onclick="event.stopPropagation(); startRitual();">Start reflection</button>
           </div>
+          <button class="frb-cta" onclick="event.stopPropagation(); startRitual();">Start</button>
           <button class="frb-close" onclick="event.stopPropagation(); dismissFeedReflection();" aria-label="Dismiss">×</button>
         </div>
         <div class="masonry">
-          <div class="tile" onclick="openMine('Rose garden')"><div class="ph img" style="height:220px"><img data-img="buffer-1" alt="Rose garden" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rose garden</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Studio wall</div></div></div>
-          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph img" style="height:180px"><img data-img="wearing-duvet" alt="Wearing a duvet" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">"Wearing a duvet"</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">@studio.yumi</div></div></div>
-          <div class="tile" onclick="openOthers('junok','g2','Backward stairs','Hongdae · 2024')"><div class="ph img" style="height:210px"><img data-img="backward-stairs" alt="Backward stairs" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Backward stairs</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Paris atrium</div></div></div>
-          <div class="tile" onclick="openOthers('jinyoung','g5','Moss on bark','forest floor')"><div class="ph img" style="height:170px"><img data-img="moss-wall" alt="Moss on bark" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Moss on bark</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">forest floor</div></div></div>
-          <div class="tile" onclick="openOthers('typewell','g7','Sign, Euljiro','printing quarter')"><div class="ph img" style="height:190px"><img data-img="sign-euljiro" alt="Sign, Euljiro" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sign, Euljiro</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">street posters</div></div></div>
-          <div class="tile" onclick="openOthers('dahye','g6','Light','morning')"><div class="ph img" style="height:230px"><img data-img="light" alt="Light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">morning</div></div></div>
-          <div class="tile" onclick="openOthers('hanuel','g8','Phương Nguyễn','reference')"><div class="ph img" style="height:190px"><img data-img="phuong-nguyen" alt="Phương Nguyễn" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Phương Nguyễn</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">reference</div></div></div>
-          <div class="tile" onclick="openOthers('jinyoung','g9','Rainbow light','chapel floor')"><div class="ph img" style="height:210px"><img data-img="rainbow-light" alt="Rainbow light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Rainbow light</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">chapel floor</div></div></div>
-          <div class="tile" onclick="openOthers('dahye','g6','Pinault collection','Tadao Ando concrete')"><div class="ph img" style="height:200px"><img data-img="pinault-collection" alt="Pinault collection" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Pinault collection</span><button class="spark-inline" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">Tadao Ando concrete</div></div></div>
-          <div class="tile" onclick="openOthers('junok','g4','Tracy Emin studio pool','empty pool')"><div class="ph img" style="height:220px"><img data-img="tracy-emin" alt="Tracy Emin studio pool" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Tracy Emin studio pool</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">empty pool</div></div></div>
-          <div class="tile" onclick="openMine('Sconce at dusk')"><div class="ph img" style="height:180px"><img data-img="buffer-2" alt="Sconce at dusk" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div><div class="cap"><div class="title-row"><span class="t">Sconce at dusk</span><button class="spark-inline on" onclick="toggleSpark(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button></div><div class="h">hallway light</div></div></div>
+          <div class="tile" onclick="openMine('Rose garden')"><div class="ph img" style="height:220px"><img data-img="buffer-1" alt="Rose garden" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g4','&quot;Wearing a duvet&quot;','@studio.yumi · 2024')"><div class="ph img" style="height:180px"><img data-img="wearing-duvet" alt="Wearing a duvet" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('junok','g2','Backward stairs','Hongdae · 2024')"><div class="ph img" style="height:210px"><img data-img="backward-stairs" alt="Backward stairs" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g5','Moss on bark','forest floor')"><div class="ph img" style="height:170px"><img data-img="moss-wall" alt="Moss on bark" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('typewell','g7','Sign, Euljiro','printing quarter')"><div class="ph img" style="height:190px"><img data-img="sign-euljiro" alt="Sign, Euljiro" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Light','morning')"><div class="ph img" style="height:230px"><img data-img="light" alt="Light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('hanuel','g8','Phương Nguyễn','reference')"><div class="ph img" style="height:190px"><img data-img="phuong-nguyen" alt="Phương Nguyễn" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('jinyoung','g9','Rainbow light','chapel floor')"><div class="ph img" style="height:210px"><img data-img="rainbow-light" alt="Rainbow light" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('dahye','g6','Pinault collection','Tadao Ando concrete')"><div class="ph img" style="height:200px"><img data-img="pinault-collection" alt="Pinault collection" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openOthers('junok','g4','Tracy Emin studio pool','empty pool')"><div class="ph img" style="height:220px"><img data-img="tracy-emin" alt="Tracy Emin studio pool" loading="lazy"><div class="save-actions"><button class="save-btn" onclick="toggleSave(event, this)" aria-label="Quick keep"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+          <div class="tile" onclick="openMine('Sconce at dusk')"><div class="ph img" style="height:180px"><img data-img="buffer-2" alt="Sconce at dusk" loading="lazy"><div class="save-actions"><button class="save-btn on" onclick="toggleSave(event, this)" aria-label="Kept"><i class="ti ti-bookmark"></i></button><button class="save-btn note-btn on" onclick="editFromFeed(this, event)" aria-label="Note"><i class="ti ti-scribble"></i></button></div></div></div>
+        </div>
+        <div class="feed-empty-state" id="feed-empty-state" style="display:none">
+          <div class="fes-title">No plops for "<span id="fes-term"></span>"</div>
+          <div class="fes-sub">Try these similar ones:</div>
+          <div class="fes-suggestions" id="fes-suggestions"></div>
+          <button class="fes-cta" onclick="clearFeedFilter(); openAddSheet();"><i class="ti ti-plus" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>Create a plop</button>
         </div>
       </div>
       <div class="bottomnav">
@@ -1323,7 +1351,6 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           </div>
         </div>
         <div class="action-row">
-          <button class="act spark-act" onclick="toggleAction(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button>
           <button class="act keep-act" onclick="toggleAction(event, this)" aria-label="Keep"><i class="ti ti-bookmark"></i></button>
           <button class="act keep-act" onclick="editMineInStudio()" aria-label="Edit notes & marks"><i class="ti ti-scribble"></i></button>
           <button class="act share-act" onclick="toast('Link copied')" aria-label="Share"><i class="ti ti-share-3"></i></button>
@@ -1339,20 +1366,20 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <div class="notes-list mine-notes-list" id="mine-notes-list"></div>
         </div>
         <div class="reco-section-h" style="border-top: 1px solid var(--line); margin-top: 18px;"><span>Discoveries from this plop</span></div>
-        <div class="reco-filter">
+        <div class="reco-filter" id="mine-reco-filter">
           <button class="on" data-filter="all" onclick="filterReco(event, this)">All</button>
           <button data-filter="visual" onclick="filterReco(event, this)"><i class="ti ti-eye"></i> Visual</button>
           <button class="notes-filter" data-filter="notes" onclick="filterReco(event, this)"><i class="ti ti-quote"></i> Notes</button>
         </div>
         <div class="reco-feed">
-          <div class="rc" data-type="visual"><div class="rc-img g6" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">White jar with willow</div><div class="rc-author">Joseon · Leeum Museum</div></div></div>
-          <div class="rc note-based" data-type="notes"><div class="rc-img g5" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div><div class="rc-body"><div class="rc-title">Grandmother's kitchen</div><div class="rc-author">@maralind · your "ancestors" thread</div></div></div>
-          <div class="rc" data-type="visual"><div class="rc-img g8" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Weaving detail</div><div class="rc-author">Anni Albers · Tate</div></div></div>
-          <div class="rc note-based" data-type="notes"><div class="rc-img g4" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div><div class="rc-body"><div class="rc-title">Tree rings, split log</div><div class="rc-author">@tomasreyes · your "materials · wood"</div></div></div>
-          <div class="rc" data-type="visual"><div class="rc-img g3" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Ceramic vessel</div><div class="rc-author">Song Dynasty · Met</div></div></div>
-          <div class="rc note-based" data-type="notes"><div class="rc-img g2" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div><div class="rc-body"><div class="rc-title">Old fruit tray</div><div class="rc-author">@junok · your "traditional fruits"</div></div></div>
-          <div class="rc" data-type="visual"><div class="rc-img g7" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Round celadon bowl</div><div class="rc-author">Goryeo · Nat'l Museum</div></div></div>
-          <div class="rc note-based" data-type="notes"><div class="rc-img g9" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div><div class="rc-body"><div class="rc-title">Carved rice bowl</div><div class="rc-author">@sena · your "everyday materials"</div></div></div>
+          <div class="rc" data-type="visual"><div class="rc-img g6" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div></div>
+          <div class="rc note-based" data-type="notes"><div class="rc-img g5" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div></div>
+          <div class="rc" data-type="visual"><div class="rc-img g8" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div></div>
+          <div class="rc note-based" data-type="notes"><div class="rc-img g4" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div></div>
+          <div class="rc" data-type="visual"><div class="rc-img g3" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div></div>
+          <div class="rc note-based" data-type="notes"><div class="rc-img g2" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div></div>
+          <div class="rc" data-type="visual"><div class="rc-img g7" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div></div>
+          <div class="rc note-based" data-type="notes"><div class="rc-img g9" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div></div>
         </div>
       </div>
     </section>
@@ -1374,7 +1401,6 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           </div>
         </div>
         <div class="action-row">
-          <button class="act spark-act" onclick="toggleAction(event, this)" aria-label="Spark"><i class="ti ti-bolt"></i></button>
           <button class="act keep-act" onclick="toggleAction(event, this)" aria-label="Keep"><i class="ti ti-bookmark"></i></button>
           <button class="act keep-act" onclick="editOthersInStudio(document.getElementById('op-cap').textContent, document.getElementById('op-handle').textContent.replace('@',''))" aria-label="Edit notes & marks"><i class="ti ti-scribble"></i></button>
           <button class="act share-act" onclick="toast('Link copied')" aria-label="Share"><i class="ti ti-share-3"></i></button>
@@ -1397,12 +1423,12 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <button class="notes-filter" data-filter="notes" onclick="filterReco(event, this)"><i class="ti ti-quote"></i> Notes</button>
         </div>
         <div class="reco-feed">
-          <div class="rc" data-type="visual"><div class="rc-img g7" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Silk drapery study</div><div class="rc-author">@studio.mira</div></div></div>
-          <div class="rc note-based" data-type="notes"><div class="rc-img g2" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div><div class="rc-body"><div class="rc-title">Grandma's blanket</div><div class="rc-author">@maralind · your "materials"</div></div></div>
-          <div class="rc" data-type="visual"><div class="rc-img g8" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Curtain sculpture</div><div class="rc-author">@dahye</div></div></div>
-          <div class="rc note-based" data-type="notes"><div class="rc-img g4" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div><div class="rc-body"><div class="rc-title">Fabric memory</div><div class="rc-author">@tomasreyes · your "textile"</div></div></div>
-          <div class="rc" data-type="visual"><div class="rc-img g5" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Bedsheet composition</div><div class="rc-author">@lore</div></div></div>
-          <div class="rc" data-type="visual"><div class="rc-img g6" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div><div class="rc-body"><div class="rc-title">Cotton batting</div><div class="rc-author">@junok</div></div></div>
+          <div class="rc" data-type="visual"><div class="rc-img g7" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div></div>
+          <div class="rc note-based" data-type="notes"><div class="rc-img g2" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div></div>
+          <div class="rc" data-type="visual"><div class="rc-img g8" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div></div>
+          <div class="rc note-based" data-type="notes"><div class="rc-img g4" style="aspect-ratio:4/5"><div class="rc-type-badge"><i class="ti ti-quote"></i></div></div></div>
+          <div class="rc" data-type="visual"><div class="rc-img g5" style="aspect-ratio:3/4"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div></div>
+          <div class="rc" data-type="visual"><div class="rc-img g6" style="aspect-ratio:1/1"><div class="rc-type-badge"><i class="ti ti-eye"></i></div></div></div>
         </div>
       </div>
     </section>
@@ -1412,7 +1438,7 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
       <div class="scrollpage" style="padding-bottom:120px">
         <div class="dethead">
           <button class="backbtn" onclick="back()">←</button>
-          <span style="font-size:15px;font-weight:700">Alerts</span>
+          <span style="font-size:15px;font-weight:700">Notifications</span>
           <div style="width:38px"></div>
         </div>
         <div class="alert-section" data-cat="waiting" style="padding-top:22px">Drafts</div>
@@ -1453,19 +1479,35 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <button class="drafts-toggle" id="drafts-toggle" onclick="toggleDrafts(this)">Show 1 more draft</button>
 
         <div class="alert-section" data-cat="kept">Activity</div>
+
+        <div class="activity-time-label">Today</div>
         <div class="alert-card alert-social" data-cat="kept" onclick="openMine('Rose garden')">
           <span class="av g1">H</span>
           <div class="body"><b>@hanuel</b> kept your <b>Rose garden</b><span class="m">1 hour ago</span></div>
           <div class="side-thumb g1"></div>
         </div>
         <div class="alert-card alert-social" data-cat="kept" onclick="openMine('Sconce at dusk')">
+          <span class="av g4">M</span>
+          <div class="body"><b>@maralind</b> kept your <b>Sconce at dusk</b><span class="m">4 hours ago</span></div>
+          <div class="side-thumb g2"></div>
+        </div>
+
+        <div class="activity-time-label">Yesterday</div>
+        <div class="alert-card alert-social" data-cat="kept" onclick="openMine('Sconce at dusk')">
           <span class="av g2">J</span>
           <div class="body"><b>@jinyoung</b> kept your <b>Sconce at dusk</b><span class="m">Yesterday</span></div>
           <div class="side-thumb g2"></div>
         </div>
+
+        <div class="activity-time-label">Last 7 days</div>
         <div class="alert-card alert-social" data-cat="follows">
           <span class="av g3">D</span>
           <div class="body"><b>@dahye</b> started following you<span class="m">2 days ago</span></div>
+        </div>
+        <div class="alert-card alert-social" data-cat="kept" onclick="openMine('Rose garden')">
+          <span class="av g7">T</span>
+          <div class="body"><b>@typewell</b> kept your <b>Rose garden</b><span class="m">5 days ago</span></div>
+          <div class="side-thumb g1"></div>
         </div>
       </div>
       <div class="bottomnav">
@@ -1482,10 +1524,11 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <div class="dethead" style="position:absolute;background:none;backdrop-filter:none;left:0;right:0;justify-content:flex-end">
           <div style="display:flex;gap:8px">
             <button class="iconbtn" onclick="toggleProfileSearch()" style="background:var(--surface)"><i class="ti ti-search"></i></button>
-            <button class="iconbtn" onclick="toast('Settings')" style="background:var(--surface)"><i class="ti ti-settings"></i></button>
+            <button class="iconbtn" onclick="go('scr-settings')" style="background:var(--surface)"><i class="ti ti-settings"></i></button>
           </div>
         </div>
         <div class="profile-search" id="profile-search">
+          <button class="ps-back" onclick="toggleProfileSearch()" aria-label="Close search"><i class="ti ti-arrow-left"></i></button>
           <div class="ps-inner"><i class="ti ti-search"></i><input placeholder="Search my plops…"></div>
         </div>
         <div class="cover"></div>
@@ -1536,11 +1579,12 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           </div>
         </div>
         <div class="profile-search" id="other-profile-search">
+          <button class="ps-back" onclick="toggleOtherProfileSearch()" aria-label="Close search"><i class="ti ti-arrow-left"></i></button>
           <div class="ps-inner"><i class="ti ti-search"></i><input placeholder="Search Hanuel's plops…"></div>
         </div>
         <div class="cover"></div>
         <div class="profhead">
-          <span class="av lg g1">H</span>
+          <span class="av lg g4">H</span>
           <div class="profname">Hanuel</div>
           <div class="profhandle">@hanuel</div>
           <div class="profbio">Textile & light. Working from Seoul.</div>
@@ -1549,15 +1593,20 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
             <a href="#" onclick="event.preventDefault();toast('@hanuel on Instagram')"><i class="ti ti-brand-instagram"></i>@hanuel</a>
           </div>
           <div class="profactions">
-            <button class="pill outline" onclick="toast('Following ' + document.getElementById('op-handle').textContent)">Follow</button>
+            <button class="pill" id="op-follow-btn" onclick="toggleFollow(this)">Follow</button>
             <button class="pill outline" onclick="toast('Link copied')">Share</button>
           </div>
         </div>
-        <div class="proftabs" id="other-tabs">
-          <div class="proftab on" data-tab="all">All <span class="cnt">134</span></div>
-          <div class="proftab" data-tab="portfolio">Portfolio <span class="cnt">42</span></div>
-          <div class="proftab" data-tab="refs">Refs <span class="cnt">78</span></div>
-          <div class="proftab" data-tab="ceramics">Ceramics <span class="cnt">14</span></div>
+        <div class="pond-header">
+          <button class="pond-selector">
+            <span class="ps-name">All</span>
+            <span class="ps-count">134</span>
+            <i class="ti ti-chevron-down"></i>
+          </button>
+          <div class="view-toggle">
+            <button class="vt-btn on" title="Image view"><i class="ti ti-layout-grid"></i></button>
+            <button class="vt-btn" title="Note view"><i class="ti ti-notes"></i></button>
+          </div>
         </div>
         <div class="profile-grid">
           <div class="tile"><div class="ph img"><img data-img="wearing-duvet" alt="" loading="lazy"></div></div>
@@ -1635,12 +1684,12 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <span style="font-size:13px;color:var(--soft)" id="rev-title">Draft</span>
         <div style="width:38px"></div>
       </div>
-      <div class="rev-progress" id="rev-progress" style="display:none">
-        <span class="d on"></span><span class="d"></span><span class="d"></span>
-        <span class="lbl">1 of 3</span>
-      </div>
 
       <div class="rev-body" id="rev-scroll">
+        <div class="rev-progress" id="rev-progress" style="display:none">
+          <span class="d on"></span><span class="d"></span><span class="d"></span>
+          <span class="lbl">1 of 3</span>
+        </div>
 
         <!-- MARKS + NOTES CARD (private zone) -->
         <div class="marks-card">
@@ -1757,9 +1806,54 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
         <div class="check-lg">✓</div>
         <div class="msg" id="saved-msg">Saved.</div>
         <div class="sub" id="saved-sub">Caption is on ari · notes stay with you.</div>
-        <button class="bell" id="saved-bell" style="display:none" onclick="go('scr-alerts')"><i class="ti ti-bell"></i> I'll ping you in Alerts <span class="chev">›</span></button>
+        <button class="bell" id="saved-bell" style="display:none" onclick="go('scr-alerts')"><i class="ti ti-bell"></i> I'll ping you in Notifications <span class="chev">›</span></button>
         <div class="actions">
           <button class="pill outline" onclick="goHome()">Back to feed</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="screen" id="scr-settings">
+      <div class="scrollpage" style="padding-bottom:60px">
+        <div class="dethead"><button class="backbtn" onclick="back()">←</button><span style="font-size:15px;font-weight:700">Settings</span><div style="width:38px"></div></div>
+        <div class="settings-body">
+          <div class="settings-group-label">Account</div>
+          <div class="settings-group">
+            <button class="settings-row"><span class="sr-label">Email</span><span class="sr-value">sungwonj92@gmail.com</span><i class="ti ti-chevron-right"></i></button>
+            <button class="settings-row"><span class="sr-label">Password</span><span class="sr-value">•••••••</span><i class="ti ti-chevron-right"></i></button>
+          </div>
+
+          <div class="settings-group-label">Notifications</div>
+          <div class="settings-group">
+            <div class="settings-row"><span class="sr-label">Reflection reminder</span><span class="sr-toggle on"><span class="knob"></span></span></div>
+            <div class="settings-row"><span class="sr-label">When someone plops mine</span><span class="sr-toggle on"><span class="knob"></span></span></div>
+            <div class="settings-row"><span class="sr-label">New followers</span><span class="sr-toggle"><span class="knob"></span></span></div>
+          </div>
+
+          <div class="settings-group-label">Privacy</div>
+          <div class="settings-group">
+            <button class="settings-row"><span class="sr-label">Profile visibility</span><span class="sr-value">Public</span><i class="ti ti-chevron-right"></i></button>
+            <button class="settings-row"><span class="sr-label">Private ponds</span><span class="sr-value">1 pond</span><i class="ti ti-chevron-right"></i></button>
+          </div>
+
+          <div class="settings-group-label">Appearance</div>
+          <div class="settings-group">
+            <button class="settings-row"><span class="sr-label">Theme</span><span class="sr-value">System</span><i class="ti ti-chevron-right"></i></button>
+          </div>
+
+          <div class="settings-group-label">About</div>
+          <div class="settings-group">
+            <div class="settings-row"><span class="sr-label">Version</span><span class="sr-value">0.4.0</span></div>
+            <button class="settings-row"><span class="sr-label">Terms of service</span><i class="ti ti-chevron-right"></i></button>
+            <button class="settings-row"><span class="sr-label">Privacy policy</span><i class="ti ti-chevron-right"></i></button>
+            <button class="settings-row"><span class="sr-label">Send feedback</span><i class="ti ti-chevron-right"></i></button>
+          </div>
+
+          <div class="settings-group danger">
+            <button class="settings-row danger-row"><span class="sr-label">Sign out</span></button>
+            <button class="settings-row danger-row"><span class="sr-label">Delete account</span></button>
+          </div>
         </div>
       </div>
     </section>
@@ -1785,6 +1879,19 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
       </div>
     </section>
 
+  </div>
+
+  <!-- DISCARD CONFIRM MODAL -->
+  <div class="modalwrap" id="discard-modal">
+    <div class="modal-scrim" onclick="closeDiscardModal()"></div>
+    <div class="modal-card">
+      <div class="modal-title">Discard this draft?</div>
+      <div class="modal-sub">This can't be undone. Your notes and marks will be lost.</div>
+      <div class="modal-actions">
+        <button class="modal-cancel" onclick="closeDiscardModal()">Cancel</button>
+        <button class="modal-discard" onclick="confirmDiscardDraft()">Discard</button>
+      </div>
+    </div>
   </div>
 
   <!-- ADD SHEET -->
@@ -1887,10 +1994,6 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
           <div class="fs-label">Currents right now</div>
           <div class="fs-chips" id="fs-currents"></div>
         </div>
-        <div class="fs-section">
-          <div class="fs-label">Places</div>
-          <div class="fs-chips" id="fs-places"></div>
-        </div>
       </div>
       <div class="fs-results" id="fs-results" style="display:none">
         <div class="fs-label" id="fs-results-label">Results</div>
@@ -1929,13 +2032,21 @@ input, textarea { font: inherit; border: 0; outline: none; background: transpare
   <!-- EDIT PROFILE SHEET -->
   <div class="sheetwrap" id="editprof-sheet">
     <div class="scrim" onclick="closeEditProfileSheet()"></div>
-    <div class="sheet">
+    <div class="sheet edit-profile-sheet">
       <div class="grab"></div>
       <h2 class="sheet-h">Edit profile</h2>
-      <p class="sheet-p">Change your name, handle, or avatar. Tabs are edited on the profile page.</p>
-      <div class="sheet-field"><div class="lbl">Display name</div><input value="Sungwon"></div>
-      <div class="sheet-field"><div class="lbl">Handle</div><input value="@sungwon"></div>
-      <div class="sheet-field"><div class="lbl">Location</div><input value="Seoul"></div>
+      <div class="ep-avatar-row">
+        <div class="ep-avatar-wrap">
+          <span class="av lg">S</span>
+          <button class="ep-avatar-edit" onclick="toast('Change photo')" aria-label="Change avatar"><i class="ti ti-camera"></i></button>
+        </div>
+      </div>
+      <div class="sheet-field"><div class="lbl">Name</div><input value="Sungwon" placeholder="Your name"></div>
+      <div class="sheet-field"><div class="lbl">Handle</div><input value="@sungwon" placeholder="@handle"></div>
+      <div class="sheet-field"><div class="lbl">Bio</div><input value="Slower way to collect. Making ari." placeholder="Short bio"></div>
+      <div class="sheet-field"><div class="lbl">Website</div><input value="sungwon.io" placeholder="yoursite.com"></div>
+      <div class="sheet-field"><div class="lbl">Instagram</div><input value="@sungwon" placeholder="@yourhandle"></div>
+      <div class="sheet-field"><div class="lbl">Location</div><input value="Seoul" placeholder="City, country"></div>
       <div class="sheet-cta"><button class="save" onclick="toast('Profile saved'); closeEditProfileSheet();">Save</button></div>
     </div>
   </div>
@@ -2092,6 +2203,8 @@ function renderMineDetail(title) {
   }
   // marks on image
   renderMineImageMarks(p.notes || []);
+  // update Discoveries filter based on whether this plop has notes
+  updateRecoFilterVisibility('mine-reco-filter', (p.notes || []).length > 0);
 }
 function renderMineImageMarks(notes) {
   const svg = document.getElementById('mine-marks-svg');
@@ -2151,7 +2264,7 @@ function editFromFeed(btn, event) {
   event.stopPropagation();
   const tile = btn.closest('.tile');
   if (!tile) return;
-  const title = (tile.querySelector('.cap .t')?.textContent || '').trim();
+  const title = (tile.querySelector('img')?.getAttribute('alt') || '').trim();
   const onclickAttr = tile.getAttribute('onclick') || '';
   // mark save + note buttons visually
   const bookmark = tile.querySelector('.save-actions .save-btn:first-of-type');
@@ -3141,7 +3254,13 @@ function openAlerts(btn) {
   go('scr-alerts');
 }
 function discardDraft() {
-  if (!confirm('Discard this draft? This can\'t be undone.')) return;
+  document.getElementById('discard-modal').classList.add('open');
+}
+function closeDiscardModal() {
+  document.getElementById('discard-modal').classList.remove('open');
+}
+function confirmDiscardDraft() {
+  closeDiscardModal();
   toast('Draft discarded');
   goHome();
 }
@@ -3506,6 +3625,8 @@ function openFeedSearch() {
   const inp = document.getElementById('feed-search-input');
   if (inp) inp.value = '';
   showFeedSuggestions(true);
+  // Clear any existing filter when opening search
+  clearFeedFilter();
   sheet.classList.add('open');
   setTimeout(() => { if (inp) inp.focus(); }, 260);
 }
@@ -3532,26 +3653,81 @@ function renderFeedSuggestions() {
   };
   if (typeof MY_PLOPS === 'object') MY_PLOPS.forEach(p => p.notes.forEach(n => addText(n.text)));
   if (typeof OTHERS_NOTES === 'object') Object.values(OTHERS_NOTES).forEach(list => list.forEach(n => addText(n.text)));
-  const currents = Object.entries(wordFreq).sort((a,b) => b[1]-a[1]).slice(0, 8);
+  const currents = Object.entries(wordFreq).sort((a,b) => b[1]-a[1]).slice(0, 12);
   const currentsEl = document.getElementById('fs-currents');
   if (currentsEl) {
     currentsEl.innerHTML = currents.map(([w,c]) => `<span class="fs-chip" onclick="pickFeedChip('${w.replace(/'/g,"\\'")}')">${w}<span class="fs-count">${c}</span></span>`).join('');
   }
-  // places: from feed tile meta (.cap .h)
-  const placeSet = new Set();
-  document.querySelectorAll('#scr-feed .masonry .tile .cap .h').forEach(el => {
-    const t = (el.textContent || '').trim();
-    if (t) placeSet.add(t);
-  });
-  const placesEl = document.getElementById('fs-places');
-  if (placesEl) {
-    placesEl.innerHTML = [...placeSet].slice(0, 8).map(p => `<span class="fs-chip" onclick="pickFeedChip('${p.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">${p}</span>`).join('');
-  }
 }
 function pickFeedChip(term) {
-  const inp = document.getElementById('feed-search-input');
-  if (inp) { inp.value = term; inp.focus(); }
-  applyFeedSearch();
+  commitFeedSearch(term);
+}
+function commitFeedSearch(term) {
+  closeFeedSearch();
+  applyFeedFilter(term);
+}
+function applyFeedFilter(term) {
+  const q = (term || '').toLowerCase().trim();
+  if (!q) { clearFeedFilter(); return; }
+  const badge = document.getElementById('feed-filter-badge');
+  const badgeTerm = document.getElementById('feed-filter-term');
+  const empty = document.getElementById('feed-empty-state');
+  const banner = document.getElementById('feed-reflection-banner');
+  if (badge) badge.style.display = 'inline-flex';
+  if (badgeTerm) badgeTerm.textContent = '"' + term + '"';
+  // Hide reflection banner while filtering
+  if (banner) { banner.dataset.filterHid = '1'; banner.style.display = 'none'; }
+  let visibleCount = 0;
+  document.querySelectorAll('#scr-feed .masonry .tile').forEach(t => {
+    const alt = (t.querySelector('img')?.getAttribute('alt') || '').trim();
+    const attr = t.getAttribute('onclick') || '';
+    const noteHay = searchableTextFor(alt);
+    const hay = (alt + ' ' + attr + ' ' + noteHay).toLowerCase();
+    if (hay.includes(q)) { t.style.display = ''; visibleCount++; }
+    else { t.style.display = 'none'; }
+  });
+  if (empty) {
+    if (visibleCount === 0) {
+      empty.style.display = 'block';
+      const fes = document.getElementById('fes-term');
+      if (fes) fes.textContent = term;
+      // Suggest top keywords different from the query
+      const wordFreq = {};
+      const stop = new Set(['the','a','an','of','in','on','and','to','is','it','you','my','me','i','at','with','for','that','this','was','are','be','as','but','not','have','has','from','by','or','so','if','all','into','out','—','·','one','only','just','were','like','than','been','when','then','here','there','still','ever','more','some']);
+      if (typeof MY_PLOPS === 'object') MY_PLOPS.forEach(p => p.notes.forEach(n => {
+        (n.text || '').toLowerCase().split(/[\s\-\.,;:!?"'()]+/).forEach(w => {
+          if (!w || w.length < 3 || stop.has(w) || w === q) return;
+          wordFreq[w] = (wordFreq[w] || 0) + 1;
+        });
+      }));
+      if (typeof OTHERS_NOTES === 'object') Object.values(OTHERS_NOTES).forEach(list => list.forEach(n => {
+        (n.text || '').toLowerCase().split(/[\s\-\.,;:!?"'()]+/).forEach(w => {
+          if (!w || w.length < 3 || stop.has(w) || w === q) return;
+          wordFreq[w] = (wordFreq[w] || 0) + 1;
+        });
+      }));
+      const top = Object.entries(wordFreq).sort((a,b) => b[1]-a[1]).slice(0, 4).map(x => x[0]);
+      const suggEl = document.getElementById('fes-suggestions');
+      if (suggEl) suggEl.innerHTML = top.map(k =>
+        `<button class="fes-chip" onclick="applyFeedFilter('${k.replace(/'/g,"\\'")}')">${k}</button>`
+      ).join('');
+    } else {
+      empty.style.display = 'none';
+    }
+  }
+}
+function clearFeedFilter() {
+  const badge = document.getElementById('feed-filter-badge');
+  const empty = document.getElementById('feed-empty-state');
+  const banner = document.getElementById('feed-reflection-banner');
+  if (badge) badge.style.display = 'none';
+  if (empty) empty.style.display = 'none';
+  document.querySelectorAll('#scr-feed .masonry .tile').forEach(t => { t.style.display = ''; });
+  // Restore reflection banner if it was hidden by filter (not by user dismiss)
+  if (banner && banner.dataset.filterHid === '1' && !banner.classList.contains('hidden')) {
+    banner.style.display = '';
+    delete banner.dataset.filterHid;
+  }
 }
 function searchableTextFor(title) {
   const parts = [title];
@@ -3596,7 +3772,13 @@ function applyFeedSearch() {
 }
 setTimeout(() => {
   const inp = document.getElementById('feed-search-input');
-  if (inp) inp.addEventListener('input', applyFeedSearch);
+  if (inp) inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = inp.value.trim();
+      if (val) commitFeedSearch(val);
+    }
+  });
 }, 0);
 function toggleProfileSearch() {
   const el = document.getElementById('profile-search');
@@ -3611,6 +3793,16 @@ function toggleOtherProfileSearch() {
   const opening = !el.classList.contains('open');
   el.classList.toggle('open');
   if (opening) setTimeout(() => { const inp = el.querySelector('input'); if (inp) inp.focus(); }, 200);
+}
+function toggleFollow(btn) {
+  const isFollowing = btn.classList.contains('following');
+  if (isFollowing) {
+    btn.classList.remove('following');
+    btn.textContent = 'Follow';
+  } else {
+    btn.classList.add('following');
+    btn.textContent = 'Following';
+  }
 }
 function openEditProfileSheet() { document.getElementById('editprof-sheet').classList.add('open'); }
 function closeEditProfileSheet() { document.getElementById('editprof-sheet').classList.remove('open'); }
@@ -3736,19 +3928,6 @@ function openKeptBySheet(title, source) {
 function closeKeptBySheet() {
   const s = document.getElementById('keptby-sheet');
   if (s) s.classList.remove('open');
-}
-
-// ============ Spark toggle (feed tile inline + used elsewhere) ============
-function toggleSpark(e, btn) {
-  e.stopPropagation();
-  const wasOn = btn.classList.contains('on');
-  btn.classList.toggle('on');
-  if (!wasOn) {
-    btn.classList.remove('burst');
-    void btn.offsetWidth;
-    btn.classList.add('burst');
-    setTimeout(() => btn.classList.remove('burst'), 500);
-  }
 }
 
 // ============ Save (Bookmark / Pencil) toggle on feed tiles ============
