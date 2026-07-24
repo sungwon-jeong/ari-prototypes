@@ -145,7 +145,6 @@ b,strong{font-weight:600}
 .plop-mark{
   position:absolute;width:27px;height:27px;border-radius:50%;background:var(--mark);border:1.5px solid #fff;
   box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;display:none;
-  transition:width .24s cubic-bezier(.32,.8,.4,1), height .24s cubic-bezier(.32,.8,.4,1), border-radius .24s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
   z-index:5;
 }
 .hero.marks-on .plop-mark{display:block}
@@ -159,10 +158,10 @@ b,strong{font-weight:600}
 .plop-mark.lasso .pm-badge{inset:auto;top:4px;left:4px;width:18px;height:18px;border-radius:50%;font-size:10px;box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .plop-mark.lasso.open .lasso-svg{display:none}
 .plop-mark.open{width:190px;max-width:calc(100% - 24px);height:auto;min-height:56px;border-radius:16px;box-shadow:0 10px 34px rgba(0,0,0,.24);z-index:6;background:#fff;border-color:transparent}
-.plop-mark.open .pm-badge{inset:auto;top:10px;left:10px;width:22px;height:22px;border-radius:50%;font-size:12px}
-.plop-mark.open .pm-note{display:block;padding:14px 34px 14px 40px;color:#111;font-size:13px;line-height:1.45;word-break:break-word}
-.plop-mark.open .pm-del{display:flex;position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;color:#8a8a8e;background:var(--surface)}
-.plop-mark.open .pm-del svg{width:12px;height:12px}
+.plop-mark.open .pm-badge{display:none}
+.plop-mark.open .pm-note{display:block;padding:14px 32px 14px 16px;color:#111;font-size:13px;line-height:1.45;word-break:break-word;opacity:0;animation:fadeIn .15s ease forwards}
+.plop-mark.open .pm-del{display:flex;position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;align-items:center;justify-content:center;color:#8a8a8e;background:transparent;border:0;padding:0}
+.plop-mark.open .pm-del svg{width:14px;height:14px;stroke-width:2}
 .actions{display:flex;align-items:center;gap:6px;padding:6px 18px 14px}
 .actbtn{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink);position:relative;flex-grow:0;flex-basis:44px}
 .actbtn.note-toggle{cursor:pointer;transition:flex-grow .22s ease, border-radius .22s ease, background .2s ease}
@@ -578,6 +577,16 @@ b,strong{font-weight:600}
 .cam-flip{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;border:0}
 .cam-flip svg{width:20px;height:20px}
 
+
+/* Mobile: fill viewport, drop desktop phone frame */
+@media (max-width: 480px){
+  body{padding:0;align-items:stretch;justify-content:stretch;background:var(--bg)}
+  .phone{width:100vw;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+  .statusbar{display:none}
+  .bottomnav{bottom:max(16px, env(safe-area-inset-bottom))}
+}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
@@ -804,7 +813,7 @@ const plopScreen=(id,o)=>`
         const pos = m.x>55
           ? `top:calc(${m.y}% - 13.5px); right:calc(${100-m.x}% - 13.5px); left:auto;`
           : `top:calc(${m.y}% - 13.5px); left:calc(${m.x}% - 13.5px); right:auto;`;
-        return `<div class="plop-mark" style="${pos}" onclick="event.stopPropagation();toggleMarkNote('${id}',this)"><span class="pm-badge">${m.n}</span><span class="pm-note">${m.note}</span><button class="pm-del" onclick="event.stopPropagation();deletePlopMark(this.parentElement)">${I.close}</button></div>`;
+        return `<div class="plop-mark" style="${pos}" onclick="event.stopPropagation();toggleMarkNote('${id}',this)"><span class="pm-badge">${m.n}</span><span class="pm-note">${m.note}</span><button class="pm-del" onclick="event.stopPropagation();closePlopMark(this.parentElement)">${I.close}</button></div>`;
       }).join('')}`:''}
     </div>
     <div class="actions">
@@ -1326,7 +1335,7 @@ function populatePlop(id, f){
       el.className = 'plop-mark';
       el.setAttribute('style', pos);
       el.setAttribute('onclick', `event.stopPropagation();toggleMarkNote('${id}',this)`);
-      el.innerHTML = `<span class="pm-badge">${i+1}</span><span class="pm-note">${note.text.replace(/"/g,'&quot;')}</span>`;
+      el.innerHTML = `<span class="pm-badge">${i+1}</span><span class="pm-note">${note.text.replace(/"/g,'&quot;')}</span><button class="pm-del" onclick="event.stopPropagation();closePlopMark(this.parentElement)">${I.close}</button>`;
       hero.appendChild(el);
     });
     // Add marks-pill (Show/Hide marks) — only count marked
@@ -1691,6 +1700,9 @@ function toggleMarkNote(id,btn){
   const nowOpen=btn.classList.toggle('open');
   if(nowOpen && btn.classList.contains('rect')){ btn.style.width=''; btn.style.height=''; }
 }
+
+function closePlopMark(el){ if(el) el.classList.remove('open'); }
+
 function markDelBtn(){ return `<button class="mn-del" onclick="event.stopPropagation();deleteMarkNoteItem(this)">${I.close}</button>`; }
 function surfaceMarkNote(id,btn){
   const badge=btn.querySelector('.pm-badge');
@@ -2153,7 +2165,7 @@ function saveMarkNote(withNote){
     const mtext=document.getElementById(id+'-mtext');
     if(mtext) mtext.textContent='Hide marks';
     const note=withNote&&v?v:'';
-    const extra=`<span class="pm-badge">${n}</span><span class="pm-note">${note||'—'}</span><button class="pm-del" onclick="event.stopPropagation();deletePlopMark(this.parentElement)">${I.close}</button>`;
+    const extra=`<span class="pm-badge">${n}</span><span class="pm-note">${note||'—'}</span><button class="pm-del" onclick="event.stopPropagation();closePlopMark(this.parentElement)">${I.close}</button>`;
     if(el.classList.contains('lasso')) el.insertAdjacentHTML('beforeend',extra);
     else el.innerHTML=extra;
     el.onclick=function(e){e.stopPropagation();toggleMarkNote(id,el);};
