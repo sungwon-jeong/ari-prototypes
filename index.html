@@ -365,6 +365,8 @@ b,strong{font-weight:600}
   font-size:13.5px;font-weight:600;white-space:nowrap;cursor:pointer;
   box-shadow:10px 0 8px -6px rgba(255,255,255,.95)}
 .pond-chip .car{font-size:9px;opacity:.75}
+.pond-chip .pc-lock{display:inline-flex;align-items:center;opacity:.85}
+.pond-chip .pc-lock svg{width:12px;height:12px;stroke:currentColor}
 .pond-chip:active{transform:scale(.96)}
 .subtab-sep{flex:none;width:1px;height:20px;background:#E4E4E4;margin:0 2px}
 .pt-all{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;cursor:pointer}
@@ -1107,6 +1109,20 @@ b,strong{font-weight:600}
 .pgrid.selecting .pcell.sel::after{border-color:#161616}
 .pgrid.selecting .pcell.sel .pcell-tick{display:flex}
 .pgrid.selecting .pcell:not(.sel) img{opacity:.55}
+/* Long-press to multi-select is the only way to file photos by hand, and a bare
+   grid gives no sign it exists. Retires the moment it is used or dismissed. */
+.grid-hint{display:none;margin:0 20px 10px;padding:10px 14px;background:#F4F4F3;border-radius:12px;
+  font-size:12.5px;color:var(--soft);align-items:center;gap:8px}
+.grid-hint.on{display:flex}
+.grid-hint .gh-x{margin-left:auto;color:#a8a8ad;background:none;padding:6px 8px;font-size:13px;cursor:pointer}
+/* These are the smallest controls in the app and they are all destructive —
+   exactly the wrong combination. Keep them visually small, but grow the hit
+   area to 44px with a transparent overlay so the layout is untouched. */
+.mn-del,.fx,.note-del,.qn-del,.gh-x{position:relative}
+.mn-del::after,.fx::after,.note-del::after,.qn-del::after,.gh-x::after{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;border-radius:50%;
+}
 .sel-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:10px 20px 12px;position:sticky;top:0;background:#fff;z-index:6}
 .sel-cancel{background:none;border:0;font-size:15px;color:var(--soft);cursor:pointer;padding:6px 0}
@@ -1328,9 +1344,10 @@ const DRAFTS=[
  {img:'venice', title:'Venice alley at night', meta:'Photo library · a week ago'},
 ];
 const ACTIVITY=[
- {a:['H','g5'], html:'<b>@hanuel</b> kept your <b>Rose garden</b>', tm:'1 hour ago', g:'g2', unread:1},
- {a:['J','g8'], html:'<b>@jinyoung</b> kept your <b>Sconce at dusk</b>', tm:'Yesterday', g:'g1', unread:1},
- {a:['D','g9'], html:'<b>@dahye</b> started following you', tm:'2 days ago'},
+ {a:['H','g5'], html:'<b>@hanuel</b> saved your <b>Rose garden</b>', tm:'1 hour ago', g:'g2', unread:1, img:'rose'},
+ {a:['J','g8'], html:'<b>@jinyoung</b> saved your <b>Sconce at dusk</b>', tm:'Yesterday', g:'g1', unread:1, img:'sconce'},
+ {a:['M','g4'], html:'<b>@studio.mira</b> read <b>Red-shaded lamp</b> differently', tm:'Yesterday', g:'g4', unread:1, img:'redlamp'},
+ {a:['D','g9'], html:'<b>@dahye</b> started following you', tm:'2 days ago', who:'scr-other-profile'},
 ];
 const MYGRID=[
  {img:'redlamp', spark:1},{img:'chandelier', spark:1},{img:'sconce', spark:1, kav:['H','g5']},
@@ -1392,21 +1409,6 @@ function originAuthorOf(img){
    nested underneath it. That parent may itself be a quote, so following the
    nested cards upward eventually lands on the first author's original post.
    `root` is carried down the chain untouched — it is what the caption shows. */
-function openOriginal(img){
-  const q = null;
-  if(!q){ go('scr-plop-others'); return; }
-  const base = (typeof FEED_BY_ID!=='undefined' && FEED_BY_ID[q.img]) || {};
-  const f = Object.assign({}, base, {img:q.img, t:q.title, s:'', desc:q.desc, showQuote:false, origName:q.name, origHandle:q.handle, origTarget:'scr-other-profile'});
-  populatePlop('scr-plop-others', f);
-  const sec=document.getElementById('scr-plop-others');
-  if(sec){
-    const nm=sec.querySelector('.author .nm'); if(nm) nm.textContent=q.name;
-    const hd=sec.querySelector('.author .hd'); if(hd) hd.textContent='@'+q.handle;
-    const avEl=sec.querySelector('.author .av'); if(avEl){ avEl.textContent=q.avL; avEl.className='av '+q.avG; }
-    sec.dataset.authname=q.name; sec.dataset.authhandle=q.handle; sec.dataset.authtarget='scr-other-profile'; sec.dataset.authl=q.avL; sec.dataset.authg=q.avG;
-  }
-  go('scr-plop-others');
-}
 /* open any post in a published quote chain (mine or someone else's) */
 function openMyPlop(img, pid){
   const base = (typeof FEED_BY_ID!=='undefined' && FEED_BY_ID[img]) || {img:img, t:'', s:'', desc:''};
@@ -1472,7 +1474,7 @@ const plopScreen=(id,o)=>`
     <div class="plop-desc">${o.desc}</div>
     <div class="keptby" onclick="openSheet('keptby-sheet')">
       <span class="avstack">${av('','g5',1)}${av('','g8',1)}${av('','g9',1)}</span>
-      <span>Kept by ${o.keptNames} and ${o.keptMore} more</span><span class="chev">›</span>
+      <span>Saved by ${o.keptNames} and ${o.keptMore} more</span><span class="chev">›</span>
     </div>
     <div class="notesbox" id="${id}-notesbox" style="display:none">
       <div class="nb-h">${I.lock} YOUR NOTES <span class="only">· only you</span></div>
@@ -1493,8 +1495,8 @@ app.innerHTML=`
     <div class="topbar"><span class="logo" onclick="go('scr-feed')" style="cursor:pointer"><svg viewBox="0 0 1724 1080" xmlns="http://www.w3.org/2000/svg" style="height:21px;width:auto;display:block"><path d="M369.051 1080C301.577 1080 239.863 1062.72 183.909 1028.16C127.954 993.6 83.1086 947.109 49.3714 888.686C16.4571 830.263 0 765.669 0 694.903C0 624.137 16.4571 559.543 49.3714 501.12C83.1086 442.697 127.954 396.206 183.909 361.646C239.863 327.086 301.577 309.806 369.051 309.806C418.423 309.806 464.091 318.857 506.057 336.96C548.846 354.24 585.463 378.926 615.909 411.017V324.617H770.194V1065.19H615.909V978.789C585.463 1010.06 548.846 1034.74 506.057 1052.85C464.091 1070.95 418.423 1080 369.051 1080ZM391.269 924.48C432.411 924.48 469.851 914.194 503.589 893.623C538.149 873.051 565.303 845.486 585.051 810.926C605.623 776.366 615.909 737.691 615.909 694.903C615.909 652.937 605.623 614.674 585.051 580.114C565.303 544.731 538.56 516.754 504.823 496.183C471.086 475.611 433.234 465.326 391.269 465.326C350.126 465.326 312.274 475.611 277.714 496.183C243.977 516.754 216.823 544.32 196.251 578.88C176.503 613.44 166.629 652.114 166.629 694.903C166.629 736.869 176.503 775.543 196.251 810.926C216.823 845.486 243.977 873.051 277.714 893.623C311.451 914.194 349.303 924.48 391.269 924.48Z" fill="black"/><path d="M969.57 1065.19V324.617H1127.56V455.451C1153.89 412.663 1187.63 378.926 1228.77 354.24C1269.91 329.554 1318.87 317.211 1375.65 317.211L1415.15 478.903C1399.51 473.966 1381.82 471.497 1362.07 471.497C1296.24 471.497 1243.17 492.48 1202.85 534.446C1163.35 576.411 1143.6 636.48 1143.6 714.651V1065.19H969.57Z" fill="black"/><path d="M1533.18 1065.19V324.617H1707.21V1065.19H1533.18ZM1620.81 204.891C1592.01 204.891 1567.74 195.017 1547.99 175.269C1528.24 154.697 1518.36 130.423 1518.36 102.446C1518.36 72.8229 1528.24 48.5486 1547.99 29.6228C1568.56 9.87428 1592.83 0 1620.81 0C1650.43 0 1674.71 9.87428 1693.63 29.6228C1713.38 49.3715 1723.26 73.6457 1723.26 102.446C1723.26 131.246 1713.38 155.52 1693.63 175.269C1673.88 195.017 1649.61 204.891 1620.81 204.891Z" fill="black"/></svg></span><button class="bellbtn" onclick="go('scr-alerts')">${I.bell}<span class="dot"></span></button></div>
     <div class="feed-reflection-banner" id="frb" onclick="startRitual()">
       <span class="frb-moon"><svg viewBox="0 0 104 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M58.7604 66.9229C54.873 72.2859 49.8632 76.2118 45.4552 77.3499C42.6902 78.0639 41.3381 78.0449 36.7592 77.228C33.161 76.5864 30.8392 75.8679 29.8565 75.0922C27.5506 73.272 25.3506 68.8431 24.3534 64.0136C22.2983 54.0617 23.2502 50.1085 30.0565 40.3268C32.6238 36.6372 35.8077 32.0641 37.1311 30.1649C42.179 22.9225 50.1007 20.973 62.422 23.9426C73.1842 26.5358 74.9163 27.215 77.2262 32.208C79.536 37.201 80.6838 40.1406 82.9053 45.5269C85.1268 50.9132 83.7871 61.4076 81.4119 66.3155C79.2183 70.8486 74.3556 72.3149 71.2469 69.3811C69.0761 67.3326 68.9115 65.3425 70.5525 60.9871C72.5828 55.5975 74.9996 52.8092 70.9546 47.1337C69.0516 44.4636 67.1776 44.2272 64.9727 41.7443C62.7678 39.2615 61.6432 34.4251 57.4358 33.8998C53.2284 33.3745 48.8513 33.3736 45.4599 35.3262C42.0686 37.2788 41.4993 41.0223 40.7568 43.4508C40.0143 45.8793 40.3364 48.3059 39.1624 51.5366C37.9884 54.7674 36.0868 56.3556 35.5181 59.3947C34.9494 62.4338 35.5651 64.1713 36.7926 65.227C38.0201 66.2828 39.6008 67.3475 41.6639 67.3475C43.7271 67.3475 45.1485 65.5814 45.8415 64.5419C46.5345 63.5024 46.386 62.0668 45.1318 61.3597C43.8775 60.6526 43.2746 59.4726 43.0006 58.3898C42.3806 55.9452 43.2319 53.3699 46.0463 49.176C48.6648 45.2739 51.1098 44.0229 55.0465 44.5715C57.169 44.8671 58.3129 45.4373 59.9823 47.0302C62.982 49.8947 63.7437 53.2098 62.6395 58.599C61.8892 62.2628 61.4401 63.2263 58.7604 66.9229Z" fill="#0C2F5E"/><path d="M14.2124 88.3961C11.4934 87.0581 7.35135 85.8863 5.43389 84.1937C2.06347 81.2195 -0.437691 69.5922 0.0642179 59.2374C0.450401 51.2913 6.29379 32.8976 9.6265 22.6805C12.9592 12.4633 20.1335 9.13393 23.6877 7.85053C27.2419 6.56713 34.214 7.60233 38.4036 6.51732C42.5932 5.43231 48.717 3.03859 52.0135 2.10066C55.3099 1.16274 63.7644 -1.23131 69.46 0.785471C75.1555 2.80225 81.5392 4.62761 87.2065 9.764C90.7365 12.964 96.1474 19.0136 98.9009 24.3623C100.61 27.6811 103.597 35.1442 103.822 40.0933C104.164 47.5833 103.218 55.4739 101.518 58.4252C99.8185 61.3765 91.692 62.0697 90.5259 57.0854C89.3598 52.1012 92.0064 45.7644 91.9933 41.678C91.9801 37.5916 89.8242 33.7712 87.7263 30.1936C85.8479 26.9905 84.2464 25.4206 78.5373 21.1882C74.7339 18.3692 72.5381 15.8305 67.1871 14.5536C61.8361 13.2766 50.1089 18.2193 47.3925 18.4642C42.979 18.8628 33.5181 19.2051 29.2659 22.158C28.3341 22.8051 25.3847 26.6246 22.7127 30.6452C19.3711 35.6734 20.0003 36.2215 18.3929 40.9788C16.7855 45.7361 13.7114 47.7918 12.6369 51.4049C11.5624 55.0179 11.261 55.0595 13.3117 60.2672C14.442 63.1391 15.8821 67.0801 16.5118 69.0259C17.6298 72.4818 19.494 74.7079 25.034 78.0295C28.153 79.9004 28.6172 80.981 31.2008 82.4461C33.7844 83.9113 37.3514 86.5775 44.3476 85.7748C51.3439 84.9721 54.8126 82.3268 58.7019 80.0495C63.7555 77.0898 65.1664 76.7604 67.3702 78.0246C71.6512 80.4813 71.0226 86.0372 65.9593 90.489C61.7867 94.1582 42.3967 99.6483 40.4551 100.226C36.6484 101.36 28.0914 98.4368 23.5302 94.4455C21.9971 93.1041 16.9313 89.7341 14.2124 88.3961Z" fill="#0C2F5E"/><path d="M81.1678 82.3765C76.3549 77.7605 85.4682 75.4499 87.1105 72.7045C88.7528 69.9591 88.7034 66.151 92.036 67.2162C95.3685 68.2815 97.089 72.0791 94.497 78.1155C91.905 84.152 85.9808 86.9926 81.1678 82.3765Z" fill="#0C2F5E"/></svg></span>
-      <span class="frb-t">Catch it before it's gone</span>
-      <span class="frb-s">3 left</span>
+      <span class="frb-t">Today's three photos</span>
+      <span class="frb-s">Mark what caught your eye · 3 left</span>
       <button class="frb-go">Start</button>
       <button class="frb-x" onclick="event.stopPropagation();document.getElementById('frb').style.display='none'">✕</button>
     </div>
@@ -1557,7 +1559,7 @@ ${plopScreen('scr-plop-others',{back:'scr-feed',avL:'H',avG:'g5',name:'Hanuel',h
     </div>
     <div style="padding:0 0 120px">
       <div id="fs-default">
-        <div class="preview-mosaic">${PREVIEW_KEYS.map(k=>`<div class="pm-cell" onclick="go('scr-plop-others')"><img src="${IMG[k]}"></div>`).join('')}</div>
+        <div class="preview-mosaic">${PREVIEW_KEYS.map(k=>`<div class="pm-cell" onclick="openImagePost('${k}')"><img src="${IMG[k]}"></div>`).join('')}</div>
       </div>
       <div id="fs-recents" style="display:none;padding:0 20px">
         <div class="rec-head"><span>Recent</span><span class="rec-clear" onclick="fsClearRecents()">Clear</span></div>
@@ -1600,7 +1602,7 @@ ${plopScreen('scr-plop-others',{back:'scr-feed',avL:'H',avG:'g5',name:'Hanuel',h
       </div>
     </div>
     <div class="prof-tabs">
-      <button class="pond-chip" onclick="allTap(event)"><span id="pond-chip-label">All</span><span class="car">▾</span></button>
+      <button class="pond-chip" onclick="allTap(event)"><span id="pond-chip-label">All</span><span class="pc-lock" id="pond-chip-lock" style="display:none">${I.lock}</span><span class="car">▾</span></button>
       <div class="pond-menu" id="pond-menu"></div>
       <span class="viewseg">
         <button class="on" id="vg" onclick="profView('grid')">${I.grid}</button>
@@ -1608,6 +1610,8 @@ ${plopScreen('scr-plop-others',{back:'scr-feed',avL:'H',avG:'g5',name:'Hanuel',h
       </span>
     </div>
     <div class="subtab-row" id="subtab-row"></div>
+    <div class="grid-hint" id="grid-hint">Press and hold a photo to file several at once
+      <button class="gh-x" onclick="dismissGridHint()" aria-label="Dismiss">✕</button></div>
     <div class="sel-bar" id="sel-bar" style="display:none">
       <button class="sel-cancel" onclick="exitSelect()">Cancel</button>
       <span class="sel-count" id="sel-count">Select photos</span>
@@ -1915,7 +1919,7 @@ app.insertAdjacentHTML('beforeend',
      <div class="pro-row" style="border:0"><span class="cir"></span> Advanced threads across your notes</div>
    </div>
    <button class="pro-cta" onclick="closeSheet('pro-sheet');toast('PRO trial started')">Try PRO — free 14 days</button>`)
-+sheet('keptby-sheet',`<h2 class="sheet-h">Kept by</h2>
++sheet('keptby-sheet',`<h2 class="sheet-h">Saved by</h2>
    <p class="sheet-p keptby-sheet-sub"><b style="color:var(--ink)">14</b> people keeping <b style="color:var(--ink)">Rose garden</b> in their ari</p>
    <div style="margin-top:8px">${KEPTBY.map(k=>`<div class="kb-row" style="cursor:pointer" onclick="go('scr-other-profile')">${av(k[2],k[1])}<div><div class="kn">@${k[0]}</div><div class="kt">${k[3]}</div></div><button class="followmini" data-follow="${k[0]}" onclick="event.stopPropagation();toggleFollow('${k[0]}')">Follow</button></div>`).join('')}</div>`)
 +sheet('following-sheet',`<h2 class="sheet-h">Following</h2>
@@ -1964,14 +1968,18 @@ function tilePressEnd(i){
 function tilePressCancel(){
   clearTimeout(pressTimer);
 }
+/* The 160ms delay is the tile's zoom animation. It used to fire unconditionally,
+   so a navigation that happened in the meantime got yanked back to this post. */
+var _tileNav = null;
 function openTile(i){
   const f=FEED[i];
   const tile=document.getElementById('tile-'+i);
-  const img=tile.querySelector('img');
-  img.style.transform='scale(1.06)';
+  const img=tile?tile.querySelector('img'):null;
+  if(img) img.style.transform='scale(1.06)';
   const targetId = f.mine ? 'scr-plop-mine' : 'scr-plop-others';
   populatePlop(targetId, f);
-  setTimeout(()=>{go(targetId);img.style.transform='';},160);
+  if(_tileNav) clearTimeout(_tileNav);
+  _tileNav = setTimeout(()=>{ _tileNav=null; go(targetId); if(img) img.style.transform=''; },160);
 }
 function populatePlop(id, f){
   const section = document.getElementById(id);
@@ -2032,7 +2040,7 @@ function populatePlop(id, f){
   const plopnotes = document.getElementById(id+'-plopnotes');
   if(plopnotes) plopnotes.innerHTML='';
   // Sync SAVED state — marking something means you kept it
-  plopSaved[id] = hasNotes || !!f.kept || !!f.mine;
+  if(hasNotes || f.kept || f.mine) SAVED.add(f.img);
   syncSaveButtons(id);
   syncReadingBar(id, f.img);
   /* The "reposted" badge is gone: the credit line under the title already names
@@ -2155,38 +2163,18 @@ function commitMark(el){
   if(!text){ el.remove(); }             // an empty note is discarded
   else { el.dataset.text = text; el.classList.remove('positioning'); rebuildMark(el, false); }
   if(id){ syncSaveButtons(id); persistMarks(id); }
+  // the Next/Skip label and the cap warning are derived from the mark count, so
+  // they have to be recomputed here — committing is when the count changes.
+  if(id==='scr-review') refreshMarkCount();
   updateMarkDim();
 }
 /* blue check → save this mark */
-function plopMarkSave(btn){
-  const el = btn.closest('.plop-mark'); if(!el) return;
-  commitMark(el);
-  updateMarkDim();
-}
 /* dim + Done appear whenever a note input is zoomed to centre */
-function updateMarkDim(){
-  const zoomed = false;
-  const dim = document.getElementById('mark-dim'); if(dim) dim.classList.toggle('on', zoomed);
-  const done = document.getElementById('mark-done'); if(done) done.classList.toggle('on', zoomed);
-}
+/* #mark-dim and #mark-done went away with the zoom-to-type editor; this has been
+   a no-op ever since. Kept as an empty function because it is called from a
+   dozen places and the calls are harmless. */
+function updateMarkDim(){}
 /* move icon → un-zoom to the image so you can drag the pin, tap again to re-zoom */
-function plopToggleMove(btn){
-  const el = btn.closest('.plop-mark'); if(!el) return;
-  const positioning = el.classList.toggle('positioning');
-  if(positioning){
-    el.setAttribute('onpointerdown','plopPosDown(event,this)');
-    el.setAttribute('onpointermove','plopPosMove(event)');
-    el.setAttribute('onpointerup','plopPosUp(event)');
-    el.setAttribute('onpointercancel','plopPosUp(event)');
-    updateMarkDim();
-    toast('Drag the pin to reposition · tap the arrows again to zoom back');
-  } else {
-    el.classList.add('zoomed');
-    el.setAttribute('onpointerdown','event.stopPropagation()');
-    el.removeAttribute('onpointermove'); el.removeAttribute('onpointerup'); el.removeAttribute('onpointercancel');
-    updateMarkDim();
-  }
-}
 /* drag the whole pin while positioning (small, on the image) */
 let posDrag=null;
 function plopPosDown(e, el){
@@ -2246,6 +2234,86 @@ function markDone(){
    through openTile sent you to scr-plop-others for anything you had only saved,
    where your private marks are (correctly) filtered out — so they were
    unreachable. This opens your copy: your marks, editable, credit unchanged. */
+/* Open whichever post an image belongs to. All twelve preview tiles were hard
+   wired to scr-plop-others, so every one of them opened the same post. */
+/* restored — the dead-code sweep over-matched and removed these */
+function _sourcePublicNotes(img){
+  let src = (typeof OTHER_NOTES!=='undefined' && OTHER_NOTES[img]) ? OTHER_NOTES[img]
+          : ((typeof MARKNOTES!=='undefined' && MARKNOTES[img]) ? MARKNOTES[img] : []);
+  // only PUBLIC notes get seeded into a Repost
+  return src.filter(n => n.visibility === 'public');
+}
+function currentOtherItems(){
+  let items = HGRID.slice();
+  const { pond, activeSubs } = OTHER_STATE;
+  if(pond && pond!=='All'){
+    const members = O_POND_MEMBERS[pond] || [];
+    items = items.filter(k => members.includes(k));
+  }
+  if(activeSubs && activeSubs.size){
+    items = items.filter(k => {
+      const tags = ((FEED_BY_ID[k]||{}).tags) || [];
+      return [...activeSubs].some(name => tags.some(t => t.toLowerCase() === name.toLowerCase()));
+    });
+  }
+  return items;
+}
+function markDelBtn(){ return `<button class="mn-del" onclick="event.stopPropagation();deleteMarkNoteItem(this)">${I.close}</button>`; }
+function notesRef(img, ctx){ return ctx==='other' ? (OTHER_NOTES[img]||[]) : (MARKNOTES[img]||[]); }
+function openFeedPond(i){
+  feedSaveTarget=i;
+  openPondPicker('feed', FEED[i] && FEED[i].img, (FEED[i]&&FEED[i].t)||'');
+  return;
+  openPondPicker('feed');
+}
+function profView(v){
+  const vg=document.getElementById('vg'), vl=document.getElementById('vl');
+  const grid=document.getElementById('mygrid'), list=document.getElementById('mylist');
+  const sub=document.getElementById('subtab-row');
+  if(vg) vg.classList.toggle('on', v==='grid');
+  if(vl) vl.classList.toggle('on', v==='list');
+  if(grid) grid.style.display = v==='grid' ? 'grid' : 'none';
+  if(list) list.style.display = v==='list' ? 'block' : 'none';
+  // sub-tabs stay visible in both grid and list — let renderSubtabs decide based on the pond
+  if(typeof renderSubtabs==='function') renderSubtabs();
+  if(typeof renderMyGrid==='function') renderMyGrid();
+}
+function resortPreview(pond, s, newRule){
+  const before = new Set(membersOf(pond, s.label));
+  const after  = new Set(autoIdsFor(newRule).concat(s.manualIds));
+  const inPond = (pond==='All') ? null : ((POND_MEMBERS[pond])||[]);
+  const keep = k => !inPond || inPond.includes(k);
+  return { added:[...after].filter(k=>!before.has(k) && keep(k)).length,
+           removed:[...before].filter(k=>!after.has(k) && keep(k)).length };
+}
+function visChip(vis){
+  vis = VIS_META[vis] ? vis : 'private';
+  const m=VIS_META[vis];
+  return `<button class="nv-chip nv-${vis}" data-vis="${vis}" onclick="event.stopPropagation();cycleNoteVis(this)">${I[m.icon]}<span>${m.label}</span></button>`;
+}
+function deleteNoteAt(imgKey, noteIdx, contextId){
+  // published-quote notes live on the post; deleting must not touch the original's
+  if(!MARKNOTES[imgKey]) return;
+  MARKNOTES[imgKey].splice(noteIdx, 1);
+  if(MARKNOTES[imgKey].length === 0) delete MARKNOTES[imgKey];
+  // Refresh detail page notes if currently viewing this image
+  const f = FEED.find(fe => fe.img === imgKey);
+  if(f && contextId){
+    populatePlop(contextId, f);
+  }
+  // Refresh the notes tab (list view) too
+  if(typeof renderMyGrid === 'function') renderMyGrid();
+  toast('Note deleted');
+}
+
+function openImagePost(img){
+  const i = FEED.findIndex(f => f.img === img);
+  if(i >= 0) return openTile(i);
+  const base = FEED_BY_ID[img] || {img};
+  const mine = !!base.mine;
+  populatePlop(mine?'scr-plop-mine':'scr-plop-others', Object.assign({}, base, {img}));
+  go(mine?'scr-plop-mine':'scr-plop-others');
+}
 function openNotePost(img){
   const base = FEED_BY_ID[img] || {img};
   const orig = (base.origName ? {name:base.origName, handle:base.origHandle, target:base.origTarget}
@@ -2402,13 +2470,6 @@ function plopMarkVis(btn){
   const sec = el.closest('.screen'); if(sec){ syncSaveButtons(sec.id); persistMarks(sec.id); }
   toast(next==='private'?'Only you':'Public');
 }
-function plopMarkDel(btn){
-  const el = btn.closest('.plop-mark'); if(!el) return;
-  const sec = el.closest('.screen'); const id = sec ? sec.id : null;
-  el.remove();
-  if(id) syncSaveButtons(id);
-  toast('Mark removed');
-}
 let _delMarkEl=null, _ndDel=null;
 /* x on the note toolbar = cancel this edit (revert unsaved text, collapse toolbar) */
 function plopMarkCancel(btn){
@@ -2431,7 +2492,7 @@ function confirmMarkDelete(){
   if(_delMarkEl){
     const el=_delMarkEl; _delMarkEl=null;
     const sec=el.closest('.screen'); const id=sec?sec.id:null;
-    el.remove(); if(id){ syncSaveButtons(id); persistMarks(id); }
+    el.remove(); if(id){ syncSaveButtons(id); persistMarks(id); if(id==='scr-review') refreshMarkCount(); }
     updateMarkDim();
     toast('Note deleted'); return;
   }
@@ -2482,14 +2543,6 @@ function collectPlopNotes(id, persist){
   MARKNOTES[img] = out;
   return out;
 }
-function feedNote(i){const f=FEED[i];openEditor(f.img,f.t,f.s);}
-let feedSaveTarget=null;
-function openFeedPond(i){
-  feedSaveTarget=i;
-  openPondPicker('feed', FEED[i] && FEED[i].img, (FEED[i]&&FEED[i].t)||'');
-  return;
-  openPondPicker('feed');
-}
 function renderDisc(id,data){
   document.getElementById(id+'-rc').innerHTML=data
     .map(d=>`<div class="rc"><div class="rc-img"><img src="${IMG[d.img]}"></div></div>`).join('');
@@ -2499,7 +2552,7 @@ renderDisc('scr-plop-others',DISC_OTHERS);
 
 function renderAlerts(){
   document.getElementById('alerts-list').innerHTML=ACTIVITY.map(a=>`
-    <div class="act-card ${a.unread?'unread':''}" style="cursor:pointer" onclick="go('scr-other-profile')"><span class="udot"></span>${av(a.a[0],a.a[1])}
+    <div class="act-card ${a.unread?'unread':''}" style="cursor:pointer" onclick="${a.img?`openImagePost('${a.img}')`:`go('${a.who||'scr-other-profile'}')`}"><span class="udot"></span>${av(a.a[0],a.a[1])}
       <div><div class="tx">${a.html}</div><div class="tm">${a.tm}</div></div>
       ${a.g?`<div class="athumb ${a.g}"></div>`:''}</div>`).join('');
   const hasUnread=ACTIVITY.some(a=>a.unread);
@@ -2697,7 +2750,6 @@ function renderMyGrid(){
   const grid = document.getElementById('mygrid');
   const list = document.getElementById('mylist');
   if(!grid) return;
-  if(typeof updateOriginCounts==='function') updateOriginCounts();
   if(!items.length){
     grid.innerHTML = `<div style="grid-column:1/-1;padding:32px 20px;text-align:center;color:var(--soft);font-size:14px">No plops here yet.</div>`;
     list.innerHTML = '';
@@ -2710,6 +2762,7 @@ function renderMyGrid(){
       onpointerleave="cellPressCancel()" onpointercancel="cellPressCancel()"
       ><img src="${IMG[c.img]}"><span class="pcell-tick">${I.checkS}</span></div>`;
   }).join('');
+  syncGridHint();
   // List view: only items that have marks/notes.
   
   const noted = items.filter(c => (MARKNOTES[c.img]||[]).length);
@@ -2752,30 +2805,6 @@ function renderOtherNotes(){
 
 /* ---- tap a completed note → actions (move / edit / copy / voice / delete) ---- */
 let _noteTarget = null;   // {img, idx, ctx}
-function noteStore(ctx){ return ctx==='other' ? OTHER_NOTES : MARKNOTES; }
-/* My notes for an image. If I've published a quote for it, that post's own
-   notes are the truth — the MARKNOTES entry still belongs to the original. */
-/* live array reference for a note list — display and actions must share it */
-function notesRef(img, ctx){ return ctx==='other' ? (OTHER_NOTES[img]||[]) : (MARKNOTES[img]||[]); }
-/* drag reorder within a plop's note list */
-renderMyGrid();
-
-/* ---- visited profile: pond → origin → sub-tab, mirroring your own profile ---- */
-function currentOtherItems(){
-  let items = HGRID.slice();
-  const { pond, activeSubs } = OTHER_STATE;
-  if(pond && pond!=='All'){
-    const members = O_POND_MEMBERS[pond] || [];
-    items = items.filter(k => members.includes(k));
-  }
-  if(activeSubs && activeSubs.size){
-    items = items.filter(k => {
-      const tags = ((FEED_BY_ID[k]||{}).tags) || [];
-      return [...activeSubs].some(name => tags.some(t => t.toLowerCase() === name.toLowerCase()));
-    });
-  }
-  return items;
-}
 /* Original creator of a plop as seen from the visited profile.
    Priority: global quote/repost maps → (their quote/repost of an unmapped
    image ⇒ it started as one of MY made plops) → their own original. */
@@ -2816,8 +2845,6 @@ function renderOtherGrid(){
   ).join('');
 }
 function updateOtherPondBtnLabel(){
-  const b = document.getElementById('og-all'); if(!b) return;
-  b.innerHTML = `${OTHER_STATE.pond} <span class="car">▾</span>`;
 }
 function otherAllTap(e){
   if(e) e.stopPropagation();
@@ -2874,6 +2901,7 @@ function toastAction(msg, actionLabel, cb){
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('on'),2600);
 }
 function go(id){
+  if(_tileNav){ clearTimeout(_tileNav); _tileNav=null; }   // a later move wins
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.getElementById('phone').classList.toggle('darkbar',document.getElementById(id).classList.contains('dark'));
@@ -2988,20 +3016,6 @@ function closeSheet(id){
 /* put the recorder back to its resting state each time the sheet opens */
 
 
-function deleteNoteAt(imgKey, noteIdx, contextId){
-  // published-quote notes live on the post; deleting must not touch the original's
-  if(!MARKNOTES[imgKey]) return;
-  MARKNOTES[imgKey].splice(noteIdx, 1);
-  if(MARKNOTES[imgKey].length === 0) delete MARKNOTES[imgKey];
-  // Refresh detail page notes if currently viewing this image
-  const f = FEED.find(fe => fe.img === imgKey);
-  if(f && contextId){
-    populatePlop(contextId, f);
-  }
-  // Refresh the notes tab (list view) too
-  if(typeof renderMyGrid === 'function') renderMyGrid();
-  toast('Note deleted');
-}
 /* marks */
 const PLOPMARKS={'scr-plop-mine':MARKS_MINE,'scr-plop-others':MARKS_OTHERS};
 function toggleMarks(id){
@@ -3014,24 +3028,7 @@ function toggleMarks(id){
     hero.querySelectorAll('.plop-mark.open').forEach(el=>el.classList.remove('open'));
   }
 }
-function toggleMarkNote(id,btn){
-  // In note-edit mode, tapping a marker surfaces its note below the voice bar
-  const editing=document.getElementById(id+'-notebtn')&&document.getElementById(id+'-notebtn').classList.contains('open');
-  if(editing){ surfaceMarkNote(id,btn); return; }
-  document.getElementById(id+'-hero').querySelectorAll('.plop-mark.open').forEach(el=>{if(el!==btn)el.classList.remove('open');});
-  const nowOpen=btn.classList.toggle('open');
-  if(nowOpen && btn.classList.contains('rect')){ btn.style.width=''; btn.style.height=''; }
-}
 
-function closePlopMark(el){ if(el) el.classList.remove('open'); }
-
-function markDelBtn(){ return `<button class="mn-del" onclick="event.stopPropagation();deleteMarkNoteItem(this)">${I.close}</button>`; }
-/* ---- per-note visibility (private → public → public/no-quote) ---- */
-function visChip(vis){
-  vis = VIS_META[vis] ? vis : 'private';
-  const m=VIS_META[vis];
-  return `<button class="nv-chip nv-${vis}" data-vis="${vis}" onclick="event.stopPropagation();cycleNoteVis(this)">${I[m.icon]}<span>${m.label}</span></button>`;
-}
 function cycleNoteVis(btn){
   const cur=btn.dataset.vis||'private';
   const next=VIS_ORDER[(VIS_ORDER.indexOf(cur)+1)%VIS_ORDER.length];
@@ -3070,17 +3067,6 @@ function deleteMarkNoteItem(btn){
       const b=m.querySelector('.pm-badge');
       if(b && b.textContent.trim()===n) m.remove();
     });
-  }
-}
-function deletePlopMark(el){
-  const b=el.querySelector('.pm-badge');
-  const n=b?b.textContent.trim():'';
-  const hero=el.closest('.hero');
-  el.remove();
-  if(hero && n){
-    const id=hero.id.replace('-hero','');
-    const row=document.querySelector('#'+id+'-plopnotes .ed-marknote[data-mark="'+n+'"]');
-    if(row) row.remove();
   }
 }
 /* ---- Settings sub-pages (nested) ---- */
@@ -3175,44 +3161,9 @@ function pauseAllNotif(el){
 }
 function setPick(el){ Array.prototype.forEach.call(el.parentElement.children,function(c){c.classList.remove('on');}); el.classList.add('on'); }
 function setToggleOpt(el){ el.classList.toggle('on'); }
-function toggleInlineNote(id){
-  const btn=document.getElementById(id+'-notebtn');
-  const willOpen=!btn.classList.contains('open');
-  if(!willOpen && _isQuoteDirty(id)){   // leaving Quote with unsaved changes → confirm
-    _pendingQuoteExit={id, nav:null};
-    openSheet('quote-save-confirm');
-    return;
-  }
-  _applyQuoteToggle(id, willOpen);
-}
 let plopTool={};
 let plopMarkCount={};
 let pendingPlopMark=null;
-function plopPickTool(id,tool){
-  plopTool[id]=tool;
-  ['mark','scribble'].forEach(t=>{
-    const el=document.getElementById(id+'-tool-'+t);
-    if(el) el.classList.toggle('on', t===tool);
-  });
-  const hero=document.getElementById(id+'-hero');
-  if(hero) hero.classList.add('armed');
-  const hint=document.getElementById(id+'-hint');
-  if(hint) hint.textContent = tool==='mark' ? 'Tap the image to place a mark'
-    : 'Swipe across the image to circle an area, then add a note';
-}
-function loadExistingMarkNotes(id){
-  const list=document.getElementById(id+'-plopnotes'); if(!list) return;
-  const hero=document.getElementById(id+'-hero'); if(!hero) return;
-  hero.querySelectorAll('.plop-mark').forEach(mk=>{
-    const b=mk.querySelector('.pm-badge'); if(!b) return;
-    const n=b.textContent.trim(); if(!n) return;
-    if(list.querySelector('.ed-marknote[data-mark="'+n+'"]')) return;
-    const noteEl=mk.querySelector('.pm-note');
-    const note=noteEl?noteEl.textContent.trim():'';
-    list.insertAdjacentHTML('beforeend',
-      `<div class="ed-marknote" data-mark="${n}"><span class="num">${n}</span><span class="txt">${note||'—'}</span><span class="nv-controls">${visChip('private')}${markDelBtn()}</span></div>`);
-  });
-}
 function plopClearTool(id){
   const hero=document.getElementById(id+'-hero');
   if(hero) hero.classList.remove('armed');
@@ -3269,6 +3220,7 @@ function pondPicked(name){
     const i=feedSaveTarget; feedSaveTarget=null; _pondMode='detail';
     if(i==null) return;
     FEED[i].kept=true; FEED[i].pond=name;
+    keepImage(FEED[i].img, name);
     track('save', {via:'feed_longpress', pond:name});
     toastAction(`Saved to ${name}`, 'Add marks', ()=>{
       // marking someone else's photo means making your own version of it
@@ -3281,10 +3233,11 @@ function pondPicked(name){
   if(!id) return;
   plopPond[id]=name;
   const lbl=document.getElementById(id+'-savepond-name'); if(lbl) lbl.textContent=name;
-  plopSaved[id]=true;
+  keepImage(imgOf(id), name);
   syncSaveButtons(id);
   track('save', {via:'detail', pond:name});
-  toast(`Saved to ${name}`);
+  toastAction(`Saved to ${name}`, 'See it', ()=>{ PROFILE_STATE.pond=name; go('scr-my-profile');
+    if(typeof renderSubtabs==='function') renderSubtabs(); renderMyGrid(); });
 }
 
 
@@ -3297,13 +3250,47 @@ function viewLastPost(){
   go('scr-plop-mine');
 }
 
+/* A save has to actually land somewhere: it joins the pond, shows up in My Pond
+   and gets filed by the classifier. Before this it only flipped a button. */
+function keepImage(img, pond){
+  if(!img) return;
+  SAVED.add(img);
+  SAVED_IMGS.add(img);
+  const m = (POND_MEMBERS[pond] = POND_MEMBERS[pond] || []);
+  if(!m.includes(img)) m.push(img);
+  Object.keys(POND_MEMBERS).forEach(p=>{        // one pond per photo
+    if(p===pond) return;
+    const i=POND_MEMBERS[p].indexOf(img); if(i>=0) POND_MEMBERS[p].splice(i,1);
+  });
+  if(!MYGRID.some(c=>c.img===img)) MYGRID.unshift({img});
+  const pd=_PONDS.find(p=>p.name===pond); if(pd) pd.count=(POND_MEMBERS[pond]||[]).length;
+  const all=_PONDS.find(p=>p.name==='All'); if(all) all.count=MYGRID.length;
+  if(typeof autoClassify==='function') autoClassify(img, pond);
+  if(typeof renderMyGrid==='function' && document.getElementById('mygrid')) renderMyGrid();
+  if(typeof renderSubtabs==='function') renderSubtabs();
+}
+function unkeepImage(img){
+  if(!img) return;
+  SAVED.delete(img); SAVED_IMGS.delete(img);
+  Object.keys(POND_MEMBERS).forEach(p=>{
+    const i=POND_MEMBERS[p].indexOf(img); if(i>=0) POND_MEMBERS[p].splice(i,1);
+  });
+  subtabsOf('All'); Object.keys(SUBTABS).forEach(p=>subtabsOf(p).forEach(s=>{
+    let i=s.autoIds.indexOf(img);   if(i>=0) s.autoIds.splice(i,1);
+    i=s.manualIds.indexOf(img);     if(i>=0) s.manualIds.splice(i,1);
+  }));
+  const gi=MYGRID.findIndex(c=>c.img===img); if(gi>=0) MYGRID.splice(gi,1);
+  if(typeof renderMyGrid==='function' && document.getElementById('mygrid')) renderMyGrid();
+  if(typeof renderSubtabs==='function') renderSubtabs();
+}
 /* ---------- Save · 1 tap, image only ---------- */
 function plopSave(id){
-  if(plopSaved[id]){                       // already kept → tapping again removes it
-    plopSaved[id]=false;
-    syncSaveButtons(id); setRepostIcon(id);
-    track('unsave', {screen:id});
-    toast('Removed'); return;
+  const key = imgOf(id);
+  if(key && SAVED.has(key)){               // already kept → tapping again removes it
+    unkeepImage(key);
+    syncSaveButtons(id);
+    track('unsave', {img:key});
+    toast('Removed from your pond'); return;
   }
   plopPondTarget=id;
   const sec=document.getElementById(id);
@@ -3316,6 +3303,10 @@ function openRepostEditor(srcId){
   const sec=document.getElementById(srcId); if(!sec) return;
   const img=sec.dataset ? sec.dataset.img : null;
   if(!img){ toast('Nothing to repost'); return; }
+  // reposting is for someone else's post; your own is just... your post
+  if(srcId==='scr-plop-mine' || (sec.dataset.authhandle||'')===ME_HANDLE){
+    toast("This one's already yours"); return;
+  }
   // REPOST.pending is read (and cleared) by openEditor on the very next line of
   // execution. Attribution is NOT stored here — REPOST_SOURCE is the single source
   // of truth for who made an image; a second copy only ever drifts out of sync.
@@ -3334,8 +3325,14 @@ function openRepostEditor(srcId){
   refreshClearAll();
   document.getElementById('rev-head-t').textContent='Repost';
   const hero=document.getElementById('scr-review-hero');
-  // seed the source's PUBLIC marks — they become yours the moment you land here
-  const seeded=_sourcePublicNotes(img);
+  // Seed whatever the user is ACTUALLY looking at. If they swiped to Jinyoung's
+  // reading and hit repost, seeding the original author's marks would hand them
+  // something different from what was on screen.
+  const viewing = (_readingId===srcId && _readings[_readingIdx]) ? _readings[_readingIdx] : null;
+  const seeded = (viewing && !viewing.original)
+    ? (viewing.notes||[]).filter(n=>n.visibility!=='private')
+    : _sourcePublicNotes(img);
+  if(viewing && !viewing.original) track('repost_of_reading', {img, who:viewing.who.handle});
   const pos=markPositionsFor(img, seeded.length);
   seeded.slice(0, MARK_CAP).forEach((n,i)=>{
     const p=(n.pos && isFinite(n.pos.x)) ? n.pos : pos[i % pos.length];
@@ -3545,6 +3542,14 @@ function stmDrop(e,i){
    several-at-a-time job, so the grid is where it belongs. */
 var selMode = false;
 var selKeys = new Set();
+var _gridHintDone = false;
+function syncGridHint(){
+  const el=document.getElementById('grid-hint'); if(!el) return;
+  const grid=document.getElementById('mygrid');
+  const many=grid && grid.querySelectorAll('.pcell').length>=4;
+  el.classList.toggle('on', !_gridHintDone && !selMode && !!many && PROFILE_STATE.pond!=='All');
+}
+function dismissGridHint(){ _gridHintDone=true; syncGridHint(); }
 function enterSelect(imgKey){
   selMode = true; selKeys.clear();
   if(imgKey) selKeys.add(imgKey);
@@ -3698,7 +3703,12 @@ function subtabsOf(pond){
 }
 /* the visible ones — hidden tabs still hold their memberships */
 function liveSubtabs(pond){ return subtabsOf(pond).filter(s=>!s.hidden); }
-function subtabByName(pond, name){ return subtabsOf(pond).find(s=>s.label===name); }
+function subtabByName(pond, name){
+  // case-insensitive: "Lamp" and "lamp" are one tab to a person, and letting
+  // both exist splits one pile into two that look identical
+  const k=String(name||'').trim().toLowerCase();
+  return subtabsOf(pond).find(s=>String(s.label).trim().toLowerCase()===k);
+}
 
 function membersOf(pond, name){
   const s = subtabByName(pond, name); if(!s) return [];
@@ -3729,16 +3739,6 @@ function resortTab(pond, s){
   normTab(s);
   s.autoIds = s.rule ? autoIdsFor(s.rule) : s.autoIds;
   return s;
-}
-function resortPond(pond){ subtabsOf(pond).forEach(s=>resortTab(pond,s)); }
-/* what a rename would do, so the user sees it before committing */
-function resortPreview(pond, s, newRule){
-  const before = new Set(membersOf(pond, s.label));
-  const after  = new Set(autoIdsFor(newRule).concat(s.manualIds));
-  const inPond = (pond==='All') ? null : ((POND_MEMBERS[pond])||[]);
-  const keep = k => !inPond || inPond.includes(k);
-  return { added:[...after].filter(k=>!before.has(k) && keep(k)).length,
-           removed:[...before].filter(k=>!after.has(k) && keep(k)).length };
 }
 /* Unsorted is computed, never stored: whatever the pond holds that no live tab
    claims. A photo the classifier could not place has to be visible somewhere —
@@ -3929,7 +3929,7 @@ function markCount(inp){
   const el = inp.closest('.plop-mark'); if(!el) return;
   const box = el.querySelector('.pm-count'); if(!box) return;
   const n = inp.value.length;
-  const near = n >= Math.round(NOTE_MAXLEN * 0.78);
+  const near = n >= NOTE_MAXLEN - 20;      // ~50자부터 보여줘야 갑자기 막히지 않음
   box.textContent = near ? n + '/' + NOTE_MAXLEN : '';
   box.classList.toggle('on', near);
   box.classList.toggle('full', n >= NOTE_MAXLEN);
@@ -4133,35 +4133,26 @@ function plopPointerUp(id,evt){
   refreshMarkCount();
   // no auto-focus: region shows its small bubble + toolbar; tap the field to zoom & type
 }
-function plopUndo(id){
-  const hero=document.getElementById(id+'-hero');
-  const marks=hero.querySelectorAll('.plop-mark');
-  if(marks.length) marks[marks.length-1].remove();
-}
-function plopClearMarks(id){
-  document.getElementById(id+'-hero').querySelectorAll('.plop-mark').forEach(el=>el.remove());
-  plopMarkCount[id]=0;
-  plopClearTool(id);
-}
-function addInlineNote(id){
-  const inp=document.getElementById(id+'-note-in');
-  if(!inp.value.trim())return;
-  const list=document.getElementById(id+'-plopnotes');
-  if(list) list.insertAdjacentHTML('beforeend',
-    `<div class="ed-marknote"><span class="num dot"></span><span class="txt">${inp.value}</span><span class="nv-controls">${visChip('private')}${markDelBtn()}</span></div>`);
-  toast('Note added');
-  inp.value='';
-}
 let plopPond={};
 let plopPondTarget=null;
 function openPlopPond(id){
   plopPondTarget=id;
   openSheet('plop-pond-sheet');
 }
-let plopSaved={'scr-plop-mine':true};
+/* Saving used to be recorded against the SCREEN id. The two detail screens are
+   reused for every post, so saving photo X then opening photo Y showed Y as
+   saved, and coming back to X lost it. A save belongs to (you, image) — that is
+   the shape the real app needs too, so the prototype uses it. */
+const SAVED = new Set(SAVED_IMGS);          // images I have kept
+function imgOf(id){ const s=document.getElementById(id); return s&&s.dataset?s.dataset.img:null; }
+const plopSaved = new Proxy({}, {           // legacy call sites keep working
+  get(_,id){ const k=imgOf(id); return k ? SAVED.has(k) : false; },
+  set(_,id,v){ const k=imgOf(id); if(k){ v?SAVED.add(k):SAVED.delete(k); } return true; }
+});
 function repostBtn(id){ return document.querySelector('#'+id+' .actbtn.repost'); }
 function syncSaveButtons(id){
-  const saved = !!plopSaved[id];
+  const k = imgOf(id);
+  const saved = !!(k && SAVED.has(k));
   const sb=document.getElementById(id+'-savebtn');
   if(sb) sb.classList.toggle('on', saved);          // bookmark fills when kept
   const rb=repostBtn(id);
@@ -4177,30 +4168,16 @@ function plopSaveNote(id){
   const img=sec&&sec.dataset?sec.dataset.img:null;
   const has = !!(img && MARKNOTES[img] && MARKNOTES[img].length);
   const pond=plopPond[id]||'Inspiration';
+  if(has) keepImage(img, pond);          // marking something is keeping it
   // Close the editor
   const btn=document.getElementById(id+'-notebtn'), wrap=document.getElementById(id+'-notewrap');
   if(btn) btn.classList.remove('open'); if(wrap) wrap.classList.remove('open');
   plopClearTool(id);
-  if(has){ plopSaved[id]=true; }
-  else { plopSaved[id]=false; }
+  if(has) keepImage(img, pond); else unkeepImage(img);
   renderPlopMarks(id, false);
   syncSaveButtons(id);
   if(typeof renderMyGrid==='function') renderMyGrid();
   toast(has ? `Saved to ${pond}` : 'Removed · not saved');
-}
-function actSpark(b){b.classList.toggle('on');toast('Spark');}
-
-function profView(v){
-  const vg=document.getElementById('vg'), vl=document.getElementById('vl');
-  const grid=document.getElementById('mygrid'), list=document.getElementById('mylist');
-  const sub=document.getElementById('subtab-row');
-  if(vg) vg.classList.toggle('on', v==='grid');
-  if(vl) vl.classList.toggle('on', v==='list');
-  if(grid) grid.style.display = v==='grid' ? 'grid' : 'none';
-  if(list) list.style.display = v==='list' ? 'block' : 'none';
-  // sub-tabs stay visible in both grid and list — let renderSubtabs decide based on the pond
-  if(typeof renderSubtabs==='function') renderSubtabs();
-  if(typeof renderMyGrid==='function') renderMyGrid();
 }
 function otherView(v){
   const vg=document.getElementById('ovg'), vl=document.getElementById('ovl');
@@ -4382,9 +4359,13 @@ const SUBTABS = {
 const PROFILE_STATE = { pond: 'All', activeSubs: new Set() };
 /* origins (made/saved) are independent, multi-select filters */
 function updatePondBtnLabel(){
-  // the label lives inside the sub-tab row, which renderSubtabs owns
   const b=document.getElementById('pond-chip-label');
   if(b) b.textContent = PROFILE_STATE.pond;
+  // a private pond said so only inside the dropdown, so you could work in one
+  // for ten minutes without knowing nothing you did was visible
+  const lk=document.getElementById('pond-chip-lock');
+  const meta=POND_META[PROFILE_STATE.pond];
+  if(lk) lk.style.display = (meta && meta.public===false) ? 'inline-flex' : 'none';
 }
 function allTap(e){
   if(e) e.stopPropagation();
@@ -4413,13 +4394,7 @@ document.addEventListener('click', function(e){
   if(e.target.closest && e.target.closest('.pond-chip')) return;
   el.classList.remove('open');
 }, true);
-function pondHeaderTap(){
-  openSheet('pond-sheet');
-}
-function updateOriginCounts(){
-  const rep=MYGRID.filter(c=>SAVED_IMGS.has(c.img)).length;
-  const b=document.getElementById('og-repost-c'); if(b) b.textContent=rep;
-}
+
 const POND_META = {
   Inspiration: { autoDetect: true, public: true },
   Digs: { autoDetect: true, public: false }
@@ -4457,19 +4432,10 @@ function pickProfilePond(name){
   PROFILE_STATE.pond = name;
   PROFILE_STATE.activeSubs.clear();
   updatePondBtnLabel();
-  const pb=document.getElementById('pond-bar'); if(pb) pb.style.display='block';
-  renderPondHeader();
   renderSubtabs();
   renderMyGrid();
 }
-function renderPondHeader(){
-  const el = document.getElementById('pond-header');
-  if(!el) return;
-  const counts = { All: 28, Inspiration: 13, Digs: 15 };
-  const name = PROFILE_STATE.pond;
-  const label = name==='All' ? 'All ponds' : name;
-  el.innerHTML = `${label} <span class="cnt">${counts[name] || 0}</span> <span class="car">▾</span>`;
-}
+
 function renderSubtabs(){
   const row = document.getElementById('subtab-row');
   if(!row) return;
@@ -4577,7 +4543,6 @@ function deleteSubtabConfirm(){
   renderMyGrid();
   toast(`"${name}" deleted`);
 }
-renderPondHeader();
 renderSubtabs();
 renderSubtabs();
 /* ---- recording: capped at VOICE_MAX_SEC, with a live meter + auto-stop ---- */
@@ -4585,28 +4550,7 @@ function _fmtDur(sec){
   sec = Math.max(0, Math.min(VOICE_MAX_SEC, Math.round(sec)));
   return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
 }
-function _recPaint(){
-  const sec = (Date.now()-recStart)/1000;
-  recElapsed = Math.min(sec, VOICE_MAX_SEC);
-  const clock = document.getElementById('rec-clock');
-  const bar   = document.getElementById('rec-bar');
-  const pct   = Math.min(100, (recElapsed/VOICE_MAX_SEC)*100);
-  if(bar) bar.style.width = pct+'%';
-  if(clock){
-    clock.firstChild && (clock.firstChild.nodeValue = _fmtDur(recElapsed));
-    clock.classList.toggle('near', recElapsed >= VOICE_MAX_SEC-5);
-  }
-  if(sec >= VOICE_MAX_SEC){ recHitCap = true; recUp(); }
-}
 /* releasing anywhere (even after dragging off the button) ends the recording */
-function isEditorEmpty(){
-  const anyText = ['f-desc','f-title','f-artist','f-place'].some(id=>{
-    const el = document.getElementById(id); return el && (el.value||'').trim();
-  });
-  const hero = document.getElementById('scr-review-hero');
-  const hasMarks = !!(hero && hero.querySelectorAll('.plop-mark').length);
-  return !anyText && !hasMarks;
-}
 function updateSaveLabel(){
   const btn = document.getElementById('bigsave-btn');
   if(!btn) return;
@@ -4820,101 +4764,6 @@ function fsRun(submit){
 document.querySelectorAll('.wave i').forEach((b,i)=>b.style.height=(4+((i*7)%11))+'px');
 document.querySelectorAll('.vn-wave i').forEach((b,i)=>b.style.height=(5+((i*5)%13))+'px');
 let _ndEdit=null;
-function ndBeginEdit(id, idx){
-  _ndEdit={id, idx}; renderNoteDrop(id);
-  const inp=document.querySelector('#'+id+'-notedrop .nd-edit-input');
-  if(inp){ try{ inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }catch(e){} }
-}
-function ndCommitEdit(id, idx, val){
-  if(!_ndEdit) return;
-  _ndEdit=null;
-  const sec=document.getElementById(id); const img=sec&&sec.dataset?sec.dataset.img:null;
-  if(img && MARKNOTES[img] && MARKNOTES[img][idx]){
-    const t=(val||'').trim();
-    if(t){ MARKNOTES[img][idx].text=t.slice(0,NOTE_MAXLEN); }
-    else { MARKNOTES[img].splice(idx,1); if(!MARKNOTES[img].length) delete MARKNOTES[img]; }
-  }
-  if(typeof renderPlopMarks==='function') renderPlopMarks(id,false);
-  if(typeof renderMyGrid==='function') renderMyGrid();
-  renderNoteDrop(id);
-}
-function ndAskDelete(id, idx){
-  const sec=document.getElementById(id); const img=sec&&sec.dataset?sec.dataset.img:null;
-  _ndDel={id, img, idx}; _delMarkEl=null; openSheet('note-del-confirm');
-}
-function ndAskDeleteVoice(id, vi){ _ndDel={id, voice:vi}; _delMarkEl=null; openSheet('note-del-confirm'); }
-/* click outside an open note dropdown closes it (note-fab handles its own toggle) */
-document.addEventListener('click', function(e){
-  const open=document.querySelector('.note-drop.open'); if(!open) return;
-  if(open.contains(e.target)) return;
-  if(e.target.closest && e.target.closest('.note-fab')) return;
-  open.classList.remove('open');
-}, true);
-
-// Initial sync so pre-rendered plop detail screens (Rose, Duvet) reflect state correctly
-(function initPlopSync(){
-  if(typeof FEED === 'undefined' || typeof populatePlop !== 'function') return;
-  const rose = FEED.find(f=>f.id==='rose');
-  const duvet = FEED.find(f=>f.id==='duvet');
-  if(rose) populatePlop('scr-plop-mine', rose);
-  if(duvet) populatePlop('scr-plop-others', duvet);
-})();
-
-
-// Mark-note-popup: scrim tap cancels pending mark (not just close)
-
-// Run immediately too in case DOMContentLoaded already fired
-
-
-
-// Ensure search segment hidden on entry
-const _origGo2 = go;
-go = function(id){
-  // leaving a screen while a pin is open → commit it and drop the dim
-  document.querySelectorAll('.plop-mark.editing').forEach(m=>{ try{ commitMark(m); }catch(e){} });
-  const _dim=document.getElementById('mark-dim'); if(_dim) _dim.classList.remove('on');
-  _origGo2(id);
-  if(id === 'scr-search'){
-    const seg = document.querySelector('#scr-search .mycol-row');
-    if(seg) seg.style.display = 'none';
-    if(typeof fsSetView === 'function') fsSetView('default');
-  }
-};
-
-// marker-edit dim layer + centred-zoom Done button
-(function(){
-  const ph=document.getElementById('phone');
-  if(ph && !document.getElementById('mark-dim')){
-    const dim=document.createElement('div');
-    dim.id='mark-dim'; dim.className='mark-dim';
-    dim.addEventListener('click', function(){
-      const ed=document.querySelector('.plop-mark.editing');
-      if(ed && typeof commitMark==='function'){ const sec=ed.closest('.screen'); commitMark(ed); }
-      if(typeof updateMarkDim==='function') updateMarkDim();
-    });
-    ph.appendChild(dim);
-  }
-  if(ph && !document.getElementById('mark-done')){
-    const done=document.createElement('button');
-    done.id='mark-done'; done.className='mark-done'; done.textContent='Done';
-    done.addEventListener('click', function(){ if(typeof markDone==='function') markDone(); });
-    ph.appendChild(done);
-  }
-})();
-
-/* ============================================================
-   v7 — Repost chooser, Quote editor, note-author profile links
-   ============================================================ */
-const ME = {name:'Sungwon', handle:'sungwon', target:'scr-my-profile', l:'S', g:'g9'};
-let repostChooserTarget = null;
-let repostPond = 'Inspiration';
-/* ---- Repost seeding ---- */
-function _sourcePublicNotes(img){
-  let src = (typeof OTHER_NOTES!=='undefined' && OTHER_NOTES[img]) ? OTHER_NOTES[img]
-          : ((typeof MARKNOTES!=='undefined' && MARKNOTES[img]) ? MARKNOTES[img] : []);
-  // only PUBLIC notes get seeded into a Repost
-  return src.filter(n => n.visibility === 'public');
-}
 /* ---- long-press a note → its author's profile ---- */
 let _lpTimer=null, _lpFired=false, _noteAuthorTarget=null;
 function _lpStart(e){
