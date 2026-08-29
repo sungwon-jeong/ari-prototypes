@@ -88,11 +88,6 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
 .chipsep{flex:none;width:1px;height:20px;background:#E4E4E4;align-self:center;margin:0 2px}
 
 /* ── banner ───────────────────────────────────────────── */
-.ban{margin:0 16px 12px;background:var(--surface);border-radius:12px;padding:11px 13px;
-  display:flex;align-items:center;gap:10px;font-size:13px}
-.ban b{font-weight:600}
-.ban .go{margin-left:auto;font-weight:600;color:var(--mark);white-space:nowrap}
-.ban .x{color:var(--soft);padding:0 2px}
 
 /* ── grid ─────────────────────────────────────────────── */
 .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;padding:0 2px}
@@ -134,27 +129,52 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
   font-size:12.5px;color:var(--soft);word-break:break-all;font-family:ui-monospace,Menlo,monospace}
 .protolab{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--soft);
   padding:16px 18px 2px;text-transform:uppercase}
+.phbar{flex:none;display:flex;gap:10px;padding:6px 16px calc(var(--safeB) + 16px)}
+.phb{flex:1;height:48px;border-radius:var(--r-pill);background:rgba(255,255,255,.14);color:#fff;
+  display:flex;align-items:center;justify-content:center;gap:7px;font-size:15px;font-weight:600}
+.phb:active{opacity:.65}
+.phhold svg path,#phsvg path{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;
+  stroke-linejoin:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 4px rgba(0,0,0,.65))}
+#phsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* the crop frame */
+.crframe{position:absolute;box-shadow:0 0 0 9999px rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.9);
+  touch-action:none;cursor:move}
+.crframe:before,.crframe:after{content:"";position:absolute;inset:0;pointer-events:none}
+.crframe:before{border-left:1px solid rgba(255,255,255,.25);border-right:1px solid rgba(255,255,255,.25);
+  margin:0 33.33%}
+.crframe:after{border-top:1px solid rgba(255,255,255,.25);border-bottom:1px solid rgba(255,255,255,.25);
+  margin:33.33% 0}
+.crframe i{position:absolute;width:40px;height:40px;touch-action:none}
+.crframe i:before{content:"";position:absolute;width:22px;height:22px;border:3px solid #fff}
+.crframe i[data-h=nw]{left:0;top:0}
+.crframe i[data-h=nw]:before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+.crframe i[data-h=ne]{right:0;top:0}
+.crframe i[data-h=ne]:before{right:-1px;top:-1px;border-left:0;border-bottom:0}
+.crframe i[data-h=sw]{left:0;bottom:0}
+.crframe i[data-h=sw]:before{left:-1px;bottom:-1px;border-right:0;border-top:0}
+.crframe i[data-h=se]{right:0;bottom:0}
+.crframe i[data-h=se]:before{right:-1px;bottom:-1px;border-left:0;border-top:0}
+.chips .chip.dark{background:rgba(255,255,255,.14);color:#fff;border:0}
 .vbar{flex:none;display:flex;align-items:center;gap:10px;background:#161616;color:#fff;
   padding:calc(var(--safeT) + 12px) 16px 12px;font-size:13.5px}
 .vbar b{font-weight:600}
 .vbar button{margin-left:auto;background:rgba(255,255,255,.16);color:#fff;height:30px;padding:0 13px;
   border-radius:var(--r-pill);font-size:13px;font-weight:600}
-.tile .byav{position:absolute;left:5px;bottom:5px;z-index:3}
 .empty{padding:70px 34px;text-align:center;color:var(--soft);font-size:14px;line-height:1.75}
 .empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:8px;font-weight:600}
+.empty .ecta{display:inline-block;margin-top:16px;background:var(--ink);color:#fff;font-size:14px;
+  font-weight:600;padding:11px 20px;border-radius:var(--r-pill)}
 
 /* ── pool list ────────────────────────────────────────── */
 .plist{padding:0 14px}
 .pcard{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:var(--r-card);
   padding:10px;margin-bottom:10px}
-.pcard.star{border-color:var(--amber);border-width:1.5px}
 .pcard:active{background:var(--surface)}
 .pmini{width:54px;height:96px;flex:none;display:grid;grid-template-columns:1fr 1fr;
   grid-template-rows:1fr 1fr;gap:1.5px;border-radius:7px;overflow:hidden;background:var(--line)}
 .pmini img{width:100%;height:100%;object-fit:cover;display:block}
 .pmeta{flex:1;min-width:0}
 .pmeta .t{font-size:15px;font-weight:600;display:flex;align-items:center;gap:5px}
-.pmeta .stx{color:var(--amber);display:flex}
 .pmeta .d{font-size:12px;color:var(--soft);margin-top:2px}
 .pmeta .q{font-size:12px;color:var(--soft);margin-top:5px;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;font-style:italic}
@@ -188,7 +208,6 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
 .crow{font-size:13px;line-height:1.5;padding:3px 0;display:flex;align-items:baseline;gap:6px}
 .crow .av{align-self:center}
 .crow b{font-weight:600}
-.cempty{font-size:12.5px;color:var(--soft);padding:2px 0 4px}
 .cin{display:flex;gap:8px;align-items:center;padding:7px 0 9px;position:sticky;bottom:0;background:#fff}
 .cin input{flex:1;height:38px;border-radius:10px;border:1px solid var(--line);padding:0 12px;
   font-size:14px;background:var(--surface)}
@@ -199,6 +218,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
 .pill{flex:none;height:38px;padding:0 14px;border-radius:var(--r-pill);background:var(--surface);
   display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500}
 .pill.on{background:var(--amber);color:#fff}
+.pill.wide{flex:1;justify-content:center;height:46px;font-size:15px;font-weight:600}
 .pill:active{opacity:.6}
 
 /* ── marking editor ───────────────────────────────────── */
@@ -206,6 +226,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
 .mkhd{flex:none;display:flex;align-items:center;gap:10px;padding:calc(var(--safeT) + 14px) 16px 10px;color:#fff}
 .mkhd h1{font-size:16px;font-weight:600}
 .mkhd .hbtn{background:rgba(255,255,255,.12);color:#fff}
+.mkhd .r{margin-left:auto;display:flex;align-items:center;gap:8px}
 .mkhd .hlink{color:#fff}
 .mkstage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;
   min-height:0;padding:2px 8px;overflow:hidden}
@@ -216,7 +237,6 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
    Without it the line is thicker across than down, by the ratio of the two. */
 .mkhold svg path{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
   vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 4px rgba(0,0,0,.65))}
-.mkhold svg path.priv{stroke-dasharray:7 5}
 /* width:max-content matters. An absolutely positioned box shrinks to the
    space left of the container edge, so a mark at x=80% got about sixty
    pixels and wrapped its note one letter per line. Flipped marks are
@@ -232,25 +252,20 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);word-break:break-word}
 .mark.flip{flex-direction:row-reverse}
 .mark.flip .pill2{margin-left:0;margin-right:6px}
-.mark.priv .badge{background:#5B5B60!important}
-.mark.theirs .badge{border-style:dashed}
-.mark .lock{width:11px;height:11px;margin-right:4px;opacity:.75;flex:none;display:inline-block;vertical-align:-1px}
 .mark.editing{z-index:9}
 .mark .pill2 input{width:150px;background:none;color:#fff;font-size:12px}
 .mark .pill2 input::placeholder{color:rgba(255,255,255,.45)}
 .mkhint{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:rgba(255,255,255,.6);
   font-size:12px;pointer-events:none}
-.mktools{flex:none;display:flex;align-items:center;gap:4px;margin:0 14px 8px;background:#1B1B1D;
-  border-radius:var(--r-pill);padding:5px}
-.tool{height:38px;padding:0 15px;border-radius:var(--r-pill);display:flex;align-items:center;gap:6px;
-  color:rgba(255,255,255,.6);font-size:13.5px;font-weight:500}
-.tool.on{background:rgba(255,255,255,.14);color:#fff}
-.tsep{width:1px;height:20px;background:rgba(255,255,255,.16);margin:0 3px}
+.mkbar{flex:none;display:flex;align-items:center;gap:10px;
+  padding:6px 18px calc(var(--safeB) + 16px)}
+.mkbar .c{margin-right:auto;font-size:13px;color:rgba(255,255,255,.45)}
+.mk-save{height:46px;padding:0 30px;border-radius:var(--r-pill);background:#fff;color:#111;
+  font-size:15.5px;font-weight:600}
+.mk-save:active{opacity:.75}
+.mktools{display:none}
+.tool{color:rgba(255,255,255,.6);display:flex;align-items:center}
 .tool.icon{padding:0 12px}
-.mkfoot{flex:none;display:flex;align-items:center;padding:2px 18px calc(var(--safeB) + 14px);color:#fff}
-.mkfoot .l{font-size:15px;color:rgba(255,255,255,.55)}
-.mkfoot .c{margin:0 auto;font-size:13px;color:rgba(255,255,255,.5)}
-.mkfoot .r{font-size:16px;font-weight:600}
 /* the note sheet */
 .nsheet{position:fixed;left:0;right:0;bottom:0;z-index:90;background:#17171A;color:#fff;
   border-radius:var(--r-card) var(--r-card) 0 0;padding:14px 16px calc(var(--safeB) + 16px);
@@ -265,10 +280,6 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
 .nfield input{flex:1;font-size:15px;color:#fff}
 .nfield input::placeholder{color:#6E6E75}
 .nfield .cnt2{font-size:11.5px;color:#6E6E75;flex:none}
-.nvis{display:flex;gap:4px;background:#242428;border-radius:12px;padding:4px;margin-top:10px}
-.nvis button{flex:1;height:36px;border-radius:9px;font-size:13px;color:#8E8E96;
-  display:flex;align-items:center;justify-content:center;gap:5px}
-.nvis button.on{background:#35353B;color:#fff;font-weight:600}
 .nsave{width:100%;height:46px;border-radius:var(--r-pill);background:#fff;color:#111;
   font-size:15px;font-weight:600;margin-top:12px}
 
@@ -329,23 +340,6 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
   color:#fff;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:6px;margin-right:8px}
 .fb:active{opacity:.6}
 
-/* share — three at a time, side by side, because choosing between them is
-   the entire reason for sending more than one */
-.optrow{display:flex;gap:10px;padding:0 14px}
-.opt{flex:1;min-width:0}
-.opt .optq{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1.5px;padding:1.5px;
-  background:var(--line);border-radius:8px;overflow:hidden;border:2px solid transparent}
-.opt.sel .optq{border-color:var(--ink)}
-.optq .oc{position:relative;aspect-ratio:9/16;overflow:hidden;background:var(--surface)}
-.optq img{width:100%;height:100%;object-fit:cover;display:block}
-.optq .on2{position:absolute;left:2px;bottom:2px;right:2px;background:rgba(17,17,17,.8);color:#fff;
-  font-size:7px;line-height:1.3;padding:2px 3px;border-radius:3px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.optbar{display:flex;align-items:center;gap:6px;padding:7px 1px 0}
-.optbar .lb{width:19px;height:19px;border-radius:50%;background:var(--surface2);color:var(--soft);
-  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
-.opt.sel .optbar .lb{background:var(--ink);color:#fff}
-.optbar .nm2{font-size:11.5px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* toast */
 .selbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;align-items:center;gap:6px;
@@ -370,17 +364,14 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
 <!-- ══ PONDS ══════════════════════════════════════════════ -->
 <section class="scr on" id="s-ponds">
   <div class="vbar" id="vbar" style="display:none">
-    <span id="vbar-t"></span><button onclick="exitViewer()">Exit</button></div>
+    <span id="vbar-t"></span><button onclick="leaveGuest()">Exit</button></div>
   <div class="hd">
     <h1>Ponds</h1><span class="cnt" id="pond-count"></span>
     <span class="r">
       <button class="hlink dim" id="pick-cancel" style="display:none" onclick="endPick()">Done</button>
-      <button class="hbtn" id="pond-manage" onclick="openSheet('sheet-board')" aria-label="Boards"></button>
     </span>
   </div>
   <div class="boardrow" id="boardrow"></div>
-  <div class="chips" id="subchips"></div>
-  <div id="banner-slot"></div>
   <div class="body"><div class="grid pad" id="grid"></div></div>
 </section>
 
@@ -397,7 +388,6 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
     <button class="hbtn" onclick="leavePool()" aria-label="Back" id="pool-back"></button>
     <h1 id="pool-title" onclick="renamePool()" style="cursor:text"></h1>
     <span class="r">
-      <button class="hlink" onclick="openShare()">Share</button>
       <button class="hbtn" onclick="openSheet('sheet-pool')" aria-label="More" id="pool-more"></button>
     </span>
   </div>
@@ -409,10 +399,11 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
       <button onclick="addComment()">Post</button>
     </div>
   </div>
+  <!-- One button. Star sorted a list nobody has yet, and Shuffle threw away
+       an arrangement and its notes for a random draw — in a product whose whole
+       claim is that the arrangement is a judgement. -->
   <div class="pbar">
-    <button class="pill" id="btn-star" onclick="toggleStar()"><span id="star-ic"></span><span>Star</span></button>
-    <button class="pill" onclick="duplicatePool()"><span id="dup-ic"></span><span>Duplicate</span></button>
-    <button class="pill" onclick="shufflePool()"><span id="shuf-ic"></span><span>Shuffle</span></button>
+    <button class="pill wide" onclick="duplicatePool()"><span id="dup-ic"></span><span>Duplicate</span></button>
   </div>
 </section>
 
@@ -421,77 +412,82 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
   <div class="mkhd">
     <button class="hbtn" onclick="markBack()" aria-label="Back" id="mk-back"></button>
     <h1 id="mk-title">Mark</h1>
-    <span class="r"><span class="cnt" id="mk-step" style="color:rgba(255,255,255,.55)"></span></span>
+    <span class="r">
+      <span class="cnt" id="mk-step" style="color:rgba(255,255,255,.5)"></span>
+      <button class="hlink" id="mk-discard" onclick="markDiscard()"
+        style="color:rgba(255,255,255,.55);font-weight:400">Skip</button>
+    </span>
   </div>
   <div class="mkstage">
     <div class="mkhold" id="mkhold">
       <img id="mkimg" alt="">
       <svg id="mksvg" preserveAspectRatio="none" viewBox="0 0 100 100"></svg>
     </div>
-    <p class="mkhint" id="mkhint">Tap the photograph where you noticed something</p>
+    <p class="mkhint" id="mkhint">Tap a spot, or draw round something</p>
   </div>
-  <div class="mktools">
-    <button class="tool on" id="t-point" onclick="setTool('point')"><span id="pt-ic"></span>Point</button>
-    <button class="tool" id="t-draw" onclick="setTool('draw')"><span id="dr-ic"></span>Draw</button>
-    <span style="flex:1"></span>
-    <span class="tsep"></span>
+  <!-- One row. There is no Point/Draw switch: a tap is a point and a drag is
+       a region, which the code already had to tell apart anyway to rescue a
+       drag too small to be an outline. A control that only repeats what the
+       gesture already says is a control worth deleting. -->
+  <div class="mkbar">
     <button class="tool icon" onclick="undoMark()" aria-label="Undo" id="undo-ic"></button>
-    <button class="tool icon" onclick="clearMarks()" aria-label="Clear" id="clear-ic"></button>
-  </div>
-  <div class="mkfoot">
-    <button class="l" onclick="markDiscard()" id="mk-discard">Discard</button>
     <span class="c" id="mk-count"></span>
-    <button class="r" onclick="markSave()" id="mk-save">Save</button>
+    <button class="mk-save" onclick="markSave()" id="mk-save">Save</button>
   </div>
 </section>
 
-<!-- ══ IMPORT · which board ═══════════════════════════════ -->
-<section class="scr" id="s-imp-board">
-  <div class="hd">
-    <button class="hlink dim" onclick="cancelImport()">Cancel</button>
+
+<!-- ══ ONE PHOTOGRAPH ═════════════════════════════════════
+     Tapping a photograph used to drop you straight into the editor, which is
+     abrupt and left cropping and deleting a single photograph with nowhere to
+     live. Now a tap opens the photograph, and the verbs sit under it. -->
+<section class="scr mkscr" id="s-photo">
+  <div class="mkhd">
+    <button class="hbtn" onclick="go('s-ponds')" aria-label="Back" id="ph-back"></button>
+    <h1 id="ph-title">Photo</h1>
+    <span class="r"><button class="hbtn" onclick="openSheet('sheet-photo')" aria-label="More" id="ph-more"></button></span>
   </div>
-  <div class="body">
-    <div class="sh" style="padding-top:6px" id="imp-h">Add photos to…</div>
-    <div class="sp">They go in as they are. You can say something about them next, or not at all.</div>
-    <div class="swapstrip" id="imp-strip" style="padding-bottom:14px"></div>
-    <div id="imp-boards"></div>
+  <div class="mkstage">
+    <div class="mkhold" id="phhold">
+      <img id="phimg" alt="">
+      <svg id="phsvg" preserveAspectRatio="none" viewBox="0 0 100 100"></svg>
+    </div>
   </div>
+  <div class="phbar">
+    <button class="phb" onclick="markThisPhoto()"><span id="phb-mark"></span>Mark</button>
+    <button class="phb" onclick="openCrop()"><span id="phb-crop"></span>Crop</button>
+  </div>
+</section>
+
+<!-- ══ CROP ═══════════════════════════════════════════════
+     A screenshot arrives with a status bar, a battery and a browser toolbar
+     on it. None of that is the reference. -->
+<section class="scr mkscr" id="s-crop">
+  <div class="mkhd">
+    <button class="hlink" style="color:rgba(255,255,255,.6);font-weight:400"
+      onclick="go('s-photo')">Cancel</button>
+    <span class="r"><button class="hlink" style="color:#fff" onclick="applyCrop()">Done</button></span>
+  </div>
+  <div class="mkstage">
+    <div class="mkhold" id="crhold">
+      <img id="crimg" alt="">
+      <div class="crframe" id="crframe">
+        <i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i>
+      </div>
+    </div>
+  </div>
+  <div class="chips" id="crpresets" style="background:transparent;padding-bottom:calc(var(--safeB) + 14px)"></div>
 </section>
 
 <!-- ══ IMPORT · which to mark ═════════════════════════════ -->
 <section class="scr" id="s-imp-mark">
+  <!-- The title sits in the header on the same line as the button. It was
+       below it, with the button floating alone on the right against nothing. -->
   <div class="hd">
+    <h1>Anything worth saying?</h1>
     <span class="r"><button class="hlink" id="imp-mark-go" onclick="impStartRun()">Skip</button></span>
   </div>
-  <div class="body">
-    <div class="sh" style="padding-top:6px">Anything worth saying?</div>
-    <div class="sp">Tap the ones you want to mark. The rest are already saved.</div>
-    <div class="grid pad" id="imp-grid"></div>
-  </div>
-</section>
-
-<!-- ══ SHARE ══════════════════════════════════════════════ -->
-<section class="scr" id="s-share">
-  <div class="hd">
-    <button class="hbtn" onclick="go('s-pool')" aria-label="Back" id="share-back"></button>
-    <h1>Share</h1>
-  </div>
-  <div class="body pad">
-    <div class="sh" style="padding-top:4px">Send which?</div>
-    <div class="sp">Up to three, side by side. It opens without an account — they pick one and
-      leave a line, and that line comes back as a comment on the one they chose.</div>
-    <div class="optrow" id="share-opts"></div>
-    <div class="sh" style="padding-top:14px;font-size:15px">A note with it</div>
-    <div style="padding:4px 14px 0">
-      <input id="share-cmt" placeholder="Which do you prefer, and why?"
-        style="width:100%;height:46px;border-radius:12px;border:1px solid var(--line);
-               padding:0 14px;font-size:15px;background:var(--surface)">
-    </div>
-    <div style="padding:16px 14px 0">
-      <button id="share-send" onclick="fakeReply()" style="width:100%;height:48px;border-radius:var(--r-pill);
-        background:var(--ink);color:#fff;font-size:15px;font-weight:600">Send</button>
-    </div>
-  </div>
+  <div class="body"><div class="grid pad" id="imp-grid"></div></div>
 </section>
 
 <!-- ══ overlays ═══════════════════════════════════════════ -->
@@ -501,10 +497,6 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
   <div class="nfield">
     <input id="ns-input" maxlength="70" placeholder="What caught your eye?">
     <span class="cnt2" id="ns-count"></span>
-  </div>
-  <div class="nvis">
-    <button id="vis-pub" class="on" onclick="setVis('public')">They see it</button>
-    <button id="vis-priv" onclick="setVis('private')">Just me</button>
   </div>
   <button class="nsave" onclick="closeNote()">Done</button>
 </div>
@@ -525,7 +517,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
   <div class="swapstrip" id="swapstrip"></div>
 </div>
 
-<div class="scrim" id="scrim" onclick="closeSheets()"></div>
+<div class="scrim" id="scrim" onclick="scrimTap()"></div>
 
 <div class="sheet" id="sheet-board">
   <div class="grab"></div><div class="sh">Boards</div>
@@ -533,17 +525,8 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
   <div class="srow" onclick="newBoard()" style="color:var(--soft)">＋ New board</div>
 </div>
 
-<div class="sheet" id="sheet-sub">
-  <div class="grab"></div><div class="sh" id="sub-h">Sub-categories</div>
-  <div class="sp" id="sub-p">Name what you want to keep separate.</div>
-  <div id="sub-rows"></div>
-  <div class="srow" onclick="newSub()" style="color:var(--soft)">＋ New sub-category</div>
-</div>
-
 <div class="sheet" id="sheet-pool">
   <div class="grab"></div><div class="sh">Pool</div>
-  <div class="srow" onclick="renamePool()">Rename</div>
-  <div class="srow" onclick="duplicatePool()">Duplicate</div>
   <div class="srow" onclick="movePool()">Move to another board</div>
   <div class="srow danger" onclick="deletePool()">Delete pool</div>
 </div>
@@ -569,24 +552,35 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;user-select:none;-webkit-user-s
 <!-- Selection puts a bar where the nav was, rather than adding a second one.
      Every verb that acts on photographs lives here and nowhere else. -->
 <div class="selbar" id="selbar">
-  <button class="sb" onclick="openSheet('sheet-sub')"><span id="sb-file"></span>File into…</button>
   <button class="sb" onclick="openSheet('sheet-move')"><span id="sb-move"></span>Move</button>
   <button class="sb danger" onclick="removeSelected()"><span id="sb-del"></span></button>
   <button class="sb main" id="sb-pool" onclick="poolFromPick()">Make a pool</button>
 </div>
 
+<!-- Choosing the board is a sheet, not a screen. You have just come out of
+     the photo picker and are still in the middle of one action; replacing the
+     whole screen makes it feel like a form you have been handed. -->
+<div class="sheet" id="sheet-photo">
+  <div class="grab"></div><div class="sh">Photo</div>
+  <div class="srow" onclick="cropFromSheet()">Crop</div>
+  <div class="srow" onclick="movePhoto()">Move to another board</div>
+  <div class="srow danger" onclick="removePhoto()">Remove photo</div>
+</div>
+
+<div class="sheet" id="sheet-imp">
+  <div class="swapstrip" id="imp-strip" style="padding:0 18px 14px"></div>
+  <div class="sh" id="imp-h">Add photos to…</div>
+  <div id="imp-boards"></div>
+</div>
+
 <div class="sheet" id="sheet-people">
   <div class="grab"></div><div class="sh" id="pe-h">People</div>
-  <div class="sp">Anyone here can add photographs and write their own notes.
-    Notes stay attached to whoever wrote them.</div>
   <div id="pe-rows"></div>
   <div id="pe-invite"></div>
   <div class="srow" style="border-top:8px solid var(--surface)" onclick="toggleLink()">
     <span>Anyone with the link can look</span><span class="tog" id="pe-tog"></span></div>
   <div id="pe-link"></div>
-  <div class="protolab">Prototype only</div>
-  <div class="sp" style="padding-bottom:6px">Be somebody else for a moment, to see what a
-    second person on this board actually looks like.</div>
+  <div class="protolab">Prototype only · be somebody else</div>
   <div id="pe-as"></div>
 </div>
 
@@ -639,17 +633,19 @@ const I = {
   loop:  svg('<path d="M15.5 7.5a5.5 5.5 0 1 0 2 4.2"/>'),
   lock:  svg('<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.2 10.5V7.6a3.8 3.8 0 1 1 7.6 0v2.9"/>'),
   close: svg('<path d="M7 7l10 10M17 7L7 17"/>'),
+  crop:  svg('<path d="M6.5 2.5v15h15M2.5 6.5h15v15"/>'),
   eye:   svg('<path d="M2.6 12S6 5.8 12 5.8 21.4 12 21.4 12 18 18.2 12 18.2 2.6 12 2.6 12z"/><circle cx="12" cy="12" r="2.9"/>'),
   globe: svg('<circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8c4 4.6 4 11 0 16.4-4-5.4-4-11.8 0-16.4"/>')
 };
 function paintIcons(){
   const put=(id,ic,cls)=>{ const e=$(id); if(e) e.innerHTML = cls ? ic.replace('class="ic"','class="ic '+cls+'"') : ic; };
-  put('pond-manage', I.board); put('pool-back', I.back); put('pool-more', I.more);
+  put('pool-back', I.back); put('pool-more', I.more);
   put('mk-back', I.back); put('share-back', I.back); put('fab', I.plus);
-  put('star-ic', I.star,'s'); put('dup-ic', I.dup,'s'); put('shuf-ic', I.shuf,'s');
-  put('pt-ic', I.dot,'s'); put('dr-ic', I.loop,'s');
-  put('sb-file', I.board,'s'); put('sb-move', I.swap,'s'); put('sb-del', I.trash,'s');
+  put('dup-ic', I.dup,'s');
+  put('sb-move', I.swap,'s'); put('sb-del', I.trash,'s');
   put('fb-mark', I.edit,'s'); put('fb-swap', I.swap,'s');
+  put('ph-back', I.back); put('ph-more', I.more);
+  put('phb-mark', I.edit,'s'); put('phb-crop', I.crop,'s');
   put('undo-ic', I.undo,'s'); put('clear-ic', I.trash,'s');
 }
 
@@ -659,14 +655,13 @@ function paintIcons(){
    honest way to show two people on one board without inventing content
    for the second one. */
 const PEOPLE = {
-  me:    {id:'me',    name:'You',        short:'You',   c:'#325788'},
-  jieun: {id:'jieun', name:'Jieun Park', short:'Jieun', c:'#A85440'},
-  minho: {id:'minho', name:'Minho Seo',  short:'Minho', c:'#3B7A5C'},
-  tara:  {id:'tara',  name:'Tara Blyth', short:'Tara',  c:'#6E56A6'}
+  me:      {id:'me',      name:'Sungwon',        short:'Sungwon', c:'#325788'},
+  jieun:   {id:'jieun',   name:'Jieun Park',     short:'Jieun',   c:'#A85440'},
+  eleanor: {id:'eleanor', name:'Eleanor Whitby', short:'Eleanor', c:'#3B7A5C'}
 };
 let ME = 'me';
 const who = id => PEOPLE[id] || PEOPLE.me;
-const initials = id => id==='me' ? 'Y' : who(id).short[0];
+const initials = id => who(id).short[0];
 function avatarHTML(id, size){
   const p=who(id), z=size||24;
   return `<span class="av" style="background:${p.c};width:${z}px;height:${z}px;font-size:${Math.round(z*0.42)}px"
@@ -686,7 +681,7 @@ function avatarHTML(id, size){
 let BOARDS = [];
 let IMAGES = [];
 let POOLS  = [];
-let UI = { board:null, subs:new Set(), poolBoard:'all', screen:'s-ponds' };
+let UI = { board:null, poolBoard:'all', screen:'s-ponds' };
 
 const MARK_CAP = 3;
 const NOTE_MAX = 70;
@@ -727,15 +722,16 @@ function save(){
 function load(){
   try{
     BOARDS = JSON.parse(localStorage.getItem('ari-boards')||'null') || [
-      {id:'b1', name:'My board', subs:[], members:['me'], link:false}
+      {id:'b1', name:'Wedding dress',     members:['me'], link:false},
+      {id:'b2', name:'Wedding hairstyle',  members:['me'], link:false}
     ];
     POOLS  = JSON.parse(localStorage.getItem('ari-pools')||'[]');
     IMAGES = JSON.parse(localStorage.getItem('ari-images')||'[]');
     /* Everything written before there were other people belongs to you. */
-    BOARDS.forEach(b=>{ b.members = b.members||['me']; b.link = !!b.link; });
-    IMAGES.forEach(i=>{ i.by = i.by||'me'; (i.marks||[]).forEach(m=>m.by=m.by||'me'); });
+    BOARDS.forEach(b=>{ b.members = b.members||['me']; b.link = !!b.link; delete b.subs; });
+    IMAGES.forEach(i=>{ i.by = i.by||'me'; delete i.subs; (i.marks||[]).forEach(m=>m.by=m.by||'me'); });
     POOLS.forEach(p=>{ p.by = p.by||'me'; p.cells.forEach(c=>(c.marks||[]).forEach(m=>m.by=m.by||'me')); });
-  }catch(e){ BOARDS=[{id:'b1',name:'Wedding dress',subs:[]}]; POOLS=[]; IMAGES=[]; }
+  }catch(e){ BOARDS=[{id:'b1',name:'Wedding dress',members:['me'],link:false}]; POOLS=[]; IMAGES=[]; }
 }
 
 /* ═══ helpers ══════════════════════════════════════════════ */
@@ -758,24 +754,25 @@ function go(id){
   document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on', s.id===id));
   const showNav = (id==='s-ponds' || id==='s-pools') && !_picking;
   $('nav').style.display = showNav ? 'flex' : 'none';
-  $('fab').style.display = VIEWING ? 'none' : 'flex';
-  $('nav').classList.toggle('solo', VIEWING);
+  const hideFab = VIEWING || !isOwner() || id!=='s-ponds';
+  $('fab').style.display = hideFab ? 'none' : 'flex';
+  $('nav').classList.toggle('solo', hideFab);
   $('selbar').classList.toggle('on', _picking && id==='s-ponds');
   $('nav-ponds').classList.toggle('on', id==='s-ponds');
   $('nav-pools').classList.toggle('on', id==='s-pools');
   if(id==='s-ponds') renderPonds();
   if(id==='s-pools') renderPools();
-  if(id==='s-share') renderShare();
   if(id==='s-pool')  requestAnimationFrame(fitQuad);
 }
 /* The ＋ does the job of the tab you are looking at. On Ponds that is
    bringing photographs in; on Pools it is starting a combination. One
    button, and the screen has already said which. */
-function fabTap(){
-  if(VIEWING) return;
-  if(UI.screen==='s-pools'){ startPick('Tap four, in the order you want them'); return; }
-  pickFiles();
-}
+/* The ＋ used to mean two things depending on which tab was lit, which is
+   why it read as ambiguous — a floating button looks like it has an action
+   of its own. It now means one thing: bring photographs in. Pools are made
+   where the photographs are, by selecting four, and the Pools screen is a
+   list of what came out. */
+function fabTap(){ if(!readOnly()) pickFiles(); }
 
 /* ═══ sheets ═══════════════════════════════════════════════ */
 let _sheetOpen = null;
@@ -785,10 +782,11 @@ function openSheet(id){
   $('scrim').classList.add('on');
   $(id).classList.add('on');
   if(id==='sheet-board') renderBoardSheet();
-  if(id==='sheet-sub')   renderSubSheet();
   if(id==='sheet-move' && _picking) renderMoveSheet();
   if(id==='sheet-people') renderPeopleSheet();
+  if(id==='sheet-imp')    renderImpBoards();
 }
+function scrimTap(){ if(_sheetOpen==='sheet-imp') cancelImport(); else closeSheets(); }
 function closeSheets(){
   document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'));
   $('scrim').classList.remove('on');
@@ -811,13 +809,12 @@ async function filesPicked(e){
   for(const f of files){
     try{
       const src = await downscale(f, 1500);
-      _incoming.push({ id:'i'+uid(), src, marks:[], subs:[], by:ME, at:Date.now() });
+      _incoming.push({ id:'i'+uid(), src, marks:[], by:ME, at:Date.now() });
     }catch(err){}
   }
   if(!_incoming.length){ toast('Could not read those'); return; }
   $('imp-h').textContent = 'Add ' + _incoming.length + (_incoming.length===1?' photo to…':' photos to…');
-  renderImpBoards();
-  go('s-imp-board');
+  openSheet('sheet-imp');
 }
 /* A phone photo is 4000px on the long edge. Four of those decoding at
    once in a pool stutters visibly, and none of this needs the pixels. */
@@ -848,12 +845,13 @@ function renderImpBoards(){
        ${esc(b.name)}<span class="k">${boardImages(b.id).length}</span></div>`).join('')
     + `<div class="srow" style="color:var(--soft)" onclick="newBoardFromImport()">＋ New board</div>`;
 }
-function cancelImport(){ _incoming=[]; go('s-ponds'); }
+function cancelImport(){ _incoming=[]; closeSheets(); go('s-ponds'); }
 function impBoardNext(){
+  closeSheets();
   _incoming.forEach(i=>{ i.board=_impBoard; });
   IMAGES = _incoming.concat(IMAGES);
   _incoming.forEach(i=>dbPut(i.id, i.src));
-  UI.board = _impBoard; UI.subs.clear();
+  UI.board = _impBoard;
   save();
   _markPick = new Set();
   renderImpMark();
@@ -882,7 +880,7 @@ function impStartRun(){
 
 /* ═══ Ponds screen ═════════════════════════════════════════ */
 function renderPonds(){
-  if(!BOARDS.length) BOARDS=[{id:'b1',name:'Wedding dress',subs:[]}];
+  if(!BOARDS.length) BOARDS=[{id:'b1',name:'Wedding dress',members:['me'],link:false}];
   if(!UI.board || !boardById(UI.board)) UI.board = BOARDS[0].id;
   const b = curBoard();
   const all = boardImages(b.id);
@@ -896,50 +894,34 @@ function renderPonds(){
     + (VIEWING ? '' : `<span class="avstack" onclick="openSheet('sheet-people')">
         ${mem.map(id=>avatarHTML(id,26)).join('')}<span class="plusp">＋</span></span>`);
 
-  $('vbar').style.display = VIEWING ? 'flex' : 'none';
+  $('vbar').style.display = readOnly() ? 'flex' : 'none';
   if(VIEWING) $('vbar-t').innerHTML = 'Read only · the link view';
-  $('pond-manage').style.display = VIEWING ? 'none' : (_picking?'none':'');
+  else if(!isOwner()) $('vbar-t').innerHTML = 'You are <b>' + esc(who(ME).name) + '</b> · you can comment';
 
-  /* Sub-categories and the two state filters are the same question asked
-     twice — show me a subset — so they share one row rather than stacking
-     two, which pushed the photographs a third of the way down the screen. */
-  const unmarked = all.filter(i=>!(i.marks||[]).length).length;
-  const unused   = all.filter(i=>!inAnyPool(i.id)).length;
-  const subs = b.subs||[];
-  $('subchips').style.display = all.length ? '' : 'none';
-  $('subchips').innerHTML =
-    subs.map(s=>{
-      const n = all.filter(i=>(i.subs||[]).includes(s.id)).length;
-      return `<button class="chip ${UI.subs.has(s.id)?'on':''}" onclick="toggleSub('${s.id}')">${esc(s.name)}<span class="k">${n}</span></button>`;
-    }).join('')
-    + `<button class="chip add" onclick="openSheet('sheet-sub')">${subs.length?'＋':'＋ Sub-category'}</button>`
-    /* A count equal to the whole board is not a filter, it is the board. */
-    + ((unmarked&&unmarked<all.length)||(unused&&unused<all.length) ? `<span class="chipsep"></span>
-        ${unmarked&&unmarked<all.length?`<button class="chip ${UI.filter==='unmarked'?'on':''}" onclick="setFilter('unmarked')">Nothing said<span class="k">${unmarked}</span></button>`:''}
-        ${unused&&unused<all.length?`<button class="chip ${UI.filter==='unused'?'on':''}" onclick="setFilter('unused')">Not in a pool<span class="k">${unused}</span></button>`:''}` : '');
-
-  let items = all;
-  if(UI.subs.size) items = items.filter(i=>(i.subs||[]).some(s=>UI.subs.has(s)));
-  if(UI.filter==='unmarked') items = items.filter(i=>!(i.marks||[]).length);
-  if(UI.filter==='unused')   items = items.filter(i=>!inAnyPool(i.id));
+  /* Sub-categories are gone. They were built for a classifier that was
+     deferred, and filing by hand is admin work the board already does —
+     if two kinds of thing need separating, that is two boards, and boards
+     are free. Nothing sits between the board's name and the photographs. */
+  const items = all;
 
   $('pond-count').textContent = '';
+  document.querySelector('#s-ponds .hd h1').textContent =
+    _picking ? (_pick.length ? (_pick.length + ' selected') : 'Pick photos') : 'Ponds';
 
   const g = $('grid');
   g.classList.toggle('picking', _picking);
   g.innerHTML = items.length ? items.map(i=>{
-    const ms=(i.marks||[]).filter(m=>!VIEWING||m.vis!=='private');
+    const ms=(i.marks||[]);
     const used=inAnyPool(i.id);
     const ord = _pick.indexOf(i.id);
     /* One dot per note, in the colour of whoever wrote it — on a shared board
        that is the difference between “three notes” and “three people”. */
-    const dots = ms.slice(0,4).map(m=>`<i style="background:${who(m.by).c}"></i>`).join('');
+    const dots = ms.slice(0,4).map(()=>`<i></i>`).join('');
     return `<div class="tile ${used?'used':''} ${ord>=0?'picked':''}" onclick="tileTap('${i.id}')"
       ${VIEWING?'':`onpointerdown="tileDown('${i.id}',event)" onpointermove="tileMove(event)"
       onpointerup="tileUp()" onpointercancel="tileUp()" onpointerleave="tileUp()"`}>
       <img src="${i.src}" alt="" loading="lazy">
       ${ms.length?`<span class="dots">${dots}</span>`:''}
-      ${i.by!=='me'&&mem.length>1?`<span class="byav">${avatarHTML(i.by,17)}</span>`:''}
       ${used&&!VIEWING?'<span class="inpool" title="in a pool"></span>':''}
       <span class="ord">${ord>=0?ord+1:''}</span></div>`;
   }).join('') : `<div class="empty" style="grid-column:1/4">
@@ -955,15 +937,7 @@ function viewerChrome(b, all){
   document.querySelector('#s-ponds .hd h1').textContent = b.name;
   const mem=b.members||['me'];
   $('boardrow').innerHTML = `<span style="font-size:13px;color:var(--soft)">${all.length} ${all.length===1?'photo':'photos'} · shared by ${esc(who(mem[0]).name)}</span>`;
-  const subs=(b.subs||[]).filter(sb=>all.some(i=>(i.subs||[]).includes(sb.id)));
-  $('subchips').innerHTML = subs.map(sb=>{
-    const n = all.filter(i=>(i.subs||[]).includes(sb.id)).length;
-    return `<button class="chip ${UI.subs.has(sb.id)?'on':''}" onclick="toggleSub('${sb.id}')">${esc(sb.name)}<span class="k">${n}</span></button>`;
-  }).join('');
-  $('subchips').style.display = subs.length ? '' : 'none';
 }
-function setFilter(f){ UI.filter = (UI.filter===f)?null:f; renderPonds(); }
-function toggleSub(id){ UI.subs.has(id)?UI.subs.delete(id):UI.subs.add(id); renderPonds(); }
 
 /* ── selection ───────────────────────────────────────────────
    One mode, entered by holding a photograph or by the ＋ on Pools.
@@ -976,13 +950,13 @@ function startPick(hint){
   _picking=true; _pick=[];
   UI.filter=null;
   go('s-ponds');
-  $('pick-cancel').style.display=''; $('pond-manage').style.display='none';
+  $('pick-cancel').style.display='';
   syncPick(); renderPonds();
   if(hint) toast(hint);
 }
 function endPick(){
   _picking=false; _pick=[];
-  $('pick-cancel').style.display='none'; $('pond-manage').style.display='';
+  $('pick-cancel').style.display='none';
   $('selbar').classList.remove('on'); $('nav').style.display='flex';
   renderPonds();
 }
@@ -994,12 +968,11 @@ function syncPick(){
   b.textContent = n===4 ? 'Make a pool' : (n>4 ? 'A pool is four' : 'Pick ' + (4-n) + ' more');
   $('sb-del').textContent = '';
   $('sb-del').innerHTML = I.trash.replace('class="ic"','class="ic s"');
-  const h=document.querySelector('#s-ponds .hd h1');
-  h.textContent = !_picking ? 'Ponds' : (_pick.length ? (_pick.length + ' selected') : 'Pick photos');
 }
 function tileTap(id){
   if(_justHeld===id){ _justHeld=null; return; }   // the hold already answered
-  if(VIEWING){ const im=imgById(id); openPhoto(im.src, (im.marks||[]).filter(m=>m.vis!=='private'), ''); return; }
+  if(readOnly()){ const im=imgById(id); openPhoto(im.src, (im.marks||[]), ''); return; }
+  if(!_picking){ showPhoto(id); return; }
   if(_picking){
     const i=_pick.indexOf(id);
     if(i>=0) _pick.splice(i,1); else _pick.push(id);
@@ -1011,7 +984,7 @@ function tileTap(id){
    that starts on a photograph does not turn into a selection. */
 let _hold=null, _holdFrom=null, _justHeld=null;
 function tileDown(id, e){
-  if(_picking || VIEWING) return;
+  if(_picking || readOnly()) return;
   _holdFrom={x:e.clientX,y:e.clientY};
   _hold=setTimeout(()=>{
     _hold=null;
@@ -1056,14 +1029,14 @@ function renderMoveSheet(){
   ).join('') || `<div class="sp">There is only one board.</div>`;
 }
 function moveSelected(bid){
-  _pick.forEach(id=>{ const im=imgById(id); im.board=bid; im.subs=[]; });
+  _pick.forEach(id=>{ const im=imgById(id); im.board=bid; });
   save(); closeSheets(); endPick(); toast('Moved to ' + boardById(bid).name);
 }
 function poolFromPick(){
   if(_pick.length!==4){ toast('A pool is four'); return; }
   const cells = _pick.map(id=>({ img:id, marks: JSON.parse(JSON.stringify(imgById(id).marks||[])) }));
   CURPOOL = { id:'p'+uid(), name:'Pool ' + (POOLS.filter(p=>p.board===UI.board).length+1), board:UI.board,
-              cells, star:false, comments:[], made:Date.now(), by:ME };
+              cells, comments:[], made:Date.now(), by:ME };
   POOLS.unshift(CURPOOL); save();
   endPick();
   openPool(CURPOOL.id);
@@ -1075,7 +1048,7 @@ function renderPeopleSheet(){
   $('pe-h').textContent = esc(b.name);
   $('pe-rows').innerHTML = b.members.map(id=>
     `<div class="prow">${avatarHTML(id,30)}<span class="nm">${esc(who(id).name)}</span>
-      <span class="rl">${id===b.members[0] ? 'Owner' : 'Can add'}</span>
+      <span class="rl">${id===b.members[0] ? 'Owner' : 'Can comment'}</span>
       ${id===b.members[0] ? '' : `<button class="rowbtn" onclick="removeMember('${id}')"
         aria-label="Remove">${I.close.replace('class="ic"','class="ic s"')}</button>`}</div>`).join('');
   const rest = Object.keys(PEOPLE).filter(id=>id!=='me' && !b.members.includes(id));
@@ -1099,12 +1072,12 @@ function addMember(id){
   const b=curBoard();
   if(!b.members.includes(id)) b.members.push(id);
   save(); renderPeopleSheet(); renderPonds();
-  toast(who(id).name + ' can now add to this board');
+  toast(who(id).name + ' can comment on this board');
 }
 function removeMember(id){
   const b=curBoard();
   confirmThen('Remove ' + who(id).name + '?',
-    'Their photographs and notes stay on the board. They just cannot add more.',
+    'Their comments stay. They just cannot open the board any more.',
     'Remove', ()=>{
       b.members = b.members.filter(x=>x!==id);
       if(ME===id) ME='me';
@@ -1123,18 +1096,27 @@ function copyLink(){
   closeSheets(); toast('Link copied');
 }
 function beSomebody(id){
-  ME=id; closeSheets(); renderPonds();
+  ME=id; closeSheets(); go('s-ponds');
   toast(id==='me' ? 'Back to you' : 'You are ' + who(id).name + ' now');
 }
 
 /* ── looking at a board the way a link recipient does.
    No ＋, no selection, no editing, and nothing marked “Just me”. */
 let VIEWING=false;
+/* Two levels and no more. The owner collects and writes; anybody invited
+   looks and comments. Co-editing was specified and dropped — the case that
+   actually happened was one person collecting and one person responding,
+   and every mechanism co-editing needed (whose mark, whose photo, a quota
+   each) was machinery in service of a hypothesis. */
+const isOwner = () => (curBoard().members||['me'])[0] === ME;
+const readOnly  = () => VIEWING || !isOwner();
+const canTalk   = () => !VIEWING;
 function openViewer(){
   VIEWING=true; closeSheets(); endPick();
   UI.poolBoard = UI.board;            // they came for this board, not all of them
   go('s-ponds'); toast('This is what they see');
 }
+function leaveGuest(){ if(VIEWING) exitViewer(); else beSomebody('me'); }
 function exitViewer(){
   VIEWING=false; UI.poolBoard='all';
   document.querySelector('#s-ponds .hd h1').textContent='Ponds';
@@ -1160,10 +1142,10 @@ function editBoard(id){
         IMAGES.filter(i=>i.board===id).forEach(i=>dbDel(i.id));
         IMAGES=IMAGES.filter(i=>i.board!==id);
         BOARDS=BOARDS.filter(x=>x.id!==id);
-        UI.board=BOARDS[0].id; UI.subs.clear(); save(); renderPonds(); toast('Board deleted');
+        UI.board=BOARDS[0].id; save(); renderPonds(); toast('Board deleted');
       }) } : null);
 }
-function pickBoard(id){ UI.board=id; UI.subs.clear(); UI.filter=null; closeSheets(); renderPonds(); }
+function pickBoard(id){ UI.board=id; closeSheets(); renderPonds(); }
 let _nameCtx=null, _nameExtra=null;
 function askName(title, value, cb, extra){
   _nameCtx=cb; _nameExtra=extra||null;
@@ -1183,60 +1165,8 @@ function nameConfirm(){
 function newBoard(){ askName('New board','',v=>{
   const d=BOARDS.find(x=>x.name.toLowerCase()===v.toLowerCase());
   if(d){ toast('“'+d.name+'” already exists'); pickBoard(d.id); return; }
-  const b={id:'b'+uid(),name:v,subs:[],members:['me'],link:false}; BOARDS.push(b); UI.board=b.id; UI.subs.clear(); save(); renderPonds(); }); }
-function newBoardFromImport(){ askName('New board','',v=>{ const b={id:'b'+uid(),name:v,subs:[],members:['me'],link:false}; BOARDS.push(b); _impBoard=b.id; save(); renderImpBoards(); }); }
-function renderSubSheet(){
-  const b=curBoard();
-  $('sub-h').textContent = esc(b.name);
-  $('sub-rows').innerHTML = (b.subs||[]).map(sb=>{
-    /* When everything selected is already filed here, the row takes it back
-       out. Filing you cannot undo is filing nobody risks. */
-    const allIn = _pick.length && _pick.every(id=>((imgById(id).subs)||[]).includes(sb.id));
-    return `<div class="srow ${allIn?'sel':''}" onclick="assignSub('${sb.id}')">${esc(sb.name)}
-       <span class="k">${boardImages(b.id).filter(i=>(i.subs||[]).includes(sb.id)).length}</span>
-       <button class="rowbtn" onclick="event.stopPropagation();editSub('${sb.id}')"
-         aria-label="Rename">${I.edit.replace('class="ic"','class="ic s"')}</button></div>`;
-  }).join('') || `<div class="sp" style="padding-top:0">None yet.</div>`;
-  $('sub-p').textContent = _pick.length
-    ? 'Tap one to file the selected photographs into it, or to take them back out.'
-    : 'Name what you want to keep separate — main dress, back, trail.';
-}
-function editSub(sid){
-  const b=curBoard(), sb=b.subs.find(x=>x.id===sid);
-  closeSheets();
-  askName('Rename sub-category', sb.name, v=>{ sb.name=v; save(); renderPonds(); }, {
-    label:'Delete sub-category',
-    run:()=>confirmThen('Delete “'+sb.name+'”?','The photographs stay on the board. Only the grouping goes.','Delete',()=>{
-      b.subs = b.subs.filter(x=>x.id!==sid);
-      IMAGES.forEach(i=>{ if(i.subs) i.subs=i.subs.filter(x=>x!==sid); });
-      UI.subs.delete(sid); save(); renderPonds(); toast('Sub-category deleted');
-    })
-  });
-}
-function newSub(){
-  askName('New sub-category','',v=>{
-    const b=curBoard();
-    const dup=(b.subs||[]).find(x=>x.name.toLowerCase()===v.toLowerCase());
-    if(dup){ toast('“'+dup.name+'” already exists'); if(_pick.length) assignSub(dup.id); return; }
-    const sub={id:'s'+uid(),name:v};
-    (b.subs=b.subs||[]).push(sub); save();
-    /* Named it while photographs were selected — that is what it was for. */
-    if(_pick.length) assignSub(sub.id); else { renderPonds(); toast('“'+v+'” added'); }
-  });
-}
-function assignSub(sid){
-  if(!_pick.length){ closeSheets(); renderPonds(); return; }
-  const n=_pick.length;
-  const name=(curBoard().subs.find(x=>x.id===sid)||{}).name||'';
-  const allIn = _pick.every(id=>((imgById(id).subs)||[]).includes(sid));
-  _pick.forEach(id=>{
-    const im=imgById(id); im.subs=im.subs||[];
-    if(allIn) im.subs = im.subs.filter(x=>x!==sid);
-    else if(!im.subs.includes(sid)) im.subs.push(sid);
-  });
-  save(); closeSheets(); endPick();
-  toast(n + (n===1?' photo ':' photos ') + (allIn?'taken out of ':'filed into ') + name);
-}
+  const b={id:'b'+uid(),name:v,members:['me'],link:false}; BOARDS.push(b); UI.board=b.id; save(); renderPonds(); }); }
+function newBoardFromImport(){ askName('New board','',v=>{ const b={id:'b'+uid(),name:v,members:['me'],link:false}; BOARDS.push(b); _impBoard=b.id; save(); renderImpBoards(); }); }
 
 /* ═══ the marking editor ═══════════════════════════════════
    Point places one; Draw outlines an area. Three to a photograph.
@@ -1247,11 +1177,9 @@ function assignSub(sid){
    Marks are stored in percentages of the image so they land in the
    same place at every size. */
 let MK = null;      // {kind:'image'|'cell', id, poolId, cellIx, marks:[]}
-let _tool = 'point';
 let _run = [], _runIx = 0;
 let _editing = null;
 
-const mineOnly = ms => ms.filter(m=>m.by===ME);
 function openMark(target){
   MK = Object.assign({}, target);
   if(target.kind==='image'){
@@ -1262,7 +1190,7 @@ function openMark(target){
     const c=p.cells[target.cellIx];
     MK.src = srcOf(c.img); MK.marks = JSON.parse(JSON.stringify(c.marks||[]));
   }
-  _tool='point'; setTool('point');
+  setTool();
   $('mkimg').src = MK.src;
   if(target.kind==='cell' && !localStorage.getItem('ari-seen-cellmark')){
     localStorage.setItem('ari-seen-cellmark','1');
@@ -1275,15 +1203,7 @@ function openMark(target){
   paintMarks();
   go('s-mark');
 }
-function setTool(t){
-  _tool=t;
-  $('t-point').classList.toggle('on', t==='point');
-  $('t-draw').classList.toggle('on', t==='draw');
-  $('mkhint').style.display = MK && MK.marks.length ? 'none' : '';
-  $('mkhint').textContent = t==='draw'
-    ? 'Draw round what you noticed'
-    : 'Tap the photograph where you noticed something';
-}
+function setTool(){ $('mkhint').style.display = MK && MK.marks.length ? 'none' : ''; }
 /* mkhold has to hug the photograph exactly — marks are stored as percentages
    of it — so the fit is computed rather than left to max-width/max-height,
    which cannot enlarge a small image and would leave it stranded. */
@@ -1305,14 +1225,9 @@ function paintMarks(){
   const hold=$('mkhold');
   hold.querySelectorAll('.mark').forEach(e=>e.remove());
   $('mksvg').innerHTML = MK.marks.filter(m=>m.kind==='region')
-    .map(m=>`<path class="${m.vis==='private'?'priv':''}" d="${pathD(m.path)}"
-      stroke="${m.by==='me'?'#fff':who(m.by).c}"/>`).join('');
+    .map(m=>`<path d="${pathD(m.path)}"/>`).join('');
   MK.marks.forEach((m,i)=>hold.appendChild(markEl(m,i)));
-  /* Three each, not three between you. A shared board where the first
-     person fills the quota leaves the second nothing to say. */
-  const mine=mineOnly(MK.marks).length, theirs=MK.marks.length-mine;
-  $('mk-count').textContent = (mine||theirs)
-    ? (mine + ' / ' + MARK_CAP) + (theirs ? ' · ' + theirs + ' from others' : '') : '';
+  $('mk-count').textContent = MK.marks.length ? (MK.marks.length + ' / ' + MARK_CAP) : '';
   $('mkhint').style.display = MK.marks.length ? 'none' : '';
 }
 const pathD = pts => pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
@@ -1327,15 +1242,13 @@ function centroid(pts){
 function markEl(m,i){
   const el=document.createElement('div');
   const flip = m.x>52;
-  const mine = m.by===ME;
-  el.className='mark' + (flip?' flip':'') + (m.vis==='private'?' priv':'') + (mine?'':' theirs');
+  el.className='mark' + (flip?' flip':'');
   if(flip){ el.style.right=(100-m.x)+'%'; el.style.left='auto'; }
   else    { el.style.left=m.x+'%'; el.style.right='auto'; }
   el.style.top=m.y+'%';
   el.dataset.i=i;
-  const lock = m.vis==='private' ? `<span class="lock">${I.lock.replace('class="ic"','class="ic xs"')}</span>` : '';
-  el.innerHTML = `<span class="badge" style="background:${who(m.by).c}">${i+1}</span>` +
-    (m.text ? `<span class="pill2">${lock}${mine?'':`<b style="color:${who(m.by).c};font-weight:600">${esc(who(m.by).short)}</b> `}${esc(m.text)}</span>` : '');
+  el.innerHTML = `<span class="badge">${i+1}</span>` +
+    (m.text ? `<span class="pill2">${esc(m.text)}</span>` : '');
   bindMark(el);
   return el;
 }
@@ -1346,7 +1259,6 @@ function bindMark(el){
   el.addEventListener('pointerdown', e=>{
     e.stopPropagation();
     const m=MK.marks[+el.dataset.i];
-    if(m.by!==ME) return;               // somebody else's reading, not yours to move
     sx=e.clientX; sy=e.clientY; startX=m.x; startY=m.y; moved=false;
     el.setPointerCapture(e.pointerId);
   });
@@ -1366,8 +1278,6 @@ function bindMark(el){
   });
   el.addEventListener('pointerup', e=>{
     e.stopPropagation();
-    const m=MK.marks[+el.dataset.i];
-    if(m.by!==ME){ toast(who(m.by).name + ' wrote this'); return; }
     if(!moved) openNote(+el.dataset.i);
     else paintMarks();
   });
@@ -1386,8 +1296,7 @@ function bindMark(el){
   hold.addEventListener('pointerdown', e=>{
     if(!MK) return;
     e.preventDefault();
-    if(mineOnly(MK.marks).length>=MARK_CAP){ toast('Up to ' + MARK_CAP + ' of your own on a photo'); return; }
-    if(_tool==='point'){ return; }
+    if(MK.marks.length>=MARK_CAP){ toast('Up to ' + MARK_CAP + ' notes on a photo'); return; }
     drawing=true; pts=[rel(e)];
     hold.setPointerCapture(e.pointerId);
   });
@@ -1400,23 +1309,16 @@ function bindMark(el){
       + `<path d="${pathD(pts)}"/>`;
   });
   hold.addEventListener('pointerup', e=>{
-    if(!MK) return;
-    if(_tool==='point'){
-      if(mineOnly(MK.marks).length>=MARK_CAP) return;
-      const p=rel(e);
-      MK.marks.push({ id:'m'+uid(), kind:'point', x:p.x, y:p.y, text:'', vis:'public', by:ME });
-      paintMarks(); openNote(MK.marks.length-1);
-      return;
-    }
-    if(!drawing) return;
+    if(!MK || !drawing) return;
     drawing=false;
-    /* Too small to read as an outline — it was a tap, so make it one. */
+    /* The gesture decides. Too small to read as an outline means it was a tap,
+       and a tap is a point — which is the whole of what the tool switch used
+       to be for. */
     const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
     const w=Math.max(...xs)-Math.min(...xs), h=Math.max(...ys)-Math.min(...ys);
     if(pts.length<4 || (w<3 && h<3)){
       const c=centroid(pts);
-      MK.marks.push({ id:'m'+uid(), kind:'point', x:c.x, y:c.y, text:'', vis:'public', by:ME });
-      toast('That was a tap, so it is a point');
+      MK.marks.push({ id:'m'+uid(), kind:'point', x:c.x, y:c.y, text:'', by:ME });
     } else {
       pts.push(pts[0]);                    // close it
       /* The badge goes on the top-left corner of what was drawn, not in the
@@ -1424,7 +1326,7 @@ function bindMark(el){
          was pointing at. */
       const bx2=Math.min(...xs), by2=Math.min(...ys);
       MK.marks.push({ id:'m'+uid(), kind:'region', path:pts.slice(),
-                      x:Math.max(4,bx2), y:Math.max(5,by2-2), text:'', vis:'public', by:ME });
+                      x:Math.max(4,bx2), y:Math.max(5,by2-2), text:'', by:ME });
     }
     paintMarks(); openNote(MK.marks.length-1);
   });
@@ -1435,7 +1337,6 @@ function openNote(i){
   $('ns-num').textContent=i+1;
   $('ns-input').value=m.text||'';
   countNote();
-  setVis(m.vis||'public', true);
   $('nsheet').classList.add('on');
   setTimeout(()=>$('ns-input').focus(), 240);
 }
@@ -1453,25 +1354,13 @@ function countNote(){
 }
 $('ns-input').addEventListener('input', countNote);
 $('ns-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); closeNote(); }});
-function setVis(v, quiet){
-  if(_editing!=null && !quiet) MK.marks[_editing].vis=v;
-  if(_editing!=null && quiet)  MK.marks[_editing].vis=MK.marks[_editing].vis||v;
-  $('vis-pub').classList.toggle('on', v==='public');
-  $('vis-priv').classList.toggle('on', v==='private');
-  if(!quiet) paintMarks();
-}
 function deleteEditingMark(){
   if(_editing==null) return;
   MK.marks.splice(_editing,1); _editing=null;
   $('nsheet').classList.remove('on');
   paintMarks();
 }
-function undoMark(){
-  if(!MK) return;
-  for(let i=MK.marks.length-1;i>=0;i--) if(MK.marks[i].by===ME){ MK.marks.splice(i,1); break; }
-  paintMarks();
-}
-function clearMarks(){ if(MK){ MK.marks=MK.marks.filter(m=>m.by!==ME); paintMarks(); } }
+function undoMark(){ if(MK && MK.marks.length){ MK.marks.pop(); paintMarks(); } }
 
 function markSave(){
   if(_editing!=null) closeNote();
@@ -1492,8 +1381,10 @@ function markBack(){ markDiscard(); }
 function nextInRunOrLeave(){
   const wasCell = MK && MK.kind==='cell';
   const poolId = MK && MK.poolId;
+  const single = MK && MK.kind==='image' && !_run.length;
   MK=null;
   if(wasCell){ openPool(poolId); return; }
+  if(single && PHOTO){ showPhoto(PHOTO); return; }
   if(_run.length && _runIx < _run.length-1){
     _runIx++; openMark({kind:'image', id:_run[_runIx]});
     return;
@@ -1501,6 +1392,179 @@ function nextInRunOrLeave(){
   _run=[]; _runIx=0;
   go('s-ponds');
   toast('Saved');
+}
+
+/* ═══ one photograph ═══════════════════════════════════════ */
+let PHOTO=null;
+function fitHold(holdId, imgId, pad){
+  const stage=$(holdId).closest('.mkstage'), hold=$(holdId), im=$(imgId);
+  if(!stage||!im.naturalWidth) return;
+  const st=getComputedStyle(stage);
+  const aw=stage.clientWidth  - parseFloat(st.paddingLeft) - parseFloat(st.paddingRight);
+  const ah=stage.clientHeight - parseFloat(st.paddingTop)  - parseFloat(st.paddingBottom) - (pad||0);
+  const r=Math.min(aw/im.naturalWidth, ah/im.naturalHeight);
+  hold.style.width=Math.round(im.naturalWidth*r)+'px';
+  hold.style.height=Math.round(im.naturalHeight*r)+'px';
+  im.style.width='100%'; im.style.height='100%';
+}
+function showPhoto(id){
+  PHOTO=id;
+  const im=imgById(id); if(!im) return;
+  $('phimg').src=im.src;
+  const ms=im.marks||[];
+  $('ph-title').textContent = ms.length ? (ms.length + (ms.length===1?' note':' notes')) : 'No notes yet';
+  $('phsvg').innerHTML = ms.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
+  const hold=$('phhold');
+  hold.querySelectorAll('.mark').forEach(e=>e.remove());
+  ms.forEach((m,k)=>{
+    const el=document.createElement('div'), fl=m.x>52;
+    el.className='mark'+(fl?' flip':'');
+    if(fl) el.style.right=(100-m.x)+'%'; else el.style.left=m.x+'%';
+    el.style.top=m.y+'%';
+    el.innerHTML=`<span class="badge">${k+1}</span>`+(m.text?`<span class="pill2">${esc(m.text)}</span>`:'');
+    hold.appendChild(el);
+  });
+  document.querySelector('#s-photo .phbar').style.display = readOnly() ? 'none' : 'flex';
+  $('ph-more').style.display = readOnly() ? 'none' : 'flex';
+  go('s-photo');
+  requestAnimationFrame(()=>fitHold('phhold','phimg'));
+}
+$('phimg').addEventListener('load', ()=>fitHold('phhold','phimg'));
+function markThisPhoto(){ openMark({kind:'image', id:PHOTO}); }
+function cropFromSheet(){ closeSheets(); openCrop(); }
+function movePhoto(){
+  closeSheets();
+  const other=BOARDS.filter(b=>b.id!==imgById(PHOTO).board);
+  if(!other.length){ toast('There is only one board'); return; }
+  $('move-rows').innerHTML = other.map(b=>
+    `<div class="srow" onclick="doMovePhoto('${b.id}')">${esc(b.name)}</div>`).join('');
+  openSheet('sheet-move');
+}
+function doMovePhoto(bid){
+  imgById(PHOTO).board=bid; save(); closeSheets(); go('s-ponds'); toast('Moved to ' + boardById(bid).name);
+}
+function removePhoto(){
+  closeSheets();
+  const used=inAnyPool(PHOTO);
+  confirmThen('Remove this photo?',
+    used ? 'It is in a pool. That pool goes with it.' : 'It leaves the board. Nothing else changes.',
+    'Remove', ()=>{
+      dbDel(PHOTO);
+      POOLS = POOLS.filter(p=>!p.cells.some(c=>c.img===PHOTO));
+      IMAGES = IMAGES.filter(i=>i.id!==PHOTO);
+      save(); go('s-ponds'); toast('Removed');
+    });
+}
+
+/* ═══ cropping ═════════════════════════════════════════════
+   A screenshot is not a photograph — it arrives with a clock, a battery and
+   a browser toolbar attached, and none of that is the reference. Cropping is
+   deliberately not part of importing: fifteen photographs would mean fifteen
+   decisions, and the import is down to two questions on purpose. */
+let CROP=null;
+function openCrop(){
+  const im=imgById(PHOTO); if(!im) return;
+  $('crimg').src=im.src;
+  CROP={x:0,y:0,w:100,h:100};
+  renderPresets();
+  go('s-crop');
+  requestAnimationFrame(()=>{ fitHold('crhold','crimg'); drawCrop(); });
+}
+$('crimg').addEventListener('load', ()=>{ fitHold('crhold','crimg'); drawCrop(); });
+function drawCrop(){
+  const f=$('crframe');
+  f.style.left=CROP.x+'%'; f.style.top=CROP.y+'%';
+  f.style.width=CROP.w+'%'; f.style.height=CROP.h+'%';
+}
+function renderPresets(){
+  const im=$('crimg'), tall = im.naturalHeight/im.naturalWidth;
+  const phoneish = tall>1.7 && tall<2.4;
+  $('crpresets').innerHTML =
+    (phoneish?`<button class="chip dark" onclick="preset('chrome')">Trim phone chrome</button>`:'')
+    + `<button class="chip dark" onclick="preset('sq')">Square</button>`
+    + `<button class="chip dark" onclick="preset('ig')">9:16</button>`
+    + `<button class="chip dark" onclick="preset('all')">Whole photo</button>`;
+}
+function preset(k){
+  const im=$('crimg'), W=im.naturalWidth, H=im.naturalHeight;
+  if(k==='all') CROP={x:0,y:0,w:100,h:100};
+  /* The status bar and the home indicator are a fixed share of a phone
+     screenshot. Everything else — a browser toolbar, a Pinterest header —
+     is not, which is why there is a frame you can drag as well. */
+  if(k==='chrome') CROP={x:0,y:5.8,w:100,h:100-5.8-3.6};
+  if(k==='sq' || k==='ig'){
+    const target = k==='sq' ? 1 : 16/9;                  // height ÷ width
+    let w=W, h=W*target;
+    if(h>H){ h=H; w=H/target; }
+    CROP={ x:(1-w/W)/2*100, y:(1-h/H)/2*100, w:w/W*100, h:h/H*100 };
+  }
+  drawCrop();
+}
+(function(){
+  const f=$('crframe');
+  let mode=null, sx=0, sy=0, start=null;
+  const box=()=>$('crhold').getBoundingClientRect();
+  const begin=(e,m)=>{ mode=m; sx=e.clientX; sy=e.clientY; start={...CROP};
+    e.target.setPointerCapture(e.pointerId); e.stopPropagation(); e.preventDefault(); };
+  f.addEventListener('pointerdown', e=>{ if(!e.target.dataset.h) begin(e,'move'); });
+  f.querySelectorAll('i').forEach(h=>h.addEventListener('pointerdown', e=>begin(e, h.dataset.h)));
+  const move = e=>{
+    if(!mode) return;
+    const r=box(), dx=(e.clientX-sx)/r.width*100, dy=(e.clientY-sy)/r.height*100;
+    const MIN=15;
+    let {x,y,w,h}=start;
+    if(mode==='move'){
+      x=Math.max(0,Math.min(100-w, x+dx));
+      y=Math.max(0,Math.min(100-h, y+dy));
+    } else {
+      const west=mode[1]==='w', north=mode[0]==='n';
+      if(west){ const nx=Math.max(0,Math.min(x+w-MIN, x+dx)); w=x+w-nx; x=nx; }
+      else    { w=Math.max(MIN, Math.min(100-x, w+dx)); }
+      if(north){ const ny=Math.max(0,Math.min(y+h-MIN, y+dy)); h=y+h-ny; y=ny; }
+      else     { h=Math.max(MIN, Math.min(100-y, h+dy)); }
+    }
+    CROP={x,y,w,h}; drawCrop();
+  };
+  f.addEventListener('pointermove', move);
+  f.querySelectorAll('i').forEach(h=>h.addEventListener('pointermove', move));
+  const end=()=>{ mode=null; };
+  f.addEventListener('pointerup', end); f.addEventListener('pointercancel', end);
+  f.querySelectorAll('i').forEach(h=>{ h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end); });
+})();
+/* Marks are stored as a share of the picture, so cutting the picture moves
+   every one of them — including the copies sitting in pools. Anything that
+   falls outside what is left is dropped rather than dragged to an edge it
+   never pointed at. */
+function remap(ms){
+  const out=[];
+  ms.forEach(m=>{
+    const nx=(m.x-CROP.x)/CROP.w*100, ny=(m.y-CROP.y)/CROP.h*100;
+    if(nx<0||nx>100||ny<0||ny>100) return;
+    const n={...m, x:nx, y:ny};
+    if(m.kind==='region') n.path=m.path.map(pt=>({x:(pt.x-CROP.x)/CROP.w*100, y:(pt.y-CROP.y)/CROP.h*100}));
+    out.push(n);
+  });
+  return out;
+}
+function applyCrop(){
+  if(CROP.w>99.5 && CROP.h>99.5 && CROP.x<0.5 && CROP.y<0.5){ go('s-photo'); return; }
+  const im=imgById(PHOTO), src=new Image();
+  src.onload=()=>{
+    const W=src.naturalWidth, H=src.naturalHeight;
+    const cx=Math.round(W*CROP.x/100), cy=Math.round(H*CROP.y/100);
+    const cw=Math.round(W*CROP.w/100), ch=Math.round(H*CROP.h/100);
+    const c=document.createElement('canvas'); c.width=cw; c.height=ch;
+    c.getContext('2d').drawImage(src, cx, cy, cw, ch, 0, 0, cw, ch);
+    const out=c.toDataURL('image/jpeg', .86);
+    const before=(im.marks||[]).length;
+    im.src=out; im.marks=remap(im.marks||[]);
+    POOLS.forEach(p=>p.cells.forEach(cell=>{ if(cell.img===PHOTO) cell.marks=remap(cell.marks||[]); }));
+    dbPut(PHOTO, out); save();
+    const lost=before-im.marks.length;
+    showPhoto(PHOTO);
+    toast(lost ? ('Cropped · ' + lost + (lost===1?' note was outside it':' notes were outside it')) : 'Cropped');
+  };
+  src.src=im.src;
 }
 
 /* ═══ Pools ════════════════════════════════════════════════ */
@@ -1516,19 +1580,20 @@ function renderPools(){
   ) : '';
   let list = POOLS.slice();
   if(UI.poolBoard!=='all') list = list.filter(p=>p.board===UI.poolBoard);
-  list.sort((a,b)=>(b.star?1:0)-(a.star?1:0) || b.made-a.made);
+  list.sort((a,b)=>b.made-a.made);
   $('pools-list').innerHTML = list.length ? list.map(p=>{
     const notes = p.cells.flatMap(c=>(c.marks||[]).map(m=>m.text)).filter(Boolean);
     const cm = (p.comments||[]).length;
-    return `<div class="pcard ${p.star?'star':''}" onclick="openPool('${p.id}')">
+    return `<div class="pcard" onclick="openPool('${p.id}')">
       <div class="pmini">${p.cells.map(c=>`<img src="${srcOf(c.img)}" alt="">`).join('')}</div>
       <div class="pmeta">
-        <div class="t">${esc(p.name)}${p.star?`<span class="stx">${I.star.replace('class="ic"','class="ic xs"')}</span>`:''}</div>
+        <div class="t">${esc(p.name)}</div>
         <div class="d">${p.by&&p.by!=='me'?esc(who(p.by).short)+' · ':''}${new Date(p.made).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}${cm?' · '+cm+' comment'+(cm>1?'s':''):''}${UI.poolBoard==='all'&&boardById(p.board)?' · '+esc(boardById(p.board).name):''}</div>
         ${notes.length?`<div class="q">“${esc(notes[0])}”</div>`:''}
       </div></div>`;
   }).join('') : `<div class="empty"><b>No pools yet</b>
-      Pick four photographs from a board and see them together.</div>`;
+      A pool is four photographs seen together. Hold one on a board to start picking.
+      <span class="ecta" onclick="startPick('Tap four, in the order you want them')">Pick four now</span></div>`;
 }
 function openPool(id){
   CURPOOL = POOLS.find(p=>p.id===id);
@@ -1539,17 +1604,19 @@ function openPool(id){
     setTimeout(()=>toast('Tap one to open it · hold and drag to move it'), 700);
   }
   /* Nothing on this screen acts on the pool when somebody arrived by link. */
-  document.querySelector('#s-pool .pbar').style.display = VIEWING ? 'none' : 'flex';
-  document.querySelector('#s-pool .cin').style.display  = VIEWING ? 'none' : 'flex';
-  document.querySelectorAll('#s-pool .hd .r > *').forEach(e=>e.style.display = VIEWING?'none':'');
-  $('pool-title').style.pointerEvents = VIEWING ? 'none' : '';
-  $('btn-star').classList.toggle('on', !!CURPOOL.star);
-  $('btn-star').querySelector('span:last-child').textContent = CURPOOL.star?'Starred':'Star';
+  /* A guest may talk and nothing else; the link view may not even do that. */
+  document.querySelector('#s-pool .pbar').style.display = readOnly() ? 'none' : 'flex';
+  document.querySelector('#s-pool .cin').style.display  = canTalk() ? 'flex' : 'none';
+  document.querySelectorAll('#s-pool .hd .r > *').forEach(e=>e.style.display = readOnly()?'none':'');
+  $('pool-title').style.pointerEvents = readOnly() ? 'none' : '';
+  /* A guest reaches a pool without passing the board, so the only place that
+     says who they are is the field they are about to type into. */
+  $('cmt-input').placeholder = isOwner() ? 'Add a comment' : ('Comment as ' + who(ME).short);
   renderQuad(); renderComments();
   go('s-pool');
 }
 function leavePool(){ CURPOOL=null; go('s-pools'); }
-function markCell(i){ if(VIEWING) return; openMark({kind:'cell', poolId:CURPOOL.id, cellIx:i}); }
+function markCell(i){ if(readOnly()) return; openMark({kind:'cell', poolId:CURPOOL.id, cellIx:i}); }
 /* The 9:16 box is sized here rather than in CSS: aspect-ratio inside a
    flex column keeps winning against min-height and pushes the bar off
    the bottom of the phone. Two numbers, measured from the screen down. */
@@ -1573,16 +1640,15 @@ addEventListener('resize', ()=>fitQuad());
 function renderQuad(){
   $('quad').innerHTML = CURPOOL.cells.map((c,i)=>{
     const ms=c.marks||[], noted=ms.filter(m=>m.text);
-    const regions = ms.filter(m=>m.kind==='region')
-      .map(m=>`<path d="${pathD(m.path)}" stroke="${m.by==='me'?'#fff':who(m.by).c}"/>`).join('');
+    const regions = ms.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
     const points  = ms.filter(m=>m.kind==='point')
-      .map(m=>`<span class="pt" style="left:${m.x}%;top:${m.y}%;background:${who(m.by).c}"></span>`).join('');
+      .map(m=>`<span class="pt" style="left:${m.x}%;top:${m.y}%"></span>`).join('');
     return `<div class="qc" data-i="${i}">
       <img src="${srcOf(c.img)}" alt="">
       <svg class="ink" viewBox="0 0 100 100" preserveAspectRatio="none">${regions}</svg>
       ${points}
       <span class="n">${i+1}</span>
-      ${noted.length?`<div class="note">${noted[0].by!=='me'?`<b style="color:${who(noted[0].by).c}">${esc(who(noted[0].by).short)}</b> `:''}${esc(noted[0].text)}${noted.length>1?`<em>+${noted.length-1}</em>`:''}</div>`:''}
+      ${noted.length?`<div class="note">${esc(noted[0].text)}${noted.length>1?`<em>+${noted.length-1}</em>`:''}</div>`:''}
     </div>`;
   }).join('');
   bindCells();
@@ -1618,7 +1684,7 @@ function bindCells(){
       const under=document.elementFromPoint(e.clientX,e.clientY);
       const cell=under && under.closest('#quad .qc');
       document.querySelectorAll('#quad .qc').forEach(c=>c.classList.remove('over'));
-      if(moved && cell && +cell.dataset.i!==from && !VIEWING){
+      if(moved && cell && +cell.dataset.i!==from && !readOnly()){
         const to=+cell.dataset.i;
         const t=CURPOOL.cells[from]; CURPOOL.cells[from]=CURPOOL.cells[to]; CURPOOL.cells[to]=t;
         save(); renderQuad();
@@ -1628,12 +1694,6 @@ function bindCells(){
       from=-1; moved=false;
     });
   });
-}
-function toggleStar(){
-  CURPOOL.star=!CURPOOL.star;
-  $('btn-star').classList.toggle('on',CURPOOL.star);
-  $('btn-star').querySelector('span:last-child').textContent = CURPOOL.star?'Starred':'Star';
-  save();
 }
 function renamePool(){
   closeSheets();
@@ -1645,24 +1705,11 @@ function renamePool(){
 function duplicatePool(){
   closeSheets();
   const copy = JSON.parse(JSON.stringify(CURPOOL));
-  copy.id='p'+uid(); copy.made=Date.now(); copy.star=false; copy.comments=[];
+  copy.id='p'+uid(); copy.made=Date.now(); copy.comments=[];
   copy.name = CURPOOL.name.replace(/\s+\d+$/,'') + ' ' + (POOLS.filter(p=>p.board===CURPOOL.board).length+1);
   POOLS.unshift(copy); save();
   openPool(copy.id);
   toast('Duplicated — swap one and it is a second option');
-}
-function shufflePool(){
-  const written = CURPOOL.cells.some(c=>(c.marks||[]).length);
-  if(written){ confirmThen('Shuffle?','Four new photographs replace these, and what you wrote on them here goes with them.','Shuffle',doShuffle); return; }
-  doShuffle();
-}
-function doShuffle(){
-  const pool = boardImages(CURPOOL.board).map(i=>i.id);
-  if(pool.length<4){ toast('Needs at least four photographs on this board'); return; }
-  const picked=[];
-  while(picked.length<4){ const c=pool[Math.floor(Math.random()*pool.length)]; if(!picked.includes(c)) picked.push(c); }
-  CURPOOL.cells = picked.map(id=>({img:id, marks:JSON.parse(JSON.stringify(imgById(id).marks||[]))}));
-  save(); renderQuad(); toast('Shuffled');
 }
 function movePool(){
   const other = BOARDS.filter(b=>b.id!==CURPOOL.board);
@@ -1684,7 +1731,7 @@ function deletePool(){
 /* swap one cell */
 let _swapIx=-1;
 function openSwap(i){
-  if(VIEWING) return;
+  if(readOnly()) return;
   _swapIx=i;
   const taken=CURPOOL.cells.map(c=>c.img);
   const cands=boardImages(CURPOOL.board).filter(im=>!taken.includes(im.id));
@@ -1716,8 +1763,7 @@ function swapCurrentCell(){ const i=FULLIX; closeFull(); openSwap(i); }
    wrote them, and name the author when it is not you. */
 function openPhoto(src, ms, cap, showVerbs){
   $('fullimg').src=src;
-  $('fullsvg').innerHTML = ms.filter(m=>m.kind==='region')
-    .map(m=>`<path d="${pathD(m.path)}" stroke="${m.by==='me'?'#fff':who(m.by).c}"/>`).join('');
+  $('fullsvg').innerHTML = ms.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
   const hold=$('fullhold');
   hold.querySelectorAll('.mark').forEach(e=>e.remove());
   ms.forEach((m,k)=>{
@@ -1726,8 +1772,8 @@ function openPhoto(src, ms, cap, showVerbs){
     el.className='mark'+(fl?' flip':'');
     if(fl){ el.style.right=(100-m.x)+'%'; } else { el.style.left=m.x+'%'; }
     el.style.top=m.y+'%';
-    el.innerHTML=`<span class="badge" style="background:${who(m.by).c}">${k+1}</span>`
-      + (m.text?`<span class="pill2">${m.by!=='me'?`<b style="color:${who(m.by).c};font-weight:600">${esc(who(m.by).short)}</b> `:''}${esc(m.text)}</span>`:'');
+    el.innerHTML=`<span class="badge">${k+1}</span>`
+      + (m.text?`<span class="pill2">${esc(m.text)}</span>`:'');
     hold.appendChild(el);
   });
   $('full-cap').textContent = cap||'';
@@ -1738,7 +1784,7 @@ function openPhoto(src, ms, cap, showVerbs){
 function openFull(i){
   FULLIX=i;
   const c=CURPOOL.cells[i];
-  openPhoto(srcOf(c.img), (c.marks||[]).filter(m=>!VIEWING||m.vis!=='private'), (i+1)+' of 4', !VIEWING);
+  openPhoto(srcOf(c.img), (c.marks||[]), (i+1)+' of 4', !readOnly());
 }
 function closeFull(){ $('full').classList.remove('on'); }
 
@@ -1760,52 +1806,6 @@ function addComment(){
 $('cmt-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addComment(); }});
 
 /* ═══ share ════════════════════════════════════════════════ */
-/* You send a set, not a picture. The letters are assigned here, in the
-   order you chose them, and they mean nothing outside this send — which
-   is why the Pools list does not print them. */
-let SHARESEL=[];
-function openShare(){ SHARESEL = CURPOOL ? [CURPOOL.id] : []; go('s-share'); }
-function shareList(){
-  const b = CURPOOL ? CURPOOL.board : null;
-  return POOLS.filter(p=>!b || p.board===b)
-    .sort((a,c)=>(c.star?1:0)-(a.star?1:0) || c.made-a.made).slice(0,4);
-}
-function toggleShare(id){
-  const i=SHARESEL.indexOf(id);
-  if(i>=0) SHARESEL.splice(i,1);
-  else { if(SHARESEL.length>=3){ toast('Three is as many as anyone will compare'); return; } SHARESEL.push(id); }
-  renderShare();
-}
-function renderShare(){
-  const list=shareList();
-  $('share-opts').innerHTML = list.length ? list.map(p=>{
-    const k=SHARESEL.indexOf(p.id);
-    return `<div class="opt ${k>=0?'sel':''}" onclick="toggleShare('${p.id}')">
-      <div class="optq">${p.cells.map(c=>{
-        /* “Just me” notes stay behind — this is the view they get. */
-        const t=(c.marks||[]).filter(m=>m.vis!=='private').map(m=>m.text).filter(Boolean)[0];
-        return `<div class="oc"><img src="${srcOf(c.img)}" alt="">${t?`<span class="on2">${esc(t)}</span>`:''}</div>`;
-      }).join('')}</div>
-      <div class="optbar"><span class="lb">${k>=0?String.fromCharCode(65+k):'·'}</span>
-        <span class="nm2">${esc(p.name)}</span></div>
-    </div>`; }).join('') : `<div class="empty">Nothing to send yet</div>`;
-  const n=SHARESEL.length;
-  $('share-send').textContent = n>1 ? ('Send ' + n + ' options') : (n===1 ? 'Send it' : 'Pick at least one');
-  $('share-send').style.opacity = n ? '1' : '.4';
-}
-/* Their reply comes back as a comment on the one they chose, so the
-   decision and the conversation about it sit in the same place. */
-function fakeReply(){
-  if(!SHARESEL.length){ toast('Pick at least one'); return; }
-  const chosen = SHARESEL[SHARESEL.length>1 ? 1 : 0];
-  const p=POOLS.find(x=>x.id===chosen);
-  const mine=$('share-cmt').value.trim();
-  if(mine) (p.comments=p.comments||[]).push({by:ME, text:mine, at:Date.now()});
-  (p.comments=p.comments||[]).push({by:'jieun', text:'This one — the sleeve settles it.', at:Date.now()});
-  $('share-cmt').value='';
-  save(); openPool(p.id);
-  toast('Jieun picked this one');
-}
 
 /* ═══ boot ═════════════════════════════════════════════════ */
 (async function(){
