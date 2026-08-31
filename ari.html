@@ -595,6 +595,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .pnm{font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em}
 .phdl{font-size:var(--t3);color:var(--soft);padding-top:2px}
 .pbio{font-size:var(--t3);line-height:1.5;padding-top:10px}
+.pbio.ask{color:var(--faint)}
 .pstat{display:flex;gap:7px;padding-top:14px;font-size:var(--t3);color:var(--soft)}
 .pstat b{color:var(--ink);font-weight:var(--wm)}
 .pstat span:not(:nth-child(2)){cursor:pointer}
@@ -1193,8 +1194,8 @@ const PEOPLE = {
   /* First names only, and the handle is the same word. A surname on a screen
      this small buys nothing, and @e.whitby made you read a name twice in two
      different forms to work out it was one person. */
-  me:      {id:'me',      name:'Sungwon', short:'Sungwon', c:'#325788', g:['#10182b','#3c4f7a'],
-            h:'sungwon',  bio:'Building ari. Mostly looking at edges and joins.', fol:0},
+  me:      {id:'me',      name:'Jamie',   short:'Jamie',   c:'#325788', g:['#10182b','#3c4f7a'],
+            h:'jamie',    bio:'', fol:0},
   jieun:   {id:'jieun',   name:'Jieun',   short:'Jieun',   c:'#A85440', g:['#3a1a12','#A85440'],
             h:'jieun',    bio:'Bridal, Seoul. Fabric before silhouette.', fol:412},
   eleanor: {id:'eleanor', name:'Eleanor', short:'Eleanor', c:'#3B7A5C', g:['#12271d','#3B7A5C'],
@@ -1215,7 +1216,7 @@ const PEOPLE = {
 /* Kept for the address below; nothing in the interface reaches it. */
 const switchable = () => Object.keys(PEOPLE).filter(id=>!PEOPLE[id].feedOnly);
 /* The nav circle is you. It changes colour when you are being somebody else,
-   so the bottom of the screen never claims you are Sungwon while you are not. */
+   so the bottom of the screen never claims you are Jamie while you are not. */
 function paintNavAvatar(){
   const g=(PEOPLE[ME]||PEOPLE.me).g || ['#10182b','#3c4f7a'];
   const el=$('nav-av'); if(el) el.style.background='linear-gradient(160deg,'+g[0]+','+g[1]+')';
@@ -1349,9 +1350,11 @@ function plantSeed(){
 }
 function load(){
   try{
+    /* One collection to start, named for nothing in particular. Two named
+       collections read as an example somebody else had already filled in;
+       one empty-ish name reads as a place to put your own things. */
     COLLS = JSON.parse(localStorage.getItem('ari2-colls')||'null') || [
-      {id:'c1',name:'Wedding dress',     owner:'me',members:['me'],link:false},
-      {id:'c2',name:'Wedding hairstyle', owner:'me',members:['me'],link:false}
+      {id:'c1',name:'Project 1', owner:'me',members:['me'],link:false}
     ];
     BOARDS = JSON.parse(localStorage.getItem('ari2-boards')||'[]');
     IMGS   = JSON.parse(localStorage.getItem('ari2-imgs')||'[]');
@@ -1377,7 +1380,7 @@ function load(){
     COLLS.forEach(c=>{c.members=c.members||['me'];c.owner=c.owner||'me';});
     IMGS.forEach(i=>{i.marks=i.marks||[];i.likes=i.likes||[];i.saves=i.saves||[];
       i.comments=i.comments||[];i.by=i.by||'me';});
-  }catch(e){ COLLS=[{id:'c1',name:'Wedding dress',owner:'me',members:['me'],link:false}]; BOARDS=[]; IMGS=[]; }
+  }catch(e){ COLLS=[{id:'c1',name:'Project 1',owner:'me',members:['me'],link:false}]; BOARDS=[]; IMGS=[]; }
 }
 
 /* ═══ helpers ══════════════════════════════════════════════ */
@@ -1585,7 +1588,7 @@ function openMarkPicker(ids){
 
 /* ═══ Library ══════════════════════════════════════════════ */
 /* Public is a view over the collections, not one of them. The image never
-   moves; it is in Wedding dress and also on show. A folder that held your
+   moves; it is in Project 1 and also on show. A folder that held your
    public things would make you choose between organising by subject and
    publishing, and the organising is what you would lose. */
 const isPublicView = () => UI.coll==='public';
@@ -1671,13 +1674,13 @@ function renderCollGrid(cols){
   ];
   if(UI.cv==='list'){
     $('lib-body').innerHTML = `<div class="rlist" style="padding-top:6px">`
+      + (guest()?'':`<div class="newrow" style="border-top:0" onclick="newCollection()">＋ New collection</div>`)
       + rows.map(r=>`<div class="row" onclick="openColl('${r.id}')">
           <span class="cthumb">${r.cover?`<img src="${r.cover}" alt="">`:''}
             ${r.globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic xs"')}</span>`:''}</span>
           <span><span style="font-weight:500">${esc(r.name)}</span>
             <span class="sub" style="display:block">${r.n} image${r.n===1?'':'s'}${r.priv?' · Private':''}</span></span>
         </div>`).join('')
-      + (guest()?'':`<div class="newrow" onclick="newCollection()">＋ New collection</div>`)
       + `</div><div style="height:104px"></div>`;
     return;
   }
@@ -1688,9 +1691,9 @@ function renderCollGrid(cols){
       <span class="cnm">${esc(name)}</span>
       <span class="csub">${n} image${n===1?'':'s'}${priv?' · Private':''}</span></a>`;
   $('lib-body').innerHTML = `<div class="cgrid">`
-    + rows.map(r=>card(r.id,r.name,r.cover,r.n,r.priv,r.globe)).join('')
     + (guest()?'':`<a class="ccard" onclick="newCollection()">
         <span class="ccover newq">${I.plus}<span>New collection</span></span></a>`)
+    + rows.map(r=>card(r.id,r.name,r.cover,r.n,r.priv,r.globe)).join('')
     + `</div><div style="height:104px"></div>`;
 }
 /* ── one collection ────────────────────────────────────────────────── */
@@ -3297,7 +3300,8 @@ function personHead(p, n, on){
       <span>·</span>
       <span onclick="openPeopleList('following')"><b>${mine?FOLLOW.size:Math.max(0,Math.round((p.fol||0)/6))}</b> following</span>
     </div>
-    ${p.bio?`<div class="pbio">${esc(p.bio)}</div>`:''}
+    ${p.bio ? `<div class="pbio">${esc(p.bio)}</div>`
+      : (mine ? `<div class="pbio ask" onclick="openEditProfile()">Say what you collect</div>` : '')}
     ${/* Editing lives in the menu, where it was asked for. A button on the
           page as well was one door too many for one small form. */
       mine ? '' : `<button class="fol wide ${on?'on':''}" onclick="toggleFollow()">${on?'Following':'Follow'}</button>`}
