@@ -152,13 +152,14 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .tile{position:relative;aspect-ratio:1;overflow:hidden;background:var(--surface);border-radius:var(--r-sm)}
 .tile img{width:100%;height:100%;object-fit:cover;display:block}
 .tile:active img{opacity:.7}
-/* Three five-pixel dots on a photograph are invisible, and which photographs
-   you have already written on is the most useful thing this grid knows. */
-.tile .dots{position:absolute;left:5px;bottom:5px;height:21px;min-width:21px;padding:0 6px;
-  border-radius:var(--r-pill);background:rgba(17,17,17,.55);color:var(--bg);display:flex;align-items:center;
-  gap:4px;font-size:var(--photo-badge);font-weight:var(--wb);
+/* Which photographs you have already written on is the most useful thing this
+   grid knows, and it is a count that never exceeds five — so it is shown as
+   the count itself rather than as a numeral to be read. The dots were once
+   too faint to see; the scrim behind them is what fixes that, not a number. */
+.tile .dots{position:absolute;left:5px;bottom:5px;display:flex;align-items:center;gap:3px;
+  padding:5px 6px;border-radius:var(--r-pill);background:var(--scrim);
   -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-.tile .dots .ic{width:13px;height:13px;stroke-width:2}
+.tile .dots i{width:5px;height:5px;border-radius:50%;background:var(--bg);display:block}
 .tile .hitnote{position:absolute;left:0;right:0;bottom:0;background:rgba(17,17,17,.8);color:var(--bg);
   font-size:var(--t4);line-height:1.3;padding:4px 5px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -1748,7 +1749,7 @@ function renderGrid(list, into){
       ${_pickMode?'':`onpointerdown="tileDown('${i.id}',event)" onpointermove="tileMove(event)"
       onpointerup="tileUp()" onpointercancel="tileUp()"`}>
       <img src="${i.src}" alt="" loading="lazy">
-      ${n?`<span class="dots">${I.note}${n}</span>`:''}
+      ${n&&!guest()?`<span class="dots">${'<i></i>'.repeat(n)}</span>`:''}
       ${i.shared&&!guest()&&!isPublicView()?`<span class="up">${I.globe.replace('class="ic"','class="ic s"')}</span>`:''}
       <span class="ord">${k<0?'':(_pickMode==='board'?k+1:'✓')}</span></div>`;
   }).join('') : emptyGrid();
@@ -1783,15 +1784,16 @@ function renderBoardList(c, boards){
   });
   /* Grey text on a divider read as a heading, and grey is what this app uses
      for “not available”. It is now the shape and size of the thing it makes,
-     standing among the boards. */
+     standing among the boards — and it stands in the first slot and never
+     moves. Putting it last meant a star reordered it, so the one control on
+     this screen that is not a board was somewhere new each time. A fixed
+     slot is a place you can aim at without reading. */
   const n = collImgs(c.id).length, enough = n>=2;
   const maker = (guest()||!enough) ? '' :
     `<a class="bcell bnew" onclick="newBoard()">
       <span class="bq newq">${I.plus}<span>New board</span></span></a>`;
   $('coll-body').innerHTML = `<div class="pad">
-    ${/* The maker goes last, as it does on the collections tab — otherwise a
-          board you starred to the top is still second. */''}
-    ${(cells.length||maker) ? `<div class="bgrid">`+cells.join('')+maker+`</div>` : ''}
+    ${(cells.length||maker) ? `<div class="bgrid">`+maker+cells.join('')+`</div>` : ''}
     ${cells.length||maker ? '' : `<div class="empty" style="grid-column:auto"><b>No boards yet</b>
           A board is two, four or six images from this collection, seen together.
           <br><span>“${esc(c.name)}” has ${n} image${n===1?'':'s'} — a board needs at least two.</span></div>`}
@@ -3351,9 +3353,6 @@ function renderSearch(){
         const hit=q ? (i.marks||[]).find(m=>(m.text||'').toLowerCase().includes(q)) : null;
         return `<div class="tile" onclick="${UI.scope==='mine'?`openMark('${i.id}')`:`openFoundFeed('${i.id}')`}">
           <img src="${i.src}" alt="">
-          ${/* The grid's badge changed shape and this one was left behind,
-                showing an empty grey pill where the count should be. */
-            (i.marks||[]).length?`<span class="dots">${I.note}${i.marks.length}</span>`:''}
           ${hit&&hit.text?`<span class="hitnote">${esc(hit.text)}</span>`:''}
         </div>`; }).join('')+`</div>`
       : `<div class="empty" style="grid-column:auto">${q?'<b>Nothing matches</b>Notes, collection and board names are searched.':'<b>Search your notes</b>Type a word you wrote on an image.'}</div>`);
