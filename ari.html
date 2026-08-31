@@ -1288,7 +1288,25 @@ function dbOpen(){return new Promise(res=>{try{
   r.onupgradeneeded=e=>e.target.result.createObjectStore('img',{keyPath:'id'});
   r.onsuccess=e=>{_db=e.target.result;res();}; r.onerror=()=>res();
 }catch(e){res();}});}
-function dbPut(id,src){try{_db&&_db.transaction('img','readwrite').objectStore('img').put({id,src});}catch(e){}}
+/* A full disk used to be silent. The try/catch below never saw a quota
+   failure — IndexedDB reports one asynchronously, on the transaction — so the
+   photograph simply was not there afterwards and the app said nothing. From
+   a tester's side that reads as the app eating their picture.
+   One message per eight seconds, because a failing batch of six fails six
+   times and the person only needs telling once. */
+let _fullAt=0;
+function storageFull(what){
+  const now=Date.now();
+  if(now-_fullAt < 8000) return;
+  _fullAt=now;
+  try{ toast('Storage is full — ' + what + ' was not saved'); }catch(e){}
+}
+function dbPut(id,src){try{
+  if(!_db) return storageFull('that image');
+  const tx=_db.transaction('img','readwrite');
+  tx.onerror=tx.onabort=()=>storageFull('that image');
+  tx.objectStore('img').put({id,src});
+}catch(e){ storageFull('that image'); }}
 function dbDel(id){try{_db&&_db.transaction('img','readwrite').objectStore('img').delete(id);}catch(e){}}
 function dbAll(){return new Promise(res=>{if(!_db)return res([]);try{
   const q=_db.transaction('img','readonly').objectStore('img').getAll();
@@ -1305,7 +1323,7 @@ function save(){try{
   localStorage.setItem('ari2-fans',JSON.stringify(FANS));
   localStorage.setItem('ari2-pend',JSON.stringify(PEND));
   localStorage.setItem('ari2-imgs',JSON.stringify(IMGS.map(i=>({...i,src:undefined}))));
-}catch(e){}}
+}catch(e){ storageFull('that change'); }}
 /* Seeded images are read from the constant above, never written to storage —
    otherwise half a megabyte of base64 lands in localStorage on every save. */
 function plantSeed(){
