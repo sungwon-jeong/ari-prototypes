@@ -16,10 +16,33 @@
 
    Everything else on screen is a view of those.
    ═══════════════════════════════════════════════════════════ */
+/* ── the whole palette, and there is no other ─────────────
+   Thirty-four hexes were in here, nine of them greys between var(--faint) and
+   var(--faint) that nobody could tell apart, and four separate reds all meaning
+   danger. A value with no name is a value nobody can be consistent about. */
 :root{
-  --bg:#FFFFFF; --surface:#F2F2F2; --surface2:#E7E7E7; --ink:#111111;
-  --soft:#8A8A8E; --line:#ECECEC; --mark:#325788; --amber:#D9A45A; --red:#C0453F;
-  --r-pill:999px; --r-card:20px; --r-img:6px;
+  --bg:#FFFFFF; --surface:#F2F2F2; --surface2:#E7E7E7; --line:#ECECEC;
+  --ink:#111111; --soft:#8A8A8E; --faint:#C6C6CB;
+  --mark:#325788; --amber:#D9A45A; --red:#E5484D;
+  /* on a photograph, where everything has to hold against the picture */
+  --onphoto:rgba(255,255,255,.86); --scrim:rgba(17,17,17,.55);
+  /* Four. Eighteen values, including three different ways of writing a pill,
+     is eighteen decisions nobody was making on purpose. */
+/* Four sizes and two weights. Fourteen sizes were in here — 14px was the
+     third most common and belonged to no scale, which is how the whole feed
+     card came to sit on a different rhythm from the rest of the app.
+     Text drawn ON a photograph is a different medium and keeps its own two:
+     against a picture, the same measure always reads smaller. */
+  --t1:19px; --t2:17px; --t3:15px; --t4:13px;
+  --wm:500; --wb:600;
+  /* One left edge. Text began at 14, 16 and 18 depending on the screen, so
+     the column wandered as you scrolled. Photographs still run to the edge. */
+  --edge:16px;
+  --photo-badge:11px; --photo-note:12px;
+  --r-pill:999px; --r-sm:6px; --r-md:12px; --r-lg:16px;   /* 16, because the September alerts card is 16 */
+  /* Not a corner — the hand-drawn loop in the first-run lesson. */
+  --r-loop:60% 40% 55% 45% / 45% 55% 45% 55%;
+  --r-card:12px;
   --shadow-float:0 8px 30px rgba(0,0,0,.12);
   --safeT:env(safe-area-inset-top); --safeB:env(safe-area-inset-bottom);
 }
@@ -27,7 +50,7 @@
 html,body{height:100%;overscroll-behavior:none}
 body{background:var(--bg);color:var(--ink);overflow:hidden;
   font-family:-apple-system,"SF Pro Text",Inter,"Helvetica Neue",sans-serif;
-  -webkit-font-smoothing:antialiased;touch-action:manipulation;font-size:15px;line-height:1.45}
+  -webkit-font-smoothing:antialiased;touch-action:manipulation;font-size:var(--t3);line-height:1.45}
 button,input{font-family:inherit;font-size:inherit;color:inherit;border:0;background:none;outline:none}
 button{cursor:pointer}
 /* A drag begun on an <img> is a native image drag, and the browser answers
@@ -41,35 +64,43 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 /* ── screens ─────────────────────────────────────────────── */
 .scr{position:fixed;inset:0;display:none;flex-direction:column;background:var(--bg)}
 .scr.on{display:flex}
-.scr.dark{background:#0C0C0D;color:#fff}
-.hd{flex:none;display:flex;align-items:center;gap:10px;padding:calc(var(--safeT) + 14px) 16px 10px}
+.scr.dark{background:var(--ink);color:var(--bg)}
+/* One header height everywhere. Angles has no buttons in its header, so it
+   stood 52 against everybody else's 58 and the title jumped six pixels each
+   time you changed section. */
+.hd{flex:none;display:flex;align-items:center;gap:10px;min-height:58px;box-sizing:border-box;
+  padding:calc(var(--safeT) + 14px) var(--edge) 10px}
 /* 19 title · 15 tab · 13 secondary. The pill tabs sat at 13, which put the
    title and everything under it two steps apart with nothing between. */
-.hd h1{font-size:19px;font-weight:500;letter-spacing:-.02em}
+.hd h1{font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em}
 .hd .r{margin-left:auto;display:flex;align-items:center;gap:10px}
-.dark .hd h1{color:#fff}
+.dark .hd h1{color:var(--bg)}
+/* A glyph with a 44px tap area and no circle. The circle exists to give a
+   back arrow a target; where there is no back arrow it is a chip on nothing. */
+.hglyph{width:26px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.hglyph .ic{width:25px;height:25px;stroke-width:1.8}
+.hglyph:active{opacity:.5}
 .hbtn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   background:var(--surface);flex:none}
-.dark .hbtn{background:rgba(255,255,255,.12);color:#fff}
+.dark .hbtn{background:rgba(255,255,255,.12);color:var(--bg)}
 .hbtn:active{opacity:.5}
 /* an editable title: a field with the chrome taken off, until you touch it */
-.edith{min-width:0;max-width:100%;font-size:17px;font-weight:500;letter-spacing:-.02em;
-  display:inline-flex;align-items:center;gap:6px;border-bottom:1px dashed #D6D6DB;
-  padding-bottom:2px;margin-right:auto}
-.edith::after{content:'';width:15px;height:15px;flex:none;opacity:.45;
-  background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z'/%3E%3C/svg%3E")}
-.dark .edith{border-bottom-color:rgba(255,255,255,.28)}
-.hname{flex:1;min-width:0;text-align:center;font-size:17px;font-weight:500;letter-spacing:-.02em;
+.edith{flex:1;min-width:0;font-size:var(--t2);font-weight:var(--wm);letter-spacing:-.02em;
+  background:transparent;border:0;border-bottom:1px dashed var(--faint);padding:0 0 3px;
+  color:var(--ink)}
+.edith:read-only{border-bottom-color:transparent}
+.edith:focus{border-bottom-color:var(--mark);border-bottom-style:solid}
+.hname{flex:1;min-width:0;text-align:center;font-size:var(--t2);font-weight:var(--wm);letter-spacing:-.02em;
   height:30px;background:transparent;border:0;padding:0 6px;color:var(--ink)}
-.hname::placeholder{color:#B9B9BE;font-weight:400}
-.hlink{font-size:15px;font-weight:600;padding:4px 2px}
+.hname::placeholder{color:var(--faint);font-weight:400}
+.hlink{font-size:var(--t3);font-weight:var(--wb);padding:4px 2px}
 .hlink.dim{color:var(--soft);font-weight:400}
-.dark .hlink{color:#fff}
+.dark .hlink{color:var(--bg)}
 .dark .hlink.dim{color:rgba(255,255,255,.55)}
 .body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .pad{padding-bottom:120px}
-.av{border-radius:50%;color:#fff;font-weight:700;display:inline-flex;align-items:center;
-  justify-content:center;flex:none;box-shadow:0 0 0 2px #fff}
+.av{border-radius:50%;color:var(--bg);font-weight:var(--wb);display:inline-flex;align-items:center;
+  justify-content:center;flex:none;box-shadow:0 0 0 2px var(--bg)}
 
 /* ── the floating pill, from September ───────────────────── */
 .nav{position:fixed;left:50%;bottom:calc(var(--safeB) + 18px);transform:translateX(-50%);
@@ -77,64 +108,76 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 /* Straight from September: a glass pill, and the lit tab marked by a pale wash
    with a filled glyph — not a black disc, which reads as a button rather than
    a place you are. */
-.navpill{display:flex;align-items:center;gap:6px;height:64px;padding:8px 16px;border-radius:var(--r-pill);
-  background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.45);
+/* Over a pale photograph a white pill behind a white blur has no edge at all
+   and the icons sit loose on the picture. A hairline of ink, not of white. */
+.navpill{display:flex;align-items:center;gap:6px;height:64px;padding:8px var(--edge);border-radius:var(--r-pill);
+  background:rgba(255,255,255,.78);border:1px solid rgba(17,17,17,.09);
   -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
   box-shadow:var(--shadow-float), inset 0 1px 0 rgba(255,255,255,.5)}
 .navbtn{width:46px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  color:#111;position:relative;transition:background .18s ease}
+  color:var(--ink);position:relative;transition:background .18s ease}
 .navbtn.on{background:rgba(255,255,255,.32)}
 .nav-av{width:34px;height:34px;border-radius:50%;display:block}
-.navbtn.avbtn.on .nav-av{box-shadow:0 0 0 2px #fff, 0 0 0 3.5px #111}
+.navbtn.avbtn.on .nav-av{box-shadow:0 0 0 2px var(--bg), 0 0 0 3.5px var(--ink)}
 .navbtn .bdot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;
-  background:#E5484D;box-shadow:0 0 0 2px rgba(255,255,255,.9);display:none}
+  background:var(--red);box-shadow:0 0 0 2px rgba(255,255,255,.9);display:none}
 .navbtn.unread .bdot{display:block}
-.fab{width:52px;height:52px;border-radius:50%;background:var(--ink);color:#fff;flex:none;
+.fab{width:52px;height:52px;border-radius:50%;background:var(--ink);color:var(--bg);flex:none;
+  border:1px solid rgba(17,17,17,.09);
   display:flex;align-items:center;justify-content:center;
   box-shadow:var(--shadow-float), inset 0 1px 0 rgba(255,255,255,.2)}
 .fab:active{transform:scale(.94)}
 .fab .ic{width:26px;height:26px;stroke-width:2}
 
 /* ── collection toggle + tabs ────────────────────────────── */
-.tgrow{flex:none;display:flex;align-items:center;gap:8px;padding:0 16px 10px}
-.cbtn{display:flex;align-items:center;gap:5px;background:var(--ink);color:#fff;height:34px;
-  padding:0 14px;border-radius:var(--r-pill);font-size:13px;font-weight:600;max-width:56%}
+.tgrow{flex:none;display:flex;align-items:center;gap:8px;padding:0 var(--edge) 10px}
+.cbtn{display:flex;align-items:center;gap:5px;background:var(--ink);color:var(--bg);height:34px;
+  padding:0 14px;border-radius:var(--r-pill);font-size:var(--t4);font-weight:var(--wb);max-width:56%}
 .cbtn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cbtn .ic{width:15px;height:15px;stroke-width:2.2;flex:none}
 .cbtn.pub{background:var(--mark)}
 .tabs{display:flex;gap:3px;background:var(--surface);border-radius:var(--r-pill);padding:3px;
   margin-left:auto}
-.tab{height:28px;padding:0 12px;border-radius:var(--r-pill);font-size:13px;color:#6f6f73;
+.tab{height:28px;padding:0 12px;border-radius:var(--r-pill);font-size:var(--t4);color:var(--soft);
   display:flex;align-items:center;gap:4px}
-.tab.on{background:#fff;color:var(--ink);font-weight:600}
-.meta{font-size:13px;color:var(--soft);margin-left:auto;white-space:nowrap}
-.inv{flex:none;display:flex;align-items:center;gap:6px;padding:0 16px 10px;font-size:13px;color:var(--soft)}
+.tab.on{background:var(--bg);color:var(--ink);font-weight:var(--wb)}
+.meta{font-size:var(--t4);color:var(--soft);margin-left:auto;white-space:nowrap}
+/* who else is in here, beside the name it belongs to */
+.faces{display:flex;align-items:center;flex:none;margin-right:4px}
+.faces:empty{display:none}
+.faces .av{margin-left:-8px;box-shadow:0 0 0 2px var(--bg)}
+.faces .av:first-child{margin-left:0}
+.faces .more2{display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:50%;background:var(--surface);color:var(--soft);
+  font-size:var(--photo-badge);font-weight:var(--wb);margin-left:-8px;
+  box-shadow:0 0 0 2px var(--bg)}
+.inv{flex:none;display:flex;align-items:center;gap:6px;padding:0 var(--edge) 10px;font-size:var(--t4);color:var(--soft)}
 .inv .ic{width:14px;height:14px}
 
 /* ── grid ────────────────────────────────────────────────── */
 /* Both tabs open the same distance below the divider. Flush on one and
    inset on the other made the page jump every time you switched. */
 .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;padding:10px 2px 0}
-.tile{position:relative;aspect-ratio:1;overflow:hidden;background:var(--surface);border-radius:var(--r-img)}
+.tile{position:relative;aspect-ratio:1;overflow:hidden;background:var(--surface);border-radius:var(--r-sm)}
 .tile img{width:100%;height:100%;object-fit:cover;display:block}
 .tile:active img{opacity:.7}
 /* Three five-pixel dots on a photograph are invisible, and which photographs
    you have already written on is the most useful thing this grid knows. */
 .tile .dots{position:absolute;left:5px;bottom:5px;height:21px;min-width:21px;padding:0 6px;
-  border-radius:999px;background:rgba(17,17,17,.55);color:#fff;display:flex;align-items:center;
-  gap:4px;font-size:11px;font-weight:600;
+  border-radius:var(--r-pill);background:rgba(17,17,17,.55);color:var(--bg);display:flex;align-items:center;
+  gap:4px;font-size:var(--photo-badge);font-weight:var(--wb);
   -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .tile .dots .ic{width:13px;height:13px;stroke-width:2}
-.tile .hitnote{position:absolute;left:0;right:0;bottom:0;background:rgba(17,17,17,.8);color:#fff;
-  font-size:9.5px;line-height:1.3;padding:4px 5px;
+.tile .hitnote{position:absolute;left:0;right:0;bottom:0;background:rgba(17,17,17,.8);color:var(--bg);
+  font-size:var(--t4);line-height:1.3;padding:4px 5px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* 17px with an 11px glyph inside it was a smudge. It also sat under the
    note dots; it now takes the other corner. */
 .tile .up{position:absolute;right:5px;top:5px;width:21px;height:21px;border-radius:50%;
-  background:rgba(17,17,17,.55);color:#fff;display:flex;align-items:center;justify-content:center;
+  background:rgba(17,17,17,.55);color:var(--bg);display:flex;align-items:center;justify-content:center;
   -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .tile .ord{display:none;position:absolute;right:5px;top:5px;width:23px;height:23px;border-radius:50%;
-  align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;
+  align-items:center;justify-content:center;font-size:var(--t4);font-weight:var(--wb);color:var(--bg);
   border:1.5px solid rgba(255,255,255,.95);background:rgba(0,0,0,.42);
   box-shadow:0 1px 4px rgba(0,0,0,.45)}
 /* Selection reads off the photographs themselves: the ones you did not pick
@@ -145,45 +188,52 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    comparing them. What you picked is marked; the rest is left alone. */
 .grid.picking .tile{transition:transform .12s}
 .grid.picking .tile.picked{transform:scale(.93)}
-.grid.picking .tile.picked::after{content:'';position:absolute;inset:0;border-radius:var(--r-img);
+.grid.picking .tile.picked::after{content:'';position:absolute;inset:0;border-radius:var(--r-sm);
   border:3px solid var(--mark);pointer-events:none}
 .grid.picking .tile .ord{display:flex}
 .grid.picking .tile:not(.picked) .ord{background:rgba(0,0,0,.28)}
-.grid.picking .tile.picked .ord{background:var(--mark);border-color:#fff}
-.empty{padding:64px 34px;text-align:center;color:var(--soft);font-size:13px;line-height:1.75;grid-column:1/4}
-.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:8px;font-weight:600}
-.empty .cta{display:inline-block;margin-top:16px;background:var(--ink);color:#fff;font-size:13px;
-  font-weight:600;padding:11px 20px;border-radius:var(--r-pill)}
+.grid.picking .tile.picked .ord{background:var(--mark);border-color:var(--bg)}
+/* Two empty states with two type pairings — 15/13 in the grids, 17/15 in
+   alerts — for the same situation. One pairing, and the larger one, because
+   an empty screen is mostly this. */
+.empty{padding:72px 40px;text-align:center;color:var(--soft);font-size:var(--t3);line-height:1.6;grid-column:1/4}
+.empty b{display:block;color:var(--ink);font-size:var(--t2);margin-bottom:8px;font-weight:var(--wb)}
+.empty .cta{display:inline-block;margin-top:16px;background:var(--ink);color:var(--bg);font-size:var(--t4);
+  font-weight:var(--wb);padding:11px 20px;border-radius:var(--r-pill)}
 
 /* ── rows ────────────────────────────────────────────────── */
 .rlist{padding:0 0 4px}
-.row{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:15px;
+.row{display:flex;align-items:center;gap:12px;padding:12px var(--edge);font-size:var(--t3);
   border-bottom:1px solid var(--line)}
 .row:active{background:var(--surface)}
-.row .k{margin-left:auto;color:var(--soft);font-size:13px}
-.row.sel{font-weight:600}
+.row .k{margin-left:auto;color:var(--soft);font-size:var(--t4)}
+.row.sel{font-weight:var(--wb)}
 .row.danger{color:var(--red)}
-.row .sub{font-size:13px;color:var(--soft);font-weight:400}
+.row .sub{font-size:var(--t4);color:var(--soft);font-weight:400}
 .row .rowbtn{margin-left:8px;width:30px;height:30px;border-radius:50%;background:var(--surface2);
   display:flex;align-items:center;justify-content:center;color:var(--soft);flex:none}
 /* A board is a shape. A 46px thumbnail cannot tell four from six, so the
    list shows each one at 9:16, two across. */
-.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:4px 16px 0}
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:10px var(--edge) 0}
 .bcell{display:block}
 .bcell:active{opacity:.62}
 .bq{aspect-ratio:9/16;display:grid;gap:2px;padding:2px;background:var(--line);
-  border-radius:8px;overflow:hidden}
+  border-radius:var(--r-sm);overflow:hidden}
 .bq.fit img{object-fit:contain}
-.bq .hole{background:rgba(0,0,0,.05);border-radius:3px}
-.draftchip{display:inline-block;margin-left:7px;padding:2px 7px;border-radius:99px;
-  background:var(--surface2);color:var(--soft);font-size:11px;font-weight:600;vertical-align:2px}
-.bq img{width:100%;height:100%;object-fit:cover;display:block;border-radius:3px}
+.bq .hole{background:rgba(0,0,0,.05);border-radius:var(--r-sm)}
+.draftchip{display:inline-block;margin-left:7px;padding:2px 7px;border-radius:var(--r-pill);
+  background:var(--surface2);color:var(--soft);font-size:var(--t4);font-weight:var(--wb);vertical-align:2px}
+.bq img{width:100%;height:100%;object-fit:cover;display:block;border-radius:var(--r-sm)}
 .bq.n2{grid-template-rows:1fr 1fr}
 .bq.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
 .bq.n6{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr}
-.bnm{display:block;font-size:15px;font-weight:500;padding:8px 2px 0;line-height:1.3}
-.bsub{display:block;font-size:13px;color:var(--soft);padding:2px 2px 0}
-.newrow{display:flex;align-items:center;gap:10px;padding:12px 16px;color:var(--soft);font-size:15px;
+.bq.newq{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+  background:transparent;border:1.5px dashed var(--faint);color:var(--soft);font-size:var(--t4)}
+.bq.newq .ic{width:24px;height:24px;stroke-width:1.8}
+.bnew:active{opacity:.6}
+.bnm{display:block;font-size:var(--t3);font-weight:var(--wm);padding:8px 2px 0;line-height:1.3}
+.bsub{display:block;font-size:var(--t4);color:var(--soft);padding:2px 2px 0}
+.newrow{display:flex;align-items:center;gap:10px;padding:12px var(--edge);color:var(--soft);font-size:var(--t3);
   border-bottom:1px solid var(--line)}
 
 /* ── selection bar ───────────────────────────────────────── */
@@ -199,30 +249,30 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
   box-shadow:none}
 .selbar.on{display:flex}
-.sb{flex:none;height:46px;padding:0 15px;border-radius:var(--r-pill);background:#fff;
-  box-shadow:var(--shadow-float);
-  font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px}
-.sb.main{flex:1;background:var(--ink);color:#fff;font-weight:600}
+.sb{flex:none;height:46px;padding:0 15px;border-radius:var(--r-pill);background:var(--bg);
+  box-shadow:var(--shadow-float);border:1px solid rgba(17,17,17,.09);
+  font-size:var(--t4);display:flex;align-items:center;justify-content:center;gap:6px}
+.sb.main{flex:1;background:var(--ink);color:var(--bg);font-weight:var(--wb)}
 .sb.main:disabled{background:var(--surface2);color:var(--soft)}
 .sb.danger{color:var(--red);padding:0 13px}
 .sb:active{opacity:.6}
 
 /* ── marking ─────────────────────────────────────────────── */
-.stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;
-  min-height:0;padding:2px 8px;overflow:hidden}
+.stage{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:0;padding:2px 8px;overflow:hidden}
 .hold{position:relative;touch-action:none;max-width:100%;max-height:100%}
-.hold img{display:block;max-width:100%;max-height:100%;border-radius:4px}
+.hold img{display:block;max-width:100%;max-height:100%;border-radius:var(--r-sm)}
 .hold svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.hold svg path{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+.hold svg path{fill:none;stroke:var(--bg);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
   vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 4px rgba(0,0,0,.65))}
 .mark{position:absolute;transform:translateY(-50%);z-index:5;display:flex;align-items:center;
   width:max-content;margin-left:-13px}
 .mark.flip{flex-direction:row-reverse;margin-left:0;margin-right:-13px}
-.mark .badge{width:26px;height:26px;border-radius:50%;background:var(--mark);color:#fff;
-  font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;
-  border:2px solid #fff;flex:none;box-shadow:0 1px 5px rgba(0,0,0,.45)}
-.mark .pill{background:rgba(17,17,17,.88);color:#fff;font-size:12px;line-height:1.35;
-  padding:6px 9px;border-radius:9px;margin-left:6px;word-break:break-word;min-width:0;
+.mark .badge{width:26px;height:26px;border-radius:50%;background:var(--mark);color:var(--bg);
+  font-size:var(--photo-note);font-weight:var(--wb);display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg);flex:none;box-shadow:0 1px 5px rgba(0,0,0,.45)}
+.mark .pill{background:rgba(17,17,17,.88);color:var(--bg);font-size:var(--photo-note);line-height:1.35;
+  padding:6px 9px;border-radius:var(--r-md);margin-left:6px;word-break:break-word;min-width:0;
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .mark.flip .pill{margin-left:0;margin-right:6px}
 /* A note covers the thing it is about. Tapping the badge folds it away and
@@ -230,50 +280,59 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    badge is a circle you can hit. */
 .mark.folded .pill{display:none}
 .fimg .mark .badge{cursor:pointer}
-.hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:rgba(255,255,255,.6);
-  font-size:12px;pointer-events:none}
-.cboxd{flex:none;border-top:1px solid rgba(255,255,255,.12);padding:8px 16px 0;
-  max-height:112px;overflow-y:auto}
-.cboxd .crow{color:#fff}
-.cind{display:flex;gap:8px;align-items:center;padding:7px 0 9px;position:sticky;bottom:0;background:#0C0C0D}
-.cind input{flex:1;height:38px;border-radius:10px;background:rgba(255,255,255,.1);padding:0 12px;
-  font-size:14px;color:#fff}
-.cind input::placeholder{color:#6E6E75}
-.cind button{font-size:14px;font-weight:600;padding:0 4px;color:#fff}
+.hint{flex:none;text-align:center;color:rgba(255,255,255,.6);padding:14px 0 0;
+  font-size:var(--t4);pointer-events:none}
+/* the first-run lesson, over the photograph */
+.lesson{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:22px;z-index:8;pointer-events:none;
+  animation:lfade .35s ease}
+@keyframes lfade{from{opacity:0}to{opacity:1}}
+.lrow{display:flex;gap:26px}
+.lg{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ldot,.lloop{width:52px;height:52px;border:2px dashed rgba(255,255,255,.55);
+  display:flex;align-items:center;justify-content:center}
+.ldot{border-radius:50%}
+.ldot:after{content:'';width:13px;height:13px;border-radius:50%;background:var(--mark);
+  box-shadow:0 0 0 2px rgba(255,255,255,.9)}
+.lloop{border-radius:var(--r-loop);transform:rotate(-8deg)}
+.lcap{font-size:var(--t4);color:rgba(255,255,255,.8)}
+.lsay{background:rgba(17,17,17,.82);color:var(--bg);font-size:var(--t4);
+  padding:7px 13px;border-radius:var(--r-pill);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .mkbar{flex:none;display:flex;align-items:center;gap:6px;width:296px;margin:0 auto;
   padding:8px 0 calc(var(--safeB) + 16px)}
-.rnd{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.13);color:#fff;
+.rnd{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.13);color:var(--bg);
   display:flex;align-items:center;justify-content:center;flex:none}
 .tbtn{height:44px;padding:0 14px;border-radius:var(--r-pill);background:rgba(255,255,255,.13);
-  color:#fff;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;flex:none}
+  color:var(--bg);display:flex;align-items:center;gap:6px;font-size:var(--t4);font-weight:var(--wm);flex:none}
 .rnd:active,.tbtn:active{opacity:.6}
 /* The count moved to the header. In 246 there is no room for a number that
    the title can carry. */
 .mkcount{display:none}
-.save{flex:1;height:44px;border-radius:var(--r-pill);background:#fff;color:#111;
-  font-size:15px;font-weight:600}
+.save{flex:1;height:44px;border-radius:var(--r-pill);background:var(--bg);color:var(--ink);
+  font-size:var(--t3);font-weight:var(--wb)}
 .save:active{opacity:.75}
 
 /* the note sheet */
-.nsheet{position:fixed;left:0;right:0;bottom:0;z-index:90;background:#17171A;color:#fff;
+.nsheet{position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--ink);color:var(--bg);
   border-radius:var(--r-card) var(--r-card) 0 0;padding:14px 16px calc(var(--safeB) + 14px);
   transform:translateY(102%);transition:transform .22s cubic-bezier(.4,0,.2,1)}
 .nsheet.on{transform:translateY(0)}
 .nh{display:flex;align-items:center;gap:9px;margin-bottom:11px}
-.nh .badge{width:24px;height:24px;border-radius:50%;background:var(--mark);color:#fff;
-  font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.nh b{font-size:14px;font-weight:600}
-.nbar .cx{flex:none;width:52px;background:rgba(255,107,96,.16);color:#FF6B60;
+.nh .badge{width:24px;height:24px;border-radius:50%;background:var(--mark);color:var(--bg);
+  font-size:var(--t4);font-weight:var(--wb);display:flex;align-items:center;justify-content:center}
+.nh b{font-size:var(--t3);font-weight:var(--wb)}
+.nbar .cx{flex:none;width:52px;background:rgba(255,107,96,.16);color:var(--red);
   display:flex;align-items:center;justify-content:center}
 .nbar .cx .ic{stroke-width:1.9}
-.nfield{display:flex;align-items:center;gap:8px;background:#242428;border-radius:12px;padding:0 12px;height:46px}
-.nfield input{flex:1;font-size:15px;color:#fff}
-.nfield input::placeholder{color:#6E6E75}
-.nfield .cnt{font-size:11.5px;color:#6E6E75;flex:none}
+.nfield{display:flex;align-items:center;gap:8px;background:var(--ink);border-radius:var(--r-md);padding:0 12px;height:46px}
+.nfield input{flex:1;font-size:var(--t3);color:var(--bg)}
+.nfield input::placeholder{color:var(--soft)}
+.nfield .cnt{font-size:var(--t4);color:var(--soft);flex:none}
 .nbar{display:flex;gap:9px;margin-top:12px}
-.nbar button{flex:1;height:46px;border-radius:var(--r-pill);font-size:15px;font-weight:600}
-.nbar .c1{background:rgba(255,255,255,.13);color:#fff}
-.nbar .c2{background:#fff;color:#111}
+.nbar button{flex:1;height:46px;border-radius:var(--r-pill);font-size:var(--t3);font-weight:var(--wb)}
+.nbar .c1{background:rgba(255,255,255,.13);color:var(--bg)}
+.nbar .c2{background:var(--bg);color:var(--ink)}
 
 /* ── crop ────────────────────────────────────────────────── */
 /* Everything outside the frame goes dark, so the picture shows what you
@@ -286,8 +345,8 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .crframe:before{border-left:1px solid rgba(255,255,255,.25);border-right:1px solid rgba(255,255,255,.25);margin:0 33.33%}
 .crframe:after{border-top:1px solid rgba(255,255,255,.25);border-bottom:1px solid rgba(255,255,255,.25);margin:33.33% 0}
 .crframe i{position:absolute;width:40px;height:40px;touch-action:none}
-.crframe i:before{content:"";position:absolute;width:22px;height:22px;border:3px solid #fff;
-  border-radius:2px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.75))}
+.crframe i:before{content:"";position:absolute;width:22px;height:22px;border:3px solid var(--bg);
+  border-radius:var(--r-sm);filter:drop-shadow(0 1px 3px rgba(0,0,0,.75))}
 .crframe i[data-h=nw]{left:0;top:0}
 .crframe i[data-h=nw]:before{left:-1px;top:-1px;border-right:0;border-bottom:0}
 .crframe i[data-h=ne]{right:0;top:0}
@@ -296,27 +355,29 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .crframe i[data-h=sw]:before{left:-1px;bottom:-1px;border-right:0;border-top:0}
 .crframe i[data-h=se]{right:0;bottom:0}
 .crframe i[data-h=se]:before{right:-1px;bottom:-1px;border-left:0;border-top:0}
-.chips{flex:none;display:flex;gap:8px;overflow-x:auto;padding:0 16px calc(var(--safeB) + 16px);
+.chips{flex:none;display:flex;gap:8px;overflow-x:auto;padding:0 var(--edge) calc(var(--safeB) + 16px);
   scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;height:38px;padding:0 14px;border-radius:var(--r-pill);background:#f3f3f2;
-  font-size:13px;font-weight:500;color:#4a4a4a;display:flex;align-items:center;white-space:nowrap}
-.chip.on{background:#161616;color:#fff;font-weight:600}
-.dark .chip{background:rgba(255,255,255,.13);color:#fff}
+.chip{flex:none;height:38px;padding:0 14px;border-radius:var(--r-pill);background:var(--surface);
+  font-size:var(--t4);font-weight:var(--wm);color:var(--soft);display:flex;align-items:center;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--bg);font-weight:var(--wb)}
+.dark .chip{background:rgba(255,255,255,.13);color:var(--bg)}
 
 /* ── board ───────────────────────────────────────────────── */
 .qwrap{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;padding:6px 12px}
-.quad{display:grid;gap:3px;padding:3px;background:var(--line);border-radius:6px}
+.quad{display:grid;gap:3px;padding:3px;background:var(--line);border-radius:var(--r-sm)}
 .quad.n2{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
 .quad.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
 .quad.n6{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr}
-.lay{flex:none;display:flex;gap:8px;padding:0 16px 10px}
-.lopt{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center;
-  font-size:13px;color:var(--soft)}
-.lopt.on{border-color:var(--ink);color:var(--ink);font-weight:600}
-.mini{width:26px;margin:0 auto 6px;aspect-ratio:9/16;background:var(--line);border-radius:3px;
-  display:grid;gap:1.5px;padding:1.5px}
-.mini i{background:var(--surface2);border-radius:1px;display:block}
+.lay{flex:none;display:flex;gap:8px;padding:0 var(--edge) 10px}
+.lopt{flex:1;border:1.5px solid var(--line);border-radius:var(--r-md);padding:8px 4px;text-align:center;
+  font-size:var(--t4);color:var(--soft)}
+.lopt.on{border-color:var(--ink);color:var(--ink);font-weight:var(--wb)}
+/* 26px of var(--line) holding var(--surface) is one grey on another. Bigger, darker,
+   and with a gap you can actually see between the cells. */
+.mini{width:34px;margin:0 auto 7px;aspect-ratio:9/16;display:grid;gap:3px}
+.mini i{background:var(--faint);border-radius:var(--r-sm);display:block}
+.lopt.on .mini i{background:var(--ink)}
 .mini.n2{grid-template-rows:1fr 1fr}
 .mini.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
 .mini.n6{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr}
@@ -332,8 +393,8 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    board is standing on black. */
 .qc.empty{display:flex;align-items:center;justify-content:center;background:rgba(128,128,128,.13);
   border:1.5px dashed rgba(128,128,128,.6)}
-.qc.empty .plus{font-size:20px;color:#9A9AA0}
-.qc{position:relative;overflow:hidden;background:var(--surface);border-radius:3px;touch-action:none}
+.qc.empty .plus{font-size:var(--t1);color:var(--soft)}
+.qc{position:relative;overflow:hidden;background:var(--surface);border-radius:var(--r-sm);touch-action:none}
 .qc img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .qc.drag{opacity:.5}
 .qc.over{outline:2px solid var(--mark);outline-offset:-2px}
@@ -345,76 +406,77 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    on the picture instead. */
 .qc .qacts{position:absolute;right:5px;bottom:4px;z-index:4;display:flex;align-items:center;gap:9px}
 .qc .qb{display:flex;align-items:center;gap:3px;color:rgba(255,255,255,.82);
-  font-size:10px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+  font-size:var(--photo-badge);font-weight:var(--wb);text-shadow:0 1px 3px rgba(0,0,0,.7)}
 .qc .qb .ic{width:15px;height:15px;stroke-width:1.9;
   filter:drop-shadow(0 1px 3px rgba(0,0,0,.7))}
-.qc .qb.on{color:#FF6B60}
-.qc .qb.on .ic{fill:#FF6B60;stroke:#FF6B60}
-.qc .n{position:absolute;left:5px;top:4px;font-size:10px;font-weight:700;color:#fff;z-index:3;
+.qc .qb.on{color:var(--red)}
+.qc .qb.on .ic{fill:var(--red);stroke:var(--red)}
+.qc .n{position:absolute;left:5px;top:4px;font-size:var(--photo-badge);font-weight:var(--wb);color:var(--bg);z-index:3;
   opacity:.8;text-shadow:0 1px 3px rgba(0,0,0,.7);line-height:1}
 /* The note and the two counts share the bottom edge, so it stops short of
    them rather than running underneath. */
-.qc .note{position:absolute;left:5px;right:56px;bottom:5px;z-index:3;background:rgba(17,17,17,.8);
-  color:#fff;font-size:10.5px;line-height:1.35;padding:5px 7px;border-radius:7px;
-  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.qc .note em{font-style:normal;opacity:.55;margin-left:4px}
 .qc svg.ink{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
-.qc svg.ink path{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+.qc svg.ink path{fill:none;stroke:var(--bg);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
   vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 3px rgba(0,0,0,.55))}
 .qc .pt{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--mark);
-  border:1.5px solid #fff;transform:translate(-50%,-50%);z-index:2;box-shadow:0 1px 3px rgba(0,0,0,.5)}
-.cbox{flex:none;border-top:1px solid var(--line);padding:9px 16px 0;max-height:104px;overflow-y:auto}
-.crow{font-size:13px;line-height:1.5;padding:3px 0;display:flex;align-items:baseline;gap:7px}
+  border:1.5px solid var(--bg);transform:translate(-50%,-50%);z-index:2;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.cbox{flex:none;border-top:1px solid var(--line);padding:9px var(--edge) 0;max-height:104px;overflow-y:auto}
+/* The same person was 18px in the list and 30px in the box below it. One
+   size, and the field and its button are the same height as each other. */
+.crow{font-size:var(--t3);line-height:1.45;padding:5px 0;display:flex;align-items:center;gap:9px}
 .crow .av{align-self:center}
-.cin{display:flex;gap:8px;align-items:center;padding:7px 0 9px;position:sticky;bottom:0;background:#fff}
-.cin input{flex:1;height:38px;border-radius:10px;border:1px solid var(--line);padding:0 12px;
-  font-size:15px;background:var(--surface)}
-.cin button{font-size:14px;font-weight:600;padding:0 4px;color:var(--mark)}
+.cin{display:flex;gap:8px;align-items:center;padding:7px 0 9px;position:sticky;bottom:0;background:var(--bg)}
+.cin input{flex:1;height:38px;border-radius:var(--r-md);border:1px solid var(--line);padding:0 12px;
+  font-size:var(--t3);background:var(--surface)}
+.cin button{font-size:var(--t3);font-weight:var(--wb);padding:0 4px;color:var(--mark)}
 .bbar{flex:none;display:flex;align-items:center;gap:6px;width:296px;margin:0 auto;
   padding:6px 8px calc(var(--safeB) + 14px)}
 .pill2{flex:1;height:44px;border-radius:var(--r-pill);background:var(--surface);
-  display:flex;align-items:center;justify-content:center;gap:6px;font-size:15px;font-weight:600}
-.pill2.on{background:var(--amber);color:#fff}
+  display:flex;align-items:center;justify-content:center;gap:6px;font-size:var(--t3);font-weight:var(--wb)}
+/* The amber came from an old palette and did nothing else in the app. This
+   mode draws blue dashes on every cell; the button is the same blue. */
+.pill2.arm{background:var(--mark);color:var(--bg)}
+.pill2.on{background:var(--amber);color:var(--bg)}
+.pill2.main{background:var(--ink);color:var(--bg)}
 .pill2:active{opacity:.6}
-.swapstrip{display:flex;gap:6px;overflow-x:auto;padding:0 16px;scrollbar-width:none}
+.swapstrip{display:flex;gap:6px;overflow-x:auto;padding:0 var(--edge);scrollbar-width:none}
 .swapstrip::-webkit-scrollbar{display:none}
-.swapstrip img{width:70px;height:124px;object-fit:cover;border-radius:7px;flex:none}
+.swapstrip img{width:70px;height:124px;object-fit:cover;border-radius:var(--r-sm);flex:none}
 .swapstrip img:active{opacity:.6}
-.swap{position:fixed;left:0;right:0;bottom:0;z-index:86;background:#fff;border-top:1px solid var(--line);
+.swap{position:fixed;left:0;right:0;bottom:0;z-index:86;background:var(--bg);border-top:1px solid var(--line);
   box-shadow:0 -6px 24px rgba(0,0,0,.1);padding:12px 0 calc(var(--safeB) + 16px);
   transform:translateY(102%);transition:transform .22s cubic-bezier(.4,0,.2,1)}
 .swap.on{transform:translateY(0)}
-.swaph{display:flex;align-items:center;justify-content:space-between;padding:0 16px 10px;
-  font-size:14px;font-weight:600}
-.swaph button{font-size:14px;font-weight:400;color:var(--soft)}
+.swaph{display:flex;align-items:center;justify-content:space-between;padding:0 var(--edge) 10px;
+  font-size:var(--t3);font-weight:var(--wb)}
+.swaph button{font-size:var(--t3);font-weight:400;color:var(--soft)}
 
 /* ── Angles · two columns, natural heights, from September ─ */
 /* Two real columns, filled by hand. CSS `columns:2` puts the first half of
    the list down the left and the second half down the right, so the top of the
    right column is the sixth newest thing — which is not what a feed means. */
-.masonry{display:flex;gap:3px;padding:0 3px;align-items:flex-start}
+/* the same opening gap the other grids have */
+.masonry{display:flex;gap:3px;padding:10px 3px 0;align-items:flex-start}
 .mcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .mtile{position:relative;overflow:hidden;
-  border-radius:var(--r-img);background:var(--surface);display:block}
+  border-radius:var(--r-sm);background:var(--surface);display:block}
 .mtile img{width:100%;height:auto;display:block}
 .mtile:active img{opacity:.75}
 .mtile .dots{position:absolute;left:6px;top:6px;display:flex;gap:3px;background:rgba(17,17,17,.45);
   padding:4px 5px;border-radius:var(--r-pill)}
-.mtile .dots i{width:5px;height:5px;border-radius:50%;background:#fff;display:block}
+.mtile .dots i{width:5px;height:5px;border-radius:50%;background:var(--bg);display:block}
 
 /* ── feed ────────────────────────────────────────────────── */
 /* Full-bleed, and the person above the picture rather than under it. A
    photograph you are asked to look at should start at the edge of the
    screen, and you should know whose it is before you look at it. */
-.fcard{padding-bottom:16px;margin-bottom:14px;border-bottom:1px solid #F4F4F4}
-.fhead{display:flex;align-items:center;gap:10px;padding:9px 14px}
-.fhead .nm{font-size:14px;font-weight:600;letter-spacing:-.01em;cursor:pointer}
+.fcard{padding-bottom:16px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.fhead{display:flex;align-items:center;gap:10px;padding:9px var(--edge)}
+.fhead .nm{font-size:var(--t3);font-weight:var(--wb);letter-spacing:-.01em;cursor:pointer}
 .fhead .av{cursor:pointer}
-.fhead .dot{color:var(--soft);font-size:14px}
-.fhead .flw{color:var(--mark);font-size:14px;font-weight:600}
-.fhead .flw.on{color:var(--soft);font-weight:400}
+.fhead .dot{color:var(--soft);font-size:var(--t3)}
 .fhead .mr{margin-left:auto;color:var(--ink);display:flex}
-.facts{display:flex;align-items:center;gap:18px;padding:11px 14px 0;color:var(--ink)}
+.facts{display:flex;align-items:center;gap:18px;padding:11px var(--edge) 0;color:var(--ink)}
 .facts>span{display:flex}
 .facts .keep{margin-left:auto}
 .facts .ic{width:24px;height:24px;stroke-width:1.7}
@@ -422,188 +484,226 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .facts .keep.saved .ic{fill:var(--mark);stroke:var(--mark)}
 /* 12 · 10 · 14 rather than 5 · 6 · 8. Packed at the old spacing the count,
    the note, the comments and the time read as one block of small text. */
-.flikes{font-size:14px;font-weight:600;padding:12px 14px 0}
+.flikes{font-size:var(--t3);font-weight:var(--wb);padding:12px var(--edge) 0}
 /* The caption is the first thing that was noticed, carrying its own number,
    so a photograph says what it is about without anybody tapping a pin. */
-.fcap{font-size:14px;line-height:1.5;padding:12px 14px 0}
-.flikes + .fcap{padding-top:6px}
-.fcap b{font-weight:600}
-.fview{font-size:14px;color:var(--soft);padding:10px 14px 0}
-.fwhen{font-size:11px;color:var(--soft);letter-spacing:.03em;padding:14px 14px 0;text-transform:uppercase}
+/* The notes were on the photograph and again underneath it, in two sizes and
+   two colours. They are numbered badges on the picture — which is where the
+   place is — and words down here, which is where words are read. There are
+   never more than three. */
+.fnotes{font-size:var(--t3);line-height:1.5;padding:12px var(--edge) 0}
+.flikes + .fnotes{padding-top:6px}
+.fnotes b{font-weight:var(--wb);margin-right:6px}
+.fnotes .fn{display:block;padding-top:4px}
+.fview{font-size:var(--t3);color:var(--soft);padding:10px var(--edge) 0}
+/* Sentence case. UPPERCASE appeared twice in the whole app, here and on the
+   alerts label, and neither was shouting at anybody. */
+.fwhen{font-size:var(--t4);color:var(--soft);padding:14px var(--edge) 0}
 .fimg{position:relative;overflow:hidden;background:var(--surface)}
 .fimg img{width:100%;display:block}
-.fimg .mark .badge{width:23px;height:23px;font-size:11px}
-.fimg .mark .pill{font-size:11.5px;padding:5px 8px}
+.fimg .mark .badge{width:23px;height:23px;font-size:var(--photo-badge)}
+.hidem{position:absolute;right:9px;top:9px;z-index:6;width:32px;height:32px;border-radius:50%;
+  background:rgba(17,17,17,.5);color:var(--bg);display:flex;align-items:center;justify-content:center;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.hidem .ic{width:19px;height:19px;stroke-width:1.8}
+.dark .hbtn .cbadge{position:absolute;right:-1px;top:-1px;min-width:15px;height:15px;padding:0 4px;
+  border-radius:var(--r-pill);background:var(--mark);color:var(--bg);font-size:var(--photo-badge);
+  font-weight:var(--wb);display:flex;align-items:center;justify-content:center}
+.dark .hbtn{position:relative}
+.fcard.nomarks .mark,.fcard.nomarks .fink{display:none}
+.fimg .mark .pill{font-size:var(--photo-note);padding:5px 8px}
 .fink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.fink path{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+.fink path{fill:none;stroke:var(--bg);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
   vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
 .frow{display:flex;align-items:center;gap:8px;padding:9px 2px 0}
-.frow .nm{font-size:15px;font-weight:500}
+.frow .nm{font-size:var(--t3);font-weight:var(--wm)}
 .frow .av,.frow .nm{cursor:pointer}
-.frow .when{font-size:13px;color:var(--soft)}
-.frow .from{font-size:13px;color:var(--soft)}
-.frow .acts{margin-left:auto;display:flex;align-items:center;gap:14px;color:var(--soft);font-size:13px}
+.frow .when{font-size:var(--t4);color:var(--soft)}
+.frow .from{font-size:var(--t4);color:var(--soft)}
+.frow .acts{margin-left:auto;display:flex;align-items:center;gap:14px;color:var(--soft);font-size:var(--t4)}
 .act{display:flex;align-items:center;gap:5px}
 .act.on{color:var(--red)}
 .act.saved{color:var(--mark)}
 
-.more{font-size:13px;color:var(--soft);padding:6px 2px 0}
-.cmts{padding:10px 14px 0}
-/* Wider than it was. Three lines packed tight read as one block of grey. */
-.cmt{font-size:14px;line-height:1.55;padding:5px 0}
-.cmt b{font-weight:600}
+.more{font-size:var(--t4);color:var(--soft);padding:6px 2px 0}
+/* These sat inside a .cmts wrapper that carried the side padding. The wrapper
+   went when commenting moved to a sheet, and the padding went with it, so the
+   comments stood fourteen pixels left of the note above them. */
+.cmt{font-size:var(--t3);line-height:1.5;padding:5px var(--edge) 0}
+.cmt b{font-weight:var(--wb);color:var(--ink)}
 .cbox2{display:flex;gap:8px;align-items:center;margin-top:6px}
-.cbox2 input{flex:1;height:36px;border-radius:9px;border:1px solid var(--line);padding:0 11px;
-  font-size:15px;background:var(--surface)}
+.cbox2 input{flex:1;height:36px;border-radius:var(--r-md);border:1px solid var(--line);padding:0 11px;
+  font-size:var(--t3);background:var(--surface)}
 /* 15px between rows, not 3. A comment is somebody talking; packed tight,
    four of them read as one paragraph of grey. */
-.clist{padding:13px 16px 4px;display:flex;flex-direction:column;gap:15px;
+.clist{padding:13px var(--edge) 4px;display:flex;flex-direction:column;gap:15px;
   max-height:44vh;overflow-y:auto}
 .clist .crow2{display:flex;gap:11px;align-items:flex-start}
-.crow2 .bd{flex:1;font-size:14px;line-height:1.5}
-.crow2 .who{font-weight:600;font-size:13px}
-.crow2 .w{color:var(--soft);font-size:12px;margin-left:7px}
-.clist .none{color:var(--soft);font-size:14px;text-align:center;padding:22px 0 18px;line-height:1.6}
-.cbar{display:flex;align-items:center;gap:10px;padding:11px 14px calc(var(--safeB) + 10px);
+.crow2 .bd{flex:1;font-size:var(--t3);line-height:1.5}
+.crow2 .who{font-weight:var(--wb);font-size:var(--t4)}
+.crow2 .w{color:var(--soft);font-size:var(--t4);margin-left:7px}
+.clist.bare{padding-top:2px}
+.clist .none{color:var(--soft);font-size:var(--t3);text-align:center;padding:2px 0 12px}
+.cbar{display:flex;align-items:center;gap:10px;padding:11px var(--edge) calc(var(--safeB) + 10px);
   border-top:1px solid var(--line)}
-.cbar input{flex:1;height:38px;border-radius:99px;background:var(--surface);
-  padding:0 14px;font-size:14px;border:0}
-.sendb{width:34px;height:34px;border-radius:50%;background:var(--mark);color:#fff;flex:none;
-  display:flex;align-items:center;justify-content:center}
-.sendb .ic{stroke-width:2.2}
-.cind .sendb{background:#fff;color:#111}
+.cbar input{flex:1;height:38px;border-radius:var(--r-pill);background:var(--surface);
+  padding:0 14px;font-size:var(--t3);border:0}
+.sendb{width:38px;height:38px;border-radius:50%;background:var(--surface2);color:var(--faint);flex:none;
+  display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+.sendb.ready{background:var(--mark);color:var(--bg)}
+.sendb .ic{stroke-width:2.1}
 .act.on2{color:var(--mark)}
-.fend{text-align:center;font-size:13px;color:var(--soft);padding:6px 16px 20px}
+.fend{text-align:center;font-size:var(--t4);color:var(--soft);padding:6px var(--edge) 20px}
 /* the person block */
 /* Two tabs the width of the screen, underlined — the profile's own
    division, and not the same object as the pill tabs inside a collection,
    which divide that collection's contents. */
 /* the field, boxed */
 .sfield2{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height:38px;
-  background:var(--surface);border-radius:11px;padding:0 11px}
+  background:var(--surface);border-radius:var(--r-md);padding:0 11px}
 .sfield2 .ic{width:17px;height:17px;color:var(--soft);flex:none}
-.sfield2 input{flex:1;min-width:0;font-size:15px;background:transparent;border:0}
+.sfield2 input{flex:1;min-width:0;font-size:var(--t3);background:transparent;border:0}
 .segrow{flex:none;display:flex;border-bottom:1px solid var(--line)}
-.seg{flex:1;padding:13px 0 12px;text-align:center;font-size:15px;color:var(--soft);
+.seg{flex:1;padding:13px 0 12px;text-align:center;font-size:var(--t3);color:var(--soft);
   position:relative;font-weight:400}
-.seg.on{color:var(--ink);font-weight:600}
+.seg.on{color:var(--ink);font-weight:var(--wb)}
 .seg .k{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;
-  padding:0 6px;margin-left:6px;border-radius:99px;background:var(--surface);
-  font-size:12px;font-weight:500;color:var(--soft)}
-.seg.on .k{background:var(--ink);color:#fff}
+  padding:0 6px;margin-left:6px;border-radius:var(--r-pill);background:var(--surface);
+  font-size:var(--t4);font-weight:var(--wm);color:var(--soft)}
+.seg.on .k{background:var(--ink);color:var(--bg)}
 .seg::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent}
 .seg.on::after{background:var(--ink)}
 /* A collection is a card with its cover on it. The count and the lock say
    what the old row said, in the place you are already looking. */
 /* the list form of the same thing */
-.cthumb{width:46px;height:46px;border-radius:10px;overflow:hidden;background:var(--surface);
+.cthumb{width:46px;height:46px;border-radius:var(--r-md);overflow:hidden;background:var(--surface);
   flex:none;position:relative;display:block}
 .cthumb img{width:100%;height:100%;object-fit:cover;display:block}
-.cthumb .gl{position:absolute;left:4px;top:4px;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
-.toolrow{flex:none;display:flex;align-items:center;padding:9px 16px 0}
-.segsw{margin-left:auto;display:flex;gap:2px;background:var(--surface);border-radius:999px;padding:2px}
-.segsw button{width:30px;height:26px;border-radius:999px;display:flex;align-items:center;
+.cthumb .gl{position:absolute;left:4px;top:4px;color:var(--bg);filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.toolrow{flex:none;display:flex;align-items:center;padding:9px var(--edge) 0}
+.segsw{margin-left:auto;display:flex;gap:2px;background:var(--surface);border-radius:var(--r-pill);padding:2px}
+.segsw button{width:30px;height:26px;border-radius:var(--r-pill);display:flex;align-items:center;
   justify-content:center;color:var(--soft)}
-.segsw button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.segsw button.on{background:var(--bg);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
 .segsw .ic{width:16px;height:16px;stroke-width:1.9}
-.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:6px 16px 0}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:6px var(--edge) 0}
 .ccard{display:block}
 .ccard:active{opacity:.62}
-.ccover{aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:var(--surface);
+.ccover{aspect-ratio:1/1;border-radius:var(--r-lg);overflow:hidden;background:var(--surface);
   display:flex;align-items:center;justify-content:center;position:relative}
 .ccover img{width:100%;height:100%;object-fit:cover;display:block}
-.ccover .gl{position:absolute;left:9px;top:9px;color:#fff;z-index:2;
+.ccover .gl{position:absolute;left:9px;top:9px;color:var(--bg);z-index:2;
   filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
-.ccover .none{color:#C6C6CB;font-size:13px}
-.cnm{display:block;font-size:15px;font-weight:600;padding:9px 2px 0;line-height:1.3}
-.csub{display:block;font-size:13px;color:var(--soft);padding:2px 2px 0}
-.phead{flex:none;text-align:center;padding:2px 22px 16px}
-.phead .av{margin:0 auto}
-.pnm{font-size:19px;font-weight:500;letter-spacing:-.02em;padding-top:10px}
-.phdl{font-size:13px;color:var(--soft);padding-top:2px}
-.pbio{font-size:15px;line-height:1.5;padding-top:8px;color:#3a3a3c}
-.pstat{display:flex;justify-content:center;gap:18px;padding-top:11px;font-size:13px;color:var(--soft)}
-.pstat b{color:var(--ink);font-weight:600}
-.fol.wide{margin:14px auto 0;height:38px;padding:0 30px}
-.prow2{flex:none;display:flex;align-items:center;gap:11px;padding:0 16px 12px}
-.prow2 .nm{font-size:17px;font-weight:600}
-.prow2 .s{font-size:13px;color:var(--soft)}
+.ccover .none{color:var(--faint);font-size:var(--t4)}
+.ccover.newq{flex-direction:column;gap:7px;background:transparent;
+  border:1.5px dashed var(--faint);color:var(--soft);font-size:var(--t4)}
+.ccover.newq .ic{width:24px;height:24px;stroke-width:1.8}
+.cnm{display:block;font-size:var(--t3);font-weight:var(--wb);padding:9px 2px 0;line-height:1.3}
+.csub{display:block;font-size:var(--t4);color:var(--soft);padding:2px 2px 0}
+/* Left, not centre. A centred block reads as a poster; this is a person's
+   details, and details are read down an edge. */
+.phead{flex:none;padding:2px var(--edge) 16px}
+.pid{display:flex;align-items:center;gap:16px}
+.pnm{font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em}
+.phdl{font-size:var(--t3);color:var(--soft);padding-top:2px}
+.pbio{font-size:var(--t3);line-height:1.5;padding-top:10px}
+.pstat{display:flex;gap:7px;padding-top:14px;font-size:var(--t3);color:var(--soft)}
+.pstat b{color:var(--ink);font-weight:var(--wm)}
+/* Editing your own line was buried in a menu. Both references put it here. */
+.pbtn{margin-top:14px;height:36px;padding:0 18px;border-radius:var(--r-pill);
+  border:1px solid var(--faint);font-size:var(--t3);font-weight:var(--wm);color:var(--ink)}
+.pbtn:active{background:var(--surface)}
+.fol.wide{margin:14px 0 0;height:38px;padding:0 30px}
+.prow2{flex:none;display:flex;align-items:center;gap:11px;padding:0 var(--edge) 12px}
+.prow2 .nm{font-size:var(--t2);font-weight:var(--wb)}
+.prow2 .s{font-size:var(--t4);color:var(--soft)}
 .fol{margin-left:auto;height:36px;padding:0 16px;border-radius:var(--r-pill);background:var(--ink);
-  color:#fff;font-size:15px;font-weight:600;display:flex;align-items:center}
+  color:var(--bg);font-size:var(--t3);font-weight:var(--wb);display:flex;align-items:center}
 .fol.on{background:var(--surface);color:var(--ink)}
-.foln{font-size:13px;color:var(--soft);padding:0 16px 10px;line-height:1.5}
+.foln{font-size:var(--t4);color:var(--soft);padding:0 var(--edge) 10px;line-height:1.5}
 /* Taken from the September MVP unchanged — cards rather than rows, a red dot
    for unread, and the time written out. Only what the rows say is new. */
-.sect-label{font-size:12px;font-weight:500;letter-spacing:1px;color:var(--soft);padding:18px 20px 10px}
-.act-card{margin:0 16px 12px;border:1px solid #EFEFEF;border-radius:16px;padding:14px;
+.sect-label{font-size:var(--t4);font-weight:var(--wm);color:var(--soft);padding:var(--edge) var(--edge) 10px}
+.act-card{margin:0 var(--edge) 12px;border:1px solid var(--line);border-radius:var(--r-lg);padding:14px;
   display:flex;align-items:center;gap:12px}
-.act-card.unread{background:#F5F8FC;border-color:#E4ECF6}
+.act-card.unread{background:var(--surface);border-color:var(--line)}
 .act-card .udot{width:8px;height:8px;border-radius:50%;background:transparent;flex:none}
-.act-card.unread .udot{background:#FF3B30}
-.act-card .tx{font-size:14px;line-height:1.4}
-.act-card .tm{font-size:12px;color:var(--soft);margin-top:3px}
-.act-card .athumb{width:48px;height:62px;border-radius:8px;margin-left:auto;flex:none;
+.act-card.unread .udot{background:var(--red)}
+.act-card .tx{font-size:var(--t3);line-height:1.4}
+.act-card .tm{font-size:var(--t4);color:var(--soft);margin-top:3px}
+.act-card .athumb{width:48px;height:62px;border-radius:var(--r-sm);margin-left:auto;flex:none;
   object-fit:cover;display:block}
-.markread{margin-left:auto;font-size:13px;font-weight:500;color:var(--mark)}
-.blankstate{padding:72px 40px;text-align:center}
-.blankstate .bs-t{font-size:17px;font-weight:600}
-.blankstate .bs-s{font-size:14px;color:var(--soft);margin-top:8px;line-height:1.5}
+.markread{margin-left:auto;font-size:var(--t4);font-weight:var(--wm);color:var(--mark)}
 
 /* ── sheets ──────────────────────────────────────────────── */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:80;opacity:0;pointer-events:none;
   transition:opacity .2s}
 .scrim.on{opacity:1;pointer-events:auto}
-.sheet{position:fixed;left:0;right:0;bottom:0;z-index:85;background:#fff;
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:85;background:var(--bg);
   border-radius:var(--r-card) var(--r-card) 0 0;box-shadow:var(--shadow-float);
   padding:8px 0 calc(var(--safeB) + 14px);transform:translateY(102%);
   transition:transform .24s cubic-bezier(.4,0,.2,1);max-height:80vh;overflow-y:auto}
 .sheet.on{transform:translateY(0)}
-.grab{width:36px;height:4px;border-radius:99px;background:var(--line);margin:6px auto 12px}
-.sh{font-size:17px;font-weight:600;padding:0 18px 10px}
-.sp{font-size:13px;color:var(--soft);padding:0 18px 12px;line-height:1.55}
-.srow{display:flex;align-items:center;gap:12px;padding:14px 18px;font-size:15px;
+.grab{width:36px;height:4px;border-radius:var(--r-pill);background:var(--line);margin:6px auto 12px}
+.sh{font-size:var(--t2);font-weight:var(--wb);padding:0 var(--edge) 10px}
+#cs-list.bare + .cbar,#sheet-comments .sh{border-bottom:0}
+.sp{font-size:var(--t4);color:var(--soft);padding:0 var(--edge) 12px;line-height:1.55}
+.srow{display:flex;align-items:center;gap:12px;padding:14px var(--edge);font-size:var(--t3);
   border-top:1px solid var(--line)}
 .srow:active{background:var(--surface)}
-.srow .k{margin-left:auto;color:var(--soft);font-size:13px}
-.srow.sel{font-weight:600}
-.srow.sel:after{content:"✓";color:var(--mark);font-weight:700}
+.srow .k{margin-left:auto;color:var(--soft);font-size:var(--t4)}
+.srow.sel{font-weight:var(--wb)}
+.srow.sel:after{content:"✓";color:var(--mark);font-weight:var(--wb)}
 .srow.danger{color:var(--red)}
 /* the row, and what sits behind it */
 .swipe{position:relative;overflow:hidden}
-.swipe-x{position:absolute;right:0;top:0;bottom:0;width:96px;background:var(--red);color:#fff;
-  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600}
-.swipe-f{position:relative;background:#fff;touch-action:pan-y}
-.sfield{padding:4px 18px 14px}
-.sfield input{width:100%;height:46px;border-radius:12px;background:var(--surface);padding:0 14px;font-size:16px}
-.scta{padding:6px 18px 4px;display:flex;gap:9px}
-.scta button{flex:1;height:48px;border-radius:var(--r-pill);font-size:15px;font-weight:600}
+.swipe-x{position:absolute;right:0;top:0;bottom:0;width:96px;background:var(--red);color:var(--bg);
+  display:flex;align-items:center;justify-content:center;font-size:var(--t3);font-weight:var(--wb)}
+.swipe-f{position:relative;background:var(--bg);touch-action:pan-y}
+.swatches{margin-left:auto;display:flex;gap:9px}
+.sw{width:28px;height:28px;border-radius:50%;border:1px solid rgba(17,17,17,.14)}
+.sw.on{box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--ink)}
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px var(--edge) 8px}
+.door{background:var(--surface);border-radius:var(--r-md);padding:22px 10px 16px;
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  font-size:var(--t3);font-weight:var(--wm);color:var(--ink)}
+.door:active{background:var(--surface2)}
+.door .ic{width:27px;height:27px;stroke-width:1.7}
+.sfield{padding:4px var(--edge) 14px}
+.sfield input{width:100%;height:46px;border-radius:var(--r-md);background:var(--surface);padding:0 14px;font-size:var(--t2)}
+.scta{padding:6px var(--edge) 4px;display:flex;gap:9px}
+.scta button{flex:1;height:48px;border-radius:var(--r-pill);font-size:var(--t3);font-weight:var(--wb)}
 .scta .c1{background:var(--surface);color:var(--ink)}
-.scta .c2{background:var(--ink);color:#fff}
-.tog{margin-left:auto;width:46px;height:28px;border-radius:99px;background:var(--surface2);
+.scta .c2{background:var(--ink);color:var(--bg)}
+.tog{margin-left:auto;width:46px;height:28px;border-radius:var(--r-pill);background:var(--surface2);
   position:relative;flex:none}
 .tog:after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
-  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s}
+  background:var(--bg);box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .18s}
 .tog.on{background:var(--mark)}
 .tog.on:after{transform:translateX(18px)}
-.linkbox{margin:10px 18px 4px;background:var(--surface);border-radius:12px;padding:11px 13px;
-  font-size:12.5px;color:var(--soft);word-break:break-all;font-family:ui-monospace,Menlo,monospace}
-.protolab{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--soft);
-  padding:18px 18px 4px;text-transform:uppercase}
-.strip{display:flex;gap:6px;overflow-x:auto;padding:0 18px 14px;scrollbar-width:none}
+.linkbox{margin:10px var(--edge) 4px;background:var(--surface);border-radius:var(--r-md);padding:11px 13px;
+  font-size:var(--t4);color:var(--soft);word-break:break-all;font-family:ui-monospace,Menlo,monospace}
+.protolab{font-size:var(--t4);font-weight:var(--wb);letter-spacing:.08em;color:var(--soft);
+  padding:var(--edge) var(--edge) 4px}
+.strip{display:flex;gap:6px;overflow-x:auto;padding:0 var(--edge) 14px;scrollbar-width:none}
 .strip::-webkit-scrollbar{display:none}
-.strip img{width:52px;height:88px;object-fit:cover;border-radius:6px;flex:none}
+.strip img{width:52px;height:88px;object-fit:cover;border-radius:var(--r-sm);flex:none}
 
 /* ── guest bar ───────────────────────────────────────────── */
-.gbar{flex:none;display:flex;align-items:center;gap:10px;background:#161616;color:#fff;
-  padding:calc(var(--safeT) + 12px) 16px 12px;font-size:13px}
-.gbar b{font-weight:600}
-.gbar button{margin-left:auto;background:rgba(255,255,255,.16);color:#fff;height:30px;padding:0 13px;
-  border-radius:var(--r-pill);font-size:13px;font-weight:600}
+.gbar{flex:none;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);
+  padding:calc(var(--safeT) + 12px) 16px 12px;font-size:var(--t4)}
+.gbar b{font-weight:var(--wb)}
+.gbar button{margin-left:auto;background:rgba(255,255,255,.16);color:var(--bg);height:30px;padding:0 13px;
+  border-radius:var(--r-pill);font-size:var(--t4);font-weight:var(--wb)}
 
-.toast .tact{margin-left:10px;font-weight:600;text-decoration:underline;text-underline-offset:2px;
+.toast .tact{margin-left:10px;font-weight:var(--wb);text-decoration:underline;text-underline-offset:2px;
   pointer-events:auto;cursor:pointer}
+/* With a sheet open the toast sat squarely on its rows and hid one of them.
+   It moves to the top, where the sheet is not. */
+body.sheeted .toast{bottom:auto;top:calc(var(--safeT) + 14px)}
+body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 .toast{position:fixed;left:50%;bottom:calc(var(--safeB) + 100px);transform:translateX(-50%) translateY(12px);
-  background:rgba(17,17,17,.94);color:#fff;font-size:13px;padding:11px 18px;border-radius:var(--r-pill);
+  background:rgba(17,17,17,.94);color:var(--bg);font-size:var(--t4);padding:11px var(--edge);border-radius:var(--r-pill);
   z-index:200;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;max-width:88vw;
   text-align:center;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -623,10 +723,14 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
        own page the object is you, so the same glyph meant something different.
        A cog says settings, and the share is the invite link the brief asks
        every profile to carry. -->
+  <!-- After Instagram's: the handle names the page in the bar, and the bar
+       carries two bare glyphs. A single circled icon alone had nothing to sit
+       beside and read as something left behind. -->
   <div class="hd">
-    <button class="hbtn" id="me-share" onclick="shareInvite()" aria-label="Share your invite link"></button>
     <h1 id="lib-title"></h1>
-    <span class="r"><button class="hbtn" id="me-more" onclick="openSheet('sheet-profile')" aria-label="Settings"></button></span></div>
+    <span class="r" style="gap:18px">
+      <button class="hglyph" id="me-share" onclick="shareInvite()" aria-label="Share your invite link"></button>
+      <button class="hglyph" id="me-more" onclick="openSheet('sheet-profile')" aria-label="Menu"></button></span></div>
   <div id="me-head"></div>
   <div class="segrow" id="me-seg"></div>
   <div class="toolrow" id="me-tools" style="display:none"></div>
@@ -646,7 +750,11 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
     <input id="nb-name" class="hname" style="display:none" placeholder="Untitled board"
       maxlength="40" autocomplete="off">
     <span class="r">
-      <button class="hlink dim" id="sel-done" style="display:none" onclick="endPick()">Done</button>
+      <!-- Beside the name these decorated the title and shoved it about as
+           people joined. Here they are a control, they stack, and they stop
+           at three. -->
+      <span class="faces" id="c-faces" onclick="openSheet('sheet-people')"></span>
+      <button class="hlink" id="sel-done" style="display:none" onclick="endPick()">Done</button>
       <button class="hbtn" id="sel-start" onclick="startPick()" aria-label="Select"></button>
       <button class="hbtn" id="lib-more" onclick="libMore()" aria-label="More"></button>
     </span>
@@ -673,21 +781,21 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   </div>
   <div class="segrow">
     <button class="seg on" id="sr-mine" onclick="setSearchScope('mine')">Mine<span class="k" id="sr-kmine">0</span></button>
-    <button class="seg" id="sr-all" onclick="setSearchScope('angles')">Angles<span class="k" id="sr-kall">0</span></button>
+    <button class="seg" id="sr-all" onclick="setSearchScope('angles')">Public<span class="k" id="sr-kall">0</span></button>
   </div>
   <div class="body"><div id="sr-body" class="pad"></div></div>
 </section>
 
 <!-- ══ ANGLES ═════════════════════════════════════════════ -->
 <section class="scr" id="s-angles">
-  <div class="hd"><h1>Angles</h1></div>
+  <div class="hd"><h1>Public</h1></div>
   <div class="body"><div id="ang-body" class="pad"></div></div>
 </section>
 
 <!-- ══ FEED · what you get after tapping a tile ═══════════ -->
 <section class="scr" id="s-feed">
   <div class="hd"><button class="hbtn" aria-label="Back" id="fd-back"></button>
-    <h1 id="fd-title">Angles</h1></div>
+    <h1 id="fd-title">Public</h1></div>
   <div class="body"><div id="fd-body" class="pad"></div></div>
 </section>
 
@@ -714,22 +822,31 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
     <button class="hbtn" onclick="markBack()" aria-label="Back" id="mk-back"></button>
     <h1 id="mk-title">Mark</h1>
     <span class="r">
+      <!-- Marking is composing and a thread is responding; the two were on
+           one surface, and this app already has one place for a thread. -->
+      <button class="hbtn" id="mk-cmt" onclick="openComments(MK.id)" aria-label="Comments"></button>
       <button class="hbtn" onclick="openSheet('sheet-image')" aria-label="More" id="mk-more"></button>
     </span>
   </div>
+  <!-- The line belongs to the photograph, so it travels with it. Left below
+       the stage it sat wherever the leftover space put it — forty pixels off
+       the picture and twelve off the bar, which reads as neither. -->
   <div class="stage">
     <div class="hold" id="mkhold">
       <img id="mkimg" alt="">
       <svg id="mksvg" preserveAspectRatio="none" viewBox="0 0 100 100"></svg>
     </div>
+    <!-- Shown on the first photograph and never again. The two gestures are
+         drawn rather than described: a line of prose on a dark screen was the
+         only thing saying what this screen was for. -->
+    <div class="lesson" id="mklesson" style="display:none">
+      <div class="lrow">
+        <span class="lg"><span class="ldot"></span><span class="lcap">Tap</span></span>
+        <span class="lg"><span class="lloop"></span><span class="lcap">Draw</span></span>
+      </div>
+      <span class="lsay">Mark what you noticed</span>
+    </div>
     <p class="hint" id="mkhint">Tap a spot, or draw round something</p>
-  </div>
-  <!-- Only appears when the collection has somebody else in it. A collection
-       you keep alone never grows a comment box. -->
-  <div class="cboxd" id="mk-cbox" style="display:none">
-    <div id="mk-comments"></div>
-    <div class="cind"><span id="mk-cav"></span><input id="mk-cin" placeholder="Add a comment" maxlength="140">
-      <button id="im-post" class="sendb" aria-label="Post" onclick="addImgComment()"></button></div>
   </div>
   <div class="mkbar">
     <button class="rnd" onclick="undoMark()" aria-label="Undo" id="undo-ic"></button>
@@ -763,7 +880,9 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
     <!-- Tapping the title renamed a board and nothing said so. It now looks
          like the field it is, which is the same field you type into when you
          make one. -->
-    <h1 id="bd-title" class="edith" onclick="renameBoard()"></h1>
+    <!-- A sheet to change one word was a screen for a keystroke. -->
+    <input id="bd-title" class="edith" maxlength="40" autocomplete="off"
+      onblur="commitTitle()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">
     <span class="r"><button class="hbtn" onclick="openSheet('sheet-board')" aria-label="More" id="bd-more"></button></span>
   </div>
   <div class="qwrap"><div class="quad" id="quad"></div></div>
@@ -800,10 +919,15 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 
 <div class="scrim" id="scrim" onclick="scrimTap()"></div>
 
+<!-- Two doors, not a menu. A centred dialog was considered and rejected: it
+     lands where no thumb reaches, and on a phone that shape is reserved for
+     “are you sure?” — nothing here is serious. -->
 <div class="sheet" id="sheet-add">
-  <div class="grab"></div><div class="sh">Add images</div>
-  <div class="srow" onclick="pickCamera()"><span id="cam-ic"></span>Take a photo</div>
-  <div class="srow" onclick="pickFiles()"><span id="lib-ic"></span>Choose from library</div>
+  <div class="grab"></div>
+  <div class="doors">
+    <button class="door" onclick="pickCamera()"><span id="cam-ic"></span>Camera</button>
+    <button class="door" onclick="pickFiles()"><span id="lib-ic"></span>Library</button>
+  </div>
 </div>
 
 <div class="sheet" id="sheet-imp">
@@ -826,8 +950,10 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   <div class="srow" onclick="toggleLink()"><span id="lk-ic"></span>Anyone with the link<span class="tog" id="cm-tog"></span></div>
   <div id="cm-link"></div>
   <div class="srow" onclick="renameCollection()"><span id="ed-ic"></span>Rename</div>
-  <div class="srow danger" onclick="deleteCollection()"><span id="tr-ic"></span>Delete collection</div>
-  <div class="srow" style="border-top:8px solid var(--surface)" onclick="openSheet('sheet-profile')">Profile and settings</div>
+  <!-- Profile and settings left: a collection's menu carrying a way into
+       your own account was one object's menu offering another's. -->
+  <div class="srow danger" style="border-top:8px solid var(--surface)"
+    onclick="deleteCollection()"><span id="tr-ic"></span>Delete collection</div>
 </div>
 
 <div class="sheet" id="sheet-people">
@@ -858,7 +984,8 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   <div id="im-boards"></div>
   <div class="srow" onclick="toggleShare()"><span id="gl-ic"></span>Show in Public<span class="tog" id="im-tog"></span></div>
   <div class="srow" onclick="moveImage()">Move to another collection</div>
-  <div class="srow danger" onclick="removeImage()">Remove image</div>
+  <div class="srow danger" style="border-top:8px solid var(--surface)"
+    onclick="removeImage()">Delete photograph</div>
 </div>
 
 <div class="sheet" id="sheet-board">
@@ -876,7 +1003,8 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   <div id="bd-link"></div>
   <div class="sp" id="bd-draftnote" style="display:none">This board still has an empty slot.
     Fill it and you can share it or copy it.</div>
-  <div class="srow danger" onclick="deleteBoard()">Delete board</div>
+  <div class="srow danger" style="border-top:8px solid var(--surface)"
+    onclick="deleteBoard()">Delete board</div>
 </div>
 
 <div class="sheet" id="sheet-move">
@@ -888,7 +1016,6 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   <div class="grab"></div><div class="sh" id="pr-h">Sungwon</div>
   <!-- Your Public collection was a row here and a card on the Collections
        tab. One of them had to go, and this was the copy nobody would find. -->
-  <div class="srow" onclick="editProfile()"><span id="pr-ed"></span>Edit profile</div>
   <div class="srow" onclick="shareInvite()"><span id="pr-sh"></span>Share your invite link</div>
   <div id="pr-following"></div>
   <div class="protolab">Prototype only · be somebody else</div>
@@ -926,7 +1053,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   <div class="navpill">
     <button class="navbtn avbtn on" id="nb-lib" onclick="go('s-library')" aria-label="Library"><span class="nav-av" id="nav-av"></span></button>
     <button class="navbtn" id="nb-sr" onclick="openSearch()" aria-label="Search"></button>
-    <button class="navbtn" id="nb-ang" onclick="go('s-angles')" aria-label="Angles"></button>
+    <button class="navbtn" id="nb-ang" onclick="go('s-angles')" aria-label="Public"></button>
     <button class="navbtn" id="nb-al" onclick="go('s-alerts')" aria-label="Alerts"><span class="bdot"></span></button>
   </div>
   <button class="fab" onclick="openSheet('sheet-add')" aria-label="Add" id="fab"></button>
@@ -948,6 +1075,7 @@ const I = {
   eye:   svg('<path d="M2.6 12S6 5.9 12 5.9 21.4 12 21.4 12 18 18.1 12 18.1 2.6 12 2.6 12z"/><circle cx="12" cy="12" r="2.9"/>'),
   /* The filled variant for the lit tab — one path with a hole in it, so the
      pupil stays the colour of the pill behind it. */
+  eyeOff:svg('<path d="M4 4l16 16"/><path d="M9.9 5.2A9.6 9.6 0 0 1 12 5c6 0 9.4 6.1 9.4 6.1a17 17 0 0 1-2.9 3.7"/><path d="M6.4 7.6A16.6 16.6 0 0 0 2.6 11.1S6 17.2 12 17.2c1.5 0 2.8-.4 4-.9"/><path d="M9.9 9.2a3.2 3.2 0 0 0 4.4 4.5"/>'),
   eyeF:  '<svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" fill-rule="evenodd" d="M2.6 12C4.9 8.3 8.3 5.9 12 5.9s7.1 2.4 9.4 6.1c-2.3 3.7-5.7 6.1-9.4 6.1S4.9 15.7 2.6 12zm12.3 0a2.9 2.9 0 1 0-5.8 0 2.9 2.9 0 0 0 5.8 0z"/></svg>',
   bell:  svg('<path d="M6.5 10a5.5 5.5 0 0 1 11 0c0 4 1.5 5.5 1.5 5.5H5S6.5 14 6.5 10z"/><path d="M10 19a2 2 0 0 0 4 0"/>'),
   down:  svg('<path d="M6 9l6 6 6-6"/>'),
@@ -965,37 +1093,45 @@ const I = {
      twelve units wide against the heart's fifteen — read as the small one. */
   heart: svg('<path d="M12 19.7c-.5 0-7.5-4.5-7.5-9.2A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7.5 2.5c0 4.7-7 9.2-7.5 9.2z"/>'),
   bubble:svg('<path d="M20 12.2c0 3.7-3.6 6.7-8 6.7-.9 0-1.8-.13-2.7-.38L5 20l1.4-3.4C5 15.4 4 13.9 4 12.2 4 8.5 7.6 5.5 12 5.5s8 3 8 6.7z"/>'),
-  send:  svg('<path d="M12 19.4V5.3"/><path d="M6.3 10.7L12 5l5.7 5.7"/>'),
+  /* The arrow every messaging field on a phone uses. A tick was considered
+     and rejected: in this app a tick already means Select and Done. */
+  send:  svg('<path d="M12 19.2V5.4"/><path d="M6.2 11.2L12 5.4l5.8 5.8"/>'),
   mark:  svg('<path d="M5.7 5h12.6v15l-6.3-4.1L5.7 20z"/>'),
   close: svg('<path d="M7 7l10 10M17 7L7 17"/>'),
   note:  svg('<path d="M5 6.5h14M5 12h14M5 17.5h9"/>'),
+  plus:  svg('<path d="M12 5.5v13M5.5 12h13"/>'),
   grid:  svg('<rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/>'),
   list:  svg('<rect x="4" y="5" width="5" height="5" rx="1.4"/><rect x="4" y="14" width="5" height="5" rx="1.4"/><path d="M12 7.5h8M12 16.5h8"/>'),
+  menu:  svg('<path d="M4 7h16M4 12h16M4 17h16"/>'),
   gear:  svg('<circle cx="12" cy="12" r="3.2"/><path d="M19.4 14.4a1.6 1.6 0 0 0 .32 1.77l.06.06a1.9 1.9 0 1 1-2.7 2.7l-.05-.06a1.6 1.6 0 0 0-1.78-.32 1.6 1.6 0 0 0-1 1.47V20a1.9 1.9 0 1 1-3.8 0v-.1a1.6 1.6 0 0 0-1.05-1.46 1.6 1.6 0 0 0-1.77.32l-.06.06a1.9 1.9 0 1 1-2.7-2.7l.06-.06a1.6 1.6 0 0 0 .32-1.77 1.6 1.6 0 0 0-1.46-1H4a1.9 1.9 0 1 1 0-3.8h.1a1.6 1.6 0 0 0 1.47-1.05 1.6 1.6 0 0 0-.33-1.77l-.06-.06a1.9 1.9 0 1 1 2.7-2.7l.06.06a1.6 1.6 0 0 0 1.77.32H10a1.6 1.6 0 0 0 1-1.46V4a1.9 1.9 0 1 1 3.8 0v.1a1.6 1.6 0 0 0 1 1.46 1.6 1.6 0 0 0 1.77-.32l.06-.06a1.9 1.9 0 1 1 2.7 2.7l-.06.06a1.6 1.6 0 0 0-.32 1.77V10a1.6 1.6 0 0 0 1.46 1H20a1.9 1.9 0 1 1 0 3.8h-.1a1.6 1.6 0 0 0-1.46 1z"/>'),
   share: svg('<path d="M12 15.5V4.2"/><path d="M7.6 8.6L12 4.2l4.4 4.4"/><path d="M5.5 13.5v5a1.6 1.6 0 0 0 1.6 1.6h9.8a1.6 1.6 0 0 0 1.6-1.6v-5"/>'),
   /* A filled square with a tick weighed twice what the ⋯ beside it did. */
   check: svg('<path d="M4.6 12.4l4.5 4.5 9.8-10.4"/>'),
   folder:svg('<path d="M3.6 7.6a2 2 0 0 1 2-2h3.1l1.8 2.2h8a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>'),
   up:    svg('<path d="M12 19V5M6 11l6-6 6 6"/>'),
-  globe: svg('<circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8M12 3.6c4.1 4.6 4.1 11.2 0 16.8-4.1-5.6-4.1-12.2 0-16.8"/>')
+  globe: svg('<circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8M12 3.6c4.1 4.6 4.1 11.2 0 16.8-4.1-5.6-4.1-12.2 0-16.8"/>'),
+  /* The lit state of the tab. A filled globe rather than a second drawing,
+     so the shape does not change when you arrive. */
+  globeF:'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="currentColor" stroke="none"/>'
+    + '<path d="M3.6 12h16.8M12 3.6c4.1 4.6 4.1 11.2 0 16.8-4.1-5.6-4.1-12.2 0-16.8z" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/></svg>',
 };
 function paintIcons(){
   const put=(id,ic,c)=>{const e=$(id); if(e) e.innerHTML = c?ic.replace('class="ic"','class="ic '+c+'"'):ic;};
   put('nb-sr',I.search);
-  $('nb-ang').insertAdjacentHTML('afterbegin', I.eye);
+  $('nb-ang').insertAdjacentHTML('afterbegin', I.globe);
   put('fab',I.plus);
   $('nb-al').insertAdjacentHTML('afterbegin', I.bell);
   put('mk-back',I.back); put('mk-more',I.more); put('bd-back',I.back); put('bd-more',I.more);
   put('fd-back',I.back); put('lib-more',I.more);
-  put('me-more',I.gear); put('me-share',I.share); put('c-back',I.back);
+  put('me-more',I.menu); put('me-share',I.share); put('c-back',I.back);
   put('gl-ic',I.globe,'s'); put('pe-back',I.back);
-  put('pr-ed',I.edit,'s'); put('pr-sh',I.share,'s');
+  put('pr-sh',I.share,'s');
   put('sel-start',I.check); put('pe-more',I.more); put('sr-back',I.back);
-  put('im-post',I.send,'s'); put('bd-post',I.send,'s'); put('cs-post',I.send,'s');
+  put('bd-post',I.send,'s'); put('cs-post',I.send,'s');
   put('bl-ic',I.link,'s'); put('ns-del',I.trash,'s');
   paintNavAvatar();
   put('undo-ic',I.undo,'s'); put('crop-ic',I.crop,'s');
-  put('cam-ic',I.cam,'s'); put('lib-ic',I.photo,'s');
+  put('cam-ic',I.cam); put('lib-ic',I.photo);
   put('pp-ic',I.person,'s'); put('lk-ic',I.link,'s'); put('ed-ic',I.edit,'s'); put('tr-ic',I.trash,'s');
   put('sr-ic',I.search,'s');
 }
@@ -1232,7 +1368,7 @@ function go(id){
   $('nb-ang').classList.toggle('on', angOn);
   $('nb-al').classList.toggle('on', id==='s-alerts');
   /* Swap the glyph rather than invert the button. */
-  $('nb-ang').querySelector('svg').outerHTML = angOn ? I.eyeF : I.eye;
+  $('nb-ang').querySelector('svg').outerHTML = angOn ? I.globeF : I.globe;
   paintNavAvatar();
   if(id==='s-library') renderMe();
   if(id==='s-coll')    renderColl();
@@ -1250,6 +1386,7 @@ let _sheet=null;
 function openSheet(id){
   closeSheets(); _sheet=id;
   $('scrim').classList.add('on'); $(id).classList.add('on');
+  document.body.classList.add('sheeted');
   if(id==='sheet-coll')     renderCollSheet();
   if(id==='sheet-collmenu') renderCollMenu();
   if(id==='sheet-people')   renderPeople();
@@ -1260,6 +1397,7 @@ function openSheet(id){
   if(id==='sheet-comments') renderCommentSheet();
 }
 function closeSheets(){
+  document.body.classList.remove('sheeted');
   document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'));
   $('scrim').classList.remove('on'); _sheet=null;
 }
@@ -1354,13 +1492,22 @@ function startRun(ids){
   const im=img(ids[0]);
   UI.coll = (im && im.coll) || UI.coll || firstColl(); UI.tab='images';
   go('s-coll');
+  /* With one photograph there is nothing to choose between, so the choosing
+     screen was two taps and no question. Done leaves it unmarked. */
+  if(ids.length===1){ _runIx=0; _markFrom='s-coll'; openMark(ids[0]); return; }
   openMarkPicker(ids);
 }
 function openMarkPicker(ids){
   _pickMode='mark'; _pick=[]; _pickPool=ids;
   renderColl(); syncPick();
+  const c=coll(UI.coll);
   $('c-title').textContent='Anything worth saying?';
-  toast('Tap the ones you want to mark');
+  /* Which of these, and where they landed — the screen said neither, and it
+     had no way out but the button at the bottom. */
+  $('tgrow').innerHTML = `<span class="meta" style="margin:0">${ids.length} in ${
+    c?esc(c.name):'your collection'}</span>`;
+  $('tgrow').style.display='flex';
+  $('c-back').style.display='flex';
 }
 
 /* ═══ Library ══════════════════════════════════════════════ */
@@ -1403,6 +1550,8 @@ function renderMe(){
   if(guest()) $('gbar-t').innerHTML = 'You are <b>'+esc(who(ME).name)+'</b> · you can comment';
   $('me-more').style.display = guest() ? 'none' : 'flex';
   $('me-share').style.display = guest() ? 'none' : 'flex';
+  /* The handle sits under the name, where both references put it. The bar
+     keeps one glyph at each end, which is why neither is stranded. */
   $('lib-title').textContent = guest() ? 'Shared with you' : '';
   const imgs=myImgs2(), cols=myColls();
   const shared = IMGS.filter(i=>i.shared && i.by===ME).length;
@@ -1473,13 +1622,18 @@ function renderCollGrid(cols){
       <span class="csub">${n} image${n===1?'':'s'}${priv?' · Private':''}</span></a>`;
   $('lib-body').innerHTML = `<div class="cgrid">`
     + rows.map(r=>card(r.id,r.name,r.cover,r.n,r.priv,r.globe)).join('')
-    + `</div>`
-    + (guest()?'':`<div class="newrow" style="margin-top:14px;border:0" onclick="newCollection()">＋ New collection</div>`)
-    + `<div style="height:104px"></div>`;
+    + (guest()?'':`<a class="ccard" onclick="newCollection()">
+        <span class="ccover newq">${I.plus}<span>New collection</span></span></a>`)
+    + `</div><div style="height:104px"></div>`;
 }
 /* ── one collection ────────────────────────────────────────────────── */
 function openColl(id){ UI.coll=id; UI.tab='images'; save(); go('s-coll'); }
-function leaveColl(){ if(_pickMode) endPick(); UI.me='colls'; go('s-library'); }
+function leaveColl(){
+  /* Backing out of the question about marking answers the question — it does
+     not also throw you out of the collection the photographs just landed in. */
+  if(_pickMode){ endPick(); return; }
+  UI.me='colls'; go('s-library');
+}
 function renderColl(){
   if(!isPublicView() && !coll(UI.coll)){ return leaveColl(); }
   const c = isPublicView() ? null : coll(UI.coll);
@@ -1489,7 +1643,8 @@ function renderColl(){
   /* The menu is on the screen the collection owns, so what it acts on is
      no longer a guess. */
   $('lib-more').style.display = (guest()||_pickMode||isPublicView()) ? 'none' : 'flex';
-  $('c-back').style.display = _pickMode ? 'none' : 'flex';
+  /* The choosing step keeps its way out; the other pick modes have a bar. */
+  $('c-back').style.display = (_pickMode && _pickMode!=='mark') ? 'none' : 'flex';
   const naming = _pickMode==='board';
   $('nb-name').style.display = naming ? '' : 'none';
   $('c-title').style.display = naming ? 'none' : '';
@@ -1509,15 +1664,19 @@ function renderColl(){
      <button class="seg ${UI.tab==='boards'?'on':''}" onclick="setTab('boards')">Boards<span class="k">${boards.length}</span></button>`;
   $('tgrow').innerHTML = naming
     ? `<span class="meta" style="margin:0">Tap them in the order you want them</span>`
-    : ((!c && isPublicView()) ? `<span class="meta" style="margin:0">${list.length} · what others see</span>` : '');
+    : ((!c && isPublicView() && list.length)
+        ? `<span class="meta" style="margin:0">${list.length} · what others see</span>` : '');
   $('tgrow').style.display = $('tgrow').innerHTML ? 'flex' : 'none';
 
+  /* “Eleanor can comment” sat between the tabs and the photographs, where it
+     read as a caption on the first one. Who is in a collection belongs to the
+     collection's name, and the guest bar at the top already says the rest. */
   const others = c ? c.members.filter(m=>m!==c.owner) : [];
-  const showInv = c && !_pickMode && (guest() || others.length);
-  $('invline').style.display = showInv ? 'flex' : 'none';
-  if(showInv) $('invline').innerHTML = guest()
-    ? `Shared by ${esc(who(c.owner).name)} · comment on its boards`
-    : (others.map(m=>esc(who(m).short)).join(', ') + ' can comment');
+  $('invline').style.display = 'none';
+  $('c-faces').innerHTML = (c && !_pickMode && others.length)
+    ? others.slice(0,3).map(m=>avatar(m,24)).join('')
+      + (others.length>3?`<span class="more2">+${others.length-3}</span>`:'')
+    : '';
 
   if(c && UI.tab==='boards' && !_pickMode){ renderBoardList(c,boards); return; }
   renderGrid(list,'coll-body');
@@ -1544,11 +1703,11 @@ function renderGrid(list, into){
 }
 function emptyGrid(){
   if(isPublicView()) return `<div class="empty"><b>Nothing public yet</b>
-    Open an image and turn on Show in Public. It appears here and in Angles.</div>`;
+    Open an image and turn on Show in Public. It appears here and in Public.</div>`;
   if(guest()) return `<div class="empty"><b>Nothing here</b>Nobody has shared a collection with you.</div>`;
   return `<div class="empty"><b>${isPublicView()?'Nothing public yet':'This collection is empty'}</b>
     ${isPublicView()
-      ? 'Turn on Show in Public on an image and it appears here — and in Angles.'
+      ? 'Turn on Show in Public on an image and it appears here — and in Public.'
       : 'Tap ＋ to take a photo or choose from your library.'}</div>`;
 }
 function renderBoardList(c, boards){
@@ -1556,20 +1715,24 @@ function renderBoardList(c, boards){
     const cm=(b.comments||[]).length;
     return `<a class="bcell" onclick="openBoard('${b.id}')">
       <span class="bq n${b.layout||b.cells.length}${b.fit?' fit':''}"
-        style="background:${b.fit?(b.bg||'#fff'):'var(--line)'}">${
+        style="background:${b.fit?(b.bg||'#FFFFFF'):'var(--line)'}">${
         b.cells.map(id=>id?`<img src="${src(id)}" alt="">`:`<span class="hole"></span>`).join('')}</span>
       <span class="bnm">${esc(b.name)}${isDraft(b)?'<span class="draftchip">Draft</span>':''}</span>
       <span class="bsub">${new Date(b.made).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}${cm?' · '+cm+' comment'+(cm>1?'s':''):''}</span>
     </a>`;
   });
+  /* Grey text on a divider read as a heading, and grey is what this app uses
+     for “not available”. It is now the shape and size of the thing it makes,
+     standing among the boards. */
   const n = collImgs(c.id).length, enough = n>=2;
+  const maker = (guest()||!enough) ? '' :
+    `<a class="bcell bnew" onclick="newBoard()">
+      <span class="bq newq">${I.plus}<span>New board</span></span></a>`;
   $('coll-body').innerHTML = `<div class="pad">
-    ${guest()||!enough?'':`<div class="newrow" onclick="newBoard()">＋ New board</div>`}
-    ${cells.length ? `<div class="bgrid">`+cells.join('')+`</div>`
-      : `<div class="empty" style="grid-column:auto"><b>No boards yet</b>
+    ${(cells.length||maker) ? `<div class="bgrid">`+maker+cells.join('')+`</div>` : ''}
+    ${cells.length||maker ? '' : `<div class="empty" style="grid-column:auto"><b>No boards yet</b>
           A board is two, four or six images from this collection, seen together.
-          ${enough && !guest() ? `<span class="cta" onclick="newBoard()">Make one</span>`
-            : `<br><span>“${esc(c.name)}” has ${n} image${n===1?'':'s'} — a board needs at least two.</span>`}</div>`}
+          <br><span>“${esc(c.name)}” has ${n} image${n===1?'':'s'} — a board needs at least two.</span></div>`}
   </div>`;
 }
 function showShared(){ closeSheets(); openColl('public'); }
@@ -1624,12 +1787,20 @@ function deleteCollection(){
   if(COLLS.length<2){ toast('This is your only collection'); return; }
   const n=collImgs(c.id).length;
   const other=COLLS.filter(x=>x.id!==c.id);
+  /* With nothing in it there is nowhere for anything to go, and asking made
+     the list of destinations read as “which one shall I delete”. */
+  if(!n){
+    confirmThen('Delete “'+c.name+'”?','It is empty. Nothing else goes with it.',
+      'Delete', ()=>doDeleteColl(c.id, other[0] ? other[0].id : ''));
+    return;
+  }
   /* Every image is in exactly one collection, so deleting one has to
      say where its images go — they cannot be left without a folder. */
-  $('mv-h').textContent = n ? ('Move ' + n + (n===1?' image to…':' images to…')) : 'Delete';
+  $('mv-h').textContent = 'Move ' + n + (n===1?' image to…':' images to…');
   $('mv-rows').innerHTML = other.map(x=>
-    `<div class="srow" onclick="doDeleteColl('${c.id}','${x.id}')">${esc(x.name)}</div>`).join('')
-    + `<div class="srow danger" onclick="doDeleteColl('${c.id}','')">Delete the images too</div>`;
+    `<div class="srow" onclick="doDeleteColl('${c.id}','${x.id}')">${esc(x.name)}<span class="k">${collImgs(x.id).length}</span></div>`).join('')
+    + `<div class="srow danger" style="border-top:8px solid var(--surface)"
+        onclick="doDeleteColl('${c.id}','')">Delete the ${n===1?'image':'images'} too</div>`;
   openSheet('sheet-move');
 }
 function doDeleteColl(cid,dest){
@@ -1722,7 +1893,8 @@ function syncPick(){
   $('nav').style.display = on ? 'none' : 'flex';
   const n=_pick.length;
   if(_pickMode==='mark'){
-    $('selbar').innerHTML = `<button class="sb main" onclick="runMarks()">${n?('Mark '+n):'Skip'}</button>`;
+    $('selbar').innerHTML = `<button class="sb main" onclick="runMarks()">${
+      n ? ('Mark '+n) : 'None of them'}</button>`;
   }else if(_pickMode==='board'){
     $('selbar').innerHTML =
       `<button class="sb" onclick="cancelNewBoard()">Cancel</button>
@@ -1780,12 +1952,28 @@ function runMarks(){
   if(!ids.length){ toast('Saved'); return; }
   _run=ids; _runIx=0; openMark(ids[0]);
 }
+/* One list, written once. Where they are now is not a destination, and if
+   the right one does not exist yet you should not have to leave to make it. */
+function destRows(hereId, fn){
+  return COLLS.filter(c=>c.owner===ME && c.id!==hereId).map(c=>
+      `<div class="srow" onclick="${fn}('${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('')
+    + `<div class="newrow" style="border-top:8px solid var(--surface);border-bottom:0"
+        onclick="newCollFor('${fn}')">＋ New collection</div>`;
+}
+let _destFn=null;
+function newCollFor(fn){
+  _destFn=fn; closeSheets();
+  askName('New collection','',v=>{
+    const d=COLLS.find(c=>c.name.toLowerCase()===v.toLowerCase());
+    const c = d || {id:'c'+uid(),name:v,owner:'me',members:['me'],link:false};
+    if(!d) COLLS.push(c);
+    save(); window[_destFn](c.id); _destFn=null;
+  });
+}
 function moveSelected(){
   if(!_pick.length) return;
-  const others=COLLS.filter(c=>c.id!==(img(_pick[0])||{}).coll);
   $('mv-h').textContent='Move to…';
-  $('mv-rows').innerHTML = COLLS.map(c=>
-    `<div class="srow" onclick="doMoveSelected('${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('');
+  $('mv-rows').innerHTML = destRows((img(_pick[0])||{}).coll, 'doMoveSelected');
   openSheet('sheet-move');
 }
 function doMoveSelected(cid){
@@ -1837,12 +2025,18 @@ function openMark(id){
   /* Read-only: the screen stops calling itself Mark and stops telling you to
      tap a spot. Offering an action that will not happen is worse than
      offering none — the tap lands, nothing appears, and you assume it broke. */
+  /* Once, on the first photograph anybody marks. */
+  const taught = (()=>{ try{ return localStorage.getItem('ari2-taught')==='1'; }catch(e){ return true; } })();
+  const teach = !ro && !taught && !(im.marks||[]).length;
+  $('mklesson').style.display = teach ? 'flex' : 'none';
   /* Save read as “save this note”, so people pressed it after one mark and
      were carried off the photograph they were still working on. */
   $('mk-save').textContent = (inRun && _runIx < _run.length-1) ? 'Next' : 'Done';
   $('undo-ic').style.visibility = (MK.marks||[]).length ? 'visible' : 'hidden';
   paintMarks();
-  $('mkhint').style.display = ro ? 'none' : $('mkhint').style.display;
+  /* After paintMarks, which sets it too — the lesson already says this, and
+     saying it twice on one screen is worse than not saying it. */
+  $('mkhint').style.display = (ro||teach) ? 'none' : $('mkhint').style.display;
   if(ro){
     $('mk-title').textContent = im.by===ME ? 'Image' : (who(im.by).short + '’s');
   }
@@ -1869,6 +2063,12 @@ function fitStage(holdId,imgId,pad){
 const pathD = p => p.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join(' ');
 const centroid = p => { const s=p.reduce((a,q)=>({x:a.x+q.x,y:a.y+q.y}),{x:0,y:0});
   return {x:s.x/p.length,y:s.y/p.length}; };
+function endLesson(){
+  const l=$('mklesson');
+  if(l && l.style.display!=='none'){ l.style.display='none';
+    try{ localStorage.setItem('ari2-taught','1'); }catch(e){}
+    $('mkhint').style.display = (MK && MK.marks.length) ? 'none' : ''; }
+}
 function paintMarks(){
   const hold=$('mkhold');
   const u=$('undo-ic'); if(u) u.style.visibility = MK.marks.length ? 'visible' : 'hidden';
@@ -1888,6 +2088,9 @@ function paintMarks(){
 /* Where a note goes, and how wide it may be. It hangs off whichever edge has
    room, and it may only be as wide as that room — a fixed max-width ran the
    text off the picture whenever the anchor sat near the middle. */
+/* Folded by default was a mistake I made while chasing the same words
+   appearing twice. A note pinned to a place is the product; hiding it until
+   asked buries the one thing the photograph came here to say. */
 function markHTML(m,i,extra,fold){
   const flip=m.x>50, room=Math.max(24, flip ? m.x : 100-m.x);
   return `<div class="mark${flip?' flip':''}" ${extra||''}
@@ -1934,6 +2137,7 @@ function bindMark(el){
   hold.addEventListener('pointercancel',()=>{ drawing=false; paintMarks(); });
   hold.addEventListener('pointerdown',e=>{
     if(!MK||!canEdit(MK.id)) return;
+    endLesson();   /* the first touch is the lesson learned */
     e.preventDefault();
     if(MK.marks.length>=MARK_CAP){ toast('Up to '+MARK_CAP+' notes on an image'); return; }
     drawing=true; pts=[rel(e)]; hold.setPointerCapture(e.pointerId); });
@@ -2003,25 +2207,17 @@ function markSave(){
 }
 /* One thread per image, for the people on its collection. A board's thread is
    about an arrangement; this one is about the photograph. */
+/* Only when there is somebody to hear it. “Public” alone was too wide: a
+   photograph you have just published and nobody has answered offered you a
+   box to talk to yourself in. */
 function renderImgComments(){
   const im=img(MK.id), c=coll(im.coll);
-  const shared = c && (c.members||[]).length>1;
-  $('mk-cbox').style.display = shared ? 'block' : 'none';
-  if(!shared) return;
-  const cs=im.comments||[];
-  $('mk-comments').innerHTML = cs.map(x=>
-    `<div class="crow">${avatar(x.by,18)}<b style="color:${who(x.by).c};font-weight:600">${esc(who(x.by).short)}</b> ${esc(x.text)}</div>`).join('');
-  $('mk-cin').placeholder = guest() ? ('Comment as '+who(ME).short) : 'Add a comment';
-  $('mk-cav').innerHTML = avatar(ME,30);
+  const n=(im.comments||[]).length;
+  const talkable = !!(n || (c && (c.members||[]).length>1));
+  $('mk-cmt').style.display = talkable ? 'flex' : 'none';
+  $('mk-cmt').innerHTML = I.bubble + (n?`<span class="cbadge">${n}</span>`:'');
   requestAnimationFrame(()=>fitStage('mkhold','mkimg',26));
 }
-function addImgComment(){
-  const v=$('mk-cin').value.trim(); if(!v||!MK) return;
-  const im=img(MK.id);
-  (im.comments=im.comments||[]).push({by:ME,text:v,at:Date.now()});
-  $('mk-cin').value=''; save(); renderImgComments();
-}
-$('mk-cin').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addImgComment();} });
 /* Back went forward. In a run of six it called the same function the Save
    button called, so the one control that could return you to the photograph
    you had just marked took you further away from it. */
@@ -2181,16 +2377,15 @@ function toggleShare(){
   save();
   /* Mid-edit, going to Angles now would throw away the marks on screen. */
   const editing = document.querySelector('.scr.on')?.id === 's-mark';
-  if(im.shared && !editing){ closeSheets(); openFeedAt(im.id); toast('Now in Public · and in Angles'); return; }
+  if(im.shared && !editing){ closeSheets(); openFeedAt(im.id); toast('Now in Public'); return; }
   renderImageSheet();
-  toast(im.shared ? (editing?'It goes to Angles when you save':'Now in Public · and in Angles') : 'Taken out of Public');
+  toast(im.shared ? (editing?'It goes to Public when you save':'Now in Public') : 'Taken out of Public');
 }
 function moveImage(){
   closeSheets();
   const im=img(MK.id);
   $('mv-h').textContent='Move to…';
-  $('mv-rows').innerHTML = COLLS.map(c=>
-    `<div class="srow ${c.id===im.coll?'sel':''}" onclick="doMoveImage('${c.id}')">${esc(c.name)}</div>`).join('');
+  $('mv-rows').innerHTML = destRows(im.coll, 'doMoveImage');
   openSheet('sheet-move');
 }
 function doMoveImage(cid){ const im=img(MK.id); im.coll=cid; save(); closeSheets();
@@ -2198,9 +2393,10 @@ function doMoveImage(cid){ const im=img(MK.id); im.coll=cid; save(); closeSheets
 function removeImage(){
   closeSheets();
   const id=MK.id, used=inBoard(id);
-  confirmThen('Remove this image?',
-    used?'It is in a board. That board goes with it.':'It leaves the collection.',
-    'Remove',()=>{
+  confirmThen('Delete this photograph?',
+    used?'It is in a board. That board goes with it. There is no undo.'
+        :'It goes from the collection and from anywhere it appears. There is no undo.',
+    'Delete',()=>{
       dbDel(id);
       BOARDS=BOARDS.filter(b=>!b.cells.includes(id));
       IMGS=IMGS.filter(i=>i.id!==id);
@@ -2226,8 +2422,16 @@ function newBoard(){
 }
 let _nbN=4;
 function setLayout(n){
-  _nbN=n; if(_pick.length>n) _pick=_pick.slice(0,n);
-  renderColl(); syncPick();
+  /* It used to keep the first n and drop the rest without a word, so
+     photographs you had chosen simply stopped being chosen. */
+  const lose=_pick.length-n;
+  if(lose>0){
+    confirmThen('Change to '+n+'?', lose+(lose===1?' photograph you chose leaves the board.'
+      :' photographs you chose leave the board.'), 'Change', ()=>{
+        _nbN=n; _pick=_pick.slice(0,n); renderColl(); syncPick(); });
+    return;
+  }
+  _nbN=n; renderColl(); syncPick();
 }
 function renderLay(){
   const pool=collImgs(UI.coll);
@@ -2239,10 +2443,12 @@ function renderLay(){
 function cancelNewBoard(){ endPick(); }
 function makeBoard(){
   if(!_pick.length){ toast('Tap the photographs, in the order you want them'); return; }
-  const cells=_pick.slice(), name=($('nb-name').value||'').trim();
-  const done = cells.length===_nbN;
+  /* endPick resets the layout to four, so the six had to be taken down
+     before it was called — a board asked for as six was arriving as four. */
+  const cells=_pick.slice(), name=($('nb-name').value||'').trim(), slots=_nbN;
+  const done = cells.length===slots;
   endPick();
-  createBoard(cells, coll(UI.coll), name, _nbN, done);
+  createBoard(cells, coll(UI.coll), name, slots, done);
 }
 function boardFromPick(){
   if(![2,4,6].includes(_pick.length)){ toast('A board is two, four or six'); return; }
@@ -2261,29 +2467,40 @@ function createBoard(cells,c,name,slots,done){
   const want = slots || cells.length;
   cells = cells.slice(0,want);
   while(cells.length<want) cells.push(null);
-  CURB={id:'b'+uid(),name:(name||'Board '+n),coll:c.id,fit:false,bg:'#fff',cells,layout:want,comments:[],by:ME,made:Date.now()};
+  /* Fit, not fill. Somebody collecting references expects to see what they
+   collected; cropping a photograph to a ninth of a screen is a choice, and
+   it should be the one you make on purpose. */
+  CURB={id:'b'+uid(),name:(name||'Board '+n),coll:c.id,fit:true,bg:'#FFFFFF',cells,layout:want,comments:[],by:ME,made:Date.now()};
   BOARDS.unshift(CURB); save();
   UI.coll=c.id; UI.tab='boards';
   openBoard(CURB.id);
   if(isDraft(CURB)) toast('Saved as a draft · tap an empty slot to fill it');
 }
+/* What Save is for. Replacing an image, dragging one, renaming, changing the
+   fit, filling the last slot — the arrangement is the thing you are working
+   on, so it waits for you to say it is right. Comments and likes are not
+   edits to it and still go straight out. */
+let _bdSnap=null;
+const bdState = b => JSON.stringify({c:b.cells,n:b.name,f:!!b.fit,g:b.bg||'#fff',l:b.layout});
+const bdDirty = () => !!(CURB && _bdSnap && _bdSnap!==bdState(CURB));
+function bdTouched(){ renderQuad(); renderBoardBar(); }
 function openBoard(id){
   CURB=board(id); if(!CURB) return go('s-library');
-  $('bd-title').textContent=CURB.name;
+  _bdSnap = bdState(CURB);
+  $('bd-title').value=CURB.name;
   const ro = guest() || !isOwner(CURB.coll);
   $('bd-bar').style.display = ro ? 'none' : 'flex';
   $('bd-more').style.display = ro ? 'none' : 'flex';
-  $('bd-title').style.pointerEvents = ro ? 'none' : '';
+  $('bd-title').readOnly = ro;
   $('bd-title').classList.toggle('edith', !ro);
   /* Somebody who arrived by a board link has no library to go back to. */
   _swapPick=null; renderBoardBar();
   $('bd-gbar').style.display = LINKONLY ? 'flex' : 'none';
   $('bd-back').style.display = LINKONLY ? 'none' : 'flex';
   $('cmt-input').placeholder = guest() ? ('Comment as '+who(ME).short) : 'Add a comment';
-  $('bd-cav').innerHTML = avatar(ME,30);
+  $('bd-cav').innerHTML = avatar(ME,28);
   renderQuad(); renderComments(); go('s-board');
 }
-function leaveBoard(){ CURB=null; UI.tab='boards'; go('s-coll'); }
 /* The 9:16 box is measured here rather than left to CSS: aspect-ratio
    inside a flex column beats min-height and pushes the bar off the
    bottom of the phone. */
@@ -2302,7 +2519,7 @@ function fitQuad(){
 }
 function renderQuad(){
   $('quad').className='quad n'+(CURB.layout||CURB.cells.length||4)+(CURB.fit?' fit':'');
-  $('quad').style.background = CURB.fit ? (CURB.bg||'#fff') : 'var(--line)';
+  $('quad').style.background = CURB.fit ? (CURB.bg||'#FFFFFF') : 'var(--line)';
   $('quad').innerHTML = CURB.cells.map((id,i)=>{
     if(!id) return `<div class="qc empty" data-i="${i}"><span class="plus">＋</span></div>`;
     const im=img(id)||{marks:[]}, ms=im.marks||[], noted=ms.filter(m=>m.text);
@@ -2319,7 +2536,9 @@ function renderQuad(){
         <button class="qb" aria-label="Comment"
           onclick="commentCell(event,'${id}')">${I.bubble.replace('class="ic"','class="ic s"')}${nc||''}</button>
       </span>
-      ${noted.length?`<div class="note">${esc(noted[0].text)}${noted.length>1?`<em>+${noted.length-1}</em>`:''}</div>`:''}
+      ${/* The note was 12px, wrapped to two lines, and sat on top of the
+            photograph the board exists to show. It is readable at full size,
+            which is one tap away. */''}
     </div>`;
   }).join('');
   bindCells(); requestAnimationFrame(fitQuad);
@@ -2349,7 +2568,7 @@ function bindCells(){
       const ro=guest()||!isOwner(CURB.coll);
       if(moved&&c&&+c.dataset.i!==from&&!ro){
         const to=+c.dataset.i, t=CURB.cells[from];
-        CURB.cells[from]=CURB.cells[to]; CURB.cells[to]=t; save(); renderQuad();
+        CURB.cells[from]=CURB.cells[to]; CURB.cells[to]=t; bdTouched();
       }else if(!moved){ cellTap(from); }
       from=-1; moved=false; });
   });
@@ -2360,7 +2579,7 @@ function likeCell(e,id){
   im.likes=im.likes||[];
   const k=im.likes.indexOf(ME);
   if(k>=0) im.likes.splice(k,1); else im.likes.push(ME);
-  save(); renderQuad();
+  save(); renderQuad(); renderBoardBar();
 }
 function commentCell(e,id){ e.stopPropagation(); openComments(id); }
 let _swapPick=null;
@@ -2379,10 +2598,31 @@ function cancelSwap(){ _swapPick=null; renderQuad(); renderBoardBar(); }
    it put you in lived only in a toast that had already gone. */
 function renderBoardBar(){
   const arming = _swapPick!==null;
+  const ro = guest() || !isOwner(CURB.coll);
+  if(ro){ $('bd-bar').innerHTML=''; return; }
   $('bd-bar').innerHTML = arming
-    ? `<button class="pill2 on" onclick="cancelSwap()">Tap one to replace · Cancel</button>`
-    : `<button class="pill2" onclick="startSwap()">${I.swap.replace('class="ic"','class="ic s"')}Replace</button>`;
+    ? `<button class="pill2 arm" onclick="cancelSwap()">Tap one to replace · Cancel</button>`
+    : `<button class="pill2" onclick="startSwap()">${I.swap.replace('class="ic"','class="ic s"')}Replace</button>
+       <button class="pill2 main" onclick="saveBoard()">${bdDirty()?'Save':'Done'}</button>`;
   $('quad').classList.toggle('arming', arming);
+}
+function saveBoard(){
+  save(); _bdSnap=bdState(CURB);
+  const draft=isDraft(CURB);
+  leaveBoard();
+  toast(draft ? 'Saved as a draft' : 'Board saved');
+}
+/* Leaving is not saving. It asks, and Discard puts the board back the way it
+   was when you opened it. */
+function leaveBoard(force){
+  if(!force && bdDirty()){
+    confirmThen('Leave without saving?','The board goes back to how it was when you opened it.',
+      'Discard', ()=>{ const w=JSON.parse(_bdSnap);
+        CURB.cells=w.c; CURB.name=w.n; CURB.fit=w.f; CURB.bg=w.g; CURB.layout=w.l;
+        save(); leaveBoard(true); });
+    return;
+  }
+  CURB=null; _bdSnap=null; UI.tab='boards'; go('s-coll');
 }
 function openSwapStrip(i){
   const taken=CURB.cells;
@@ -2393,7 +2633,7 @@ function openSwapStrip(i){
 }
 function doSwap(id){
   if(_swapPick==null||_swapPick<0) return;
-  CURB.cells[_swapPick]=id; closeSwap(); save(); renderQuad();
+  CURB.cells[_swapPick]=id; closeSwap(); bdTouched();
 }
 function closeSwap(){ $('swap').classList.remove('on'); $('swapstrip').innerHTML='';
   _swapPick=null; renderQuad(); }
@@ -2408,8 +2648,15 @@ function renderBoardSheet(){
   const draft=isDraft(CURB);
   $('bl-tog').classList.toggle('on', !!CURB.link);
   $('bd-fit').classList.toggle('on', !!CURB.fit);
+  /* A word on the right told you the answer without showing it. Three
+     swatches show it and choose it in one tap — paper is there because it is
+     what most reference boards actually sit on. */
   $('bd-bg').innerHTML = CURB.fit
-    ? `<div class="srow" onclick="toggleBg()">Background<span class="k">${CURB.bg==='#000'?'Black':'White'}</span></div>` : '';
+    ? `<div class="srow">Background<span class="swatches">${
+        [['#FFFFFF','White'],['#111111','Black'],['#E8E4DC','Paper']].map(([c,n])=>
+          `<button class="sw ${(CURB.bg||'#FFFFFF').toUpperCase()===c?'on':''}"
+             style="background:${c}" aria-label="${n}" onclick="setBg('${c}')"></button>`).join('')
+      }</span></div>` : '';
   /* A draft is half a thought. Copying one, or handing it to somebody, is
      not what either control is for. */
   $('bd-dup').style.display = draft ? 'none' : '';
@@ -2420,8 +2667,8 @@ function renderBoardSheet(){
        <div class="srow" onclick="openAsVisitor()">Open it as they would see it</div>` : '';
   $('bd-draftnote').style.display = draft ? '' : 'none';
 }
-function toggleFit(){ CURB.fit=!CURB.fit; save(); renderBoardSheet(); renderQuad(); }
-function toggleBg(){ CURB.bg = CURB.bg==='#000' ? '#fff' : '#000'; save(); renderBoardSheet(); renderQuad(); }
+function toggleFit(){ CURB.fit=!CURB.fit; renderBoardSheet(); bdTouched(); }
+function setBg(c){ CURB.bg=c; renderBoardSheet(); bdTouched(); }
 /* Growing borrows from the collection; shrinking drops what no longer fits,
    which is a thing to be asked about rather than done quietly. */
 function toggleBoardLink(){
@@ -2434,8 +2681,14 @@ function copyBoardLink(){
   closeSheets(); toast('Link copied');
 }
 function openAsVisitor(){ location.search='?board='+CURB.id; }
-function renameBoard(){ closeSheets();
-  askName('Name this board',CURB.name,v=>{ CURB.name=v; $('bd-title').textContent=v; save(); }); }
+function commitTitle(){
+  if(!CURB) return;
+  const v=($('bd-title').value||'').trim();
+  if(!v){ $('bd-title').value=CURB.name; return; }
+  if(v===CURB.name) return;
+  CURB.name=v; renderBoardBar();
+}
+function renameBoard(){ closeSheets(); $('bd-title').focus(); $('bd-title').select(); }
 function deleteBoard(){
   closeSheets();
   confirmThen('Delete “'+CURB.name+'”?','The images stay. Only this arrangement goes.','Delete',()=>{
@@ -2446,16 +2699,24 @@ function deleteBoard(){
 function renderComments(){
   const cs=CURB.comments||[];
   $('comments').innerHTML=cs.map(c=>
-    `<div class="crow">${avatar(c.by,18)}<b style="color:${who(c.by).c};font-weight:600">${esc(who(c.by).short)}</b> ${esc(c.text)}</div>`).join('');
+    `<div class="crow">${avatar(c.by,28)}<b style="color:${who(c.by).c};font-weight:600">${esc(who(c.by).short)}</b> ${esc(c.text)}</div>`).join('');
   requestAnimationFrame(fitQuad);
 }
 function addComment(){
   const v=$('cmt-input').value.trim(); if(!v) return;
   (CURB.comments=CURB.comments||[]).push({by:ME,text:v,at:Date.now()});
-  $('cmt-input').value=''; save(); renderComments();
+  $('cmt-input').value=''; save(); renderComments(); syncSend();
 }
 $('cmt-input').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addComment();} });
 $('cs-in').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addSheetComment();} });
+/* Grey until there is something to send, so what the button responds to is
+   visible rather than guessed. */
+const SENDPAIRS=[['cs-in','cs-post'],['cmt-input','bd-post']];
+function syncSend(){ SENDPAIRS.forEach(([i,b])=>{
+  const inp=$(i), btn=$(b); if(inp&&btn) btn.classList.toggle('ready', !!inp.value.trim()); }); }
+SENDPAIRS.forEach(([i])=>{ const inp=$(i);
+  if(inp){ inp.addEventListener('input',syncSend); inp.addEventListener('focus',syncSend); } });
+syncSend();
 
 /* ═══ Angles ═══════════════════════════════════════════════
    One image at a time, with what its owner wrote on it. Like and
@@ -2480,7 +2741,7 @@ function renderAngles(){
             `<a class="mtile" onclick="openFeedAt('${i.id}')"><img src="${i.src}" alt=""></a>`).join('') + `</div>`).join('')
         + `</div>`
       : `<div class="empty" style="grid-column:auto"><b>Nothing here yet</b>
-          Open one of your images and turn on Share to Angles.</div>`);
+          Open one of your images and turn on Show in Public.</div>`);
   /* The grid is for scanning. Dropping you back at the top after one look
      throws away the scanning — and one attempt is not enough, because the
      column is still shorter than where you were until the pictures decode. */
@@ -2502,26 +2763,28 @@ function feedCard(i){
   const ink=all.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
   const pins=all.map((m,k)=>markHTML(m,k,'',true)).join('');
   const cs=i.comments||[], w=who(i.by);
-  const mine=i.by===ME, following=FOLLOW.has(i.by);
+  /* Following is a decision about a person, and it belongs on the page about
+     that person. On every card it asked the same question over and over of
+     somebody who was trying to look at photographs. */
   return `<div class="fcard" id="fc_${i.id}">
     <div class="fhead"><span onclick="openPerson('${i.by}')">${avatar(i.by,32)}</span>
       <span class="nm" onclick="openPerson('${i.by}')">${esc(w.h||w.short)}</span>
       ${i.from?`<span class="dot">· from ${esc(who(i.from).short)}</span>`:''}
-      ${mine?'':`<span class="dot">·</span><span class="flw ${following?'on':''}"
-        onclick="followFromFeed('${i.by}')">${following?'Following':'Follow'}</span>`}
       <span class="mr" onclick="postMenu('${i.id}')">${I.more}</span></div>
     <div class="fimg"><img src="${i.src}" alt="">
       ${ink?`<svg class="fink" viewBox="0 0 100 100" preserveAspectRatio="none">${ink}</svg>`:''}
-      ${pins}</div>
+      ${pins}
+      ${all.length?`<button class="hidem" aria-label="Hide the marks"
+        onclick="toggleMarks(event,'${i.id}')">${I.eyeOff}</button>`:''}</div>
     <div class="facts">
       <span class="like ${liked?'on':''}" onclick="like('${i.id}')">${I.heart}</span>
       <span onclick="openComments('${i.id}')">${I.bubble}</span>
       <span class="keep ${saved?'saved':''}" onclick="saveFrom('${i.id}')">${I.mark}</span></div>
     ${countLine(i)}
-    ${noted.length?`<div class="fcap"><b>${esc(w.short)}</b> ${esc(noted[0].text)}</div>`:''}
-    ${noted.length>1?`<div class="fview" onclick="unfoldMarks('${i.id}')">${noted.length-1} more note${noted.length>2?'s':''} on the photograph</div>`:''}
+    ${noted.length?`<div class="fnotes"><b>${esc(w.short)}</b>${esc(noted[0].text)}${
+        noted.slice(1).map(m=>`<span class="fn">${esc(m.text)}</span>`).join('')}</div>`:''}
     ${cs.length>2?`<div class="fview" onclick="openComments('${i.id}')">View all ${cs.length} comments</div>`:''}
-    ${cs.slice(-2).map(c=>`<div class="cmt"><b style="color:${who(c.by).c}">${esc(who(c.by).short)}</b> ${esc(c.text)}</div>`).join('')}
+    ${cs.slice(-2).map(c=>`<div class="cmt"><b>${esc(who(c.by).short)}</b> ${esc(c.text)}</div>`).join('')}
     ${cs.length?'':`<div class="fview" onclick="openComments('${i.id}')">Add a comment</div>`}
     <div class="fwhen">${ago(i.sharedAt||i.at)} ago</div></div>`;
 }
@@ -2537,15 +2800,13 @@ function countLine(i){
   if(sv) bits.push(sv+' saved');
   return `<div class="flikes">${bits.join(' · ')}</div>`;
 }
-function followFromFeed(id){
-  if(FOLLOW.has(id)) FOLLOW.delete(id); else FOLLOW.add(id);
-  save(); repaintFeed();
-}
-/* The other notes are already on the picture. Rather than print them twice,
-   say how many there are and open the pills back up when asked. */
-function unfoldMarks(id){
+/* Marks off, and the photograph on its own. Per card, and not remembered —
+   it is a look, not a setting. */
+function toggleMarks(e,id){
+  e.stopPropagation();
   const c=$('fc_'+id); if(!c) return;
-  c.querySelectorAll('.mark').forEach(m=>m.classList.remove('folded'));
+  const off=c.classList.toggle('nomarks');
+  c.querySelector('.hidem').innerHTML = off ? I.eye : I.eyeOff;
 }
 /* A feed can be scoped. Coming from a search, it carries the matches and
    nothing else — tapping a result used to throw the query away and drop you
@@ -2560,30 +2821,35 @@ function renderCommentSheet(){
   const i=img(CMTON); if(!i) return closeSheets();
   const cs=i.comments||[];
   $('cs-h').textContent = cs.length ? ('Comments · '+cs.length) : 'Comments';
+  /* Two rules, a heading and forty pixels of air around one sentence, for a
+     thread with nothing in it. */
+  $('cs-list').classList.toggle('bare', !cs.length);
   $('cs-list').innerHTML = cs.length
     ? cs.map(c=>`<div class="crow2">${avatar(c.by,32)}<span class="bd">
         <span class="who" onclick="closeSheets();openPerson('${c.by}')"
           style="color:${who(c.by).c}">${esc(who(c.by).h||who(c.by).short)}</span>
         <span class="w">${ago(c.at)}</span><br>${esc(c.text)}</span></div>`).join('')
-    : `<div class="none">No comments yet.<br>Say what you noticed.</div>`;
-  $('cs-av').innerHTML = avatar(ME,30);
-  $('cs-in').placeholder = 'Add a comment for '+(who(i.by).h||who(i.by).short)+'…';
+    : `<div class="none">Nothing yet</div>`;
+  $('cs-av').innerHTML = avatar(ME,28);
+  $('cs-in').placeholder = i.by===ME ? 'Add a comment'
+    : ('Add a comment for '+(who(i.by).h||who(i.by).short)+'…');
   $('cs-list').scrollTop = 9e5;
 }
 function addSheetComment(){
   const el=$('cs-in'), v=(el.value||'').trim(); if(!v) return;
   const i=img(CMTON); if(!i) return;
   (i.comments=i.comments||[]).push({by:ME,text:v,at:Date.now()});
-  el.value=''; save(); renderCommentSheet();
+  el.value=''; save(); renderCommentSheet(); syncSend();
   if(document.querySelector('#s-feed.on')) repaintFeed();
   if(document.querySelector('#s-board.on')) renderQuad();
+  if(document.querySelector('#s-mark.on')) renderImgComments();
 }
 function renderFeed(){
   const l=FEEDSET ? FEEDSET.map(img).filter(Boolean) : feedImgs();
   $('fd-body').innerHTML = l.map(feedCard).join('')
     + (l.length?`<div class="fend">${FEEDSET
         ? ('That is all ' + l.length + ' that matched')
-        : ('That is everything · ' + l.length + ' in Angles')}</div>`:'');
+        : ('That is everything · ' + l.length + ' in Public')}</div>`:'');
 }
 /* Land on the one that was tapped, and keep landing on it while the pictures
    below are still decoding and changing the height under you. */
@@ -2593,7 +2859,7 @@ function openFeedAt(id, set, label){
   const gb=document.querySelector('#s-angles .body');
   if(gb && !set) _gridScroll=gb.scrollTop;
   FEEDSET = set || null;
-  $('fd-title').textContent = label || 'Angles';
+  $('fd-title').textContent = label || 'Public';
   $('fd-back').onclick = () => go(set ? 's-search' : 's-angles');
   renderFeed(); go('s-feed');
   const body=document.querySelector('#s-feed .body');
@@ -2611,7 +2877,7 @@ function postMenu(id){
   _post=id; const i=img(id);
   $('po-h').textContent = who(i.by).short + '’s image';
   $('po-rows').innerHTML = (i.by===ME)
-    ? `<div class="srow danger" onclick="closeSheets();askUnshare('${id}')">Remove from Angles</div>`
+    ? `<div class="srow danger" onclick="closeSheets();askUnshare('${id}')">Remove from Public</div>`
     : `<div class="srow" onclick="hideFromFeed('${id}')">Hide this</div>
        <div class="srow danger" onclick="reportPost('${id}')">Report</div>`;
   openSheet('sheet-post');
@@ -2625,16 +2891,16 @@ function reportPost(id){
       toast('Reported · thank you'); });
 }
 let HIDDEN=new Set();
-function hideFromFeed(id){ HIDDEN.add(id); closeSheets(); repaintFeed(); toast('Hidden from your Angles'); }
+function hideFromFeed(id){ HIDDEN.add(id); closeSheets(); repaintFeed(); toast('Hidden from yours'); }
 /* “Take it down” read as deleting. It is not — the photograph and everything
    written on it stay where they are; it stops being public. */
 function askUnshare(id){
   const im=img(id), c=coll(im&&im.coll);
-  confirmThen('Remove from Angles?',
-    'Nobody will see it in Angles. It stays in '+(c?'“'+c.name+'”':'your collection')+' with its notes.',
+  confirmThen('Remove from Public?',
+    'Nobody else will see it. It stays in '+(c?'“'+c.name+'”':'your collection')+' with its notes.',
     'Remove',()=>unshare(id));
 }
-function unshare(id){ const i=img(id); i.shared=false; save(); repaintFeed(); toast('Taken off Angles'); }
+function unshare(id){ const i=img(id); i.shared=false; save(); repaintFeed(); toast('No longer public'); }
 function like(id){
   const i=img(id); const k=i.likes.indexOf(ME);
   if(k>=0) i.likes.splice(k,1); else i.likes.push(ME);
@@ -2662,10 +2928,11 @@ function saveFrom(id){
     COLLS.push(c); mine.push(c); save();
   }
   $('mv-h').textContent='Save to…';
-  $('mv-rows').innerHTML=mine.map(c=>
-    `<div class="srow" onclick="doSave('${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('');
+  $('mv-rows').innerHTML = destRows(null,'doSave')
+    + `<div class="srow" style="color:var(--soft)" onclick="cancelSave()">Not now</div>`;
   openSheet('sheet-move');
 }
+function cancelSave(){ _saving=null; closeSheets(); }
 function doSave(cid){
   const orig=img(_saving); if(!orig) return closeSheets();
   const copy={id:'i'+uid(),src:orig.src,coll:cid,marks:[],comments:[],shared:false,by:ME,
@@ -2682,7 +2949,7 @@ function openFeed(id){ openFeedAt(id); }
 function openFoundFeed(id){
   const q=UI.q;
   const hits=feedImgs().filter(i=>!q||(i.marks||[]).some(m=>(m.text||'').toLowerCase().includes(q)));
-  openFeedAt(id, hits.map(i=>i.id), q ? '“'+q+'”' : 'Angles');
+  openFeedAt(id, hits.map(i=>i.id), q ? '“'+q+'”' : 'Public');
 }
 function moveSaved(id){
   $('mv-h').textContent='Move to…';
@@ -2802,9 +3069,9 @@ function renderAlerts(){
       <span class="udot"></span>${avatar(a.by,34)}
       <div><div class="tx">${alertLine(a)}</div><div class="tm">${agoWords(a.at)}</div></div>
       ${a.img?`<img class="athumb" src="${src(a.img)}" alt="">`:''}</div>`).join('')
-    : `<div class="blankstate"><div class="bs-t">Nothing yet</div>
-        <div class="bs-s">When somebody follows you, likes or saves your
-          photograph, or says something on it, it shows up here.</div></div>`;
+    : `<div class="empty" style="grid-column:auto"><b>Nothing yet</b>
+        When somebody follows you, likes or saves your photograph, or says
+        something on it, it shows up here.</div>`;
   refreshBell();
 }
 function markAllRead(){ SEEN=Date.now(); save(); renderAlerts(); }
@@ -2828,7 +3095,7 @@ function renderPerson(){
   /* The same grid your own Images tab uses. A ragged two-column wall is for
      Angles, where you are browsing; a person's page is an inventory. */
   $('pe-body').innerHTML =
-    (theirs.length ? `<div class="grid" style="padding-top:10px">`
+    (theirs.length ? `<div class="grid" style="padding-top:14px">`
         + theirs.map(i=>`<div class="tile" onclick="openFeedAt('${i.id}')">
             <img src="${i.src}" alt="" loading="lazy"></div>`).join('')
         + `</div>`
@@ -2837,19 +3104,24 @@ function renderPerson(){
 /* One block: face, name, handle, a line, and who is reading. The header
    above it carries nothing but back and ⋯ — the name is already here, and
    printing it twice made the page look like two pages. */
+/* The avatar stood alone on a line with three hundred pixels of nothing
+   beside it, and everything else stacked underneath. Cosmos and Pinterest
+   both put the name next to the face; so does this now. */
 function personHead(p, n, on){
   const mine = p.id===ME;
   return `<div class="phead">
-    ${avatar(p.id,64)}
-    <div class="pnm">${esc(p.name)}</div>
-    <div class="phdl">@${esc(p.h||p.id)}</div>
-    ${p.bio?`<div class="pbio">${esc(p.bio)}</div>`:''}
+    <div class="pid">${avatar(p.id,64)}
+      <div><div class="pnm">${esc(p.name)}</div>
+        <div class="phdl">@${esc(p.h||p.id)}</div></div></div>
     <div class="pstat">
       <span><b>${mine ? FANS.length : ((p.fol||0)+(on?1:0))}</b> followers</span>
+      <span>·</span>
       <span><b>${mine?FOLLOW.size:Math.max(0,Math.round((p.fol||0)/6))}</b> following</span>
-      <span><b>${n}</b> in Angles</span>
     </div>
-    ${mine ? '' : `<button class="fol wide ${on?'on':''}" onclick="toggleFollow()">${on?'Following':'Follow'}</button>`}
+    ${p.bio?`<div class="pbio">${esc(p.bio)}</div>`:''}
+    ${mine
+      ? `<button class="pbtn" onclick="editProfile()">Edit profile</button>`
+      : `<button class="fol wide ${on?'on':''}" onclick="toggleFollow()">${on?'Following':'Follow'}</button>`}
   </div>`;
 }
 /* On somebody else: report them. On yourself: your own settings, which is
