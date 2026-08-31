@@ -72,7 +72,8 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   padding:calc(var(--safeT) + 14px) var(--edge) 10px}
 /* 19 title · 15 tab · 13 secondary. The pill tabs sat at 13, which put the
    title and everything under it two steps apart with nothing between. */
-.hd h1{font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em}
+.hd h1{font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .hd .r{margin-left:auto;display:flex;align-items:center;gap:10px}
 .dark .hd h1{color:var(--bg)}
 /* A glyph with a 44px tap area and no circle. The circle exists to give a
@@ -131,16 +132,6 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 
 /* ── collection toggle + tabs ────────────────────────────── */
 .tgrow{flex:none;display:flex;align-items:center;gap:8px;padding:0 var(--edge) 10px}
-.cbtn{display:flex;align-items:center;gap:5px;background:var(--ink);color:var(--bg);height:34px;
-  padding:0 14px;border-radius:var(--r-pill);font-size:var(--t4);font-weight:var(--wb);max-width:56%}
-.cbtn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cbtn .ic{width:15px;height:15px;stroke-width:2.2;flex:none}
-.cbtn.pub{background:var(--mark)}
-.tabs{display:flex;gap:3px;background:var(--surface);border-radius:var(--r-pill);padding:3px;
-  margin-left:auto}
-.tab{height:28px;padding:0 12px;border-radius:var(--r-pill);font-size:var(--t4);color:var(--soft);
-  display:flex;align-items:center;gap:4px}
-.tab.on{background:var(--bg);color:var(--ink);font-weight:var(--wb)}
 .meta{font-size:var(--t4);color:var(--soft);margin-left:auto;white-space:nowrap}
 /* who else is in here, beside the name it belongs to */
 .faces{display:flex;align-items:center;flex:none;margin-right:4px}
@@ -198,8 +189,6 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    an empty screen is mostly this. */
 .empty{padding:72px 40px;text-align:center;color:var(--soft);font-size:var(--t3);line-height:1.6;grid-column:1/4}
 .empty b{display:block;color:var(--ink);font-size:var(--t2);margin-bottom:8px;font-weight:var(--wb)}
-.empty .cta{display:inline-block;margin-top:16px;background:var(--ink);color:var(--bg);font-size:var(--t4);
-  font-weight:var(--wb);padding:11px 20px;border-radius:var(--r-pill)}
 
 /* ── rows ────────────────────────────────────────────────── */
 .rlist{padding:0 0 4px}
@@ -210,8 +199,6 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .row.sel{font-weight:var(--wb)}
 .row.danger{color:var(--red)}
 .row .sub{font-size:var(--t4);color:var(--soft);font-weight:400}
-.row .rowbtn{margin-left:8px;width:30px;height:30px;border-radius:50%;background:var(--surface2);
-  display:flex;align-items:center;justify-content:center;color:var(--soft);flex:none}
 /* A board is a shape. A 46px thumbnail cannot tell four from six, so the
    list shows each one at 9:16, two across. */
 .bgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:10px var(--edge) 0}
@@ -256,6 +243,10 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
   box-shadow:none}
 .selbar.on{display:flex}
+.selhint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--safeB) + 72px);
+  z-index:60;display:none;padding:6px 12px;border-radius:var(--r-pill);
+  background:var(--scrim);color:var(--onphoto);font-size:var(--t4);white-space:nowrap}
+.selhint.on{display:block}
 .sb{flex:none;height:46px;padding:0 15px;border-radius:var(--r-pill);background:var(--bg);
   box-shadow:var(--shadow-float);border:1px solid rgba(17,17,17,.09);
   font-size:var(--t4);display:flex;align-items:center;justify-content:center;gap:6px}
@@ -528,25 +519,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .fink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .fink path{fill:none;stroke:var(--bg);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
   vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
-.frow{display:flex;align-items:center;gap:8px;padding:9px 2px 0}
-.frow .nm{font-size:var(--t3);font-weight:var(--wm)}
-.frow .av,.frow .nm{cursor:pointer}
-.frow .when{font-size:var(--t4);color:var(--soft)}
-.frow .from{font-size:var(--t4);color:var(--soft)}
-.frow .acts{margin-left:auto;display:flex;align-items:center;gap:14px;color:var(--soft);font-size:var(--t4)}
-.act{display:flex;align-items:center;gap:5px}
-.act.on{color:var(--red)}
-.act.saved{color:var(--mark)}
-
-.more{font-size:var(--t4);color:var(--soft);padding:6px 2px 0}
-/* These sat inside a .cmts wrapper that carried the side padding. The wrapper
-   went when commenting moved to a sheet, and the padding went with it, so the
-   comments stood fourteen pixels left of the note above them. */
-.cmt{font-size:var(--t3);line-height:1.5;padding:5px var(--edge) 0}
-.cmt b{font-weight:var(--wb);color:var(--ink)}
-.cbox2{display:flex;gap:8px;align-items:center;margin-top:6px}
-.cbox2 input{flex:1;height:36px;border-radius:var(--r-md);border:1px solid var(--line);padding:0 11px;
-  font-size:var(--t3);background:var(--surface)}
+/* These sat inside a .cmt b{font-weight:var(--wb);color:var(--ink)}
 /* 15px between rows, not 3. A comment is somebody talking; packed tight,
    four of them read as one paragraph of grey. */
 .clist{padding:13px var(--edge) 4px;display:flex;flex-direction:column;gap:15px;
@@ -565,7 +538,6 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
 .sendb.ready{background:var(--mark);color:var(--bg)}
 .sendb .ic{stroke-width:2.1}
-.act.on2{color:var(--mark)}
 .fend{text-align:center;font-size:var(--t4);color:var(--soft);padding:6px var(--edge) 20px}
 /* the person block */
 /* Two tabs the width of the screen, underlined — the profile's own
@@ -616,28 +588,23 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 /* Left, not centre. A centred block reads as a poster; this is a person's
    details, and details are read down an edge. */
 .phead{flex:none;padding:2px var(--edge) 16px}
+.phead.own{padding-top:calc(var(--safeT) + 14px)}
 .pid{display:flex;align-items:center;gap:16px}
+.pid .hglyph{margin-left:auto;align-self:flex-start}
 .pnm{font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em}
 .phdl{font-size:var(--t3);color:var(--soft);padding-top:2px}
 .pbio{font-size:var(--t3);line-height:1.5;padding-top:10px}
 .pstat{display:flex;gap:7px;padding-top:14px;font-size:var(--t3);color:var(--soft)}
 .pstat b{color:var(--ink);font-weight:var(--wm)}
 .pstat span:not(:nth-child(2)){cursor:pointer}
-/* Editing your own line was buried in a menu. Both references put it here. */
-.pbtn{margin-top:14px;height:36px;padding:0 18px;border-radius:var(--r-pill);
-  border:1px solid var(--faint);font-size:var(--t3);font-weight:var(--wm);color:var(--ink)}
-.pbtn:active{background:var(--surface)}
 .fol.wide{margin:14px 0 0;height:38px;padding:0 30px}
-.prow2{flex:none;display:flex;align-items:center;gap:11px;padding:0 var(--edge) 12px}
-.prow2 .nm{font-size:var(--t2);font-weight:var(--wb)}
-.prow2 .s{font-size:var(--t4);color:var(--soft)}
 .fol{margin-left:auto;height:36px;padding:0 16px;border-radius:var(--r-pill);background:var(--ink);
   color:var(--bg);font-size:var(--t3);font-weight:var(--wb);display:flex;align-items:center}
 .fol.on{background:var(--surface);color:var(--ink)}
-.foln{font-size:var(--t4);color:var(--soft);padding:0 var(--edge) 10px;line-height:1.5}
 /* Taken from the September MVP unchanged — cards rather than rows, a red dot
    for unread, and the time written out. Only what the rows say is new. */
 .sect-label{font-size:var(--t4);font-weight:var(--wm);color:var(--soft);padding:var(--edge) var(--edge) 10px}
+.alist .sect-label:first-child{padding-top:6px}
 .act-card{margin:0 var(--edge) 12px;border:1px solid var(--line);border-radius:var(--r-lg);padding:14px;
   display:flex;align-items:center;gap:12px}
 .act-card.unread{background:var(--surface);border-color:var(--line)}
@@ -645,7 +612,9 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .act-card.unread .udot{background:var(--red)}
 .act-card .tx{font-size:var(--t3);line-height:1.4}
 .act-card .tm{font-size:var(--t4);color:var(--soft);margin-top:3px}
-.act-card .athumb{width:48px;height:62px;border-radius:var(--r-sm);margin-left:auto;flex:none;
+/* The widths were always the same; a 48 by 62 thumbnail made those rows
+   twenty pixels taller than the ones without one. */
+.act-card .athumb{width:44px;height:44px;border-radius:var(--r-sm);margin-left:auto;flex:none;
   object-fit:cover;display:block}
 .markread{margin-left:auto;font-size:var(--t4);font-weight:var(--wm);color:var(--mark)}
 
@@ -697,8 +666,23 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .tog.on:after{transform:translateX(18px)}
 .linkbox{margin:10px var(--edge) 4px;background:var(--surface);border-radius:var(--r-md);padding:11px 13px;
   font-size:var(--t4);color:var(--soft);word-break:break-all;font-family:ui-monospace,Menlo,monospace}
-.protolab{font-size:var(--t4);font-weight:var(--wb);letter-spacing:.08em;color:var(--soft);
-  padding:var(--edge) var(--edge) 4px}
+/* a settings screen, and the sheet that edits a profile */
+.chev{margin-left:auto;color:var(--faint);font-size:var(--t2)}
+.out{margin-left:auto;color:var(--faint);font-size:var(--t4)}
+.ephead{display:flex;align-items:center;padding:2px var(--edge) 12px}
+.ephead span{margin:0 auto;font-size:var(--t2);font-weight:var(--wb)}
+.epav{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0 6px}
+.efield{padding:10px var(--edge) 2px}
+.efield label{display:block;font-size:var(--t4);color:var(--soft);padding-bottom:5px}
+/* A textarea does not inherit the page's family, so it fell back to the
+   browser's monospace and the bio looked like code. */
+.efield input,.efield textarea{width:100%;background:var(--surface);border:0;border-radius:var(--r-md);
+  padding:10px 12px;font-size:var(--t3);color:var(--ink);line-height:1.45;resize:none;
+  font-family:inherit}
+.withat{display:flex;align-items:center;gap:0;background:var(--surface);border-radius:var(--r-md);padding-left:12px}
+.withat>span{color:var(--soft);font-size:var(--t3)}
+.withat input{background:transparent;padding-left:2px}
+.cnt2{float:right;color:var(--faint)}
 .strip{display:flex;gap:6px;overflow-x:auto;padding:0 var(--edge) 14px;scrollbar-width:none}
 .strip::-webkit-scrollbar{display:none}
 .strip img{width:52px;height:88px;object-fit:cover;border-radius:var(--r-sm);flex:none}
@@ -733,17 +717,9 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 <section class="scr on" id="s-library">
   <div class="gbar" id="gbar" style="display:none">
     <span id="gbar-t"></span><button onclick="leaveGuest()">Exit</button></div>
-  <!-- ⋯ means “this screen's object” everywhere else in the app, and on your
-       own page the object is you, so the same glyph meant something different.
-       A cog says settings, and the share is the invite link the brief asks
-       every profile to carry. -->
-  <!-- After Instagram's: the handle names the page in the bar, and the bar
-       carries two bare glyphs. A single circled icon alone had nothing to sit
-       beside and read as something left behind. -->
-  <div class="hd">
-    <h1 id="lib-title"></h1>
-    <span class="r" style="gap:18px">
-      <button class="hglyph" id="me-more" onclick="openSheet('sheet-profile')" aria-label="Menu"></button></span></div>
+  <!-- No bar. With the handle under the name and the invite gone, one glyph
+       was left floating over an empty strip; it now sits on the line it
+       belongs to, beside the face it opens the settings for. -->
   <div id="me-head"></div>
   <div class="segrow" id="me-seg"></div>
   <div class="toolrow" id="me-tools" style="display:none"></div>
@@ -761,7 +737,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
          from the collection you are standing in, and the only thing the
          board needs that the collection cannot give it is a name. -->
     <input id="nb-name" class="hname" style="display:none" placeholder="Untitled board"
-      maxlength="40" autocomplete="off">
+      maxlength="32" autocomplete="off">
     <span class="r">
       <!-- Beside the name these decorated the title and shoved it about as
            people joined. Here they are a control, they stack, and they stop
@@ -826,7 +802,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="hd"><h1>Alerts</h1>
     <span class="r"><button class="markread" id="al-mark" onclick="markAllRead()">Mark all read</button></span></div>
   <div class="body"><div class="sect-label" id="al-head">ACTIVITY</div>
-    <div id="al-body"></div><div style="height:110px"></div></div>
+    <div id="al-body" class="alist"></div><div style="height:110px"></div></div>
 </section>
 
 <!-- ══ MARK · also the image itself ═══════════════════════ -->
@@ -902,7 +878,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
          like the field it is, which is the same field you type into when you
          make one. -->
     <!-- A sheet to change one word was a screen for a keystroke. -->
-    <input id="bd-title" class="edith" maxlength="40" autocomplete="off"
+    <input id="bd-title" class="edith" maxlength="32" autocomplete="off"
       onblur="commitTitle()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">
     <span class="r"><button class="hbtn" onclick="openSheet('sheet-board')" aria-label="More" id="bd-more"></button></span>
   </div>
@@ -958,9 +934,6 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div id="imp-rows"></div>
 </div>
 
-<div class="sheet" id="sheet-coll">
-  <div class="grab"></div><div class="sh">Show</div>
-  <div id="coll-rows"></div>
   <div class="srow" onclick="newCollection()" style="color:var(--soft)">＋ New collection</div>
 </div>
 
@@ -1024,7 +997,8 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
        stands it on a colour you choose. -->
   <div class="srow" onclick="toggleFit()">Fit the whole photograph<span class="tog" id="bd-fit"></span></div>
   <div id="bd-bg"></div>
-  <div class="srow" id="bd-dup" onclick="closeSheets();duplicateBoard()">Duplicate</div>
+  <div class="srow" id="bd-dup" style="border-top:8px solid var(--surface)"
+    onclick="closeSheets();duplicateBoard()">Duplicate</div>
   <!-- The collection is the wrong unit to share. What you want to show a
        client is one board, and handing over the collection hands over
        everything else in it. -->
@@ -1041,15 +1015,55 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div id="mv-rows"></div>
 </div>
 
+<!-- Seven rows ending in delete account, as the brief asks. Every developer
+     tool that used to live here is gone: this goes to real people, and a
+     product with its scaffolding still up is not one. -->
 <div class="sheet" id="sheet-profile">
   <div class="grab"></div><div class="sh" id="pr-h">Settings</div>
-  <!-- Your Public collection was a row here and a card on the Collections
-       tab. One of them had to go, and this was the copy nobody would find. -->
-  <div class="protolab">Prototype only · be somebody else</div>
-  <div id="pr-as"></div>
-  <div class="sp" style="padding-top:10px">Or open <b>?as=jieun</b> on the end of the address to
-    start as them — two windows side by side show both sides at once.</div>
-  <div class="srow danger" onclick="resetAll()">Reset everything</div>
+  <div class="srow" onclick="openEditProfile()">Edit profile<span class="chev">›</span></div>
+  <div class="srow" onclick="openSheet('sheet-notif')">Notifications<span class="chev">›</span></div>
+  <div class="srow" onclick="openSheet('sheet-feedback')">Send feedback<span class="chev">›</span></div>
+  <div class="srow" onclick="openSheet('sheet-about')">About ari<span class="chev">›</span></div>
+  <div class="srow" onclick="toast('Opens in your browser')">Privacy policy<span class="out">↗</span></div>
+  <div class="srow" onclick="toast('Opens in your browser')">Terms of service<span class="out">↗</span></div>
+  <div class="srow danger" style="border-top:8px solid var(--surface)"
+    onclick="askDeleteAccount()">Delete account</div>
+</div>
+
+<div class="sheet" id="sheet-editprof">
+  <div class="grab"></div>
+  <div class="ephead"><button class="hlink dim" onclick="closeSheets()">Cancel</button>
+    <span>Edit profile</span>
+    <button class="hlink" onclick="saveProfile()">Save</button></div>
+  <div class="epav"><span id="ep-av"></span>
+    <button class="hlink" onclick="toast('Choosing a photograph comes with the camera work')">Change photo</button></div>
+  <div class="efield"><label>Name</label><input id="ep-name" maxlength="30" autocomplete="off"></div>
+  <div class="efield"><label>Handle</label>
+    <span class="withat"><span>@</span><input id="ep-h" maxlength="20" autocomplete="off"></span></div>
+  <div class="efield"><label>One line<span class="cnt2" id="ep-cnt"></span></label>
+    <textarea id="ep-bio" maxlength="80" rows="2"></textarea></div>
+  <div style="height:10px"></div>
+</div>
+
+<!-- Four events make a notification, so there are four switches and no more. -->
+<div class="sheet" id="sheet-notif">
+  <div class="grab"></div><div class="sh">Notifications</div>
+  <div id="nt-rows"></div>
+  <div class="sp">Turning one off stops the alert. Nothing else changes.</div>
+</div>
+
+<div class="sheet" id="sheet-feedback">
+  <div class="grab"></div><div class="sh">Send feedback</div>
+  <div class="sp" style="padding-bottom:6px">What is missing, what is wrong, what you wish it did.</div>
+  <div class="efield"><textarea id="fb-t" rows="4" placeholder="Type anything"></textarea></div>
+  <div class="scta"><button class="c1" onclick="closeSheets()">Cancel</button>
+    <button class="c2" onclick="sendFeedback()">Send</button></div>
+</div>
+
+<div class="sheet" id="sheet-about">
+  <div class="grab"></div><div class="sh">About ari</div>
+  <div class="sp">A place to keep what you noticed, and to say what you noticed in it.<br><br>
+    Private beta · prototype build.</div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -1061,13 +1075,14 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 
 <div class="sheet" id="sheet-name">
   <div class="grab"></div><div class="sh" id="name-h">Name</div>
-  <div class="sfield"><input id="name-input" placeholder="Name"></div>
+  <div class="sfield"><input id="name-input" placeholder="Name" maxlength="32"></div>
   <div class="scta"><button class="c1" onclick="closeSheets()">Cancel</button>
     <button class="c2" onclick="nameConfirm()">Save</button></div>
 </div>
 
 <!-- Selection replaces the nav rather than sitting on top of it: while
      you are choosing images there is nowhere else to be. -->
+<div class="selhint" id="selhint"></div>
 <div class="selbar" id="selbar"></div>
 
 <div class="toast" id="toast"></div>
@@ -1152,7 +1167,7 @@ function paintIcons(){
   $('nb-al').insertAdjacentHTML('afterbegin', I.bell);
   put('mk-back',I.back); put('mk-more',I.more); put('bd-back',I.back); put('bd-more',I.more);
   put('fd-back',I.back); put('lib-more',I.more);
-  put('me-more',I.menu); put('c-back',I.back);
+  put('c-back',I.back);
   put('gl-ic',I.globe,'s'); put('pe-back',I.back);
   put('sel-start',I.check); put('pe-more',I.more); put('sr-back',I.back);
   put('bd-post',I.send,'s'); put('cs-post',I.send,'s');
@@ -1196,6 +1211,7 @@ const PEOPLE = {
   visitor: {id:'visitor', name:'Visitor',        short:'Visitor', c:'#6B6B70', feedOnly:true,
             h:'visitor',  bio:'', fol:0}
 };
+/* Kept for the address below; nothing in the interface reaches it. */
 const switchable = () => Object.keys(PEOPLE).filter(id=>!PEOPLE[id].feedOnly);
 /* The nav circle is you. It changes colour when you are being somebody else,
    so the bottom of the screen never claims you are Sungwon while you are not. */
@@ -1283,6 +1299,7 @@ function save(){try{
   localStorage.setItem('ari2-coll',UI.coll||'');
   localStorage.setItem('ari2-me',UI.me||'colls');
   localStorage.setItem('ari2-cv',UI.cv||'grid');
+  localStorage.setItem('ari2-notif',JSON.stringify(NOTIF));
   localStorage.setItem('ari2-follow',JSON.stringify([...FOLLOW]));
   localStorage.setItem('ari2-fans',JSON.stringify(FANS));
   localStorage.setItem('ari2-pend',JSON.stringify(PEND));
@@ -1325,6 +1342,7 @@ function load(){
     UI.coll = localStorage.getItem('ari2-coll') || '';
     UI.me   = localStorage.getItem('ari2-me') || 'colls';
     UI.cv   = localStorage.getItem('ari2-cv') || 'grid';
+    NOTIF   = JSON.parse(localStorage.getItem('ari2-notif')||'null') || NOTIF;
     FOLLOW = new Set(JSON.parse(localStorage.getItem('ari2-follow')||'[]'));
     FANS   = JSON.parse(localStorage.getItem('ari2-fans')||'null');
     PEND   = JSON.parse(localStorage.getItem('ari2-pend')||'null');
@@ -1413,12 +1431,15 @@ function go(id){
 let _sheet=null;
 function openSheet(id){
   closeSheets(); _sheet=id;
+  /* A toast already on screen would otherwise leap to the top and land on
+     whatever is up there. It has said its piece; it goes. */
+  clearTimeout(_t); $('toast').classList.remove('on');
   $('scrim').classList.add('on'); $(id).classList.add('on');
   document.body.classList.add('sheeted');
-  if(id==='sheet-coll')     renderCollSheet();
   if(id==='sheet-collmenu') renderCollMenu();
   if(id==='sheet-people')   renderPeople();
   if(id==='sheet-invite')   renderInvite();
+  if(id==='sheet-notif')    renderNotif();
   if(id==='sheet-board')    renderBoardSheet();
   if(id==='sheet-image')    renderImageSheet();
   if(id==='sheet-profile')  renderProfile();
@@ -1491,7 +1512,9 @@ function renderImpRows(){
   $('imp-strip').innerHTML=_in.slice(0,14).map(i=>`<img src="${i.src}" alt="">`).join('');
   $('imp-rows').innerHTML = COLLS.map(c=>
     `<div class="srow" onclick="impInto('${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('')
-    + `<div class="srow" style="color:var(--soft)" onclick="newCollFromImport()">＋ New collection</div>`;
+    + `<div class="srow" style="color:var(--soft)" onclick="newCollFromImport()">＋ New collection</div>`
+    + `<div class="srow" style="border-top:8px solid var(--surface);color:var(--soft)"
+        onclick="cancelImport()">Not now</div>`;
 }
 function cancelImport(){ _in=[]; closeSheets(); }
 function newCollFromImport(){
@@ -1579,13 +1602,14 @@ function myImgs2(){
 function renderMe(){
   $('gbar').style.display = guest() ? 'flex' : 'none';
   if(guest()) $('gbar-t').innerHTML = 'You are <b>'+esc(who(ME).name)+'</b> · you can comment';
-  $('me-more').style.display = guest() ? 'none' : 'flex';
-  /* The handle sits under the name, where both references put it. The bar
-     keeps one glyph at each end, which is why neither is stranded. */
-  $('lib-title').textContent = guest() ? 'Shared with you' : '';
+
   const imgs=myImgs2(), cols=myColls();
   const shared = IMGS.filter(i=>i.shared && i.by===ME).length;
-  $('me-head').innerHTML = guest() ? '' : personHead(who(ME), shared, false);
+  /* A guest has no profile here; the black bar above already says whose
+     collections these are and what they may do. */
+  $('me-head').innerHTML = guest()
+    ? `<div class="phead" style="padding-top:calc(var(--safeT) + 14px)"><div class="pnm">Shared with you</div></div>`
+    : personHead(who(ME), shared, false);
   $('me-seg').innerHTML =
     `<button class="seg ${UI.me==='images'?'on':''}" onclick="setMeTab('images')">Images<span class="k">${imgs.length}</span></button>
      <button class="seg ${UI.me==='colls'?'on':''}" onclick="setMeTab('colls')">Collections<span class="k">${cols.length + (guest()?0:1)}</span></button>
@@ -1775,17 +1799,6 @@ function renderBoardList(c, boards){
 }
 function showShared(){ closeSheets(); openColl('public'); }
 
-/* ── collection toggle ───────────────────────────────────── */
-function renderCollSheet(){
-  const mine = guest() ? COLLS.filter(c=>c.members.includes(ME)) : COLLS;
-  const pub=filed().filter(i=>i.shared&&(coll(i.coll)||{}).owner===ME).length;
-  $('coll-rows').innerHTML =
-    (guest()?'':`<div class="srow ${isPublicView()?'sel':''}" style="border-top:0;color:var(--mark)"
-       onclick="pickColl('public')">${I.globe.replace('class="ic"','class="ic s"')}Public<span class="k">${pub}</span></div>`)
-    + mine.map((c,k)=>`<div class="srow ${UI.coll===c.id?'sel':''}"
-        ${k===0&&!guest()?'style="border-top:8px solid var(--surface)"':''}
-        onclick="pickColl('${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('');
-}
 function pickColl(id){ closeSheets(); openColl(id); }
 function newCollection(){
   closeSheets();
@@ -1937,6 +1950,7 @@ function startPick(){
   renderLibrary(); syncPick();
 }
 function endPick(){
+  $('selhint').classList.remove('on');
   const wasMark=_pickMode==='mark';
   _pickMode=null; _pick=[]; _pickPool=null; _nbN=4;
   $('selbar').classList.remove('on'); $('nav').style.display='flex';
@@ -1947,6 +1961,7 @@ function syncPick(){
   const on=!!_pickMode;
   $('selbar').classList.toggle('on',on);
   $('nav').style.display = on ? 'none' : 'flex';
+  $('selhint').classList.remove('on');
   const n=_pick.length;
   if(_pickMode==='mark'){
     $('selbar').innerHTML = `<button class="sb main" onclick="runMarks()">${
@@ -1957,11 +1972,16 @@ function syncPick(){
        <button class="sb main" ${n?'':'disabled'} onclick="makeBoard()">${
          n===_nbN ? 'Create' : ('Create '+n+'/'+_nbN)}</button>`;
   }else if(_pickMode==='manage'){
-    $('c-title').textContent = n ? (n+' selected') : 'Select images';
+    /* Moving and deleting are irreversible, and the thing they act on was
+       not on screen while you did them. */
+    const cn=(coll(UI.coll)||{}).name||'';
+    $('c-title').textContent = n ? (cn+' · '+n+' selected') : (cn+' · select images');
     $('selbar').innerHTML =
       `<button class="sb" onclick="moveSelected()">${I.folder.replace('class="ic"','class="ic s"')}Move</button>
-       <button class="sb danger" onclick="removeSelected()">${I.trash.replace('class="ic"','class="ic s"')}</button>
+       <button class="sb danger" onclick="removeSelected()">${I.trash.replace('class="ic"','class="ic s"')}Delete</button>
        <button class="sb main" ${![2,4,6].includes(n)?'disabled':''} onclick="boardFromPick()">New board</button>`;
+  $('selhint').textContent = 'A board takes 2, 4 or 6 images';
+  $('selhint').classList.toggle('on', ![2,4,6].includes(n));
   }
 }
 function tileTap(id){
@@ -2070,6 +2090,9 @@ let MKRO=false;
 /* Where marking was entered from, so leaving returns there. With a screen
    per collection, “back to the library” is no longer one place. */
 let _markFrom='s-coll';
+/* An alert opens a photograph too, and dropping somebody into a collection
+   they never opened is a place they did not ask for. */
+const BACKTO=['s-library','s-alerts','s-search','s-coll'];
 /* Tapping a photograph used to arm a pen. Looking and marking are different
    things, and the one you do far more often was the one that could not be
    done without changing something. */
@@ -2339,7 +2362,7 @@ function markBack(){
   MK=null; _run=[]; _runIx=0;
   if(_cameFromAngles){ _cameFromAngles=false; go('s-angles'); return; }
   if(_cameFromBoard){ _cameFromBoard=false; openBoard(CURB.id); return; }
-  go(_markFrom==='s-library' ? 's-library' : 's-coll');
+  go(BACKTO.includes(_markFrom) ? _markFrom : 's-coll');
 }
 let _cameFromBoard=false;
 function nextOrLeave(){
@@ -2348,7 +2371,7 @@ function nextOrLeave(){
   if(_run.length && _runIx<_run.length-1){ _runIx++; openMark(_run[_runIx]); return; }
   const fin=_run.length; _run=[]; _runIx=0;
   if(_cameFromBoard){ _cameFromBoard=false; openBoard(CURB.id); return; }
-  go(_markFrom==='s-library' ? 's-library' : 's-coll');
+  go(BACKTO.includes(_markFrom) ? _markFrom : 's-coll');
   if(fin) toast('Saved');
 }
 
@@ -2511,7 +2534,7 @@ function removeImage(){
       dbDel(id);
       BOARDS=BOARDS.filter(b=>!b.cells.includes(id));
       IMGS=IMGS.filter(i=>i.id!==id);
-      MK=null; _run=[]; save(); go(_markFrom==='s-library'?'s-library':'s-coll'); toast('Removed');
+      MK=null; _run=[]; save(); go(BACKTO.includes(_markFrom) ? _markFrom : 's-coll'); toast('Removed');
     });
 }
 
@@ -2829,6 +2852,7 @@ function addComment(){
 }
 $('cmt-input').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addComment();} });
 $('cs-in').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addSheetComment();} });
+$('ep-bio').addEventListener('input',countBio);
 $('iv-q').addEventListener('input',renderInvite);
 /* Grey until there is something to send, so what the button responds to is
    visible rather than guessed. */
@@ -3088,22 +3112,22 @@ function alerts(){
   const out=[];
   IMGS.filter(i=>i.by===ME).forEach(i=>{
     const t=i.reactAt||i.sharedAt||i.at;
-    i.likes.filter(p=>p!==ME).forEach(p=>out.push({t:'like',by:p,img:i.id,at:t}));
-    i.saves.filter(p=>p!==ME).forEach(p=>out.push({t:'save',by:p,img:i.id,at:t}));
+    if(NOTIF.like) i.likes.filter(p=>p!==ME).forEach(p=>out.push({t:'like',by:p,img:i.id,at:t}));
+    if(NOTIF.save) i.saves.filter(p=>p!==ME).forEach(p=>out.push({t:'save',by:p,img:i.id,at:t}));
   });
   IMGS.forEach(i=>{
     const mine = i.by===ME || isOwner(i.coll) || (i.comments||[]).some(c=>c.by===ME);
     if(!mine) return;
-    (i.comments||[]).filter(c=>c.by!==ME).forEach(c=>
+    if(NOTIF.comment) (i.comments||[]).filter(c=>c.by!==ME).forEach(c=>
       out.push({t:'icomment',by:c.by,img:i.id,text:c.text,at:c.at}));
   });
-  if(ME==='me') FANS.forEach(f=>out.push({t:'follow',by:f.by,at:f.at}));
+  if(ME==='me' && NOTIF.follow) FANS.forEach(f=>out.push({t:'follow',by:f.by,at:f.at}));
   BOARDS.forEach(b=>{
     /* Yours if you own the collection, or if you have said something on it —
        otherwise a visitor is told about a conversation they are not in. */
     const mine = isOwner(b.coll) || (b.comments||[]).some(c=>c.by===ME);
     if(!mine) return;
-    (b.comments||[]).filter(c=>c.by!==ME).forEach(c=>
+    if(NOTIF.comment) (b.comments||[]).filter(c=>c.by!==ME).forEach(c=>
       out.push({t:'comment',by:c.by,board:b.id,text:c.text,at:c.at}));
   });
   return out.sort((a,b)=>b.at-a.at);
@@ -3181,15 +3205,25 @@ function renderAlerts(){
      which is what makes the control in the header mean anything — opening
      the screen and reading it are not the same act. */
   const has=!!list.length;
-  $('al-head').style.display = has ? '' : 'none';
+  $('al-head').style.display = 'none';   /* the bands below carry the labels */
   $('al-mark').style.display = list.some(a=>a.at>SEEN) ? '' : 'none';
-  $('al-body').innerHTML = has ? list.map(a=>
+  /* ACTIVITY was a section heading over one section, separating nothing.
+     Same type, same colour, and now it tells you when. */
+  const day=864e5, now=Date.now();
+  const band = t => (now-t < day) ? 0 : (now-t < 7*day) ? 1 : 2;
+  const BAND = ['Today','This week','Earlier'];
+  let last=-1;
+  $('al-body').innerHTML = has ? list.map(a=>{
+    let head='';
+    const bd=band(a.at);
+    if(bd!==last){ last=bd; head=`<div class="sect-label">${BAND[bd]}</div>`; }
+    return head +
     `<div class="act-card ${a.at>SEEN?'unread':''}"
        onclick="${a.t==='follow'?`openPerson('${a.by}')`
                 : a.t==='comment'?`openBoard('${a.board}')` : `openMark('${a.img}')`}">
       <span class="udot"></span>${avatar(a.by,34)}
       <div><div class="tx">${alertLine(a)}</div><div class="tm">${agoWords(a.at)}</div></div>
-      ${a.img?`<img class="athumb" src="${src(a.img)}" alt="">`:''}</div>`).join('')
+      ${a.img?`<img class="athumb" src="${src(a.img)}" alt="">`:''}</div>`; }).join('')
     : `<div class="empty" style="grid-column:auto"><b>Nothing yet</b>
         When somebody follows you, likes or saves your photograph, or says
         something on it, it shows up here.</div>`;
@@ -3230,10 +3264,12 @@ function renderPerson(){
    both put the name next to the face; so does this now. */
 function personHead(p, n, on){
   const mine = p.id===ME;
-  return `<div class="phead">
+  return `<div class="phead${mine?' own':''}">
     <div class="pid">${avatar(p.id,64)}
       <div><div class="pnm">${esc(p.name)}</div>
-        <div class="phdl">@${esc(p.h||p.id)}</div></div></div>
+        <div class="phdl">@${esc(p.h||p.id)}</div></div>
+      ${mine?`<button class="hglyph" id="me-more" onclick="openSheet('sheet-profile')"
+        aria-label="Menu">${I.menu}</button>`:''}</div>
     ${/* A list of people is not a setting. It hangs off the number that
           counts them, which is where anybody would look for it. */''}
     <div class="pstat">
@@ -3242,9 +3278,9 @@ function personHead(p, n, on){
       <span onclick="openPeopleList('following')"><b>${mine?FOLLOW.size:Math.max(0,Math.round((p.fol||0)/6))}</b> following</span>
     </div>
     ${p.bio?`<div class="pbio">${esc(p.bio)}</div>`:''}
-    ${mine
-      ? `<button class="pbtn" onclick="editProfile()">Edit profile</button>`
-      : `<button class="fol wide ${on?'on':''}" onclick="toggleFollow()">${on?'Following':'Follow'}</button>`}
+    ${/* Editing lives in the menu, where it was asked for. A button on the
+          page as well was one door too many for one small form. */
+      mine ? '' : `<button class="fol wide ${on?'on':''}" onclick="toggleFollow()">${on?'Following':'Follow'}</button>`}
   </div>`;
 }
 /* On somebody else: report them. On yourself: your own settings, which is
@@ -3324,12 +3360,49 @@ function renderSearch(){
 }
 
 /* ═══ profile ══════════════════════════════════════════════ */
-function renderProfile(){
-  $('pr-h').textContent='Settings';
-  $('pr-as').innerHTML=switchable().map(id=>
-    `<div class="srow" onclick="beSomebody('${id}')">${avatar(id,28)}
-      <span style="font-weight:${id===ME?600:400}">${esc(who(id).name)}</span>
-      <span class="k">${id===ME?'You are this person':'Be them'}</span></div>`).join('');
+function renderProfile(){ $('pr-h').textContent='Settings'; }
+function openEditProfile(){
+  const p=who(ME);
+  $('ep-av').innerHTML=avatar(ME,64);
+  $('ep-name').value=p.name||''; $('ep-h').value=p.h||''; $('ep-bio').value=p.bio||'';
+  countBio(); openSheet('sheet-editprof');
+}
+function countBio(){ $('ep-cnt').textContent = $('ep-bio').value.length+'/80'; }
+function saveProfile(){
+  const n=$('ep-name').value.trim(), h=$('ep-h').value.trim().replace(/[^a-z0-9._]/gi,'').toLowerCase();
+  if(!n){ toast('A name is the one thing this needs'); return; }
+  if(!h){ toast('Pick a handle'); return; }
+  const p=PEOPLE[ME];
+  p.name=n; p.short=n.split(' ')[0]; p.h=h; p.bio=$('ep-bio').value.trim();
+  closeSheets(); renderMe(); toast('Saved');
+}
+/* Four events make a notification, so there are four switches. */
+let NOTIF={follow:1,like:1,save:1,comment:1};
+const NOTIFROWS=[['follow','New followers'],['like','Likes'],['save','Saves'],['comment','Comments']];
+function renderNotif(){
+  $('nt-rows').innerHTML = NOTIFROWS.map(([k,label])=>
+    `<div class="srow" onclick="toggleNotif('${k}')">${label}<span class="tog ${NOTIF[k]?'on':''}"></span></div>`).join('');
+}
+function toggleNotif(k){ NOTIF[k]=NOTIF[k]?0:1; save(); renderNotif(); refreshBell(); }
+function sendFeedback(){
+  const v=($('fb-t').value||'').trim();
+  if(!v){ toast('Write something first'); return; }
+  $('fb-t').value=''; closeSheets(); toast('Sent · thank you');
+}
+/* The brief is specific about this: hidden at once, erased seven days later,
+   and signing back in during those days cancels it. */
+function askDeleteAccount(){
+  closeSheets();
+  const n=filed().length, c=COLLS.length, b=BOARDS.length;
+  confirmThen('Delete your account?',
+    n+' photograph'+(n===1?'':'s')+', '+c+' collection'+(c===1?'':'s')+' and '+b+' board'+(b===1?'':'s')+
+    ' go. It is hidden straight away and erased seven days from now — opening ari again before then cancels it.',
+    'Delete', ()=>{
+      IMGS.forEach(i=>dbDel(i.id));
+      ['colls','boards','imgs','seen','coll','me','cv','follow','fans','pend','firstpub','taught','notif']
+        .forEach(k=>{ try{ localStorage.removeItem('ari2-'+k); }catch(e){} });
+      location.reload();
+    });
 }
 function openPeopleList(which){
   const ids = which==='following' ? [...FOLLOW] : FANS.map(f=>f.by);
@@ -3345,17 +3418,6 @@ function beSomebody(id){
   go('s-library'); toast(id==='me'?'Back to you':'You are '+who(id).name+' now');
 }
 function leaveGuest(){ beSomebody('me'); }
-function resetAll(){
-  closeSheets();
-  confirmThen('Reset everything?','Every image, collection and board goes. There is no undo.','Reset',()=>{
-    IMGS.forEach(i=>dbDel(i.id));
-    localStorage.removeItem('ari2-colls'); localStorage.removeItem('ari2-boards');
-    localStorage.removeItem('ari2-imgs'); localStorage.removeItem('ari2-seen');
-    localStorage.removeItem('ari2-coll'); localStorage.removeItem('ari2-follow');
-    localStorage.removeItem('ari2-fans'); localStorage.removeItem('ari2-pend');
-    location.reload();
-  });
-}
 
 /* A swipe with something open closes it rather than navigating — the same
    thing the scrim does, which is what the gesture means at that moment. */
@@ -3381,8 +3443,10 @@ addEventListener('popstate', e=>{
   IMGS.forEach(i=>{ if(i.seed) i.src=SEEDIMG[i.id.replace('seed_','')]; });
   plantSeed();
   IMGS = IMGS.filter(i=>i.src);          // an image with no file is a ghost
-  /* ?as=jieun opens the prototype as that person, so two windows side by side
-     show the owner's screen and the guest's without touching a menu. */
+  /* ?as=jieun still opens the prototype as that person — two windows side by
+     side show both halves of a shared collection. It has no button anywhere:
+     this build goes to real people, and a product with a developer menu in
+     its settings is not one. */
   let want=null;
   try{
     const u=new URLSearchParams(location.search);
