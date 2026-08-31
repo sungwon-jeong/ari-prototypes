@@ -23,7 +23,7 @@
 :root{
   --bg:#FFFFFF; --surface:#F2F2F2; --surface2:#E7E7E7; --line:#ECECEC;
   --ink:#111111; --soft:#8A8A8E; --faint:#C6C6CB;
-  --mark:#325788; --amber:#D9A45A; --red:#E5484D;
+  --mark:#325788; --red:#E5484D; --gold:#F5C24B;
   /* on a photograph, where everything has to hold against the picture */
   --onphoto:rgba(255,255,255,.86); --scrim:rgba(17,17,17,.55);
   /* Four. Eighteen values, including three different ways of writing a pill,
@@ -145,11 +145,11 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 /* who else is in here, beside the name it belongs to */
 .faces{display:flex;align-items:center;flex:none;margin-right:4px}
 .faces:empty{display:none}
-.faces .av{margin-left:-8px;box-shadow:0 0 0 2px var(--bg)}
+.faces .av{margin-left:-9px;box-shadow:0 0 0 2px var(--bg)}
 .faces .av:first-child{margin-left:0}
 .faces .more2{display:inline-flex;align-items:center;justify-content:center;
-  width:24px;height:24px;border-radius:50%;background:var(--surface);color:var(--soft);
-  font-size:var(--photo-badge);font-weight:var(--wb);margin-left:-8px;
+  min-width:26px;height:26px;padding:0 5px;border-radius:var(--r-pill);background:var(--surface);
+  color:var(--soft);font-size:var(--photo-badge);font-weight:var(--wm);margin-left:-9px;
   box-shadow:0 0 0 2px var(--bg)}
 .inv{flex:none;display:flex;align-items:center;gap:6px;padding:0 var(--edge) 10px;font-size:var(--t4);color:var(--soft)}
 .inv .ic{width:14px;height:14px}
@@ -219,6 +219,13 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .bcell:active{opacity:.62}
 .bq{aspect-ratio:9/16;display:grid;gap:2px;padding:2px;background:var(--line);
   border-radius:var(--r-sm);overflow:hidden}
+.bstar{position:absolute;right:6px;top:6px;z-index:3;width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:var(--bg);
+  background:rgba(17,17,17,.42);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.bstar .ic{width:17px;height:17px;stroke-width:1.7}
+.bstar.on{background:rgba(17,17,17,.55)}
+.bstar.on .ic{color:var(--gold)}
+.bq{position:relative}
 .bq.fit img{object-fit:contain}
 .bq .hole{background:rgba(0,0,0,.05);border-radius:var(--r-sm)}
 .draftchip{display:inline-block;margin-left:7px;padding:2px 7px;border-radius:var(--r-pill);
@@ -299,8 +306,13 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .lsay{background:rgba(17,17,17,.82);color:var(--bg);font-size:var(--t4);
   padding:7px 13px;border-radius:var(--r-pill);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.mkbar{flex:none;display:flex;align-items:center;gap:6px;width:296px;margin:0 auto;
+.mkbar{flex:none;display:flex;align-items:center;width:296px;margin:0 auto;
   padding:8px 0 calc(var(--safeB) + 16px)}
+.mkset{flex:1;display:flex;align-items:center;gap:6px}
+/* A blue edge on the frame, so the mode you are in is on the picture rather
+   than only in the word at the top. */
+.hold.editing{box-shadow:0 0 0 2px var(--mark)}
+.hold.nomarks .mark,.hold.nomarks svg{display:none}
 .rnd{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.13);color:var(--bg);
   display:flex;align-items:center;justify-content:center;flex:none}
 .tbtn{height:44px;padding:0 14px;border-radius:var(--r-pill);background:rgba(255,255,255,.13);
@@ -398,7 +410,9 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .qc img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .qc.drag{opacity:.5}
 .qc.over{outline:2px solid var(--mark);outline-offset:-2px}
-.qc.pick{outline:2px solid var(--amber);outline-offset:-2px}
+/* The cell you tapped to replace. Blue, like the dashes on the others and
+   like the bar — the amber was the last of a palette nothing else used. */
+.qc.pick{outline:2px solid var(--mark);outline-offset:-2px}
 /* A comment that says “the third one” had nowhere to point. These two put
    the response on the photograph instead of describing which one it was. */
 /* Two round buttons on each of six cells is twelve pieces of furniture over
@@ -436,7 +450,6 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 /* The amber came from an old palette and did nothing else in the app. This
    mode draws blue dashes on every cell; the button is the same blue. */
 .pill2.arm{background:var(--mark);color:var(--bg)}
-.pill2.on{background:var(--amber);color:var(--bg)}
 .pill2.main{background:var(--ink);color:var(--bg)}
 .pill2:active{opacity:.6}
 .swapstrip{display:flex;gap:6px;overflow-x:auto;padding:0 var(--edge);scrollbar-width:none}
@@ -609,6 +622,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .pbio{font-size:var(--t3);line-height:1.5;padding-top:10px}
 .pstat{display:flex;gap:7px;padding-top:14px;font-size:var(--t3);color:var(--soft)}
 .pstat b{color:var(--ink);font-weight:var(--wm)}
+.pstat span:not(:nth-child(2)){cursor:pointer}
 /* Editing your own line was buried in a menu. Both references put it here. */
 .pbtn{margin-top:14px;height:36px;padding:0 18px;border-radius:var(--r-pill);
   border:1px solid var(--faint);font-size:var(--t3);font-weight:var(--wm);color:var(--ink)}
@@ -729,7 +743,6 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="hd">
     <h1 id="lib-title"></h1>
     <span class="r" style="gap:18px">
-      <button class="hglyph" id="me-share" onclick="shareInvite()" aria-label="Share your invite link"></button>
       <button class="hglyph" id="me-more" onclick="openSheet('sheet-profile')" aria-label="Menu"></button></span></div>
   <div id="me-head"></div>
   <div class="segrow" id="me-seg"></div>
@@ -849,10 +862,18 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     <p class="hint" id="mkhint">Tap a spot, or draw round something</p>
   </div>
   <div class="mkbar">
-    <button class="rnd" onclick="undoMark()" aria-label="Undo" id="undo-ic"></button>
-    <button class="tbtn" onclick="openCrop()"><span id="crop-ic"></span>Crop</button>
-    <span class="mkcount" id="mk-count"></span>
-    <button class="save" onclick="markSave()" id="mk-save">Done</button>
+    <!-- Looking. Nothing here changes the photograph. -->
+    <span class="mkset" id="mkbar-view">
+      <button class="rnd" onclick="toggleViewMarks()" aria-label="Hide the marks" id="vhide"></button>
+      <button class="save" onclick="enterEdit()" id="mk-note">＋ Note</button>
+    </span>
+    <!-- Marking. -->
+    <span class="mkset" id="mkbar-edit" style="display:none">
+      <button class="rnd" onclick="undoMark()" aria-label="Undo" id="undo-ic"></button>
+      <button class="tbtn" onclick="openCrop()"><span id="crop-ic"></span>Crop</button>
+      <span class="mkcount" id="mk-count"></span>
+      <button class="save" onclick="markSave()" id="mk-save">Done</button>
+    </span>
   </div>
 </section>
 
@@ -956,6 +977,14 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     onclick="deleteCollection()"><span id="tr-ic"></span>Delete collection</div>
 </div>
 
+<!-- Inviting is a search. A list of every person in the app is a list that
+     works at seven and not at a hundred. -->
+<div class="sheet" id="sheet-invite">
+  <div class="grab"></div><div class="sh">Invite someone</div>
+  <div class="sfield"><input id="iv-q" placeholder="Search by name or handle" autocomplete="off"></div>
+  <div id="iv-rows"></div>
+</div>
+
 <div class="sheet" id="sheet-people">
   <div class="grab"></div><div class="sh" id="pe-h">People</div>
   <div id="pe-rows"></div>
@@ -1013,11 +1042,9 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 </div>
 
 <div class="sheet" id="sheet-profile">
-  <div class="grab"></div><div class="sh" id="pr-h">Sungwon</div>
+  <div class="grab"></div><div class="sh" id="pr-h">Settings</div>
   <!-- Your Public collection was a row here and a card on the Collections
        tab. One of them had to go, and this was the copy nobody would find. -->
-  <div class="srow" onclick="shareInvite()"><span id="pr-sh"></span>Share your invite link</div>
-  <div id="pr-following"></div>
   <div class="protolab">Prototype only · be somebody else</div>
   <div id="pr-as"></div>
   <div class="sp" style="padding-top:10px">Or open <b>?as=jieun</b> on the end of the address to
@@ -1099,6 +1126,8 @@ const I = {
   mark:  svg('<path d="M5.7 5h12.6v15l-6.3-4.1L5.7 20z"/>'),
   close: svg('<path d="M7 7l10 10M17 7L7 17"/>'),
   note:  svg('<path d="M5 6.5h14M5 12h14M5 17.5h9"/>'),
+  star:  svg('<path d="M12 4.6l2.3 4.7 5.2.8-3.75 3.65.89 5.16L12 16.47l-4.64 2.44.89-5.16L4.5 10.1l5.2-.8z"/>'),
+  starF: '<svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 4.6l2.3 4.7 5.2.8-3.75 3.65.89 5.16L12 16.47l-4.64 2.44.89-5.16L4.5 10.1l5.2-.8z"/></svg>',
   plus:  svg('<path d="M12 5.5v13M5.5 12h13"/>'),
   grid:  svg('<rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/>'),
   list:  svg('<rect x="4" y="5" width="5" height="5" rx="1.4"/><rect x="4" y="14" width="5" height="5" rx="1.4"/><path d="M12 7.5h8M12 16.5h8"/>'),
@@ -1123,9 +1152,8 @@ function paintIcons(){
   $('nb-al').insertAdjacentHTML('afterbegin', I.bell);
   put('mk-back',I.back); put('mk-more',I.more); put('bd-back',I.back); put('bd-more',I.more);
   put('fd-back',I.back); put('lib-more',I.more);
-  put('me-more',I.menu); put('me-share',I.share); put('c-back',I.back);
+  put('me-more',I.menu); put('c-back',I.back);
   put('gl-ic',I.globe,'s'); put('pe-back',I.back);
-  put('pr-sh',I.share,'s');
   put('sel-start',I.check); put('pe-more',I.more); put('sr-back',I.back);
   put('bd-post',I.send,'s'); put('cs-post',I.send,'s');
   put('bl-ic',I.link,'s'); put('ns-del',I.trash,'s');
@@ -1390,6 +1418,7 @@ function openSheet(id){
   if(id==='sheet-coll')     renderCollSheet();
   if(id==='sheet-collmenu') renderCollMenu();
   if(id==='sheet-people')   renderPeople();
+  if(id==='sheet-invite')   renderInvite();
   if(id==='sheet-board')    renderBoardSheet();
   if(id==='sheet-image')    renderImageSheet();
   if(id==='sheet-profile')  renderProfile();
@@ -1485,7 +1514,9 @@ function impInto(cid){
 /* Which of these is worth saying something about — asked once for
    the whole batch, not once per photograph. */
 let _run=[], _runIx=0, _runPick=new Set();
-function startRun(ids){
+/* Choosing photographs to mark is asking to mark them, whether it is six or
+   one — the mode comes from the way in, not from how many. */
+function startRun(ids){ _view=[]; _viewIx=0; MKEDIT=true;
   _runPick=new Set(); _run=ids;
   /* The photographs have just landed in a collection, so that is the screen
      to ask the question on — not a page above it. */
@@ -1549,7 +1580,6 @@ function renderMe(){
   $('gbar').style.display = guest() ? 'flex' : 'none';
   if(guest()) $('gbar-t').innerHTML = 'You are <b>'+esc(who(ME).name)+'</b> · you can comment';
   $('me-more').style.display = guest() ? 'none' : 'flex';
-  $('me-share').style.display = guest() ? 'none' : 'flex';
   /* The handle sits under the name, where both references put it. The bar
      keeps one glyph at each end, which is why neither is stranded. */
   $('lib-title').textContent = guest() ? 'Shared with you' : '';
@@ -1586,12 +1616,6 @@ function setMeTab(t){ UI.me=t; save(); renderMe(); }
 function editProfile(){
   closeSheets();
   askName('Your one line', who(ME).bio||'', v=>{ PEOPLE[ME].bio=v; renderMe(); });
-}
-function shareInvite(){
-  closeSheets();
-  const url='https://ari.app/join?from='+(who(ME).h||ME);
-  try{ const r=navigator.clipboard.writeText(url); if(r&&r.catch) r.catch(()=>{}); }catch(e){}
-  toast('Invite link copied · '+url.replace('https://',''));
 }
 function setCollView(v){ if(UI.cv===v) return; UI.cv=v; save(); renderMe(); }
 function renderCollGrid(cols){
@@ -1673,9 +1697,14 @@ function renderColl(){
      collection's name, and the guest bar at the top already says the rest. */
   const others = c ? c.members.filter(m=>m!==c.owner) : [];
   $('invline').style.display = 'none';
+  /* Two and a count from four onward, so the cluster is one width whether
+     there is one person in here or twenty, and the buttons beside it never
+     move. */
   $('c-faces').innerHTML = (c && !_pickMode && others.length)
-    ? others.slice(0,3).map(m=>avatar(m,24)).join('')
-      + (others.length>3?`<span class="more2">+${others.length-3}</span>`:'')
+    ? (others.length<=3
+        ? others.map(m=>avatar(m,26)).join('')
+        : others.slice(0,2).map(m=>avatar(m,26)).join('')
+          + `<span class="more2">+${Math.min(99,others.length-2)}</span>`)
     : '';
 
   if(c && UI.tab==='boards' && !_pickMode){ renderBoardList(c,boards); return; }
@@ -1711,12 +1740,19 @@ function emptyGrid(){
       : 'Tap ＋ to take a photo or choose from your library.'}</div>`;
 }
 function renderBoardList(c, boards){
-  const cells = boards.sort((a,b)=>b.made-a.made).map(b=>{
+  /* Starred boards first, in the order they were starred; then the rest,
+     newest first. A star is a decision about order, so the order it makes
+     is the order the decisions were made in. */
+  const cells = boards.slice().sort((a,b)=>
+      (a.star?0:1)-(b.star?0:1) || (a.star ? a.star-b.star : b.made-a.made)
+    ).map(b=>{
     const cm=(b.comments||[]).length;
     return `<a class="bcell" onclick="openBoard('${b.id}')">
       <span class="bq n${b.layout||b.cells.length}${b.fit?' fit':''}"
         style="background:${b.fit?(b.bg||'#FFFFFF'):'var(--line)'}">${
-        b.cells.map(id=>id?`<img src="${src(id)}" alt="">`:`<span class="hole"></span>`).join('')}</span>
+        b.cells.map(id=>id?`<img src="${src(id)}" alt="">`:`<span class="hole"></span>`).join('')}
+        ${guest()?'':`<button class="bstar ${b.star?'on':''}" aria-label="Keep at the top"
+          onclick="event.stopPropagation();starBoard('${b.id}')">${b.star?I.starF:I.star}</button>`}</span>
       <span class="bnm">${esc(b.name)}${isDraft(b)?'<span class="draftchip">Draft</span>':''}</span>
       <span class="bsub">${new Date(b.made).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}${cm?' · '+cm+' comment'+(cm>1?'s':''):''}</span>
     </a>`;
@@ -1729,7 +1765,9 @@ function renderBoardList(c, boards){
     `<a class="bcell bnew" onclick="newBoard()">
       <span class="bq newq">${I.plus}<span>New board</span></span></a>`;
   $('coll-body').innerHTML = `<div class="pad">
-    ${(cells.length||maker) ? `<div class="bgrid">`+maker+cells.join('')+`</div>` : ''}
+    ${/* The maker goes last, as it does on the collections tab — otherwise a
+          board you starred to the top is still second. */''}
+    ${(cells.length||maker) ? `<div class="bgrid">`+cells.join('')+maker+`</div>` : ''}
     ${cells.length||maker ? '' : `<div class="empty" style="grid-column:auto"><b>No boards yet</b>
           A board is two, four or six images from this collection, seen together.
           <br><span>“${esc(c.name)}” has ${n} image${n===1?'':'s'} — a board needs at least two.</span></div>`}
@@ -1832,11 +1870,29 @@ function renderPeople(){
           <div class="srow swipe-f" data-rm="${id}">${avatar(id,30)}${esc(who(id).name)}
             <span class="k">Can comment</span></div></div>`).join('');
   bindSwipes();
-  const rest=switchable().filter(id=>id!=='me'&&!c.members.includes(id));
-  $('pe-invite').innerHTML = rest.length
-    ? `<div class="protolab">Invite</div>` + rest.map(id=>
-      `<div class="srow" onclick="addMember('${id}')">${avatar(id,30)}${esc(who(id).name)}<span class="k">Invite</span></div>`).join('')
-    : '';
+  /* Listing everybody in the app is a list that works at seven people and
+     not at a hundred. One row, and a search behind it. */
+  $('pe-invite').innerHTML =
+    `<div class="srow" style="border-top:8px solid var(--surface)"
+       onclick="openInvite()"><span id="iv-ic"></span>Invite someone</div>`;
+  put2('iv-ic', I.person, 's');
+}
+const put2=(id,ic,c)=>{const e=$(id); if(e) e.innerHTML = c?ic.replace('class="ic"','class="ic '+c+'"'):ic;};
+function openInvite(){
+  $('iv-q').value=''; renderInvite(); openSheet('sheet-invite');
+  setTimeout(()=>$('iv-q').focus(),220);
+}
+function renderInvite(){
+  const c=coll(UI.coll); if(!c) return;
+  const q=($('iv-q').value||'').trim().toLowerCase();
+  const rest=Object.keys(PEOPLE)
+    .filter(id=>id!==ME && id!=='visitor' && !c.members.includes(id))
+    .filter(id=>!q || who(id).name.toLowerCase().includes(q) || (who(id).h||'').includes(q));
+  $('iv-rows').innerHTML = rest.length
+    ? rest.map(id=>`<div class="srow" onclick="addMember('${id}')">${avatar(id,30)}
+        <span>${esc(who(id).name)}<span class="sub" style="display:block">@${esc(who(id).h||id)}</span></span>
+        <span class="k">Invite</span></div>`).join('')
+    : `<div class="sp">${q?'Nobody by that name.':'Everybody you know is already here.'}</div>`;
 }
 function addMember(id){ const c=coll(UI.coll);
   if(!c.members.includes(id)) c.members.push(id);
@@ -1919,7 +1975,10 @@ function tileTap(id){
     }
     syncPick(); renderLibrary(); return;
   }
-  openMark(id);
+  /* Into the viewer, carrying the rest of what is on screen so it can be
+     paged through. */
+  const list=[...document.querySelectorAll('#coll-body .tile,#lib-body .tile')].map(t=>t.dataset.id);
+  openViewer(list.length?list:[id], Math.max(0,list.indexOf(id)));
 }
 let _hold=null, _from=null, _justHeld=null, _sweep=false;
 function tileDown(id,e){
@@ -2011,23 +2070,48 @@ let MKRO=false;
 /* Where marking was entered from, so leaving returns there. With a screen
    per collection, “back to the library” is no longer one place. */
 let _markFrom='s-coll';
+/* Tapping a photograph used to arm a pen. Looking and marking are different
+   things, and the one you do far more often was the one that could not be
+   done without changing something. */
+let MKEDIT=false, _view=[], _viewIx=0;
+function openViewer(ids, ix){
+  _view = ids.slice(); _viewIx = Math.max(0, ix);
+  MKEDIT=false; openMark(_view[_viewIx]);
+}
+function viewStep(d){
+  if(MKEDIT || _view.length<2) return;
+  const n=_viewIx+d; if(n<0||n>=_view.length) return;
+  _viewIx=n; openMark(_view[n]);
+}
+function enterEdit(){ MKEDIT=true; openMark(MK.id); }
+function leaveEdit(){
+  if(_editing!=null) closeNote();
+  commitMarks(); MKEDIT=false; openMark(MK.id);
+}
 function openMark(id){
   const im=img(id); if(!im) return;
   if(UI.screen!=='s-mark' && UI.screen!=='s-crop') _markFrom=UI.screen;
   MK={ id, marks: JSON.parse(JSON.stringify(im.marks||[])) };
   $('mkimg').src=im.src;
   const inRun=_run.length>1;
-  $('mk-title').textContent = inRun ? ((_runIx+1)+' of '+_run.length)
-    : ((im.marks||[]).length ? (im.marks.length+(im.marks.length===1?' note':' notes')) : 'Mark');
   const ro = MKRO = !canEdit(id);
+  if(ro) MKEDIT=false;
+  const editing = MKEDIT && !ro;
+  setMkTitle();
   $('mk-more').style.display = ro ? 'none' : 'flex';
+  $('mkhold').classList.toggle('editing', editing);
+  $('mk-back').innerHTML = editing && !inRun ? I.close : I.back;
   document.querySelector('#s-mark .mkbar').style.display = ro ? 'none' : 'flex';
+  $('mkbar-view').style.display = editing ? 'none' : 'flex';
+  _viewHide=false; $('mkhold').classList.remove('nomarks');
+  $('vhide').innerHTML = I.eyeOff.replace('class="ic"','class="ic s"');
+  $('mkbar-edit').style.display = editing ? 'flex' : 'none';
   /* Read-only: the screen stops calling itself Mark and stops telling you to
      tap a spot. Offering an action that will not happen is worse than
      offering none — the tap lands, nothing appears, and you assume it broke. */
   /* Once, on the first photograph anybody marks. */
   const taught = (()=>{ try{ return localStorage.getItem('ari2-taught')==='1'; }catch(e){ return true; } })();
-  const teach = !ro && !taught && !(im.marks||[]).length;
+  const teach = editing && !taught && !(im.marks||[]).length;
   $('mklesson').style.display = teach ? 'flex' : 'none';
   /* Save read as “save this note”, so people pressed it after one mark and
      were carried off the photograph they were still working on. */
@@ -2036,10 +2120,7 @@ function openMark(id){
   paintMarks();
   /* After paintMarks, which sets it too — the lesson already says this, and
      saying it twice on one screen is worse than not saying it. */
-  $('mkhint').style.display = (ro||teach) ? 'none' : $('mkhint').style.display;
-  if(ro){
-    $('mk-title').textContent = im.by===ME ? 'Image' : (who(im.by).short + '’s');
-  }
+  $('mkhint').style.display = (!editing||teach) ? 'none' : $('mkhint').style.display;
   renderImgComments();
   go('s-mark');
   requestAnimationFrame(()=>fitStage('mkhold','mkimg',26));
@@ -2063,6 +2144,12 @@ function fitStage(holdId,imgId,pad){
 const pathD = p => p.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join(' ');
 const centroid = p => { const s=p.reduce((a,q)=>({x:a.x+q.x,y:a.y+q.y}),{x:0,y:0});
   return {x:s.x/p.length,y:s.y/p.length}; };
+let _viewHide=false;
+function toggleViewMarks(){
+  _viewHide=!_viewHide;
+  $('mkhold').classList.toggle('nomarks',_viewHide);
+  $('vhide').innerHTML = (_viewHide?I.eye:I.eyeOff).replace('class="ic"','class="ic s"');
+}
 function endLesson(){
   const l=$('mklesson');
   if(l && l.style.display!=='none'){ l.style.display='none';
@@ -2076,10 +2163,19 @@ function paintMarks(){
   $('mksvg').innerHTML = MK.marks.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
   MK.marks.forEach((m,i)=>hold.appendChild(markEl(m,i)));
   if(MKRO) return;
-  const inRun=_run.length>1;
-  $('mk-title').textContent = inRun ? ((_runIx+1)+' of '+_run.length)
-    : (MK.marks.length ? (MK.marks.length+' / '+MARK_CAP) : 'Mark');
+  setMkTitle();
   $('mkhint').style.display = MK.marks.length ? 'none' : '';
+}
+/* One author for the title. It had two — openMark and paintMarks — and
+   paintMarks ran second, so every state openMark set was overwritten. */
+function setMkTitle(){
+  if(!MK) return;
+  const im=img(MK.id)||{}, inRun=_run.length>1, editing=MKEDIT && !MKRO;
+  $('mk-title').textContent = editing
+    ? (inRun ? ((_runIx+1)+' of '+_run.length)
+       : (MK.marks.length ? ('Marking · '+MK.marks.length+'/'+MARK_CAP) : 'Marking'))
+    : (_view.length>1 ? ((_viewIx+1)+' of '+_view.length)
+       : (im.by===ME ? 'Image' : (who(im.by).short + '’s')));
 }
 /* Anchored from whichever edge leaves room: an absolutely positioned
    box can only be as wide as the space to its right, so a mark near
@@ -2135,8 +2231,17 @@ function bindMark(el){
              y:Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100)) }; };
   hold.addEventListener('dragstart',e=>e.preventDefault());
   hold.addEventListener('pointercancel',()=>{ drawing=false; paintMarks(); });
+  /* Looking: a horizontal drag turns the page. Marking: the same drag draws,
+     which is why the two cannot share a screen without saying which is on. */
+  let sx=0, sy=0, swiping=false;
+  hold.addEventListener('pointerdown',e=>{ if(MKEDIT) return; sx=e.clientX; sy=e.clientY; swiping=true; });
+  hold.addEventListener('pointerup',e=>{
+    if(!swiping) return; swiping=false;
+    const dx=e.clientX-sx, dy=e.clientY-sy;
+    if(Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.6) viewStep(dx<0?1:-1);
+  });
   hold.addEventListener('pointerdown',e=>{
-    if(!MK||!canEdit(MK.id)) return;
+    if(!MK||!canEdit(MK.id)||!MKEDIT) return;
     endLesson();   /* the first touch is the lesson learned */
     e.preventDefault();
     if(MK.marks.length>=MARK_CAP){ toast('Up to '+MARK_CAP+' notes on an image'); return; }
@@ -2203,6 +2308,10 @@ function commitMarks(){
 }
 function markSave(){
   if(_editing!=null) closeNote();
+  /* A run is a batch you asked to mark, and Done finishes it. Outside one,
+     Done finishes marking and hands you back the photograph rather than
+     throwing you out of it. */
+  if(!_run.length && MKEDIT){ leaveEdit(); return; }
   commitMarks(); nextOrLeave();
 }
 /* One thread per image, for the people on its collection. A board's thread is
@@ -2224,6 +2333,8 @@ function renderImgComments(){
 function markBack(){
   if(_editing!=null) closeNote();
   commitMarks();
+  /* In marking, back is a close: it leaves the mode, not the photograph. */
+  if(MKEDIT && !_run.length){ leaveEdit(); return; }
   if(_run.length>1 && _runIx>0){ _runIx--; openMark(_run[_runIx]); return; }
   MK=null; _run=[]; _runIx=0;
   if(_cameFromAngles){ _cameFromAngles=false; go('s-angles'); return; }
@@ -2587,7 +2698,8 @@ function cellTap(i){
   if(_swapPick!==null){ _swapPick=i; renderQuad(); openSwapStrip(i); return; }
   /* An empty slot is the one thing on a board that says what to do next. */
   if(!CURB.cells[i]){ _swapPick=i; openSwapStrip(i); return; }
-  _cameFromBoard=true; openMark(CURB.cells[i]);
+  _cameFromBoard=true;
+  openViewer(CURB.cells.filter(Boolean), CURB.cells.filter(Boolean).indexOf(CURB.cells[i]));
 }
 function startSwap(){
   _swapPick=-1; renderQuad(); renderBoardBar();
@@ -2671,6 +2783,14 @@ function toggleFit(){ CURB.fit=!CURB.fit; renderBoardSheet(); bdTouched(); }
 function setBg(c){ CURB.bg=c; renderBoardSheet(); bdTouched(); }
 /* Growing borrows from the collection; shrinking drops what no longer fits,
    which is a thing to be asked about rather than done quietly. */
+/* The value is when it was starred, so the order they were starred in is
+   recoverable — a boolean would only have told us that it was. */
+function starBoard(id){
+  const b=board(id); if(!b) return;
+  b.star = b.star ? 0 : Date.now();
+  save(); renderColl();
+  toast(b.star ? 'Kept at the top' : 'No longer at the top');
+}
 function toggleBoardLink(){
   CURB.link=!CURB.link; save(); renderBoardSheet();
   toast(CURB.link ? 'Anyone with the link can read it and comment' : 'Link off');
@@ -2709,6 +2829,7 @@ function addComment(){
 }
 $('cmt-input').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addComment();} });
 $('cs-in').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addSheetComment();} });
+$('iv-q').addEventListener('input',renderInvite);
 /* Grey until there is something to send, so what the button responds to is
    visible rather than guessed. */
 const SENDPAIRS=[['cs-in','cs-post'],['cmt-input','bd-post']];
@@ -3113,10 +3234,12 @@ function personHead(p, n, on){
     <div class="pid">${avatar(p.id,64)}
       <div><div class="pnm">${esc(p.name)}</div>
         <div class="phdl">@${esc(p.h||p.id)}</div></div></div>
+    ${/* A list of people is not a setting. It hangs off the number that
+          counts them, which is where anybody would look for it. */''}
     <div class="pstat">
-      <span><b>${mine ? FANS.length : ((p.fol||0)+(on?1:0))}</b> followers</span>
+      <span onclick="openPeopleList('followers')"><b>${mine ? FANS.length : ((p.fol||0)+(on?1:0))}</b> followers</span>
       <span>·</span>
-      <span><b>${mine?FOLLOW.size:Math.max(0,Math.round((p.fol||0)/6))}</b> following</span>
+      <span onclick="openPeopleList('following')"><b>${mine?FOLLOW.size:Math.max(0,Math.round((p.fol||0)/6))}</b> following</span>
     </div>
     ${p.bio?`<div class="pbio">${esc(p.bio)}</div>`:''}
     ${mine
@@ -3192,7 +3315,9 @@ function renderSearch(){
         const hit=q ? (i.marks||[]).find(m=>(m.text||'').toLowerCase().includes(q)) : null;
         return `<div class="tile" onclick="${UI.scope==='mine'?`openMark('${i.id}')`:`openFoundFeed('${i.id}')`}">
           <img src="${i.src}" alt="">
-          ${(i.marks||[]).length?`<span class="dots">${'<i></i>'.repeat(Math.min(i.marks.length,3))}</span>`:''}
+          ${/* The grid's badge changed shape and this one was left behind,
+                showing an empty grey pill where the count should be. */
+            (i.marks||[]).length?`<span class="dots">${I.note}${i.marks.length}</span>`:''}
           ${hit&&hit.text?`<span class="hitnote">${esc(hit.text)}</span>`:''}
         </div>`; }).join('')+`</div>`
       : `<div class="empty" style="grid-column:auto">${q?'<b>Nothing matches</b>Notes, collection and board names are searched.':'<b>Search your notes</b>Type a word you wrote on an image.'}</div>`);
@@ -3200,14 +3325,20 @@ function renderSearch(){
 
 /* ═══ profile ══════════════════════════════════════════════ */
 function renderProfile(){
-  $('pr-h').textContent=who(ME).name;
-  $('pr-following').innerHTML = FOLLOW.size
-    ? [...FOLLOW].map(id=>`<div class="srow" onclick="closeSheets();openPerson('${id}')">
-        ${avatar(id,26)}${esc(who(id).name)}<span class="k">Following</span></div>`).join('') : '';
+  $('pr-h').textContent='Settings';
   $('pr-as').innerHTML=switchable().map(id=>
     `<div class="srow" onclick="beSomebody('${id}')">${avatar(id,28)}
       <span style="font-weight:${id===ME?600:400}">${esc(who(id).name)}</span>
       <span class="k">${id===ME?'You are this person':'Be them'}</span></div>`).join('');
+}
+function openPeopleList(which){
+  const ids = which==='following' ? [...FOLLOW] : FANS.map(f=>f.by);
+  $('po-h').textContent = which==='following' ? 'Following' : 'Followers';
+  $('po-rows').innerHTML = ids.length
+    ? ids.map(id=>`<div class="srow" onclick="closeSheets();openPerson('${id}')">
+        ${avatar(id,30)}${esc(who(id).name)}<span class="k">@${esc(who(id).h||id)}</span></div>`).join('')
+    : `<div class="sp">Nobody yet.</div>`;
+  openSheet('sheet-post');
 }
 function beSomebody(id){
   ME=id; closeSheets(); UI.coll=firstColl()||'';
