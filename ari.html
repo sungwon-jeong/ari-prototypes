@@ -42,12 +42,41 @@
   --r-pill:999px; --r-sm:6px; --r-md:12px; --r-lg:16px;   /* 16, because the September alerts card is 16 */
   /* Not a corner — the hand-drawn loop in the first-run lesson. */
   --r-loop:60% 40% 55% 45% / 45% 55% 45% 55%;
-  --r-card:12px;
+  --r-card:12px; --r-phone:34px;
   --shadow-float:0 8px 30px rgba(0,0,0,.12);
-  --safeT:env(safe-area-inset-top); --safeB:env(safe-area-inset-bottom);
+  /* A floor, so nothing ever sits flush against the edge. On a phone the
+     browser's own chrome usually fills these; when it hides itself, or the
+     app is on the home screen, this is what stands in. */
+  --safeT:max(env(safe-area-inset-top), 8px);
+  --safeB:max(env(safe-area-inset-bottom), 8px);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overscroll-behavior:none}
+/* Every screen, sheet, bar and toast here is position:fixed, which means the
+   browser window. On a phone that is exactly right. On a desktop it stretches
+   an app built for 390px across a monitor.
+   A transform on an ancestor makes it the containing block for the fixed
+   things inside it, so one line moves all nine layers into the frame without
+   touching any of them.
+   Translate only, never scale: a mark is stored from the difference between a
+   pointer coordinate and the picture's rect, and scaling the two apart puts
+   the pin somewhere the finger was not. */
+/* Every child of it is fixed, so on a phone it has no height of its own.
+   Nothing measures it, but a box of zero pixels is a thing waiting to be
+   measured by mistake. */
+#phone{height:100%}
+@media (min-width:760px) and (min-height:560px){
+  body{background:var(--surface);display:flex;align-items:center;justify-content:center}
+  /* Inside the frame there is no status bar and no home indicator, so the
+     two values every screen already reads are set to what a phone would have
+     given them. Nothing else changes: the screens were always spacing
+     themselves off these. */
+  #phone{--safeT:44px; --safeB:26px;
+    position:relative;transform:translateZ(0);
+    width:390px;height:min(844px, calc(100vh - 48px));
+    overflow:hidden;border-radius:var(--r-phone);background:var(--bg);
+    box-shadow:0 22px 60px rgba(0,0,0,.20), 0 0 0 1px var(--line)}
+}
 body{background:var(--bg);color:var(--ink);overflow:hidden;
   font-family:-apple-system,"SF Pro Text",Inter,"Helvetica Neue",sans-serif;
   -webkit-font-smoothing:antialiased;touch-action:manipulation;font-size:var(--t3);line-height:1.45}
@@ -718,6 +747,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
+<div id="phone">
 
 <!-- ══ YOU ════════════════════════════════════════════════
      The screen you land on is your own page — the same block a visitor
@@ -951,9 +981,10 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div id="imp-rows"></div>
 </div>
 
-  <div class="srow" onclick="newCollection()" style="color:var(--soft)">＋ New collection</div>
-</div>
-
+<!-- A row and a closing tag left behind by a sheet that was taken out. Body
+     absorbed the stray </div> and nothing looked wrong, until the app was put
+     inside a frame and that tag closed the frame two thirds of the way down
+     the file — every sheet after it fell outside. -->
 <div class="sheet" id="sheet-collmenu">
   <div class="grab"></div><div class="sh" id="cm-h">Collection</div>
   <div id="cm-people"></div>
@@ -1080,7 +1111,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A place to keep what you noticed, and to say what you noticed in it.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 1 Sep 22:11 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 1 Sep 23:27 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -3707,5 +3738,6 @@ addEventListener('popstate', e=>{
   go('s-library');
 })();
 </script>
+</div>
 </body>
 </html>
