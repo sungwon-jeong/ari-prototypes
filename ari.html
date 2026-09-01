@@ -286,12 +286,6 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .fimg .mark .badge{cursor:pointer}
 .hint{flex:none;text-align:center;color:rgba(255,255,255,.6);padding:14px 0 0;
   font-size:var(--t4);pointer-events:none}
-.capwrap{flex:none;display:flex;align-items:center;gap:8px;width:296px;margin:12px auto 0;
-  padding:0 2px 8px;border-bottom:1px solid rgba(255,255,255,.28)}
-.capwrap input{flex:1;background:none;border:0;color:var(--bg);font-size:var(--t3);
-  font-family:inherit;outline:none}
-.capwrap input::placeholder{color:rgba(255,255,255,.45)}
-.capwrap .cnt{flex:none;font-size:var(--photo-badge);color:rgba(255,255,255,.4)}
 /* the first-run lesson, over the photograph */
 .lesson{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:22px;z-index:8;pointer-events:none;
@@ -853,15 +847,6 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     </div>
     <p class="hint" id="mkhint">Tap a spot, or draw round something</p>
   </div>
-  <!-- A Mark is about one point. Some photographs have nothing to point at
-       and something to say anyway, and until now there was no way to say it —
-       the only door was “choose a spot”, which is a harder demand than the
-       brief makes. Either one lets a photograph out. -->
-  <div class="capwrap" id="mk-capwrap" style="display:none">
-    <input id="mk-cap" maxlength="70" placeholder="Say what you noticed"
-      autocomplete="off" oninput="capCount()" onblur="commitCap()">
-    <span class="cnt" id="mk-capcnt"></span>
-  </div>
   <p class="hint" id="mk-ro" style="display:none">Only whoever took this can mark it</p>
   <div class="mkbar">
     <!-- Three slots, and the white button sits in the middle one. It used to
@@ -1095,7 +1080,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A place to keep what you noticed, and to say what you noticed in it.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 1 Sep 15:59 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 1 Sep 18:32 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -2166,14 +2151,10 @@ function publishSelected(){
                      : (need.length===1?'It needs a line first':'They need a line first'));
   startPub();
 }
-function startPub(){
-  const id=_pubRun[_pubIx];
-  MKEDIT=true; openMark(id);
-  setTimeout(()=>$('mk-cap').focus(), 260);
-}
-function pubSkip(){ commitCap(); stepPub(); }
+function startPub(){ MKEDIT=true; openMark(_pubRun[_pubIx]); }
+function pubSkip(){ stepPub(); }
 function pubNext(){
-  commitCap(); commitMarks();
+  commitMarks();
   const im=img(_pubRun[_pubIx]);
   if(im && said(im)){ im.shared=true; im.sharedAt=Date.now(); firstPublish(im.id); save(); }
   stepPub();
@@ -2246,7 +2227,7 @@ function leaveEdit(){
 function openMark(id){
   const im=img(id); if(!im) return;
   if(UI.screen!=='s-mark' && UI.screen!=='s-crop') _markFrom=UI.screen;
-  MK={ id, marks: JSON.parse(JSON.stringify(im.marks||[])), cap: im.cap||'' };
+  MK={ id, marks: JSON.parse(JSON.stringify(im.marks||[])) };
   /* Assigning src re-runs the image, and a 1500px data URL decodes with a
      blank frame in the middle. openMark runs on every entry, exit and step,
      so the same photograph was flashing three times over one edit. */
@@ -2269,9 +2250,6 @@ function openMark(id){
   $('vhide').style.display = (im.marks||[]).length ? 'flex' : 'none';
   $('vhide').innerHTML = I.eyeOff.replace('class="ic"','class="ic s"');
   $('mkbar-edit').style.display = editing ? 'flex' : 'none';
-  $('mk-capwrap').style.display = editing ? 'flex' : 'none';
-  $('mk-cap').value = MK.cap||'';
-  capCount();
   /* Read-only: the screen stops calling itself Mark and stops telling you to
      tap a spot. Offering an action that will not happen is worse than
      offering none — the tap lands, nothing appears, and you assume it broke. */
@@ -2279,7 +2257,7 @@ function openMark(id){
   const taught = (()=>{ try{ return localStorage.getItem('ari2-taught')==='1'; }catch(e){ return true; } })();
   /* Not in a publish run: there the act is the line underneath, and a lesson
      about pinning points somewhere else. */
-  const teach = editing && !taught && !(im.marks||[]).length && !_pubRun.length;
+  const teach = editing && !taught && !(im.marks||[]).length;
   $('mklesson').style.display = teach ? 'flex' : 'none';
   /* Save read as “save this note”, so people pressed it after one mark and
      were carried off the photograph they were still working on. */
@@ -2481,18 +2459,14 @@ function undoMark(){ if(MK&&MK.marks.length){ MK.marks.pop(); commitMarks(); pai
    any other way threw them away. They are yours the moment you make them. */
 function commitMarks(){
   if(!MK) return;
-  const im=img(MK.id);
-  if(im && canEdit(MK.id)){ im.marks=JSON.parse(JSON.stringify(MK.marks)); im.cap=MK.cap||''; }
+  const im=img(MK.id); if(im && canEdit(MK.id)) im.marks=JSON.parse(JSON.stringify(MK.marks));
   save();
 }
-function capCount(){
-  if(MK) MK.cap=$('mk-cap').value;
-  $('mk-capcnt').textContent = ($('mk-cap').value.length||'') && ($('mk-cap').value.length+'/70');
-}
-function commitCap(){ if(!MK) return; MK.cap=$('mk-cap').value.trim(); commitMarks(); }
-/* Either one lets a photograph out: a mark with words on it, or a line about
-   the whole thing. */
-const said = im => !!im && (((im.marks||[]).some(m=>(m.text||'').trim())) || !!(im.cap||'').trim());
+/* One way to write on a photograph: put a mark on it. A caption was a second
+   door onto the same room — the same question in two fields on one screen —
+   and it was the easier door, which would have made the marks optional. The
+   mark is the only thing here that carries where you were looking. */
+const said = im => !!im && (im.marks||[]).some(m=>(m.text||'').trim());
 function markSave(){
   if(_editing!=null) closeNote();
   /* A run is a batch you asked to mark, and Done finishes it. Outside one,
@@ -2529,7 +2503,7 @@ function markBack(){
      screen, so _pubRun stayed loaded and the next photograph you opened
      anywhere in the app was still wearing Skip and Publish — and its Done
      ran the run's own step instead of finishing marking. */
-  if(_pubRun.length){ commitCap(); endPub('Left the rest as they are'); return; }
+  if(_pubRun.length){ endPub('Left the rest as they are'); return; }
   commitMarks();
   /* In marking, back is a close: it leaves the mode, not the photograph. */
   if(MKEDIT && !_run.length){ leaveEdit(); return; }
@@ -2716,7 +2690,7 @@ function toggleShare(){
      image whether anything was said refuses a photograph you have just
      written on. Ask the editor when the editor is open. */
   const written = MK && MK.id===im.id
-    ? (MK.marks||[]).some(m=>(m.text||'').trim()) || !!(MK.cap||'').trim()
+    ? (MK.marks||[]).some(m=>(m.text||'').trim())
     : said(im);
   if(!im.shared && !written){
     toast('Say something on it first — that is what people come for');
@@ -3159,9 +3133,8 @@ function feedCard(i){
       <span onclick="openComments('${i.id}')">${I.bubble}</span>
       <span class="keep ${saved?'saved':''}" onclick="saveFrom('${i.id}')">${I.mark}</span></div>
     ${countLine(i)}
-    ${(i.cap||noted.length)?`<div class="fnotes"><b>${esc(w.short)}</b>${
-        esc(i.cap || noted[0].text)}${
-        (i.cap?noted:noted.slice(1)).map(m=>`<span class="fn">${esc(m.text)}</span>`).join('')}</div>`:''}
+    ${noted.length?`<div class="fnotes"><b>${esc(w.short)}</b>${esc(noted[0].text)}${
+        noted.slice(1).map(m=>`<span class="fn">${esc(m.text)}</span>`).join('')}</div>`:''}
     ${cs.length>2?`<div class="fview" onclick="openComments('${i.id}')">View all ${cs.length} comments</div>`:''}
     ${cs.slice(-2).map(c=>`<div class="cmt"><b>${esc(who(c.by).short)}</b> ${esc(c.text)}</div>`).join('')}
     ${cs.length?'':`<div class="fview" onclick="openComments('${i.id}')">Add a comment</div>`}
