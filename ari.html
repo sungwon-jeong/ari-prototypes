@@ -1080,7 +1080,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A place to keep what you noticed, and to say what you noticed in it.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 1 Sep 18:32 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 1 Sep 22:11 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -1394,6 +1394,8 @@ function load(){
             {by:'doyun',  at:Date.now()-31*h},
             {by:'marta',  at:Date.now()-4*24*h}];
     }
+    BOARDS.forEach(b=>(b.comments||[]).forEach(c=>{
+      if(c.img===undefined && c.cell!==undefined) c.img=(b.cells||[])[c.cell]; }));
     COLLS.forEach(c=>{c.members=c.members||['me'];c.owner=c.owner||'me';});
     IMGS.forEach(i=>{i.marks=i.marks||[];i.likes=i.likes||[];i.saves=i.saves||[];
       i.comments=i.comments||[];i.by=i.by||'me';});
@@ -1820,7 +1822,7 @@ function renderBoardList(c, boards){
   const cells = boards.slice().sort((a,b)=>
       (a.star?0:1)-(b.star?0:1) || (a.star ? a.star-b.star : b.made-a.made)
     ).map(b=>{
-    const cm=(b.comments||[]).length;
+    const cm=boardTalk(b).length;
     return `<a class="bcell" onclick="openBoard('${b.id}')">
       <span class="bq n${b.layout||b.cells.length}${b.fit?' fit':''}"
         style="background:${b.fit?(b.bg||'#FFFFFF'):'var(--line)'}">${
@@ -2469,16 +2471,14 @@ function commitMarks(){
 const said = im => !!im && (im.marks||[]).some(m=>(m.text||'').trim());
 function markSave(){
   if(_editing!=null) closeNote();
-  /* A run is a batch you asked to mark, and Done finishes it. Outside one,
-     Done finishes marking and hands you back the photograph rather than
-     throwing you out of it — because you opened the photograph to look at it.
-     From a board you did not: you were arranging, you stepped in to say one
-     more thing, and the thing you are working on is the board. Done goes
-     back to it. */
-  if(!_run.length && MKEDIT){
-    if(_cameFromBoard && CURB){ commitMarks(); MKEDIT=false; _cameFromBoard=false;
-      MK=null; openBoard(CURB.id); return; }
-    leaveEdit(); return; }
+  /* Done means done, wherever you came from. It used to leave you on the
+     photograph when you had opened it on its own — which was meant kindly and
+     read as nothing happening: the screen came back almost identical, one pin
+     heavier, with the same button waiting. Coming back in is one tap from the
+     grid, so leaving costs less than staying did. */
+  if(!_run.length && MKEDIT && _cameFromBoard && CURB){
+    commitMarks(); MKEDIT=false; _cameFromBoard=false; MK=null;
+    openBoard(CURB.id); return; }
   commitMarks(); nextOrLeave();
 }
 /* One thread per image, for the people on its collection. A board's thread is
@@ -2519,6 +2519,10 @@ function nextOrLeave(){
   if(_cameFromAngles){ _cameFromAngles=false; _run=[]; go('s-angles'); return; }
   if(_run.length && _runIx<_run.length-1){ _runIx++; openMark(_run[_runIx]); return; }
   const fin=_run.length; _run=[]; _runIx=0;
+  /* Leaving means leaving the mode too. While Done handed the photograph
+     back this was done by leaveEdit; now that Done leaves, nothing was
+     clearing it and the next photograph opened already armed. */
+  MKEDIT=false;
   if(_cameFromBoard){ _cameFromBoard=false; openBoard(CURB.id); return; }
   go(BACKTO.includes(_markFrom) ? _markFrom : 's-coll');
   if(fin) toast('Saved');
@@ -2851,16 +2855,19 @@ function renderQuad(){
     const im=img(id)||{marks:[]}, ms=im.marks||[], noted=ms.filter(m=>m.text);
     const regions=ms.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
     const points=ms.filter(m=>m.kind==='point').map(m=>`<span class="pt" style="left:${m.x}%;top:${m.y}%"></span>`).join('');
-    const liked=(im.likes||[]).includes(ME), nc=(im.comments||[]).length;
+    const nc=boardThread(CURB, id).length;
     return `<div class="qc ${_swapPick===i?'pick':''}" data-i="${i}">
       <img src="${src(id)}" alt="">
       <svg class="ink" viewBox="0 0 100 100" preserveAspectRatio="none">${regions}</svg>
       ${points}<span class="n">${i+1}</span>
+      ${/* The heart wrote to the photograph's own likes — the same number the
+            feed shows — so somebody you sent a private board to could raise a
+            public count, and see it. It told you nothing either: no
+            notification, no list, just a heart you would have to reopen the
+            board to find. Saying which one is what a comment is for. */''}
       <span class="qacts">
-        <button class="qb ${liked?'on':''}" aria-label="Like"
-          onclick="likeCell(event,'${id}')">${I.heart.replace('class="ic"','class="ic s"')}${(im.likes||[]).length||''}</button>
         <button class="qb" aria-label="Comment"
-          onclick="commentCell(event,'${id}')">${I.bubble.replace('class="ic"','class="ic s"')}${nc||''}</button>
+          onclick="commentCell(event,${i})">${I.bubble.replace('class="ic"','class="ic s"')}${nc||''}</button>
       </span>
       ${/* The note was 12px, wrapped to two lines, and sat on top of the
             photograph the board exists to show. It is readable at full size,
@@ -2899,15 +2906,12 @@ function bindCells(){
       from=-1; moved=false; });
   });
 }
-function likeCell(e,id){
-  e.stopPropagation();
-  const im=img(id); if(!im) return;
-  im.likes=im.likes||[];
-  const k=im.likes.indexOf(ME);
-  if(k>=0) im.likes.splice(k,1); else im.likes.push(ME);
-  save(); renderQuad(); renderBoardBar();
-}
-function commentCell(e,id){ e.stopPropagation(); openComments(id); }
+/* A board's thread is about an arrangement and belongs to whoever holds the
+   link; a photograph's is public and belongs to anybody who found it. They
+   were one list, so a client's private note on a board appeared under that
+   photograph in Public, and a stranger's question in Public appeared on the
+   board you had sent a client. */
+function commentCell(e,i){ e.stopPropagation(); openComments(CURB.cells[i], i); }
 let _swapPick=null;
 function cellTap(i){
   if(_swapPick!==null){ _swapPick=i; renderQuad(); openSwapStrip(i); return; }
@@ -3020,7 +3024,8 @@ function firstShare(bid){
   _visitT=setTimeout(()=>{
     const b=board(bid); if(!b) return;
     b.comments=[...(b.comments||[]),
-      {id:'c'+uid(),by:'visitor',text:'The second one. Can we see it bigger?',at:Date.now()}];
+      {id:'c'+uid(),by:'visitor',text:'The second one. Can we see it bigger?',at:Date.now(),
+       img:b.cells[1]||b.cells[0]}];
     save(); refreshBell();
     if(document.querySelector('#s-alerts.on')) renderAlerts();
     toast('Somebody replied to your board', 'See', ()=>go('s-alerts'));
@@ -3167,12 +3172,28 @@ let FEEDSET=null;
 /* Flat, and no replies to replies. A thread turns a place for noticing into a
    place for arguing, and brings moderation with it. */
 let CMTON=null;
-function openComments(id){ CMTON=id; openSheet('sheet-comments');
+let CMTCELL=null;
+const cmtOnBoard = () => CMTCELL!==null && !!CURB;
+/* Keyed to the photograph, not to the position it happened to be in. Bound to
+   the slot, “this one” moved to a different dress the moment the board was
+   rearranged, and outlived the cell when the board was shrunk — still counted,
+   still notifying, no longer reachable. */
+const boardThread = (b, id) => (b.comments||[]).filter(c=>c.img===id);
+const boardTalk = b => (b.comments||[]).filter(c=>(b.cells||[]).includes(c.img));
+/* Which cell, or none — and it has to be set on every way in, or a comment
+   typed on a feed card would land on whichever board was open last. */
+function openComments(id, cell){ CMTON=id; CMTCELL = (cell===undefined ? null : cell);
+  openSheet('sheet-comments');
   setTimeout(()=>{ const el=$('cs-in'); if(el) el.focus(); },220); }
 function renderCommentSheet(){
   const i=img(CMTON); if(!i) return closeSheets();
-  const cs=i.comments||[];
-  $('cs-h').textContent = cs.length ? ('Comments · '+cs.length) : 'Comments';
+  const onb=cmtOnBoard();
+  const cs=(onb ? boardThread(CURB, CMTON) : (i.comments||[]));
+  /* Which board, and which of its photographs — the number is the slot it is
+     sitting in now, read fresh rather than remembered. */
+  const at=(CURB&&CURB.cells)?CURB.cells.indexOf(CMTON):-1;
+  $('cs-h').textContent = (onb ? ('On ' + esc(CURB.name) + (at>=0 ? (' · '+(at+1)) : '')) : 'Comments')
+    + (cs.length ? (' · '+cs.length) : '');
   /* Two rules, a heading and forty pixels of air around one sentence, for a
      thread with nothing in it. */
   $('cs-list').classList.toggle('bare', !cs.length);
@@ -3183,14 +3204,16 @@ function renderCommentSheet(){
         <span class="w">${ago(c.at)}</span><br>${esc(c.text)}</span></div>`).join('')
     : `<div class="none">Nothing yet</div>`;
   $('cs-av').innerHTML = avatar(ME,28);
-  $('cs-in').placeholder = i.by===ME ? 'Add a comment'
-    : ('Add a comment for '+(who(i.by).h||who(i.by).short)+'…');
+  $('cs-in').placeholder = onb ? 'Say something about this one'
+    : (i.by===ME ? 'Add a comment'
+    : ('Add a comment for '+(who(i.by).h||who(i.by).short)+'…'));
   $('cs-list').scrollTop = 9e5;
 }
 function addSheetComment(){
   const el=$('cs-in'), v=(el.value||'').trim(); if(!v) return;
   const i=img(CMTON); if(!i) return;
-  (i.comments=i.comments||[]).push({by:ME,text:v,at:Date.now()});
+  if(cmtOnBoard()) (CURB.comments=CURB.comments||[]).push({by:ME,text:v,at:Date.now(),img:CMTON});
+  else (i.comments=i.comments||[]).push({by:ME,text:v,at:Date.now()});
   el.value=''; save(); renderCommentSheet(); syncSend();
   if(document.querySelector('#s-feed.on')) repaintFeed();
   if(document.querySelector('#s-board.on')) renderQuad();
@@ -3334,7 +3357,7 @@ function alerts(){
        otherwise a visitor is told about a conversation they are not in. */
     const mine = isOwner(b.coll) || (b.comments||[]).some(c=>c.by===ME);
     if(!mine) return;
-    if(NOTIF.board) (b.comments||[]).filter(c=>c.by!==ME).forEach(c=>
+    if(NOTIF.board) boardTalk(b).filter(c=>c.by!==ME).forEach(c=>
       out.push({t:'comment',by:c.by,board:b.id,text:c.text,at:c.at}));
   });
   return out.sort((a,b)=>b.at-a.at);
