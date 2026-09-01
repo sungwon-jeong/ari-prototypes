@@ -219,9 +219,11 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .draftchip{display:inline-block;margin-left:7px;padding:2px 7px;border-radius:var(--r-pill);
   background:var(--surface2);color:var(--soft);font-size:var(--t4);font-weight:var(--wb);vertical-align:2px}
 .bq img{width:100%;height:100%;object-fit:cover;display:block;border-radius:var(--r-sm)}
-.bq.n2{grid-template-rows:1fr 1fr}
-.bq.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
-.bq.n6{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr}
+.bq.n2{grid-template-rows:minmax(0,1fr) minmax(0,1fr)}
+.bq.n4{grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+       grid-template-rows:minmax(0,1fr) minmax(0,1fr)}
+.bq.n6{grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+       grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}
 .bq.newq{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
   background:transparent;border:1.5px dashed var(--faint);color:var(--soft);font-size:var(--t4)}
 .bq.newq .ic{width:24px;height:24px;stroke-width:1.8}
@@ -238,7 +240,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    needs to separate itself from it; the selection bar owns the screen while
    it is up, and the pill only read as a thick white ring round the button. */
 .selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--safeB) + 18px);
-  z-index:60;display:none;align-items:center;gap:8px;width:296px;padding:0;
+  z-index:60;display:none;align-items:center;justify-content:center;gap:8px;width:296px;padding:0;
   border-radius:var(--r-pill);background:transparent;
   border:0;
   -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
@@ -252,8 +254,11 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   box-shadow:var(--shadow-float);border:1px solid rgba(17,17,17,.09);
   font-size:var(--t4);display:flex;align-items:center;justify-content:center;gap:6px}
 .sb.main{flex:1;background:var(--ink);color:var(--bg);font-weight:var(--wb)}
+.sb.solo{flex:none;padding:0 30px}
 .sb.main:disabled{background:var(--surface2);color:var(--soft)}
 .sb.danger{color:var(--red);padding:0 13px}
+.sb.ghost{background:transparent;box-shadow:none;border:1px solid var(--faint);color:var(--soft);
+  font-weight:var(--wm)}
 .sb:active{opacity:.6}
 
 /* ── marking ─────────────────────────────────────────────── */
@@ -300,21 +305,24 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .mkbar{flex:none;display:flex;align-items:center;width:296px;margin:0 auto;
   padding:8px 0 calc(var(--safeB) + 16px)}
-.mkset{flex:1;display:flex;align-items:center;gap:6px}
+.mkset{flex:1;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px}
+.mkset .sl{justify-self:start;display:flex;gap:6px}
+.mkset .sr{justify-self:end;display:flex;gap:6px}
+.mkset .save{padding:0 26px}
 /* A blue edge on the frame, so the mode you are in is on the picture rather
    than only in the word at the top. */
 .hold.editing{box-shadow:0 0 0 2px var(--mark)}
 .hold.nomarks .mark,.hold.nomarks svg{display:none}
-.rnd{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.13);color:var(--bg);
+.rnd{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.13);color:var(--bg);
   display:flex;align-items:center;justify-content:center;flex:none}
-.tbtn{height:44px;padding:0 14px;border-radius:var(--r-pill);background:rgba(255,255,255,.13);
+.tbtn{height:38px;padding:0 12px;border-radius:var(--r-pill);background:rgba(255,255,255,.13);
   color:var(--bg);display:flex;align-items:center;gap:6px;font-size:var(--t4);font-weight:var(--wm);flex:none}
 .rnd:active,.tbtn:active{opacity:.6}
 /* The count moved to the header. In 246 there is no room for a number that
    the title can carry. */
 .mkcount{display:none}
-.save{flex:1;height:44px;border-radius:var(--r-pill);background:var(--bg);color:var(--ink);
-  font-size:var(--t3);font-weight:var(--wb)}
+.save{flex:1;height:38px;border-radius:var(--r-pill);background:var(--bg);color:var(--ink);
+  font-size:var(--t4);font-weight:var(--wb)}
 .save:active{opacity:.75}
 
 /* the note sheet */
@@ -839,18 +847,25 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     </div>
     <p class="hint" id="mkhint">Tap a spot, or draw round something</p>
   </div>
+  <p class="hint" id="mk-ro" style="display:none">Only whoever took this can mark it</p>
   <div class="mkbar">
+    <!-- Three slots, and the white button sits in the middle one. It used to
+         be flex:1 beside a 44px circle, so its label sat right of centre —
+         and worse, an Undo with nothing to undo was hidden but still holding
+         its 44px, which pushed Crop and Done across the screen. A slot that
+         is empty now costs nothing. -->
     <!-- Looking. Nothing here changes the photograph. -->
     <span class="mkset" id="mkbar-view">
-      <button class="rnd" onclick="toggleViewMarks()" aria-label="Hide the marks" id="vhide"></button>
-      <button class="save" onclick="enterEdit()" id="mk-note">＋ Note</button>
+      <span class="sl"><button class="rnd" onclick="toggleViewMarks()"
+        aria-label="Hide the marks" id="vhide"></button></span>
+      <button class="save" onclick="enterEdit()" id="mk-note">Mark</button>
+      <span class="sr"></span>
     </span>
     <!-- Marking. -->
     <span class="mkset" id="mkbar-edit" style="display:none">
-      <button class="rnd" onclick="undoMark()" aria-label="Undo" id="undo-ic"></button>
-      <button class="tbtn" onclick="openCrop()"><span id="crop-ic"></span>Crop</button>
-      <span class="mkcount" id="mk-count"></span>
+      <span class="sl"><button class="rnd" onclick="undoMark()" aria-label="Undo" id="undo-ic"></button></span>
       <button class="save" onclick="markSave()" id="mk-save">Done</button>
+      <span class="sr"><button class="tbtn" onclick="openCrop()"><span id="crop-ic"></span>Crop</button></span>
     </span>
   </div>
 </section>
@@ -903,7 +918,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
      do here, so it stands with the other two. -->
 <div class="nsheet" id="nsheet">
   <div class="nh"><span class="badge" id="ns-num">1</span><b id="ns-h">Note</b></div>
-  <div class="nfield"><input id="ns-input" maxlength="70" placeholder="What caught your eye?">
+  <div class="nfield"><input id="ns-input" maxlength="70" placeholder="Say what you noticed">
     <span class="cnt" id="ns-count"></span></div>
   <div class="nbar"><button class="cx" id="ns-del" onclick="deleteEditingMark()"
       aria-label="Remove this mark"></button>
@@ -1051,7 +1066,6 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 <div class="sheet" id="sheet-notif">
   <div class="grab"></div><div class="sh">Notifications</div>
   <div id="nt-rows"></div>
-  <div class="sp">Turning one off stops the alert. Nothing else changes.</div>
 </div>
 
 <div class="sheet" id="sheet-feedback">
@@ -1065,7 +1079,8 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 <div class="sheet" id="sheet-about">
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A place to keep what you noticed, and to say what you noticed in it.<br><br>
-    Private beta · prototype build.</div>
+    Private beta · prototype build.<br>
+    <span style="color:var(--faint)">Build 1 Sep 12:04 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -1464,6 +1479,7 @@ function openSheet(id){
   if(id==='sheet-notif')    renderNotif();
   if(id==='sheet-board')    renderBoardSheet();
   if(id==='sheet-image')    renderImageSheet();
+  if(id==='sheet-about')    $('ab-who').textContent = 'you are @'+(who(ME).h||ME);
   if(id==='sheet-profile')  renderProfile();
   if(id==='sheet-imp')      renderImpRows();
   if(id==='sheet-comments') renderCommentSheet();
@@ -1577,7 +1593,7 @@ function openMarkPicker(ids){
   _pickMode='mark'; _pick=[]; _pickPool=ids;
   renderColl(); syncPick();
   const c=coll(UI.coll);
-  $('c-title').textContent='Anything worth saying?';
+  $('c-title').textContent='Pick images to mark';
   /* Which of these, and where they landed — the screen said neither, and it
      had no way out but the button at the bottom. */
   $('tgrow').innerHTML = `<span class="meta" style="margin:0">${ids.length} in ${
@@ -1987,8 +2003,11 @@ function syncPick(){
   $('selhint').classList.remove('on');
   const n=_pick.length;
   if(_pickMode==='mark'){
-    $('selbar').innerHTML = `<button class="sb main" onclick="runMarks()">${
-      n ? ('Mark '+n) : 'None of them'}</button>`;
+    /* Skipping and marking used to be one 296px black pill wearing two
+       labels, so the screen's loudest object was the way out of it. */
+    $('selbar').innerHTML = n
+      ? `<button class="sb main solo" onclick="runMarks()">Mark ${n}</button>`
+      : `<button class="sb ghost" onclick="runMarks()">Not now</button>`;
   }else if(_pickMode==='board'){
     $('selbar').innerHTML =
       `<button class="sb" onclick="cancelNewBoard()">Cancel</button>
@@ -2138,7 +2157,10 @@ function openMark(id){
   const im=img(id); if(!im) return;
   if(UI.screen!=='s-mark' && UI.screen!=='s-crop') _markFrom=UI.screen;
   MK={ id, marks: JSON.parse(JSON.stringify(im.marks||[])) };
-  $('mkimg').src=im.src;
+  /* Assigning src re-runs the image, and a 1500px data URL decodes with a
+     blank frame in the middle. openMark runs on every entry, exit and step,
+     so the same photograph was flashing three times over one edit. */
+  if($('mkimg').src!==im.src) $('mkimg').src=im.src;
   const inRun=_run.length>1;
   const ro = MKRO = !canEdit(id);
   if(ro) MKEDIT=false;
@@ -2148,10 +2170,15 @@ function openMark(id){
   $('mkhold').classList.toggle('editing', editing);
   $('mk-back').innerHTML = editing && !inRun ? I.close : I.back;
   document.querySelector('#s-mark .mkbar').style.display = ro ? 'none' : 'flex';
-  $('mkbar-view').style.display = editing ? 'none' : 'flex';
+  $('mk-ro').style.display = ro ? 'block' : 'none';
+  $('mkbar-view').style.display = editing ? 'none' : 'grid';
   _viewHide=false; $('mkhold').classList.remove('nomarks');
+  /* Offering to hide nothing is the same fault as offering an action that
+     will not happen: the tap lands, the screen does not change, and you
+     conclude it is broken. */
+  $('vhide').style.display = (im.marks||[]).length ? 'flex' : 'none';
   $('vhide').innerHTML = I.eyeOff.replace('class="ic"','class="ic s"');
-  $('mkbar-edit').style.display = editing ? 'flex' : 'none';
+  $('mkbar-edit').style.display = editing ? 'grid' : 'none';
   /* Read-only: the screen stops calling itself Mark and stops telling you to
      tap a spot. Offering an action that will not happen is worse than
      offering none — the tap lands, nothing appears, and you assume it broke. */
@@ -2162,7 +2189,7 @@ function openMark(id){
   /* Save read as “save this note”, so people pressed it after one mark and
      were carried off the photograph they were still working on. */
   $('mk-save').textContent = (inRun && _runIx < _run.length-1) ? 'Next' : 'Done';
-  $('undo-ic').style.visibility = (MK.marks||[]).length ? 'visible' : 'hidden';
+  $('undo-ic').style.display = (MK.marks||[]).length ? 'flex' : 'none';
   paintMarks();
   /* After paintMarks, which sets it too — the lesson already says this, and
      saying it twice on one screen is worse than not saying it. */
@@ -2204,7 +2231,7 @@ function endLesson(){
 }
 function paintMarks(){
   const hold=$('mkhold');
-  const u=$('undo-ic'); if(u) u.style.visibility = MK.marks.length ? 'visible' : 'hidden';
+  const u=$('undo-ic'); if(u) u.style.display = MK.marks.length ? 'flex' : 'none';
   hold.querySelectorAll('.mark').forEach(e=>e.remove());
   $('mksvg').innerHTML = MK.marks.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
   MK.marks.forEach((m,i)=>hold.appendChild(markEl(m,i)));
@@ -2220,8 +2247,10 @@ function setMkTitle(){
   $('mk-title').textContent = editing
     ? (inRun ? ((_runIx+1)+' of '+_run.length)
        : (MK.marks.length ? ('Marking · '+MK.marks.length+'/'+MARK_CAP) : 'Marking'))
-    : (_view.length>1 ? ((_viewIx+1)+' of '+_view.length)
-       : (im.by===ME ? 'Image' : (who(im.by).short + '’s')));
+    /* “4 of 4” here meant the fourth photograph in the collection, and in a
+       marking run the same words mean the fourth thing left to write on. One
+       string, two meanings, and the one worth knowing is where you are. */
+    : (im.by===ME ? ((coll(im.coll)||{}).name || 'Image') : (who(im.by).short + '’s'));
 }
 /* Anchored from whichever edge leaves room: an absolutely positioned
    box can only be as wide as the space to its right, so a mark near
@@ -2509,7 +2538,10 @@ function renderImageSheet(){
   $('im-tog').classList.toggle('on', !!im.shared);
   /* The grid stays unlabelled — All is for looking, not for locating. The
      answer belongs at the moment you ask it, which is here. */
-  const inb=BOARDS.filter(b=>b.cells.includes(im.id));
+  /* Not the board you are standing in — back already goes there, and a row
+     that reopens where you are is a door onto the room you are in. Other
+     boards holding this photograph are still worth offering. */
+  const inb=BOARDS.filter(b=>b.cells.includes(im.id) && !(CURB && b.id===CURB.id));
   /* Which collection it is in is not news — you are standing in it. Only
      say something when there is something to say. */
   $('im-where').textContent = inb.length ? ('In ' + inb.length + (inb.length===1?' board':' boards')) : '';
@@ -2630,8 +2662,12 @@ function createBoard(cells,c,name,slots,done){
   CURB={id:'b'+uid(),name:(name||'Board '+n),coll:c.id,fit:true,bg:'#FFFFFF',cells,layout:want,comments:[],by:ME,made:Date.now()};
   BOARDS.unshift(CURB); save();
   UI.coll=c.id; UI.tab='boards';
-  openBoard(CURB.id);
-  if(isDraft(CURB)) toast('Saved as a draft · tap an empty slot to fill it');
+  /* It used to open itself, which put you inside an arrangement you had not
+     asked to arrange. The board is already saved by this line; landing on the
+     shelf lets you see it appear and decide whether to go in. */
+  const made=CURB; CURB=null;
+  go('s-coll'); renderColl();
+  toast(isDraft(made) ? 'Saved as a draft · open it to fill the last slot' : 'Board made');
 }
 /* What Save is for. Replacing an image, dragging one, renaming, changing the
    fit, filling the last slot — the arrangement is the thing you are working
@@ -2840,6 +2876,22 @@ function starBoard(id){
 function toggleBoardLink(){
   CURB.link=!CURB.link; save(); renderBoardSheet();
   toast(CURB.link ? 'Anyone with the link can read it and comment' : 'Link off');
+  if(CURB.link) firstShare(CURB.id);
+}
+const VISIT_AFTER = 9000;
+let _visitT=null;
+function firstShare(bid){
+  if(localStorage.getItem('ari2-firstshare')) return;
+  try{ localStorage.setItem('ari2-firstshare','1'); }catch(e){}
+  clearTimeout(_visitT);
+  _visitT=setTimeout(()=>{
+    const b=board(bid); if(!b) return;
+    b.comments=[...(b.comments||[]),
+      {id:'c'+uid(),by:'visitor',text:'The second one. Can we see it bigger?',at:Date.now()}];
+    save(); refreshBell();
+    if(document.querySelector('#s-alerts.on')) renderAlerts();
+    toast('Somebody replied to your board', 'See', ()=>go('s-alerts'));
+  }, VISIT_AFTER);
 }
 function copyBoardLink(){
   try{ const r=navigator.clipboard.writeText('https://ari.app/b/'+CURB.id+'x7');
@@ -3150,7 +3202,7 @@ function alerts(){
        otherwise a visitor is told about a conversation they are not in. */
     const mine = isOwner(b.coll) || (b.comments||[]).some(c=>c.by===ME);
     if(!mine) return;
-    if(NOTIF.comment) (b.comments||[]).filter(c=>c.by!==ME).forEach(c=>
+    if(NOTIF.board) (b.comments||[]).filter(c=>c.by!==ME).forEach(c=>
       out.push({t:'comment',by:c.by,board:b.id,text:c.text,at:c.at}));
   });
   return out.sort((a,b)=>b.at-a.at);
@@ -3217,7 +3269,8 @@ function agoWords(t){
 function alertLine(a){
   const w=who(a.by), h=`<b>@${esc(w.h||w.short)}</b>`;
   if(a.t==='comment'){ const b=board(a.board);
-    return h+' commented on <b>'+esc(b?b.name:'a board')+'</b> — “'+esc(a.text)+'”'; }
+    const nm = a.by==='visitor' ? '<b>Someone with your link</b>' : h;
+    return nm+' commented on <b>'+esc(b?b.name:'a board')+'</b> — “'+esc(a.text)+'”'; }
   if(a.t==='icomment') return h+' said “'+esc(a.text)+'” on your photograph';
   if(a.t==='follow')   return h+' started following you';
   return h+(a.t==='like'?' likes':' saved')+' your photograph';
@@ -3398,8 +3451,13 @@ function saveProfile(){
   closeSheets(); renderMe(); toast('Saved');
 }
 /* Four events make a notification, so there are four switches. */
-let NOTIF={follow:1,like:1,save:1,comment:1};
-const NOTIFROWS=[['follow','New followers'],['like','Likes'],['save','Saves'],['comment','Comments']];
+let NOTIF={follow:1,like:1,save:1,comment:1,board:1};
+/* A board is the thing you send to somebody, so a reply to one is not the
+   same event as a reply to a photograph and does not belong under the same
+   switch. It is also the only signal a board produces at all — nothing counts
+   who opened it, here or anywhere else in this product. */
+const NOTIFROWS=[['follow','New followers'],['like','Likes'],['save','Saves'],
+                 ['comment','Comments on your photographs'],['board','Comments on your boards']];
 function renderNotif(){
   $('nt-rows').innerHTML = NOTIFROWS.map(([k,label])=>
     `<div class="srow" onclick="toggleNotif('${k}')">${label}<span class="tog ${NOTIF[k]?'on':''}"></span></div>`).join('');
@@ -3420,7 +3478,7 @@ function askDeleteAccount(){
     ' go. It is hidden straight away and erased seven days from now — opening ari again before then cancels it.',
     'Delete', ()=>{
       IMGS.forEach(i=>dbDel(i.id));
-      ['colls','boards','imgs','seen','coll','me','cv','follow','fans','pend','firstpub','taught','notif']
+      ['colls','boards','imgs','seen','coll','me','cv','follow','fans','pend','firstpub','firstshare','taught','notif']
         .forEach(k=>{ try{ localStorage.removeItem('ari2-'+k); }catch(e){} });
       location.reload();
     });
