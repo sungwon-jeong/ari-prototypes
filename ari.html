@@ -421,6 +421,11 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 /* ── board ───────────────────────────────────────────────── */
 .qwrap{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;padding:6px 12px}
 .ofn{flex:none;margin-left:8px;font-size:var(--t4);color:var(--soft)}
+/* Who else is in here, in the header, because a mix with nobody in it and a
+   mix with three people in it looked identical. */
+.bwith{flex:none;display:flex;margin-left:10px}
+.bwith .av{margin-left:-7px;box-shadow:0 0 0 2px var(--bg)}
+.bwith .av:first-child{margin-left:0}
 .quad{display:grid;gap:3px;padding:3px;background:var(--line);border-radius:var(--r-sm)}
 .quad.n2{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
 .quad.n4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
@@ -523,40 +528,62 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .mtile .dots i{width:5px;height:5px;border-radius:50%;background:var(--bg);display:block}
 
 /* ── feed ────────────────────────────────────────────────── */
-/* Full-bleed, and the person above the picture rather than under it. A
-   photograph you are asked to look at should start at the edge of the
-   screen, and you should know whose it is before you look at it. */
-.fcard{padding-bottom:16px;margin-bottom:14px;border-bottom:1px solid var(--line)}
-.fhead{display:flex;align-items:center;gap:10px;padding:9px var(--edge)}
-.fhead .nm{font-size:var(--t3);font-weight:var(--wb);letter-spacing:-.01em;cursor:pointer}
-.fhead .av{cursor:pointer}
-.fhead .dot{color:var(--soft);font-size:var(--t3)}
-.fhead .mr{margin-left:auto;color:var(--ink);display:flex}
-.facts{display:flex;align-items:center;gap:18px;padding:11px var(--edge) 0;color:var(--ink)}
-.facts>span{display:flex}
-.facts .keep{margin-left:auto}
-.facts .ic{width:24px;height:24px;stroke-width:1.7}
-.facts .like.on .ic{fill:var(--red);stroke:var(--red)}
-.facts .keep.saved .ic{fill:var(--mark);stroke:var(--mark)}
-/* 12 · 10 · 14 rather than 5 · 6 · 8. Packed at the old spacing the count,
-   the note, the comments and the time read as one block of small text. */
-.flikes{font-size:var(--t3);font-weight:var(--wb);padding:12px var(--edge) 0}
-/* The caption is the first thing that was noticed, carrying its own number,
-   so a photograph says what it is about without anybody tapping a pin. */
-/* The notes were on the photograph and again underneath it, in two sizes and
-   two colours. They are numbered badges on the picture — which is where the
-   place is — and words down here, which is where words are read. There are
-   never more than three. */
-.fnotes{font-size:var(--t3);line-height:1.5;padding:12px var(--edge) 0}
-.flikes + .fnotes{padding-top:6px}
-.fnotes b{font-weight:var(--wb);margin-right:6px}
-.fnotes .fn{display:block;padding-top:4px}
-.fview{font-size:var(--t3);color:var(--soft);padding:10px var(--edge) 0}
-/* Sentence case. UPPERCASE appeared twice in the whole app, here and on the
-   alerts label, and neither was shouting at anybody. */
-.fwhen{font-size:var(--t4);color:var(--soft);padding:14px var(--edge) 0}
-.fimg{position:relative;overflow:hidden;background:var(--surface)}
-.fimg img{width:100%;display:block}
+/* One photograph per screen, turned sideways like a page in a notebook.
+   A feed you can scroll past is a feed you do scroll past, and the only
+   claim this product makes is that somebody looked. Sideways also stops
+   the vertical thumb-flick that every other app has trained, which is the
+   point rather than a side effect. */
+#s-feed .body{overflow:hidden;padding:0}
+#fd-body{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none}
+#fd-body::-webkit-scrollbar{display:none}
+.fpage{flex:0 0 100%;width:100%;scroll-snap-align:center;display:flex;
+  flex-direction:column;gap:14px;padding:8px 0 calc(var(--safeB) + 96px)}
+/* The photograph takes the room that is left and sits in the middle of it;
+   the line underneath stays where the thumb is. Centring the whole column
+   instead left a white band above the picture and none below it. */
+.fwrap{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+/* Shrink-wrapped to the photograph, because the numbered marks are placed as
+   percentages of this box. Letterbox it and every mark moves. */
+.fimg{position:relative;align-self:center;max-width:100%;background:var(--surface)}
+.fimg img{display:block;max-width:100%;max-height:var(--fh);width:auto;height:auto}
+/* Whose it is, and the four things you can do. Nothing else — the note is on
+   the photograph where it was placed, and printing it again underneath said
+   the same sentence twice in two sizes. */
+.fbar{display:flex;align-items:center;gap:9px;padding:0 var(--edge);color:var(--ink)}
+.fbar .who{display:flex;align-items:center;gap:9px;cursor:pointer}
+.fbar .who b{font-size:var(--t3);font-weight:var(--wb);letter-spacing:-.01em}
+.fbar .dot{color:var(--soft);font-size:var(--t4)}
+.fbar .acts{margin-left:auto;display:flex;align-items:center;gap:17px}
+.fbar .acts>span{display:flex;position:relative}
+.fbar .ic{width:22px;height:22px;stroke-width:1.7}
+.fbar .like.on .ic{fill:var(--red);stroke:var(--red)}
+.fbar .keep.saved .ic{fill:var(--mark);stroke:var(--mark)}
+/* The conversation leaves no trace but its size. Two lines of it under every
+   photograph was the thing that made this read as somebody else's app. */
+.fbar .cm .n{position:absolute;right:-9px;top:-3px;font-size:var(--photo-badge);
+  font-weight:var(--wb);color:var(--soft)}
+/* The face row switches which reading is on the photograph, and the line
+   under the picture says whose it is. Reading somebody else's marks while
+   the only name on screen was the photographer's is not a smaller mistake
+   than printing the note twice — it is a wrong one. */
+.ffaces{display:flex;align-items:center;justify-content:center;gap:9px;padding:0 var(--edge)}
+.fread{font-size:var(--t4);color:var(--soft);margin-left:3px}
+.flikes{font-size:var(--t4);color:var(--soft);text-align:center;padding:0 var(--edge)}
+.fend{align-items:center;justify-content:center;text-align:center;
+  font-size:var(--t4);color:var(--soft)}
+/* Sideways is not a learned gesture, and on a laptop it is not a gesture at
+   all — there the arrows are the only way through. On a phone they say which
+   way the pages go and then stop saying it, because they are a sentence
+   rather than a control. In the margin, never over the photograph. */
+#s-feed .body{position:relative}
+.fnav{position:absolute;z-index:8;width:36px;height:36px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;color:var(--ink);
+  background:var(--bg);border:1px solid var(--line);opacity:.62;
+  transform:translateY(-50%);transition:opacity .5s}
+.fnav.on{display:flex}
+.fnav.l{left:6px} .fnav.r{right:6px}
+.fnav .ic{width:20px;height:20px;stroke-width:1.9}
 .fimg .mark .badge{width:23px;height:23px;font-size:var(--photo-badge)}
 .hidem{position:absolute;right:9px;top:9px;z-index:6;width:32px;height:32px;border-radius:50%;
   background:rgba(17,17,17,.5);color:var(--bg);display:flex;align-items:center;justify-content:center;
@@ -566,12 +593,11 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   border-radius:var(--r-pill);background:var(--mark);color:var(--bg);font-size:var(--photo-badge);
   font-weight:var(--wb);display:flex;align-items:center;justify-content:center}
 .dark .hbtn{position:relative}
-.fcard.nomarks .mark,.fcard.nomarks .fink{display:none}
+.fpage.nomarks .mark,.fpage.nomarks .fink{display:none}
 .fimg .mark .pill{font-size:var(--photo-note);padding:5px 8px}
 .fink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .fink path{fill:none;stroke:var(--bg);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
   vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
-/* These sat inside a .cmt b{font-weight:var(--wb);color:var(--ink)}
 /* 15px between rows, not 3. A comment is somebody talking; packed tight,
    four of them read as one paragraph of grey. */
 .clist{padding:13px var(--edge) 4px;display:flex;flex-direction:column;gap:15px;
@@ -590,7 +616,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
 .sendb.ready{background:var(--mark);color:var(--bg)}
 .sendb .ic{stroke-width:2.1}
-.fend{text-align:center;font-size:var(--t4);color:var(--soft);padding:6px var(--edge) 20px}
+
 /* the person block */
 /* Two tabs the width of the screen, underlined — the profile's own
    division, and not the same object as the pill tabs inside a collection,
@@ -842,8 +868,10 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 <!-- ══ FEED · what you get after tapping a tile ═══════════ -->
 <section class="scr" id="s-feed">
   <div class="hd"><button class="hbtn" aria-label="Back" id="fd-back"></button>
-    <h1 id="fd-title">Public</h1></div>
-  <div class="body"><div id="fd-body" class="pad"></div></div>
+    <h1 id="fd-title">Public</h1><span class="ofn" id="fd-of"></span></div>
+  <div class="body"><div id="fd-body"></div>
+    <button class="fnav l" id="fd-prev" onclick="feedTurn(-1)" aria-label="Previous"></button>
+    <button class="fnav r" id="fd-next" onclick="feedTurn(1)" aria-label="Next"></button></div>
 </section>
 
 <!-- ══ A PERSON ═══════════════════════════════════════════
@@ -946,6 +974,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
          to look at. Renaming is in the menu, where the rest of the board's
          settings are. -->
     <h1 id="bd-title"></h1><span class="ofn" id="bd-of"></span>
+    <span class="bwith" id="bd-with"></span>
     <span class="r">
       <!-- The conversation used to live in a 104px slot under the board, where
            one long sentence filled it and a second was a scroll. It is a
@@ -1010,10 +1039,12 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="srow" onclick="openSheet('sheet-people')"><span id="pp-ic"></span>People<span class="k" id="cm-n"></span></div>
   <div class="srow" onclick="toggleLink()"><span id="lk-ic"></span>Anyone with the link<span class="tog" id="cm-tog"></span></div>
   <div id="cm-link"></div>
-  <div class="srow" onclick="renameCollection()"><span id="ed-ic"></span>Rename</div>
+  <div class="srow" id="cm-rename" onclick="renameCollection()"><span id="ed-ic"></span>Rename</div>
+  <div class="srow danger" id="cm-leave" style="border-top:8px solid var(--surface)"
+    onclick="leaveCollection()">Leave this collection</div>
   <!-- Profile and settings left: a collection's menu carrying a way into
        your own account was one object's menu offering another's. -->
-  <div class="srow danger" style="border-top:8px solid var(--surface)"
+  <div class="srow danger" id="cm-del" style="border-top:8px solid var(--surface)"
     onclick="deleteCollection()"><span id="tr-ic"></span>Delete collection</div>
 </div>
 
@@ -1104,7 +1135,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     <button class="hlink" onclick="saveProfile()">Save</button></div>
   <div class="epav"><span id="ep-av"></span>
     <button class="hlink" onclick="toast('Choosing a photograph comes with the camera work')">Change photo</button></div>
-  <div class="efield"><label>Name</label><input id="ep-name" maxlength="30" autocomplete="off"></div>
+  <div class="efield"><label>Name</label><input id="ep-name" maxlength="20" autocomplete="off"></div>
   <div class="efield"><label>Handle</label>
     <span class="withat"><span>@</span><input id="ep-h" maxlength="20" autocomplete="off"></span></div>
   <div class="efield"><label>One line<span class="cnt2" id="ep-cnt"></span></label>
@@ -1139,7 +1170,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A place to keep what you noticed, and to say what you noticed in it.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 2 Sep 19:40 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 3 Sep 12:15 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -1187,6 +1218,7 @@ const svg = d => '<svg class="ic" viewBox="0 0 24 24">'+d+'</svg>';
 const I = {
   plus:  svg('<path d="M12 5v14M5 12h14"/>'),
   back:  svg('<path d="M15 6l-6 6 6 6"/>'),
+  fwd:   svg('<path d="M9 6l6 6-6 6"/>'),
   more:  svg('<circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none"/>'),
   photo: svg('<rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M3.4 17l5-4.6 4 3.4 3-2.4 5 4.2"/>'),
   search:svg('<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>'),
@@ -1241,6 +1273,7 @@ function paintIcons(){
   $('nb-ang').insertAdjacentHTML('afterbegin', I.globe);
   put('fab',I.plus);
   $('nb-al').insertAdjacentHTML('afterbegin', I.bell);
+  put('fd-prev',I.back); put('fd-next',I.fwd);
   put('mk-back',I.back); put('mk-more',I.more); put('bd-back',I.back); put('bd-more',I.more);
   put('fd-back',I.back); put('lib-more',I.more);
   put('c-back',I.back);
@@ -1311,6 +1344,10 @@ const who = id => PEOPLE[id] || PEOPLE.me;
    their layer sees Theirs. */
 const poss = w => w===ME ? 'Yours'
   : (who(w).unnamed ? 'Theirs' : (who(w).short + '’s'));
+/* Somebody who has not named themselves has nothing to call them by in the
+   third person — “Your name” and “You” only work from inside that account.
+   Where a label is optional, leave it out rather than print nonsense. */
+const nameOr = (w,alt) => (w===ME || who(w).unnamed) ? (alt===undefined?null:alt) : who(w).short;
 const avatar = (id,z) => `<span class="av" style="background:${who(id).c};width:${z}px;height:${z}px;
   font-size:${Math.round(z*.42)}px" title="${esc(who(id).name)}">${who(id).short[0]}</span>`;
 
@@ -1451,6 +1488,7 @@ function load(){
     UI.coll = localStorage.getItem('ari2-coll') || '';
     UI.me   = localStorage.getItem('ari2-me') || 'colls';
     UI.cv   = localStorage.getItem('ari2-cv') || 'grid';
+    TURNED  = localStorage.getItem('ari2-turned')==='1';
     /* Merged, not replaced. A switch added later is absent from what was
        saved earlier, and reading the old object whole turns it off for
        everybody who has ever opened the app. */
@@ -1538,7 +1576,25 @@ function toast(m, label, fn){
    single page has nothing behind it, so the swipe threw you out of the
    prototype entirely. */
 let _popping=false;
+/* Which function a screen leaves by. The phone's back gesture and the arrow
+   in the corner have to be the same thing: with the gesture wired straight to
+   the previous screen, the arrow saved a mark and the gesture lost it, and
+   the arrow asked before discarding a mix while the gesture kept the changes
+   without asking. Same hand movement, opposite outcome. */
+const EXITS = {
+  's-mark':  ()=>markBack(),
+  's-crop':  ()=>cancelCrop(),
+  's-board': ()=>boardBack(),
+  's-coll':  ()=>leaveColl()
+};
 function go(id){
+  /* Choosing photographs belongs to the collection screen. Left behind, the
+     selection bar floated over the profile with the nav bar underneath it. */
+  if(UI.screen==='s-coll' && id!=='s-coll' && id!=='s-mark' && _pickMode) endPick();
+  /* Leaving the photograph by any door leaves marking mode too. The menu on
+     the marking screen can open a mix or jump to Public, and either way the
+     next photograph opened anywhere in the app was already armed. */
+  if(UI.screen==='s-mark' && id!=='s-mark' && id!=='s-crop') MKEDIT=false;
   if(!_popping && UI.screen!==id){ try{ history.pushState({s:id},''); }catch(e){} }
   UI.screen=id;
   /* A toast raised on one screen used to follow you onto the next, where it
@@ -1596,6 +1652,11 @@ function closeSheets(){
   $('scrim').classList.remove('on'); _sheet=null;
 }
 function scrimTap(){ if(_sheet==='sheet-imp') cancelImport(); else closeSheets(); }
+/* The sheet had two exits that disagreed. Tapping outside it threw the
+   photographs away; backing out of it kept them in a variable, in no
+   collection and on no screen — and the next time anybody chose a file they
+   were dropped without a word. */
+const closeSheetsOrCancel = () => { if(_sheet==='sheet-imp') cancelImport(); else closeSheets(); };
 
 let _nameCb=null;
 function askName(title,value,cb){
@@ -1617,21 +1678,27 @@ $('cf-go').onclick=()=>{const f=_cf;_cf=null;closeSheets();if(f)f();};
 let _in=[], _impColl=null;
 function pickFiles(){ closeSheets(); $('filein').click(); }
 function pickCamera(){ closeSheets(); $('camin').click(); }
+let _impMore=false;
 async function filesPicked(e){
   const files=[...e.target.files]; e.target.value='';
-  if(!files.length) return;
+  const more=_impMore; _impMore=false;
+  if(!files.length){ if(more && _in.length) openSheet('sheet-imp'); return; }
   toast('Reading ' + files.length + '…');
+  const held = more ? _in : [];
   _in=[];
   /* One timestamp per image, counting down, so a batch keeps the order you
      chose it in. Date.now() for all of them lands on the same millisecond and
      the grid comes back shuffled — you mark the first one and it is no longer
      first. */
-  let t=Date.now();
+  /* A second batch has to land below the first, or “add more” shuffles the
+     order you chose them in. */
+  let t = held.length ? Math.min(...held.map(i=>i.at)) - 1 : Date.now();
   for(const f of files){
     try{ const s=await downscale(f,1500);
       _in.push({id:'i'+uid(),src:s,marks:[],comments:[],shared:false,by:ME,likes:[],saves:[],at:t--});
     }catch(err){}
   }
+  _in = held.concat(_in);
   if(!_in.length){ toast('Could not read those'); return; }
   _impColl = (isPublicView() ? null : UI.coll) || (COLLS[0]&&COLLS[0].id);
   $('imp-h').textContent='Add ' + _in.length + (_in.length===1?' image to…':' images to…');
@@ -1658,7 +1725,8 @@ function renderImpRows(){
     `<div class="srow" onclick="impPick(this,'${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('')
     + `<div class="srow" style="color:var(--soft)" onclick="newCollFromImport()">＋ New collection</div>`
     + `<div class="srow" style="border-top:8px solid var(--surface);color:var(--soft)"
-        onclick="cancelImport()">Not now</div>`;
+        onclick="importMore()">＋ Add more images</div>`
+    + `<div class="srow" style="color:var(--soft)" onclick="cancelImport()">Not now</div>`;
 }
 /* The row acted and the sheet closed in the same instant, so nothing on
    screen ever confirmed which one you hit. It holds for a moment first. */
@@ -1670,7 +1738,11 @@ function impPick(el,cid){
     I.check.replace('class="ic"','class="ic s"')+'</span>');
   setTimeout(()=>impInto(cid), 190);
 }
-function cancelImport(){ _in=[]; closeSheets(); }
+function cancelImport(){ const n=_in.length; _in=[]; closeSheets();
+  if(n) toast('Nothing added'); }
+/* Wanting a fifth photograph was being expressed by backing out, because
+   there was nothing else on the sheet to press. */
+function importMore(){ _impMore=true; $('filein').click(); }
 function newCollFromImport(){
   askName('New collection','',v=>{
     const c={id:'c'+uid(),name:v,owner:'me',members:['me'],link:false};
@@ -1755,7 +1827,7 @@ function myImgs2(){
 }
 function renderMe(){
   $('gbar').style.display = guest() ? 'flex' : 'none';
-  if(guest()) $('gbar-t').innerHTML = 'You are <b>'+esc(who(ME).name)+'</b> · you can comment';
+  if(guest()) $('gbar-t').innerHTML = 'You are <b>'+esc(who(ME).name)+'</b> · '+(linkGuest()?'you can comment':'you can mark and comment');
 
   const imgs=myImgs2(), cols=myColls();
   const shared = IMGS.filter(i=>i.shared && i.by===ME).length;
@@ -1802,7 +1874,11 @@ function renderCollGrid(cols){
     ...(guest()?[]:[{id:'public',name:'Public',cover:(pub0[0]||{}).src,n:pub0.length,priv:false,globe:true}]),
     ...cols.map(c=>{ const im=collImgs(c.id);
       return {id:c.id,name:c.name,cover:(im[0]||{}).src,n:im.length,
-        priv:!c.link&&c.members.length<2,globe:false}; })
+        priv:!c.link&&c.members.length<2,globe:false,
+        /* Whose it is, on anything you did not make. “Project 1 · 2 images”
+           told somebody who had just been invited nothing about whose
+           project they were standing in. */
+        by: nameOr(c.owner)}; })
   ];
   if(UI.cv==='list'){
     $('lib-body').innerHTML = `<div class="rlist" style="padding-top:6px">`
@@ -1811,29 +1887,45 @@ function renderCollGrid(cols){
           <span class="cthumb">${r.cover?`<img src="${r.cover}" alt="">`:''}
             ${r.globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic xs"')}</span>`:''}</span>
           <span><span style="font-weight:500">${esc(r.name)}</span>
-            <span class="sub" style="display:block">${r.n} image${r.n===1?'':'s'}${r.priv?' · Private':''}</span></span>
+            <span class="sub" style="display:block">${r.by?(esc(r.by)+' · '):''}${
+              r.n} image${r.n===1?'':'s'}${r.priv?' · Private':''}</span></span>
         </div>`).join('')
       + `</div><div style="height:104px"></div>`;
     return;
   }
-  const card = (id,name,cover,n,priv,globe) =>
+  const card = (id,name,cover,n,priv,globe,by) =>
     `<a class="ccard" onclick="openColl('${id}')">
       <span class="ccover">${cover?`<img src="${cover}" alt="">`:`<span class="none">Empty</span>`}
         ${globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic s"')}</span>`:''}</span>
       <span class="cnm">${esc(name)}</span>
-      <span class="csub">${n} image${n===1?'':'s'}${priv?' · Private':''}</span></a>`;
+      <span class="csub">${by?(esc(by)+' · '):''}${n} image${n===1?'':'s'}${priv?' · Private':''}</span></a>`;
   $('lib-body').innerHTML = `<div class="cgrid">`
     + (guest()?'':`<a class="ccard" onclick="newCollection()">
         <span class="ccover newq">${I.plus}<span>New collection</span></span></a>`)
-    + rows.map(r=>card(r.id,r.name,r.cover,r.n,r.priv,r.globe)).join('')
+    + rows.map(r=>card(r.id,r.name,r.cover,r.n,r.priv,r.globe,r.by)).join('')
     + `</div><div style="height:104px"></div>`;
 }
 /* ── one collection ────────────────────────────────────────────────── */
-function openColl(id){ UI.coll=id; UI.tab='images'; save(); go('s-coll'); }
+function openColl(id){
+  /* A collection you are not in is not a screen you can stand on. Every way
+     in is a link or a row that could have been written before somebody took
+     you back out again. */
+  const c = id==='public' ? true : coll(id);
+  if(!c){ toast('That collection is gone'); return; }
+  if(id!=='public' && c.owner!==ME && !(c.members||[]).includes(ME)){
+    toast('You are not in that collection'); return; }
+  UI.coll=id; UI.tab='images'; save(); go('s-coll'); }
 function leaveColl(){
   /* Backing out of the question about marking answers the question — it does
      not also throw you out of the collection the photographs just landed in. */
-  if(_pickMode){ endPick(); return; }
+  if(_pickMode){ const mk=_pickMode==='mark', n=(_pickPool||[]).length,
+                       cn=(coll(UI.coll)||{}).name||'';
+    endPick();
+    /* Choosing a collection is what commits the photographs, and the screen
+       after it looks like it is still asking. Leaving it says where they
+       went, because nobody read the line that already said so. */
+    if(mk && n) toast(n+(n===1?' image':' images')+' in '+cn+' · not marked');
+    return; }
   UI.me='colls'; go('s-library');
 }
 function renderColl(){
@@ -1841,10 +1933,14 @@ function renderColl(){
   const c = isPublicView() ? null : coll(UI.coll);
   const list = visibleImgs();
   $('c-gbar').style.display = guest() ? 'flex' : 'none';
-  if(guest()) $('c-gbar-t').innerHTML = 'You are <b>'+esc(who(ME).name)+'</b> · you can comment';
+  if(guest()) $('c-gbar-t').innerHTML = 'You are <b>'+esc(who(ME).name)+'</b> · '+(linkGuest()?'you can comment':'you can mark and comment');
   /* The menu is on the screen the collection owns, so what it acts on is
      no longer a guess. */
-  $('lib-more').style.display = (guest()||_pickMode||isPublicView()) ? 'none' : 'flex';
+  /* Hiding the whole menu from a member also hid who else is in here and the
+     way out — a room with no guest list and no door. They get two rows; the
+     ones that rename and delete somebody else's collection stay hidden. */
+  $('lib-more').style.display = (linkGuest()||_pickMode||isPublicView()
+    || !coll(UI.coll)) ? 'none' : 'flex';
   /* The choosing step keeps its way out; the other pick modes have a bar. */
   $('c-back').style.display = (_pickMode && _pickMode!=='mark') ? 'none' : 'flex';
   const naming = _pickMode==='board';
@@ -1971,16 +2067,48 @@ function newCollection(){
 function libMore(){ openSheet(coll(UI.coll) && !isPublicView() ? 'sheet-collmenu' : 'sheet-profile'); }
 function renderCollMenu(){
   const c=coll(UI.coll); if(!c) return closeSheets();
-  $('cm-h').textContent=c.name;
+  const mine=isOwner(c.id);
+  const on=nameOr(c.owner);
+  $('cm-h').textContent = (mine||!on) ? c.name : (c.name + ' · ' + on);
   $('cm-n').textContent = c.members.length>1 ? (c.members.length-1) : '';
+  /* Renaming, the link and deleting belong to whoever made it. */
+  ['cm-rename','cm-tog'].forEach(k=>{ const el=$(k);
+    const row = k==='cm-tog' ? el.parentElement : el;
+    row.style.display = mine ? 'flex' : 'none'; });
+  $('cm-del').style.display  = mine ? 'flex' : 'none';
+  $('cm-leave').style.display= mine ? 'none' : 'flex';
   $('cm-tog').classList.toggle('on', !!c.link);
-  $('cm-link').innerHTML = c.link
+  /* Hiding the toggle from a member left the box under it, so somebody who
+     had been let in could hand out the owner's link. */
+  $('cm-link').innerHTML = (c.link && mine)
     ? `<div class="linkbox">ari.app/c/${c.id}k2x</div>
        <div class="srow" onclick="copyLink('${c.id}')">Copy link</div>` : '';
-  $('cm-people').innerHTML = c.members.length>1
+  /* The list of who you let in is the owner's business; a member reading it
+     was shown one row, containing herself. */
+  $('cm-people').innerHTML = (mine && c.members.length>1)
     ? c.members.filter(m=>m!==c.owner).map(m=>
-        `<div class="srow" style="border-top:0">${avatar(m,28)}${esc(who(m).name)}<span class="k">Can comment</span></div>`).join('')
+        `<div class="srow" style="border-top:0">${avatar(m,28)}${esc(who(m).name)}<span class="k">Can mark</span></div>`).join('')
     : '';
+}
+/* Leaving takes your marks with you — they were your reading of somebody
+   else's photographs, and there is nowhere for them to sit once you are
+   out of the room. */
+function leaveCollection(){
+  const c=coll(UI.coll); closeSheets(); if(!c) return;
+  const n=IMGS.filter(i=>i.coll===c.id).reduce((k,i)=>
+    k+(i.marks||[]).filter(m=>m.by===ME).length, 0);
+  confirmThen('Leave ' + c.name + '?',
+    n ? (n+' mark'+(n===1?'':'s')+' of yours '+(n===1?'goes':'go')+' with you.')
+      : 'You will not see it again unless somebody adds you back.',
+    'Leave', ()=>{
+      c.members=c.members.filter(m=>m!==ME);
+      c.invites=(c.invites||[]).filter(v=>v.who!==ME);
+      IMGS.filter(i=>i.coll===c.id).forEach(i=>{
+        i.marks=(i.marks||[]).filter(m=>(m.by||i.by)!==ME); });
+      /* The mix you were standing in belongs to the room you just left. */
+      CURB=null; _bdSnap=null;
+      save(); UI.me='colls'; go('s-library'); renderMe(); toast('Left ' + c.name);
+    });
 }
 function toggleLink(){ const c=coll(UI.coll); if(!c) return; c.link=!c.link; save(); renderCollMenu();
   toast(c.link?'Anyone with the link can look':'Link off'); }
@@ -2065,11 +2193,15 @@ function renderInvite(){
     : `<div class="sp">${q?'Nobody by that name.':'Everybody you know is already here.'}</div>`;
 }
 function addMember(id){ const c=coll(UI.coll);
-  if(!c.members.includes(id)) c.members.push(id);
+  if(!c.members.includes(id)){ c.members.push(id);
+    /* Being added produced nothing at all on the other person's phone, so
+       the only way anybody found a shared collection was by opening their
+       own library and noticing a name they did not put there. */
+    (c.invites=c.invites||[]).push({by:ME, who:id, at:Date.now()}); }
   /* Adding somebody is the whole errand. Staying on the list to watch the
      row you just made appear is not a step anybody wanted. */
   save(); closeSheets(); renderLibrary();
-  toast(who(id).name+' can comment on this collection'); }
+  toast(who(id).short+' can mark and comment here'); }
 /* Drag the row left to uncover Remove; let go and it settles open or shut. */
 function bindSwipes(){
   document.querySelectorAll('.swipe-f').forEach(el=>{
@@ -2111,7 +2243,9 @@ function endPick(){
   const wasMark=_pickMode==='mark';
   _pickMode=null; _pick=[]; _pickPool=null; _nbN=4;
   $('selbar').classList.remove('on'); $('nav').style.display='flex';
-  if(wasMark){ _run=[]; _runIx=0; }
+  /* Marking mode outlived the question about marking: back out of the
+     picker and the next photograph you opened anywhere was already armed. */
+  if(wasMark){ _run=[]; _runIx=0; MKEDIT=false; }
   renderLibrary();
 }
 /* Only the badge and the outline change when you pick something, so nothing
@@ -2196,10 +2330,13 @@ document.addEventListener('pointermove', e=>{
 });
 document.addEventListener('pointerup', ()=>{ _sweep=false; });
 function runMarks(){
-  const ids=_pick.slice();
+  const ids=_pick.slice(), pool=(_pickPool||[]).length, cn=(coll(UI.coll)||{}).name||'';
   endPick();
-  if(!ids.length){ toast('Saved'); return; }
-  _run=ids; _runIx=0; openMark(ids[0]);
+  /* Nobody read the line saying where they landed, so leaving the question
+     unanswered says it: the photographs are in, they are simply unmarked. */
+  if(!ids.length){ toast(pool ? (pool+(pool===1?' image':' images')+' in '+cn+' · not marked') : 'Saved'); return; }
+
+  MKEDIT=true; _run=ids; _runIx=0; openMark(ids[0]);
 }
 /* One list, written once. Where they are now is not a destination, and if
    the right one does not exist yet you should not have to leave to make it. */
@@ -3167,6 +3304,13 @@ function setBdHead(){
      would be hiding the tools from the person using them. */
   $('bd-cmt').style.display = (BDEDIT || linkGuest()) ? 'none' : 'flex';
   $('bd-more').style.display = (guest() || !isOwner(CURB.coll)) ? 'none' : 'flex';
+  /* A mix carried no sign that anybody else was in it, so writing on it read
+     as talking to yourself — and the one thing a mix is for is not being
+     alone with it. */
+  const mem=((coll(CURB.coll)||{}).members)||[];
+  const who2=[...mem].sort((a,b)=>(a===(coll(CURB.coll)||{}).owner?-1:b===(coll(CURB.coll)||{}).owner?1:0));
+  $('bd-with').innerHTML = (BDEDIT || linkGuest() || who2.length<2) ? ''
+    : who2.slice(0,4).map(w=>avatar(w,22)).join('');
   const n=boardTalk(CURB).length;
   $('bd-cmt').innerHTML = I.bubble + (n?`<span class="cbadge">${n}</span>`:'');
 }
@@ -3345,42 +3489,48 @@ function renderAngles(){
   }
 }
 let _gsnap=null;
+/* Which reading is on the photograph, per card. Not remembered between
+   visits — it is a look, not a setting. */
+let FLAYER={};
+function feedLayer(id,w){ FLAYER[id]=w; repaintCard(id); }
+function repaintCard(id){
+  const el=$('fc_'+id), i=img(id); if(!el||!i) return;
+  const d=document.createElement('div'); d.innerHTML=feedCard(i);
+  el.replaceWith(d.firstElementChild);
+}
 function feedCard(i){
   const liked=i.likes.includes(ME), saved=i.saves.includes(ME);
-  /* The marks stay pinned where the person put them. The caption below
-     repeats the first one — it does not replace them. Take the pins off and
-     this is an image feed with captions, which is a thing that exists. */
-  /* One layer on a card: the photographer's. Three people's pins on one
-     small picture is not a reading, it is a mess. The others are read by
-     opening it. */
-  const all=layerOf(i, i.by), noted=all.filter(m=>m.text);
+  /* The marks stay pinned where the person put them, and that is the only
+     place they appear. One layer at a time: three people's pins on one
+     picture is not a reading, it is a mess. */
+  const ppl=layerPeople(i), lay=(ppl.includes(FLAYER[i.id])?FLAYER[i.id]:i.by);
+  const all=layerOf(i, lay);
   const ink=all.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
   const pins=all.map((m,k)=>markHTML(m,k,'',true)).join('');
-  const cs=i.comments||[], w=who(i.by);
+  const cs=(i.comments||[]).length, w=who(i.by), rd=who(lay);
   /* Following is a decision about a person, and it belongs on the page about
      that person. On every card it asked the same question over and over of
      somebody who was trying to look at photographs. */
-  return `<div class="fcard" id="fc_${i.id}">
-    <div class="fhead"><span onclick="openPerson('${i.by}')">${avatar(i.by,32)}</span>
-      <span class="nm" onclick="openPerson('${i.by}')">${esc(w.h||w.short)}</span>
-      ${i.from?`<span class="dot">· from ${esc(who(i.from).short)}</span>`:''}
-      <span class="mr" onclick="postMenu('${i.id}')">${I.more}</span></div>
-    <div class="fimg"><img src="${i.src}" alt="">
+  return `<div class="fpage" id="fc_${i.id}">
+    <div class="fwrap"><div class="fimg" style="--pin:${who(lay).c}"><img src="${i.src}" alt="">
       ${ink?`<svg class="fink" viewBox="0 0 100 100" preserveAspectRatio="none">${ink}</svg>`:''}
       ${pins}
       ${all.length?`<button class="hidem" aria-label="Hide the marks"
-        onclick="toggleMarks(event,'${i.id}')">${I.eyeOff}</button>`:''}</div>
-    <div class="facts">
-      <span class="like ${liked?'on':''}" onclick="like('${i.id}')">${I.heart}</span>
-      <span onclick="openComments('${i.id}')">${I.bubble}</span>
-      <span class="keep ${saved?'saved':''}" onclick="saveFrom('${i.id}')">${I.mark}</span></div>
-    ${countLine(i)}
-    ${noted.length?`<div class="fnotes"><b>${esc(w.short)}</b>${esc(noted[0].text)}${
-        noted.slice(1).map(m=>`<span class="fn">${esc(m.text)}</span>`).join('')}</div>`:''}
-    ${cs.length>2?`<div class="fview" onclick="openComments('${i.id}')">View all ${cs.length} comments</div>`:''}
-    ${cs.slice(-2).map(c=>`<div class="cmt"><b>${esc(who(c.by).short)}</b> ${esc(c.text)}</div>`).join('')}
-    ${cs.length?'':`<div class="fview" onclick="openComments('${i.id}')">Add a comment</div>`}
-    <div class="fwhen">${ago(i.sharedAt||i.at)} ago</div></div>`;
+        onclick="toggleMarks(event,'${i.id}')">${I.eyeOff}</button>`:''}</div></div>
+    <div class="fbar">
+      <span class="who" onclick="openPerson('${lay}')">${avatar(lay,26)}<b>${esc(rd.h||rd.short)}</b></span>
+      ${lay!==i.by?`<span class="dot">on ${esc(w.h||w.short)}’s</span>`
+        : i.from?`<span class="dot">· from ${esc(who(i.from).short)}</span>`:''}
+      <span class="acts">
+        <span class="like ${liked?'on':''}" onclick="like('${i.id}')">${I.heart}</span>
+        <span class="cm" onclick="openComments('${i.id}')">${I.bubble}${cs?`<span class="n">${cs}</span>`:''}</span>
+        <span class="keep ${saved?'saved':''}" onclick="saveFrom('${i.id}')">${I.mark}</span>
+        <span onclick="postMenu('${i.id}')">${I.more}</span></span></div>
+    ${ppl.length>1?`<div class="ffaces">${ppl.map(x=>
+      `<button class="lf ${x===lay?'on':''}" onclick="feedLayer('${i.id}','${x}')"
+        aria-label="${esc(who(x).short)}">${avatar(x,26)}</button>`).join('')}
+      <span class="fread">${ppl.length} readings</span></div>`:''}
+    ${countLine(i)}</div>`;
 }
 /* Only whoever took the photograph is told how it did. A public number
    turns looking into scoring, and the person it would help least is the one
@@ -3463,17 +3613,86 @@ function addSheetComment(){
   else if(cmtOnBoard()) (CURB.comments=CURB.comments||[]).push({by:ME,text:v,at:Date.now(),img:CMTON});
   else (i.comments=i.comments||[]).push({by:ME,text:v,at:Date.now()});
   el.value=''; save(); renderCommentSheet(); syncSend();
-  if(document.querySelector('#s-feed.on')) repaintFeed();
+  if(document.querySelector('#s-feed.on')) repaintCard(CMTON);
   if(document.querySelector('#s-board.on')){ renderQuad(); setBdHead(); }
   if(document.querySelector('#s-mark.on')) renderImgComments();
 }
+let FEEDN=[];
 function renderFeed(){
   const l=FEEDSET ? FEEDSET.map(img).filter(Boolean) : feedImgs();
+  FEEDN=l.map(i=>i.id);
+  fitFeed();
   $('fd-body').innerHTML = l.map(feedCard).join('')
-    + (l.length?`<div class="fend">${FEEDSET
+    + (l.length?`<div class="fpage fend"><span>${FEEDSET
         ? ('That is all ' + l.length + ' that matched')
-        : ('That is everything · ' + l.length + ' in Public')}</div>`:'');
+        : ('That is everything · ' + l.length + ' in Public')}</span></div>`:'');
+  syncFeedOf();
 }
+/* The photograph is capped in pixels rather than in vh, because on a wide
+   screen the whole app sits inside a scaled phone and vh is the browser's
+   window, not the phone's. */
+function fitFeed(){
+  const el=$('fd-body'); if(!el) return;
+  /* The bar under the photograph, the row of faces, and the floating nav
+     the page has to end above. */
+  const room=el.clientHeight - 210;
+  if(room>80) el.style.setProperty('--fh', room+'px');
+}
+/* A laptop keeps them; a phone is told once and then left alone. */
+let TURNED=false;
+const wideScreen = () => matchMedia('(min-width:760px) and (min-height:560px)').matches;
+function syncFeedOf(){
+  const el=$('fd-body'), n=FEEDN.length;
+  if(!el||!n){ $('fd-of').textContent=''; $('fd-prev').classList.remove('on');
+    $('fd-next').classList.remove('on'); return; }
+  const w=el.clientWidth||1, at=Math.round(el.scrollLeft/w);
+  $('fd-of').textContent = at>=n ? '' : ((at+1)+' / '+n);
+  if(at>0 && !TURNED){ TURNED=true; try{ localStorage.setItem('ari2-turned','1'); }catch(e){} }
+  const show = wideScreen() || !TURNED;
+  $('fd-prev').classList.toggle('on', show && at>0);
+  $('fd-next').classList.toggle('on', show && at<n);
+  placeArrows();
+}
+/* Level with the middle of the photograph, which is not the middle of the
+   screen — the line underneath and the nav bar sit below it. */
+function placeArrows(){
+  const body=document.querySelector('#s-feed .body');
+  const wrap=document.querySelector('#fd-body .fpage .fwrap');
+  if(!body||!wrap) return;
+  const r=wrap.getBoundingClientRect(), b=body.getBoundingClientRect();
+  const y=(r.top-b.top+r.height/2)+'px';
+  $('fd-prev').style.top=y; $('fd-next').style.top=y;
+}
+let _fdTick=0;
+$('fd-body').addEventListener('scroll',()=>{
+  if(_fdTick) return;
+  _fdTick=requestAnimationFrame(()=>{ _fdTick=0; syncFeedOf(); });
+},{passive:true});
+/* A laptop has no swipe. The prototype is being read in a browser as often as
+   on a phone, and a wheel scrolls down — which in a sideways scroller does
+   nothing at all, so the whole of Public was one photograph and no way past
+   it. The wheel and the arrow keys turn the page instead. */
+function feedTurn(d){
+  const e=$('fd-body'), w=e.clientWidth||1;
+  const at=Math.round(e.scrollLeft/w)+d;
+  if(at<0 || at>FEEDN.length) return;
+  e.scrollTo({left:at*w, behavior:'smooth'});
+}
+let _wheelAt=0;
+$('fd-body').addEventListener('wheel', ev=>{
+  const d=Math.abs(ev.deltaX)>Math.abs(ev.deltaY) ? ev.deltaX : ev.deltaY;
+  if(Math.abs(d)<4) return;
+  ev.preventDefault();
+  const now=Date.now();
+  if(now-_wheelAt<420) return;
+  _wheelAt=now; feedTurn(d>0?1:-1);
+},{passive:false});
+addEventListener('keydown', ev=>{
+  if(UI.screen!=='s-feed' || _sheet) return;
+  if(ev.key==='ArrowRight') feedTurn(1);
+  else if(ev.key==='ArrowLeft') feedTurn(-1);
+});
+addEventListener('resize',()=>{ if(UI.screen==='s-feed'){ fitFeed(); syncFeedOf(); } });
 /* Land on the one that was tapped, and keep landing on it while the pictures
    below are still decoding and changing the height under you. */
 let _snap=null;
@@ -3484,15 +3703,15 @@ function openFeedAt(id, set, label){
   FEEDSET = set || null;
   $('fd-title').textContent = label || 'Public';
   $('fd-back').onclick = () => go(set ? 's-search' : 's-angles');
-  renderFeed(); go('s-feed');
-  const body=document.querySelector('#s-feed .body');
-  /* offsetTop is measured from the screen, not from the scroller, so the
-     header bar's height has to come off — otherwise the card lands with the
-     photograph at the top and whose photograph it is hidden behind the bar. */
-  const put=()=>{ const el=$('fc_'+id);
-    if(el) body.scrollTop=Math.max(0, el.offsetTop - body.offsetTop - 2); };
+  go('s-feed'); renderFeed();
+  const body=$('fd-body');
+  /* Land on the one that was tapped. By index rather than by measuring the
+     element, because the pages are still decoding and moving under it. */
+  const put=()=>{ const at=FEEDN.indexOf(id);
+    fitFeed();
+    if(at>=0) body.scrollLeft = at * (body.clientWidth||1); };
   put(); clearInterval(_snap);
-  let n=0; _snap=setInterval(()=>{ put(); if(++n>14) clearInterval(_snap); },70);
+  let n=0; _snap=setInterval(()=>{ put(); if(++n>10) clearInterval(_snap); },70);
   body.addEventListener('pointerdown',()=>clearInterval(_snap),{once:true});
 }
 let _post=null;
@@ -3527,9 +3746,16 @@ function unshare(id){ const i=img(id); i.shared=false; save(); repaintFeed(); to
 function like(id){
   const i=img(id); const k=i.likes.indexOf(ME);
   if(k>=0) i.likes.splice(k,1); else i.likes.push(ME);
-  save(); repaintFeed();
+  /* One card, not the whole run. Rebuilding every page to fill in a heart
+     also rebuilds the scroller under your thumb. */
+  save(); if(UI.screen==='s-feed') repaintCard(id); else renderAngles();
 }
-function repaintFeed(){ if(UI.screen==='s-feed') renderFeed(); else renderAngles(); }
+function repaintFeed(){
+  if(UI.screen!=='s-feed') return renderAngles();
+  const e=$('fd-body'), w=e.clientWidth||1, at=Math.round(e.scrollLeft/w);
+  renderFeed();
+  e.scrollLeft = Math.min(at, FEEDN.length) * w;
+}
 /* Saving somebody else's image puts a copy in your library, and it
    has to land in a collection like everything else — one rule, so
    there is nothing to explain. Their notes do not come with it: a
@@ -3609,6 +3835,11 @@ function alerts(){
       if(t>runs[k].at) runs[k].at=t; }); });
   if(NOTIF.mark) Object.values(runs).forEach(r=>out.push(r));
   if(ME==='me' && NOTIF.follow) FANS.forEach(f=>out.push({t:'follow',by:f.by,at:f.at}));
+  /* Only while it is still true. Removed from a collection, she was still
+     being told she had been added to it — and the row opened it. */
+  if(NOTIF.invite) COLLS.forEach(c=>(c.invites||[]).forEach(v=>{
+    if(v.who===ME && v.by!==ME && (c.members||[]).includes(ME))
+      out.push({t:'invite',by:v.by,coll:c.id,at:v.at}); }));
   BOARDS.forEach(b=>{
     /* Yours if you own the collection, or if you have said something on it —
        otherwise a visitor is told about a conversation they are not in. */
@@ -3687,6 +3918,8 @@ function alertLine(a){
     return h+' marked '+n+(c?(' in <b>'+esc(c.name)+'</b>'):' of yours'); }
   if(a.t==='icomment') return h+' said “'+esc(a.text)+'” on your photograph';
   if(a.t==='follow')   return h+' started following you';
+  if(a.t==='invite'){ const c=coll(a.coll);
+    return h+' added you to <b>'+esc(c?c.name:'a collection')+'</b>'; }
   return h+(a.t==='like'?' likes':' saved')+' your photograph';
 }
 function renderAlerts(){
@@ -3710,6 +3943,7 @@ function renderAlerts(){
     return head +
     `<div class="act-card ${a.at>SEEN?'unread':''}"
        onclick="${a.t==='follow'?`openPerson('${a.by}')`
+                : a.t==='invite'?`openColl('${a.coll}')`
                 : a.t==='comment'?`openBoard('${a.board}')`
                 : a.t==='marked'?`openMarked('${a.by}','${a.imgs[0]}')` : `openMark('${a.img}')`}">
       <span class="udot"></span>${avatar(a.by,34)}
@@ -3718,8 +3952,8 @@ function renderAlerts(){
       ${a.imgs?`<span class="athumbs">${a.imgs.slice(0,3).map(id=>
           `<img src="${src(id)}" alt="">`).join('')}</span>`:''}</div>`; }).join('')
     : `<div class="empty" style="grid-column:auto"><b>Nothing yet</b>
-        When somebody follows you, likes or saves your photograph, or says
-        something on it, it shows up here.</div>`;
+        When somebody adds you to a collection, follows you, likes or saves
+        your photograph, or says something on it, it shows up here.</div>`;
   refreshBell();
 }
 /* Opening it puts you on their reading of the first one they marked. */
@@ -3877,12 +4111,13 @@ function saveProfile(){
   save(); closeSheets(); renderMe(); toast('Saved');
 }
 /* Four events make a notification, so there are four switches. */
-let NOTIF={follow:1,like:1,save:1,comment:1,board:1,mark:1};
+let NOTIF={follow:1,like:1,save:1,comment:1,board:1,mark:1,invite:1};
 /* A board is the thing you send to somebody, so a reply to one is not the
    same event as a reply to a photograph and does not belong under the same
    switch. It is also the only signal a board produces at all — nothing counts
    who opened it, here or anywhere else in this product. */
-const NOTIFROWS=[['follow','New followers'],['like','Likes'],['save','Saves'],
+const NOTIFROWS=[['follow','New followers'],['invite','Being added to a collection'],
+                 ['like','Likes'],['save','Saves'],
                  ['mark','Marks on your photographs'],
                  ['comment','Comments on your photographs'],['board','Comments on your mixes']];
 function renderNotif(){
@@ -3905,7 +4140,7 @@ function askDeleteAccount(){
     ' go. It is hidden straight away and erased seven days from now — opening ari again before then cancels it.',
     'Delete', ()=>{
       IMGS.forEach(i=>dbDel(i.id));
-      ['colls','boards','imgs','seen','coll','me','cv','follow','fans','pend','firstpub','firstshare','taught','notif','prof']
+      ['colls','boards','imgs','seen','coll','me','cv','follow','fans','pend','firstpub','firstshare','taught','notif','prof','turned']
         .forEach(k=>{ try{ localStorage.removeItem('ari2-'+k); }catch(e){} });
       location.reload();
     });
@@ -3932,8 +4167,17 @@ addEventListener('popstate', e=>{
   if(openThing){
     if($('nsheet').classList.contains('on')) cancelNote();
     if($('swap').classList.contains('on')) closeSwap();
-    closeSheets();
+    closeSheetsOrCancel();
     try{ history.pushState({s:UI.screen},''); }catch(err){}
+    return;
+  }
+  const fn=EXITS[UI.screen];
+  if(fn){
+    const was=UI.screen;
+    _popping=true; fn(); _popping=false;
+    /* It asked a question instead of leaving. The entry has already been
+       spent, so put it back or the next press is swallowed. */
+    if(UI.screen===was){ try{ history.pushState({s:was},''); }catch(err){} }
     return;
   }
   _popping=true;
