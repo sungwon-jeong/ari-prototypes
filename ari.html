@@ -91,7 +91,7 @@ html,body{height:100%;overscroll-behavior:none}
 body{background:var(--bg);color:var(--ink);overflow:hidden;
   font-family:-apple-system,"SF Pro Text",Inter,"Helvetica Neue",sans-serif;
   -webkit-font-smoothing:antialiased;touch-action:manipulation;font-size:var(--t3);line-height:1.45}
-button,input{font-family:inherit;font-size:inherit;color:inherit;border:0;background:none;outline:none}
+button,input,textarea{font-family:inherit;font-size:inherit;color:inherit;border:0;background:none;outline:none}
 button{cursor:pointer}
 /* A drag begun on an <img> is a native image drag, and the browser answers
    it by cancelling the pointer — which kills every stroke and every reorder. */
@@ -114,6 +114,18 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    title and everything under it two steps apart with nothing between. */
 .hd h1{font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#c-ttl{display:flex;align-items:center;gap:5px}
+#c-ttl #c-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#c-caret{flex:none;display:flex;color:var(--soft)}
+#c-caret .ic{width:19px;height:19px;stroke-width:2.2}
+#c-ttl:active{opacity:.55}
+/* Where the list of projects opens, from a project's own title. A row says its size, and a lock or a face says who
+   else can see it. */
+.prow{display:flex;align-items:center;gap:9px}
+.prow .nm2{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow.on .nm2{font-weight:var(--wb)}
+.prow .mk{display:flex;color:var(--soft)}
+.prow .mk .ic{width:15px;height:15px}
 .hd .r{margin-left:auto;display:flex;align-items:center;gap:10px}
 .dark .hd h1{color:var(--bg)}
 /* A glyph with a 44px tap area and no circle. The circle exists to give a
@@ -538,11 +550,15 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none}
 #fd-body::-webkit-scrollbar{display:none}
 .fpage{flex:0 0 100%;width:100%;scroll-snap-align:center;display:flex;
-  flex-direction:column;gap:14px;padding:8px 0 calc(var(--safeB) + 96px)}
-/* The photograph takes the room that is left and sits in the middle of it;
-   the line underneath stays where the thumb is. Centring the whole column
-   instead left a white band above the picture and none below it. */
-.fwrap{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+  flex-direction:column;justify-content:center;gap:14px;
+  padding:8px 0 calc(var(--safeB) + 96px)}
+/* Pinning the line to the bottom of the page and letting the photograph
+   float in what was left made the gap between a picture and the name of
+   whoever took it a leftover: 67px under a tall photograph and 197 under a
+   wide one, jumping by half that every time a page turned. The line belongs
+   to the picture, so it travels with it and the space goes above and below
+   the pair — where it reads as margin rather than as a mistake. */
+.fwrap{flex:0 0 auto;width:100%;display:flex;align-items:center;justify-content:center}
 /* Shrink-wrapped to the photograph, because the numbered marks are placed as
    percentages of this box. Letterbox it and every mark moves. */
 .fimg{position:relative;align-self:center;max-width:100%;background:var(--surface)}
@@ -626,6 +642,10 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   background:var(--surface);border-radius:var(--r-md);padding:0 11px}
 .sfield2 .ic{width:17px;height:17px;color:var(--soft);flex:none}
 .sfield2 input{flex:1;min-width:0;font-size:var(--t3);background:transparent;border:0}
+/* Two tabs, and a grid of everything you have ever noticed is not one of
+   them: it contradicts the one claim this product makes, that a reference
+   belongs to a piece of work. “All” only means something once it has a
+   scope, so it survives one level down and not here. */
 .segrow{flex:none;display:flex;border-bottom:1px solid var(--line)}
 .seg{flex:1;padding:13px 0 12px;text-align:center;font-size:var(--t3);color:var(--soft);
   position:relative;font-weight:400}
@@ -644,6 +664,15 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .cthumb img{width:100%;height:100%;object-fit:cover;display:block}
 .cthumb .gl{position:absolute;left:4px;top:4px;color:var(--bg);filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
 .toolrow{flex:none;display:flex;align-items:center;padding:9px var(--edge) 0}
+/* The action first, the preference after it: the pill anchors the edge. And
+   it carries a word, because the nav bar's own ＋ is on the same screen and
+   adds photographs — two bare pluses meaning different things. */
+.addbtn{margin-left:auto;height:28px;padding:0 11px 0 8px;border-radius:var(--r-pill);
+  background:var(--surface);display:flex;align-items:center;gap:3px;flex:none;
+  color:var(--ink);font-size:var(--t4);font-weight:var(--wb)}
+.addbtn .ic{width:16px;height:16px;stroke-width:2.1}
+.addbtn:active{opacity:.55}
+.addbtn + .segsw{margin-left:9px}
 .segsw{margin-left:auto;display:flex;gap:2px;background:var(--surface);border-radius:var(--r-pill);padding:2px}
 .segsw button{width:30px;height:26px;border-radius:var(--r-pill);display:flex;align-items:center;
   justify-content:center;color:var(--soft)}
@@ -665,6 +694,26 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .csub{display:block;font-size:var(--t4);color:var(--soft);padding:2px 2px 0}
 /* Left, not centre. A centred block reads as a poster; this is a person's
    details, and details are read down an edge. */
+/* Your own page carries tabs, a tool row and a grid under it, so the block
+   that says who you are cannot also be the tallest thing on the screen.
+   Are.na gives it one line; this gives it two and keeps the bio, which is
+   the only line on the page you wrote. Somebody else's page is unchanged —
+   it has nothing under the header but photographs. */
+.mehead{flex:none;padding:calc(var(--safeT) + 12px) var(--edge) 10px}
+.mehead .row1{display:flex;align-items:center;gap:11px}
+.mehead .mcol2{flex:1;min-width:0}
+.mehead .nm3{font-size:var(--t2);font-weight:var(--wm);letter-spacing:-.02em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mehead .nm3 span{color:var(--soft);font-weight:400;font-size:var(--t3)}
+.mehead .st2{font-size:var(--t4);color:var(--soft);padding-top:2px;display:flex;gap:6px}
+.mehead .st2 b{color:var(--ink);font-weight:var(--wm)}
+.mehead .st2 span:not(:nth-child(2)){cursor:pointer}
+.mehead .bio2{font-size:var(--t4);color:var(--soft);padding-top:7px;line-height:1.45}
+.mehead .bio2.ask{color:var(--faint)}
+/* Who else is in it, on the cover and on the row. */
+.cwith{position:absolute;right:7px;bottom:7px}
+.cwith .av{box-shadow:0 0 0 2px var(--bg)}
+.rwith{margin-left:auto;display:flex}
 .phead{flex:none;padding:2px var(--edge) 16px}
 .phead.own{padding-top:calc(var(--safeT) + 14px)}
 .pid{display:flex;align-items:center;gap:16px}
@@ -755,8 +804,21 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .ephead{display:flex;align-items:center;padding:2px var(--edge) 12px}
 .ephead span{margin:0 auto;font-size:var(--t2);font-weight:var(--wb)}
 .epav{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0 6px}
-.efield{padding:10px var(--edge) 2px}
-.efield label{display:block;font-size:var(--t4);color:var(--soft);padding-bottom:5px}
+/* The blue line somebody saw was the browser's own focus ring: the reset
+   above covered input and not textarea, and the sheet's rounded edge cut it
+   in half. A field is now a block that lifts when you are in it — label
+   darkens, field goes white, and the ring is inset so nothing can clip it. */
+.efield{margin:0 6px;padding:10px calc(var(--edge) - 6px) 2px;
+  border-radius:var(--r-md);transition:background .16s}
+.efield:focus-within{background:var(--surface);padding-bottom:8px}
+.efield label{display:block;font-size:var(--t4);color:var(--soft);padding-bottom:5px;
+  transition:color .16s}
+.efield:focus-within label{color:var(--ink);font-weight:var(--wb)}
+.efield:focus-within input,.efield:focus-within textarea,
+.efield:focus-within .withat{background:var(--bg);box-shadow:inset 0 0 0 1.5px var(--ink)}
+/* The count belongs to the field being typed in, not to the form. */
+.efield .cnt2{opacity:0;transition:opacity .16s}
+.efield:focus-within .cnt2{opacity:1}
 /* A textarea does not inherit the page's family, so it fell back to the
    browser's monospace and the bio looked like code. */
 .efield input,.efield textarea{width:100%;background:var(--surface);border:0;border-radius:var(--r-md);
@@ -816,7 +878,10 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     <span id="c-gbar-t"></span><button onclick="leaveGuest()">Exit</button></div>
   <div class="hd">
     <button class="hbtn" id="c-back" onclick="leaveColl()" aria-label="Back"></button>
-    <h1 id="c-title"></h1>
+    <!-- The name of the project you are in is also the way to another one.
+         Going back out to the profile to switch was the round trip that made
+         several projects feel like several places. -->
+    <h1 id="c-ttl" onclick="openProjects()"><span id="c-title"></span><span id="c-caret"></span></h1>
     <!-- Making a board no longer takes you to a screen of its own. You pick
          from the collection you are standing in, and the only thing the
          board needs that the collection cannot give it is a name. -->
@@ -1033,19 +1098,26 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
      absorbed the stray </div> and nothing looked wrong, until the app was put
      inside a frame and that tag closed the frame two thirds of the way down
      the file — every sheet after it fell outside. -->
+<!-- Public, then your projects, then a way to make one. The same list on
+     your page and on a project's title bar. -->
+<div class="sheet" id="sheet-projects">
+  <div class="grab"></div><div class="sh">Projects</div>
+  <div id="pk-rows"></div>
+</div>
+
 <div class="sheet" id="sheet-collmenu">
-  <div class="grab"></div><div class="sh" id="cm-h">Collection</div>
+  <div class="grab"></div><div class="sh" id="cm-h">Project</div>
   <div id="cm-people"></div>
   <div class="srow" onclick="openSheet('sheet-people')"><span id="pp-ic"></span>People<span class="k" id="cm-n"></span></div>
   <div class="srow" onclick="toggleLink()"><span id="lk-ic"></span>Anyone with the link<span class="tog" id="cm-tog"></span></div>
   <div id="cm-link"></div>
   <div class="srow" id="cm-rename" onclick="renameCollection()"><span id="ed-ic"></span>Rename</div>
   <div class="srow danger" id="cm-leave" style="border-top:8px solid var(--surface)"
-    onclick="leaveCollection()">Leave this collection</div>
+    onclick="leaveCollection()">Leave this project</div>
   <!-- Profile and settings left: a collection's menu carrying a way into
        your own account was one object's menu offering another's. -->
   <div class="srow danger" id="cm-del" style="border-top:8px solid var(--surface)"
-    onclick="deleteCollection()"><span id="tr-ic"></span>Delete collection</div>
+    onclick="deleteCollection()"><span id="tr-ic"></span>Delete project</div>
 </div>
 
 <!-- Inviting is a search. A list of every person in the app is a list that
@@ -1083,7 +1155,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="sp" id="im-where"></div>
   <div id="im-boards"></div>
   <div class="srow" onclick="toggleShare()"><span id="gl-ic"></span>Show in Public<span class="tog" id="im-tog"></span></div>
-  <div class="srow" onclick="moveImage()">Move to another collection</div>
+  <div class="srow" onclick="moveImage()">Move to another project</div>
   <div class="srow danger" style="border-top:8px solid var(--surface)"
     onclick="removeImage()">Delete photograph</div>
 </div>
@@ -1170,7 +1242,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A place to keep what you noticed, and to say what you noticed in it.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 3 Sep 12:15 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 3 Sep 19:05 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -1261,6 +1333,8 @@ const I = {
   check: svg('<path d="M4.6 12.4l4.5 4.5 9.8-10.4"/>'),
   folder:svg('<path d="M3.6 7.6a2 2 0 0 1 2-2h3.1l1.8 2.2h8a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>'),
   up:    svg('<path d="M12 19V5M6 11l6-6 6 6"/>'),
+  lock:  svg('<rect x="5" y="10.4" width="14" height="9.6" rx="2.2"/>'
+           + '<path d="M8.6 10.4V8.1a3.4 3.4 0 0 1 6.8 0v2.3"/>'),
   globe: svg('<circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8M12 3.6c4.1 4.6 4.1 11.2 0 16.8-4.1-5.6-4.1-12.2 0-16.8"/>'),
   /* The lit state of the tab. A filled globe rather than a second drawing,
      so the shape does not change when you arrive. */
@@ -1635,6 +1709,7 @@ function openSheet(id){
   clearTimeout(_t); $('toast').classList.remove('on');
   $('scrim').classList.add('on'); $(id).classList.add('on');
   document.body.classList.add('sheeted');
+  if(id==='sheet-projects') renderProjects();
   if(id==='sheet-collmenu') renderCollMenu();
   if(id==='sheet-people')   renderPeople();
   if(id==='sheet-invite')   renderInvite();
@@ -1723,7 +1798,7 @@ function renderImpRows(){
   $('imp-strip').innerHTML=_in.slice(0,14).map(i=>`<img src="${i.src}" alt="">`).join('');
   $('imp-rows').innerHTML = COLLS.map(c=>
     `<div class="srow" onclick="impPick(this,'${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('')
-    + `<div class="srow" style="color:var(--soft)" onclick="newCollFromImport()">＋ New collection</div>`
+    + `<div class="srow" style="color:var(--soft)" onclick="newCollFromImport()">＋ New project</div>`
     + `<div class="srow" style="border-top:8px solid var(--surface);color:var(--soft)"
         onclick="importMore()">＋ Add more images</div>`
     + `<div class="srow" style="color:var(--soft)" onclick="cancelImport()">Not now</div>`;
@@ -1744,7 +1819,7 @@ function cancelImport(){ const n=_in.length; _in=[]; closeSheets();
    there was nothing else on the sheet to press. */
 function importMore(){ _impMore=true; $('filein').click(); }
 function newCollFromImport(){
-  askName('New collection','',v=>{
+  askName('New project','',v=>{
     const c={id:'c'+uid(),name:v,owner:'me',members:['me'],link:false};
     COLLS.push(c); save(); _impColl=c.id;
     $('imp-h').textContent='Add ' + _in.length + (_in.length===1?' image to…':' images to…');
@@ -1785,7 +1860,7 @@ function openMarkPicker(ids){
   /* Which of these, and where they landed — the screen said neither, and it
      had no way out but the button at the bottom. */
   $('tgrow').innerHTML = `<span class="meta" style="margin:0">${ids.length} in ${
-    c?esc(c.name):'your collection'}</span>`;
+    c?esc(c.name):'your project'}</span>`;
   $('tgrow').style.display='flex';
   $('c-back').style.display='flex';
 }
@@ -1835,28 +1910,56 @@ function renderMe(){
      collections these are and what they may do. */
   $('me-head').innerHTML = guest()
     ? `<div class="phead" style="padding-top:calc(var(--safeT) + 14px)"><div class="pnm">Shared with you</div></div>`
-    : personHead(who(ME), shared, false);
-  $('me-seg').innerHTML =
-    `<button class="seg ${UI.me==='images'?'on':''}" onclick="setMeTab('images')">Images<span class="k">${imgs.length}</span></button>
-     <button class="seg ${UI.me==='colls'?'on':''}" onclick="setMeTab('colls')">Collections<span class="k">${cols.length + (guest()?0:1)}</span></button>
-`;
-  /* On its own row rather than at the end of the tabs, where a third control
-     in a row of two tabs read as a third tab. It shows both states, so which
-     one you are in is visible without pressing anything. */
-  $('me-tools').style.display = UI.me==='colls' ? 'flex' : 'none';
-  if(UI.me==='colls'){
+    : meHead(who(ME));
+  /* Somebody who was let in has no page of their own here — the black bar
+     says whose projects these are, and cards say which. */
+  if(guest()){
+    $('me-seg').innerHTML=''; $('me-seg').style.display='none';
+    $('me-tools').style.display='flex';
     $('me-tools').innerHTML =
-      `<span class="meta" style="margin:0">${cols.length + (guest()?0:1)} collections</span>
-       <span class="segsw">
-         <button class="${UI.cv!=='list'?'on':''}" onclick="setCollView('grid')" aria-label="Show as cards">${I.grid}</button>
-         <button class="${UI.cv==='list'?'on':''}" onclick="setCollView('list')" aria-label="Show as a list">${I.list}</button>
-       </span>`;
+      `<span class="meta" style="margin:0">${cols.length} project${cols.length===1?'':'s'}</span>`
+      + viewSwitch();
     return renderCollGrid(cols);
   }
-  renderGrid(imgs,'lib-body');
-  $('lib-body').insertAdjacentHTML('beforeend','<div style="height:104px"></div>');
+  const pub = IMGS.filter(i=>i.shared && i.by===ME && (coll(i.coll)||{}).owner===ME)
+    .sort((a,b)=>(b.sharedAt||b.at)-(a.sharedAt||a.at));
+  /* Two tabs that both name what is behind them. Projects carries a count
+     because how many you have is worth knowing; Public does not, because it
+     is a place rather than a quantity — and a count of photographs beside a
+     count of projects put two different units in one row. */
+  $('me-seg').style.display='flex';
+  $('me-seg').innerHTML =
+    `<button class="seg ${UI.me!=='public'?'on':''}" onclick="setMeTab('colls')">Projects<span class="k">${cols.length}</span></button>
+     <button class="seg ${UI.me==='public'?'on':''}" onclick="setMeTab('public')">Public</button>`;
+  $('me-tools').style.display='flex';
+  if(UI.me==='public'){
+    /* Nothing to say up here — the tab says Public, and when it is empty the
+       grid itself explains who can see what lands in it. */
+    $('me-tools').style.display='none';
+    renderGrid(pub,'lib-body',true);
+    $('lib-body').insertAdjacentHTML('beforeend','<div style="height:104px"></div>');
+    return;
+  }
+  /* Making a project belongs to the row that heads the list of them, not to
+     a card inside it: first the card took the slot the eye lands on, then it
+     was moved to the end and started running away down the page as the list
+     grew. Here it is fixed, and both views share it. */
+  $('me-tools').innerHTML =
+    `<span class="meta" style="margin:0">${cols.length} project${cols.length===1?'':'s'}</span>`
+    + `<button class="addbtn" onclick="newCollection()">${I.plus}New</button>`
+    + viewSwitch();
+  renderCollGrid(cols);
 }
-function setMeTab(t){ UI.me=t; save(); renderMe(); }
+/* Cards to recognise, a list to scan. Past a dozen projects the covers stop
+   helping and the names start, so the choice is the person's and it is
+   remembered. */
+function viewSwitch(){
+  return `<span class="segsw">
+     <button class="${UI.cv!=='list'?'on':''}" onclick="setCollView('grid')" aria-label="Show as cards">${I.grid}</button>
+     <button class="${UI.cv==='list'?'on':''}" onclick="setCollView('list')" aria-label="Show as a list">${I.list}</button>
+   </span>`;
+}
+function setMeTab(t){ if(UI.me===t) return; UI.me=t; save(); renderMe(); }
 /* Cards are four to a screen. Past ten collections you are looking for a
    name, and a name is what a list is for. */
 /* Nothing is created here. On a phone it opens the system share sheet with a
@@ -1869,40 +1972,45 @@ function editProfile(){
 }
 function setCollView(v){ if(UI.cv===v) return; UI.cv=v; save(); renderMe(); }
 function renderCollGrid(cols){
-  const pub0 = IMGS.filter(i=>i.shared && (coll(i.coll)||{}).owner===ME);
+  /* Public used to sit in here as a card pretending to be a project. It is
+     a tab now, so this list is projects and nothing else. */
   const rows = [
-    ...(guest()?[]:[{id:'public',name:'Public',cover:(pub0[0]||{}).src,n:pub0.length,priv:false,globe:true}]),
     ...cols.map(c=>{ const im=collImgs(c.id);
       return {id:c.id,name:c.name,cover:(im[0]||{}).src,n:im.length,
-        priv:!c.link&&c.members.length<2,globe:false,
+        priv:!c.link&&c.members.length<2,globe:!!c.link,
+        /* A face on anything somebody else is inside. “0 images” said
+           nothing about whether the room was empty or shared. */
+        with:(c.members||[]).filter(m=>m!==c.owner)[0]||null,
         /* Whose it is, on anything you did not make. “Project 1 · 2 images”
            told somebody who had just been invited nothing about whose
            project they were standing in. */
         by: nameOr(c.owner)}; })
   ];
   if(UI.cv==='list'){
+    /* Making one is rare; opening one is not. The row that makes a project
+       goes after the projects rather than in front of them. */
     $('lib-body').innerHTML = `<div class="rlist" style="padding-top:6px">`
-      + (guest()?'':`<div class="newrow" style="border-top:0" onclick="newCollection()">＋ New collection</div>`)
       + rows.map(r=>`<div class="row" onclick="openColl('${r.id}')">
           <span class="cthumb">${r.cover?`<img src="${r.cover}" alt="">`:''}
             ${r.globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic xs"')}</span>`:''}</span>
           <span><span style="font-weight:500">${esc(r.name)}</span>
             <span class="sub" style="display:block">${r.by?(esc(r.by)+' · '):''}${
               r.n} image${r.n===1?'':'s'}${r.priv?' · Private':''}</span></span>
+          ${r.with?`<span class="rwith">${avatar(r.with,22)}</span>`:''}
         </div>`).join('')
       + `</div><div style="height:104px"></div>`;
     return;
   }
-  const card = (id,name,cover,n,priv,globe,by) =>
-    `<a class="ccard" onclick="openColl('${id}')">
-      <span class="ccover">${cover?`<img src="${cover}" alt="">`:`<span class="none">Empty</span>`}
-        ${globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic s"')}</span>`:''}</span>
-      <span class="cnm">${esc(name)}</span>
-      <span class="csub">${by?(esc(by)+' · '):''}${n} image${n===1?'':'s'}${priv?' · Private':''}</span></a>`;
+  const card = r =>
+    `<a class="ccard" onclick="openColl('${r.id}')">
+      <span class="ccover">${r.cover?`<img src="${r.cover}" alt="">`:`<span class="none">Empty</span>`}
+        ${r.globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic s"')}</span>`:''}
+        ${r.with?`<span class="cwith">${avatar(r.with,22)}</span>`:''}</span>
+      <span class="cnm">${esc(r.name)}</span>
+      <span class="csub">${r.by?(esc(r.by)+' · '):''}${r.n} image${r.n===1?'':'s'}${
+        r.priv?' · Private':''}</span></a>`;
   $('lib-body').innerHTML = `<div class="cgrid">`
-    + (guest()?'':`<a class="ccard" onclick="newCollection()">
-        <span class="ccover newq">${I.plus}<span>New collection</span></span></a>`)
-    + rows.map(r=>card(r.id,r.name,r.cover,r.n,r.priv,r.globe,r.by)).join('')
+    + rows.map(card).join('')
     + `</div><div style="height:104px"></div>`;
 }
 /* ── one collection ────────────────────────────────────────────────── */
@@ -1911,9 +2019,9 @@ function openColl(id){
      in is a link or a row that could have been written before somebody took
      you back out again. */
   const c = id==='public' ? true : coll(id);
-  if(!c){ toast('That collection is gone'); return; }
+  if(!c){ toast('That project is gone'); return; }
   if(id!=='public' && c.owner!==ME && !(c.members||[]).includes(ME)){
-    toast('You are not in that collection'); return; }
+    toast('You are not in that project'); return; }
   UI.coll=id; UI.tab='images'; save(); go('s-coll'); }
 function leaveColl(){
   /* Backing out of the question about marking answers the question — it does
@@ -1949,6 +2057,10 @@ function renderColl(){
   $('nb-lay').style.display  = naming ? 'flex' : 'none';
   if(naming) renderLay();
   if(!_pickMode) $('c-title').textContent = isPublicView() ? 'Public' : c.name;
+  /* Not while choosing photographs — the title is saying what the selection
+     is for, and it is not a place to leave from. */
+  const canSwitch = !_pickMode && !guest() && !isPublicView() && COLLS.filter(x=>x.owner===ME).length>0;
+  $('c-caret').innerHTML = canSwitch ? I.down.replace('class="ic"','class="ic s"') : '';
   $('sel-start').style.display = (_pickMode||guest()||isPublicView()||!list.length) ? 'none' : 'flex';
   $('sel-done').style.display = (_pickMode==='manage') ? '' : 'none';
 
@@ -1987,7 +2099,9 @@ function renderColl(){
   renderGrid(list,'coll-body');
 }
 function setTab(t){ UI.tab=t; renderColl(); }
-function renderGrid(list, into){
+/* On the grid that is already labelled Public, a globe on every tile says
+   the same thing nine times. */
+function renderGrid(list, into, pubGrid){
   /* The picker shows the same images in the same order as the grid behind it. */
   const src2 = _pickMode==='mark'
     ? IMGS.filter(i=>_pickPool.includes(i.id)).sort((a,b)=>b.at-a.at) : list;
@@ -2001,19 +2115,24 @@ function renderGrid(list, into){
       onpointerup="tileUp()" onpointercancel="tileUp()"`}>
       <img src="${i.src}" alt="" loading="lazy">
       ${n&&!guest()?`<span class="dots">${'<i></i>'.repeat(n)}</span>`:''}
-      ${i.shared&&!guest()&&!isPublicView()?`<span class="up">${I.globe.replace('class="ic"','class="ic s"')}</span>`:''}
+      ${i.shared&&!guest()&&!isPublicView()&&!pubGrid?`<span class="up">${
+        I.globe.replace('class="ic"','class="ic s"')}</span>`:''}
       <span class="ord">${k<0?'':(_pickMode==='board'?k+1:'✓')}</span></div>`;
-  }).join('') : emptyGrid();
+  }).join('') : emptyGrid(pubGrid);
   const t=$(into||'coll-body'); t.innerHTML=''; t.appendChild(g);
 }
-function emptyGrid(){
-  if(isPublicView()) return `<div class="empty"><b>Nothing public yet</b>
-    Open an image and turn on Show in Public. It appears here and in Public.</div>`;
-  if(guest()) return `<div class="empty"><b>Nothing here</b>Nobody has shared a collection with you.</div>`;
-  return `<div class="empty"><b>${isPublicView()?'Nothing public yet':'This collection is empty'}</b>
-    ${isPublicView()
-      ? 'Turn on Show in Public on an image and it appears here — and in Public.'
-      : 'Tap ＋ to take a photo or choose from your library.'}</div>`;
+/* The Public tab on your page is not a project, and said so wrongly: it
+   read “This project is empty”, because the only test for Public was which
+   collection was open. */
+function emptyGrid(pubGrid){
+  /* “It appears here and in Public” was written when this was a collection
+     screen and Public was somewhere else. On the Public tab it points at
+     itself. Who can see it is the thing worth saying. */
+  if(pubGrid || isPublicView()) return `<div class="empty"><b>Nothing public yet</b>
+    Anyone can see the images you put here. Turn on Show in Public on one to start.</div>`;
+  if(guest()) return `<div class="empty"><b>Nothing here</b>Nobody has shared a project with you.</div>`;
+  return `<div class="empty"><b>This project is empty</b>
+    Tap ＋ to take a photo or choose from your library.</div>`;
 }
 function renderBoardList(c, boards){
   /* Starred boards first, in the order they were starred; then the rest,
@@ -2046,7 +2165,7 @@ function renderBoardList(c, boards){
   $('coll-body').innerHTML = `<div class="pad">
     ${(cells.length||maker) ? `<div class="bgrid">`+maker+cells.join('')+`</div>` : ''}
     ${cells.length||maker ? '' : `<div class="empty" style="grid-column:auto"><b>No mixes yet</b>
-          A mix is two, four or six images from this collection, seen together.
+          A mix is two, four or six images from this project, seen together.
           <br><span>“${esc(c.name)}” has ${n} image${n===1?'':'s'} — a mix needs at least two.</span></div>`}
   </div>`;
 }
@@ -2055,7 +2174,7 @@ function showShared(){ closeSheets(); openColl('public'); }
 function pickColl(id){ closeSheets(); openColl(id); }
 function newCollection(){
   closeSheets();
-  askName('New collection','',v=>{
+  askName('New project','',v=>{
     const d=COLLS.find(c=>c.name.toLowerCase()===v.toLowerCase());
     if(d){ toast('“'+d.name+'” already exists'); pickColl(d.id); return; }
     const c={id:'c'+uid(),name:v,owner:'me',members:['me'],link:false};
@@ -2064,6 +2183,28 @@ function newCollection(){
 }
 /* Two ⋯ on one screen meaning two different things was the confusion. One
    glyph, one place, and the sheet knows whether a collection is open. */
+function openProjects(){ if(_pickMode || guest()) return; openSheet('sheet-projects'); }
+function renderProjects(){
+  const here = UI.coll;
+  const row = (id,name,n,mark,on) =>
+    `<div class="srow prow ${on?'on':''}" onclick="pickProject('${id}')">
+      <span class="nm2">${esc(name)}</span>${mark}
+      <span class="k">${n}</span></div>`;
+  /* Projects only. Public is a tab on your own page, not a project you can
+     stand inside, and a row for it here would open a different screen from
+     every other row. */
+  $('pk-rows').innerHTML =
+    COLLS.filter(c=>c.owner===ME).map(c=>{
+        const shut = !c.link && c.members.length<2;
+        /* A lock when nobody else can see it, a face when somebody can —
+           the same two states the project itself shows. */
+        const mark = shut ? `<span class="mk">${I.lock.replace('class="ic"','class="ic xs"')}</span>`
+          : (c.members.length>1 ? avatar(c.members.filter(m=>m!==ME)[0],18)
+             : `<span class="mk">${I.globe.replace('class="ic"','class="ic xs"')}</span>`);
+        return row(c.id, c.name, collImgs(c.id).length, mark, here===c.id); }).join('')
+    + `<div class="newrow" onclick="closeSheets();newCollection()">＋ New project</div>`;
+}
+function pickProject(id){ closeSheets(); openColl(id); }
 function libMore(){ openSheet(coll(UI.coll) && !isPublicView() ? 'sheet-collmenu' : 'sheet-profile'); }
 function renderCollMenu(){
   const c=coll(UI.coll); if(!c) return closeSheets();
@@ -2116,11 +2257,11 @@ function copyLink(id){ try{const r=navigator.clipboard.writeText('https://ari.ap
   if(r&&r.catch)r.catch(()=>{});}catch(e){} closeSheets(); toast('Link copied'); }
 function renameCollection(){
   const c=coll(UI.coll); closeSheets(); if(!c) return;
-  askName('Rename collection',c.name,v=>{ c.name=v; save(); renderLibrary(); });
+  askName('Rename project',c.name,v=>{ c.name=v; save(); renderLibrary(); });
 }
 function deleteCollection(){
   const c=coll(UI.coll); closeSheets(); if(!c) return;
-  if(COLLS.length<2){ toast('This is your only collection'); return; }
+  if(COLLS.length<2){ toast('This is your only project'); return; }
   const n=collImgs(c.id).length;
   const other=COLLS.filter(x=>x.id!==c.id);
   /* With nothing in it there is nowhere for anything to go, and asking made
@@ -2151,7 +2292,7 @@ function doDeleteColl(cid,dest){
   UI.coll = dest || firstColl() || '';
   save();
   if(dest) openColl(dest); else { UI.me='colls'; go('s-library'); }
-  toast('Collection deleted');
+  toast('Project deleted');
 }
 
 /* ── people on a collection ──────────────────────────────── */
@@ -2344,12 +2485,12 @@ function destRows(hereId, fn){
   return COLLS.filter(c=>c.owner===ME && c.id!==hereId).map(c=>
       `<div class="srow" onclick="${fn}('${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('')
     + `<div class="newrow" style="border-top:8px solid var(--surface);border-bottom:0"
-        onclick="newCollFor('${fn}')">＋ New collection</div>`;
+        onclick="newCollFor('${fn}')">＋ New project</div>`;
 }
 let _destFn=null;
 function newCollFor(fn){
   _destFn=fn; closeSheets();
-  askName('New collection','',v=>{
+  askName('New project','',v=>{
     const d=COLLS.find(c=>c.name.toLowerCase()===v.toLowerCase());
     const c = d || {id:'c'+uid(),name:v,owner:'me',members:['me'],link:false};
     if(!d) COLLS.push(c);
@@ -2367,7 +2508,7 @@ function moveSelected(){
   $('mv-rows').innerHTML = destRows(here, 'doMoveSelected')
     + `<div class="srow" style="border-top:8px solid var(--surface)" onclick="publishSelected()">
         ${I.globe.replace('class="ic"','class="ic s"')}Add to Public
-        <span class="k">stays in ${esc(c?c.name:'the collection')}</span></div>`;
+        <span class="k">stays in ${esc(c?c.name:'the project')}</span></div>`;
   openSheet('sheet-move');
 }
 /* A run of the ones that have nothing on them: the photograph full size, a
@@ -2420,7 +2561,7 @@ function removeSelected(){
   if(!_pick.length) return;
   const used=_pick.filter(inBoard).length;
   confirmThen('Remove '+_pick.length+(_pick.length===1?' image?':' images?'),
-    used?(used+(used===1?' is':' are')+' in a board. Those boards go too.'):'They leave the collection.',
+    used?(used+(used===1?' is':' are')+' in a mix. Those mixes go too.'):'They leave the project.',
     'Remove', ()=>{
       const n=_pick.length;
       _pick.forEach(dbDel);
@@ -3053,7 +3194,7 @@ function removeImage(){
 let CURB=null;
 function newBoard(){
   const c=coll(UI.coll);
-  if(!c){ toast('Open a collection first'); return; }
+  if(!c){ toast('Open a project first'); return; }
   const pool=collImgs(c.id);
   if(pool.length<2){ toast('“'+c.name+'” has '+pool.length+' — a mix needs at least two'); return; }
   _pickMode='board'; _pick=[]; _nbN = pool.length<4 ? 2 : 4;
@@ -3096,7 +3237,7 @@ function boardFromPick(){
   if(![2,4,6].includes(_pick.length)){ toast('A mix is two, four or six'); return; }
   const cid=(img(_pick[0])||{}).coll;
   if(!_pick.every(id=>(img(id)||{}).coll===cid)){
-    toast('A mix is four from one collection'); return;
+    toast('A mix is four from one project'); return;
   }
   const cells=_pick.slice(); endPick(); createBoard(cells, coll(cid));
 }
@@ -3348,7 +3489,7 @@ function leaveBoard(force){
 function openSwapStrip(i){
   const taken=CURB.cells;
   const cands=collImgs(CURB.coll).filter(im=>!taken.includes(im.id));
-  if(!cands.length){ toast('Nothing else in this collection'); _swapPick=null; renderQuad(); return; }
+  if(!cands.length){ toast('Nothing else in this project'); _swapPick=null; renderQuad(); return; }
   $('swapstrip').innerHTML=cands.map(im=>`<img src="${im.src}" onclick="doSwap('${im.id}')" alt="">`).join('');
   $('swap').classList.add('on');
 }
@@ -3739,7 +3880,7 @@ function hideFromFeed(id){ HIDDEN.add(id); closeSheets(); repaintFeed(); toast('
 function askUnshare(id){
   const im=img(id), c=coll(im&&im.coll);
   confirmThen('Remove from Public?',
-    'Nobody else will see it. It stays in '+(c?'“'+c.name+'”':'your collection')+' with its notes.',
+    'Nobody else will see it. It stays in '+(c?'“'+c.name+'”':'your project')+' with its notes.',
     'Remove',()=>unshare(id));
 }
 function unshare(id){ const i=img(id); i.shared=false; save(); repaintFeed(); toast('No longer public'); }
@@ -3919,7 +4060,7 @@ function alertLine(a){
   if(a.t==='icomment') return h+' said “'+esc(a.text)+'” on your photograph';
   if(a.t==='follow')   return h+' started following you';
   if(a.t==='invite'){ const c=coll(a.coll);
-    return h+' added you to <b>'+esc(c?c.name:'a collection')+'</b>'; }
+    return h+' added you to <b>'+esc(c?c.name:'a project')+'</b>'; }
   return h+(a.t==='like'?' likes':' saved')+' your photograph';
 }
 function renderAlerts(){
@@ -3952,7 +4093,7 @@ function renderAlerts(){
       ${a.imgs?`<span class="athumbs">${a.imgs.slice(0,3).map(id=>
           `<img src="${src(id)}" alt="">`).join('')}</span>`:''}</div>`; }).join('')
     : `<div class="empty" style="grid-column:auto"><b>Nothing yet</b>
-        When somebody adds you to a collection, follows you, likes or saves
+        When somebody adds you to a project, follows you, likes or saves
         your photograph, or says something on it, it shows up here.</div>`;
   refreshBell();
 }
@@ -3997,6 +4138,24 @@ function renderPerson(){
 /* The avatar stood alone on a line with three hundred pixels of nothing
    beside it, and everything else stacked underneath. Cosmos and Pinterest
    both put the name next to the face; so does this now. */
+/* Your own page, in two lines plus the one you wrote. */
+function meHead(p){
+  return `<div class="mehead">
+    <div class="row1">${avatar(p.id,38)}
+      <div class="mcol2">
+        <div class="nm3">${esc(p.name)} <span>@${esc(p.h||p.id)}</span></div>
+        <div class="st2">
+          <span onclick="openPeopleList('followers')"><b>${FANS.length}</b> followers</span>
+          <span>·</span>
+          <span onclick="openPeopleList('following')"><b>${FOLLOW.size}</b> following</span>
+        </div>
+      </div>
+      <button class="hglyph" onclick="openSheet('sheet-profile')" aria-label="Menu">${I.menu}</button>
+    </div>
+    ${p.bio ? `<div class="bio2">${esc(p.bio)}</div>`
+            : `<div class="bio2 ask" onclick="openEditProfile()">Say what you collect</div>`}
+  </div>`;
+}
 function personHead(p, n, on){
   const mine = p.id===ME;
   return `<div class="phead${mine?' own':''}">
@@ -4080,7 +4239,7 @@ function renderSearch(){
     (names.length ? `<div class="rlist">`+names.map(n=>
       `<div class="row" onclick="${n.t==='board'?`openBoard('${n.id}')`:`openColl('${n.id}')`}">
         ${n.t==='board'?I.dup.replace('class="ic"','class="ic s"'):I.photo.replace('class="ic"','class="ic s"')}
-        ${esc(n.name)}<span class="k">${n.t}</span></div>`).join('')+`</div>` : '')
+        ${esc(n.name)}<span class="k">${n.t==='board'?'mix':'project'}</span></div>`).join('')+`</div>` : '')
     /* Show the note that matched. A grid of pictures does not explain why
        any of them came back. */
     + (hits.length ? `<div class="grid pad">`+hits.map(i=>{
@@ -4089,7 +4248,7 @@ function renderSearch(){
           <img src="${i.src}" alt="">
           ${hit&&hit.text?`<span class="hitnote">${esc(hit.text)}</span>`:''}
         </div>`; }).join('')+`</div>`
-      : `<div class="empty" style="grid-column:auto">${q?'<b>Nothing matches</b>Notes, collection and mix names are searched.':'<b>Search your notes</b>Type a word you wrote on an image.'}</div>`);
+      : `<div class="empty" style="grid-column:auto">${q?'<b>Nothing matches</b>Notes, project and mix names are searched.':'<b>Search your notes</b>Type a word you wrote on an image.'}</div>`);
 }
 
 /* ═══ profile ══════════════════════════════════════════════ */
@@ -4116,7 +4275,7 @@ let NOTIF={follow:1,like:1,save:1,comment:1,board:1,mark:1,invite:1};
    same event as a reply to a photograph and does not belong under the same
    switch. It is also the only signal a board produces at all — nothing counts
    who opened it, here or anywhere else in this product. */
-const NOTIFROWS=[['follow','New followers'],['invite','Being added to a collection'],
+const NOTIFROWS=[['follow','New followers'],['invite','Being added to a project'],
                  ['like','Likes'],['save','Saves'],
                  ['mark','Marks on your photographs'],
                  ['comment','Comments on your photographs'],['board','Comments on your mixes']];
@@ -4136,7 +4295,7 @@ function askDeleteAccount(){
   closeSheets();
   const n=filed().length, c=COLLS.length, b=BOARDS.length;
   confirmThen('Delete your account?',
-    n+' photograph'+(n===1?'':'s')+', '+c+' collection'+(c===1?'':'s')+' and '+b+' mix'+(b===1?'':'es')+
+    n+' photograph'+(n===1?'':'s')+', '+c+' project'+(c===1?'':'s')+' and '+b+' mix'+(b===1?'':'es')+
     ' go. It is hidden straight away and erased seven days from now — opening ari again before then cancels it.',
     'Delete', ()=>{
       IMGS.forEach(i=>dbDel(i.id));
