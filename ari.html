@@ -42,6 +42,8 @@
      the column wandered as you scrolled. Photographs still run to the edge. */
   --edge:16px;
   --photo-badge:11px; --photo-note:12px;
+  /* One floating control over anything: page, photograph, light or dark. */
+  --lift:0 1px 6px rgba(0,0,0,.18);
   --r-pill:999px; --r-sm:6px; --r-md:12px; --r-lg:16px;   /* 16, because the September alerts card is 16 */
   /* Not a corner — the hand-drawn loop in the first-run lesson. */
   --r-loop:60% 40% 55% 45% / 45% 55% 45% 55%;
@@ -146,8 +148,13 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   color:var(--ink)}
 .edith:read-only{border-bottom-color:transparent}
 .edith:focus{border-bottom-color:var(--mark);border-bottom-style:solid}
-.hname{flex:1;min-width:0;text-align:center;font-size:var(--t2);font-weight:var(--wm);letter-spacing:-.02em;
-  height:30px;background:transparent;border:0;padding:0 6px;color:var(--ink)}
+/* The field has to be the title, not a different thing in its place. It was
+   centred and a size smaller, so tapping a name to fix a typo moved it to the
+   middle of the screen and shrank it — three changes at once, none of them
+   asked for. Left, and the same 19px, so the only thing that appears is a
+   caret where the letters already were. */
+.hname{flex:1;min-width:0;text-align:left;font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em;
+  height:30px;background:transparent;border:0;padding:0;color:var(--ink)}
 .hname::placeholder{color:var(--faint);font-weight:400}
 .hlink{font-size:var(--t3);font-weight:var(--wb);padding:4px 2px}
 .hlink.dim{color:var(--soft);font-weight:400}
@@ -709,9 +716,27 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    way the pages go and then stop saying it, because they are a sentence
    rather than a control. In the margin, never over the photograph. */
 #s-feed .body{position:relative}
+/* A white disc, a near-white border and 62% opacity read fine over a
+   landscape photograph, which fills the width and sits under them. A portrait
+   one is capped by height instead, so it is narrower than the screen — and
+   the arrow, pinned to the screen rather than to the picture, slid out into
+   the margin. There it was white on white, with the opacity fading the border
+   and the chevron along with it: 29 of its 36 pixels on bare page. A shadow
+   lifts it off whatever is behind it, and full opacity keeps the chevron. */
+/* Lifted. The scale and the shadow say the thing is in your hand; pointer
+   events go off it so that elementFromPoint reports what is underneath it
+   rather than the card being carried. */
+.lifted{box-shadow:var(--lift);opacity:.94;
+  position:relative;z-index:3;pointer-events:none}
+.rlist .row,.cgrid .ccard{transition:transform .16s ease}
+.lifted,body.dragging .rlist .row,body.dragging .cgrid .ccard{transition:none}
+/* While something is in the air the list must not scroll under it, and a
+   long press must not turn into a text selection. */
+body.dragging{user-select:none;-webkit-user-select:none}
+body.dragging #lib-body{touch-action:none}
 .fnav{position:absolute;z-index:8;width:36px;height:36px;border-radius:50%;
   display:none;align-items:center;justify-content:center;color:var(--ink);
-  background:var(--bg);border:1px solid var(--line);opacity:.62;
+  background:var(--bg);border:0;box-shadow:var(--lift);
   transform:translateY(-50%);transition:opacity .5s}
 .fnav.on{display:flex}
 .fnav.l{left:6px} .fnav.r{right:6px}
@@ -1404,7 +1429,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A visual note app. Write on the picture, at the spot you were looking at.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 4 Sep 23:30 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 5 Sep 02:35 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -1698,6 +1723,7 @@ function save(){
     put('coll',   UI.coll||''),
     put('me',     UI.me||'colls'),
     put('cv',     UI.cv||'grid'),
+    put('ord',    JSON.stringify(ORD)),
     put('notif',  JSON.stringify(NOTIF)),
     put('follow', JSON.stringify([...FOLLOW])),
     put('fans',   JSON.stringify(FANS)),
@@ -1768,6 +1794,7 @@ function load(){
     UI.coll = localStorage.getItem('ari2-coll') || '';
     UI.me   = localStorage.getItem('ari2-me') || 'colls';
     UI.cv   = localStorage.getItem('ari2-cv') || 'grid';
+    ORD     = read('ord', []);
     TURNED  = localStorage.getItem('ari2-turned')==='1';
     /* Merged, not replaced. A switch added later is absent from what was
        saved earlier, and reading the old object whole turns it off for
@@ -2023,7 +2050,7 @@ function downscale(file,max){
 }
 function renderImpRows(){
   $('imp-strip').innerHTML=_in.slice(0,14).map(i=>`<img src="${i.src}" alt="">`).join('');
-  $('imp-rows').innerHTML = COLLS.map(c=>
+  $('imp-rows').innerHTML = myColls().map(c=>
     `<div class="srow" onclick="impPick(this,'${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('')
     + `<div class="srow" style="color:var(--soft)" onclick="newCollFromImport()">＋ New project</div>`
     + `<div class="srow" style="border-top:8px solid var(--surface);color:var(--soft)"
@@ -2102,20 +2129,16 @@ const isPublicView = () => UI.coll==='public';
    things that have nothing to do with each other, and at twenty collections
    it is noise. Public survives because it means something — what I put out. */
 function visibleImgs(){
-  let list = IMGS.filter(i=>i.coll && coll(i.coll));
-  if(guest()){
-    const mine = COLLS.filter(c=>c.members.includes(ME)).map(c=>c.id);
-    list = list.filter(i=>mine.includes(i.coll));
-  }
+  /* Two more copies of the test that myColls() got wrong: both asked the
+     membership question only of a guest. One function answers it now. */
+  const mine = myColls().map(c=>c.id);
+  let list = IMGS.filter(i=>i.coll && coll(i.coll) && mine.includes(i.coll));
   if(isPublicView()) list = list.filter(i=>i.shared && (coll(i.coll)||{}).owner===ME);
   else               list = list.filter(i=>i.coll===UI.coll);
   return list.sort((a,b)=>(isPublicView()?((b.sharedAt||b.at)-(a.sharedAt||a.at)):(b.at-a.at)));
 }
 /* Where to land: where you were, else the first collection you can see. */
-function firstColl(){
-  const mine = guest() ? COLLS.filter(c=>c.members.includes(ME)) : COLLS;
-  return (mine[0]||{}).id || null;
-}
+function firstColl(){ return (myColls()[0]||{}).id || null; }
 /* One entry point for both screens, because sixteen call sites simply want
    “draw whatever library screen is showing”. */
 function renderLibrary(){
@@ -2125,7 +2148,33 @@ function renderLibrary(){
 /* The filter used to run only when guest() was true, so the account this
    prototype starts as saw every project in the file — including ones owned by
    somebody else that it had never been let into. One test, no exceptions. */
-function myColls(){ return COLLS.filter(c=>c.owner===ME || (c.members||[]).includes(ME)); }
+function myColls(){ return ordered(COLLS.filter(c=>c.owner===ME || (c.members||[]).includes(ME))); }
+/* Order belongs to the person, not to the project. Two people who share one
+   each keep their own, and jieun dragging it to the top of hers does nothing
+   to yours. A project not in your order yet — just made, or one you were just
+   invited into — goes at the end of yours, wherever anybody else keeps it;
+   otherwise somebody else's tidying leaks into your screen and the order is
+   a property of the project again. */
+let ORD=[];
+function ordered(cols){
+  const at = id => { const i=ORD.indexOf(id);
+    return i<0 ? 1e6 + cols.findIndex(c=>c.id===id) : i; };
+  return cols.slice().sort((a,b)=>at(a.id)-at(b.id));
+}
+/* Only what was on screen has been reordered. Anything else of yours keeps
+   its place behind it rather than being shuffled by a list it was not in. */
+/* Every list of projects in the app reads through one of these two, so the
+   order you dragged into is the order everywhere — the sheet that files an
+   import, the one that moves a photograph, the picker at the top of a
+   project. A list that kept its own order would be the app disagreeing with
+   itself about something the person had just said. */
+function myOwned(){ return ordered(COLLS.filter(c=>c.owner===ME)); }
+function setOrder(ids){
+  ids=ids.filter(Boolean);
+  if(!ids.length) return;
+  ORD = ids.concat(ORD.filter(id=>!ids.includes(id)));
+  save();
+}
 function myImgs2(){
   const ids=myColls().map(c=>c.id);
   return IMGS.filter(i=>i.coll && ids.includes(i.coll)).sort((a,b)=>b.at-a.at);
@@ -2221,7 +2270,7 @@ function renderCollGrid(cols){
     /* Making one is rare; opening one is not. The row that makes a project
        goes after the projects rather than in front of them. */
     $('lib-body').innerHTML = `<div class="rlist" style="padding-top:6px">`
-      + rows.map(r=>`<div class="row" onclick="openColl('${r.id}')">
+      + rows.map(r=>`<div class="row" data-cid="${r.id}" onclick="openColl('${r.id}')">
           <span class="cthumb">${r.cover?`<img src="${r.cover}" alt="">`:''}
             ${r.globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic xs"')}</span>`:''}</span>
           <span><span style="font-weight:500">${esc(r.name)}</span>
@@ -2230,10 +2279,11 @@ function renderCollGrid(cols){
           ${r.with.length?`<span class="rwith">${facePile(r.with,22)}</span>`:''}
         </div>`).join('')
       + `</div><div style="height:104px"></div>`;
+    armReorder('lib-body','.rlist .row,.cgrid .ccard', setOrder);
     return;
   }
   const card = r =>
-    `<a class="ccard" onclick="openColl('${r.id}')">
+    `<a class="ccard" data-cid="${r.id}" onclick="openColl('${r.id}')">
       <span class="ccover">${r.cover?`<img src="${r.cover}" alt="">`:`<span class="none">Empty</span>`}
         ${r.globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic s"')}</span>`:''}
         ${r.with.length?`<span class="cwith">${facePile(r.with,22)}</span>`:''}</span>
@@ -2243,6 +2293,79 @@ function renderCollGrid(cols){
   $('lib-body').innerHTML = `<div class="cgrid">`
     + rows.map(card).join('')
     + `</div><div style="height:104px"></div>`;
+  armReorder('lib-body','.rlist .row,.cgrid .ccard', setOrder);
+}
+/* Long press to lift, then drag. A plain drag fights the scroll in the list,
+   and a handle would be a third control the card view has no room for — and
+   two views with two gestures are two features to learn. One gesture, both
+   layouts: the drop point is decided by document order rather than by
+   geometry, so a column and a two-up grid need no separate arithmetic. */
+let _dragged=false;
+function armReorder(boxId, sel, done){
+  const box=$(boxId); if(!box || box._armed) return;
+  box._armed=true;
+  let lift=null, timer=null, sx=0, sy=0, pid=null;
+  /* Where the finger was when the lifted thing last took a slot. Everything
+     it travels from there is a transform, so the card stays under the finger
+     instead of sitting in its old place while the list rearranges around it.
+     Re-based on every swap, which is what makes the jump into the new slot
+     read as the list settling rather than as the card escaping. */
+  let px=0, py=0;
+  const carry=(x,y)=>{ if(lift) lift.style.transform =
+    'translate('+(x-px)+'px,'+(y-py)+'px) scale(1.03)'; };
+  const items=()=>[...box.querySelectorAll(sel)];
+  const stop=()=>{ clearTimeout(timer); timer=null; };
+  const end=()=>{
+    stop();
+    if(!lift) return;
+    lift.classList.remove('lifted');
+    lift.style.transform='';
+    document.body.classList.remove('dragging');
+    try{ box.releasePointerCapture(pid); }catch(e){}
+    lift=null;
+    done(items().map(e=>e.dataset.cid));
+  };
+  box.addEventListener('pointerdown', e=>{
+    if(_pickMode) return;
+    const el=e.target.closest(sel); if(!el) return;
+    sx=e.clientX; sy=e.clientY; pid=e.pointerId;
+    /* Cleared here rather than by the click that follows a drop, because a
+       pointer that moved often produces no click at all — and a suppression
+       flag nobody consumes goes on to eat the next honest tap. */
+    _dragged=false;
+    stop();
+    timer=setTimeout(()=>{
+      lift=el; _dragged=true;
+      px=sx; py=sy;
+      el.classList.add('lifted');
+      carry(sx,sy);
+      document.body.classList.add('dragging');
+      try{ box.setPointerCapture(pid); }catch(err){}
+      try{ navigator.vibrate && navigator.vibrate(8); }catch(err){}
+    }, 340);
+  });
+  box.addEventListener('pointermove', e=>{
+    if(!lift){
+      /* A press that turns into a scroll was never a lift. */
+      if(timer && (Math.abs(e.clientX-sx)>8 || Math.abs(e.clientY-sy)>8)) stop();
+      return; }
+    e.preventDefault();
+    carry(e.clientX,e.clientY);
+    const under=document.elementFromPoint(e.clientX,e.clientY);
+    const t=under && under.closest(sel);
+    if(!t || t===lift || t.parentElement!==lift.parentElement) return;
+    const n=items(), ti=n.indexOf(t), li=n.indexOf(lift);
+    if(ti<0||li<0) return;
+    if(ti>li) t.after(lift); else t.before(lift);
+    px=e.clientX; py=e.clientY; carry(e.clientX,e.clientY);
+  });
+  box.addEventListener('pointerup', end);
+  box.addEventListener('pointercancel', end);
+  /* The finger that finished a drag is still over a project, and letting go
+     would otherwise open it. */
+  box.addEventListener('click', e=>{
+    if(_dragged){ _dragged=false; e.stopPropagation(); e.preventDefault(); }
+  }, true);
 }
 /* ── one collection ────────────────────────────────────────────────── */
 function openColl(id){
@@ -2403,13 +2526,33 @@ function renderBoardList(c, boards){
 function showShared(){ closeSheets(); openColl('public'); }
 
 function pickColl(id){ closeSheets(); openColl(id); }
-function newCollection(){
+/* Making a project and going into one are different acts, and which one this
+   is depends on why it was reached. From the picker — a list whose whole job
+   is to take you somewhere — it takes you there, like every other row in it.
+   From the projects page it does what it says and no more: the project
+   appears where it will live from now on, which is also the moment to drag it
+   somewhere else. Landing inside an empty one instead hid the thing that had
+   just been made, and hid where in the order it had landed. */
+function newCollection(open){
   closeSheets();
   askName('New project','',v=>{
     const d=COLLS.find(c=>c.name.toLowerCase()===v.toLowerCase());
-    if(d){ toast('“'+d.name+'” already exists'); pickColl(d.id); return; }
+    if(d){ toast('“'+d.name+'” already exists');
+      return open ? pickColl(d.id) : showNew(d.id); }
     const c={id:'c'+uid(),name:v,owner:'me',members:['me'],link:false};
-    COLLS.push(c); save(); openColl(c.id);
+    COLLS.push(c); save();
+    if(open) openColl(c.id); else showNew(c.id);
+  });
+}
+/* New projects land at the end of your order, which is far enough down a long
+   list to be worth scrolling to. Nothing marks it once it is there: a ring
+   that fades is a thing happening on screen, and what happened is that a
+   project now exists — the card says that by being there. */
+function showNew(id){
+  UI.me='colls'; go('s-library'); renderMe();
+  requestAnimationFrame(()=>{
+    const el=document.querySelector('#lib-body [data-cid="'+id+'"]');
+    if(el) el.scrollIntoView({block:'center',behavior:'smooth'});
   });
 }
 /* Two ⋯ on one screen meaning two different things was the confusion. One
@@ -2499,7 +2642,7 @@ function renderProjects(){
      stand inside, and a row for it here would open a different screen from
      every other row. */
   $('pk-rows').innerHTML =
-    COLLS.filter(c=>c.owner===ME).map(c=>{
+    myOwned().map(c=>{
         const shut = !c.link && c.members.length<2;
         /* A lock when nobody else can see it, a face when somebody can —
            the same two states the project itself shows. */
@@ -2507,7 +2650,7 @@ function renderProjects(){
           : (c.members.length>1 ? avatar(c.members.filter(m=>m!==ME)[0],18)
              : `<span class="mk">${I.globe.replace('class="ic"','class="ic xs"')}</span>`);
         return row(c.id, c.name, collImgs(c.id).length, mark, here===c.id); }).join('')
-    + `<div class="newrow" onclick="closeSheets();newCollection()">＋ New project</div>`;
+    + `<div class="newrow" onclick="closeSheets();newCollection(true)">＋ New project</div>`;
 }
 function pickProject(id){ closeSheets(); openColl(id); }
 function libMore(){ openSheet(coll(UI.coll) && !isPublicView() ? 'sheet-collmenu' : 'sheet-profile'); }
@@ -2829,7 +2972,7 @@ function runMarks(){
 /* One list, written once. Where they are now is not a destination, and if
    the right one does not exist yet you should not have to leave to make it. */
 function destRows(hereId, fn){
-  return COLLS.filter(c=>c.owner===ME && c.id!==hereId).map(c=>
+  return myOwned().filter(c=>c.id!==hereId).map(c=>
       `<div class="srow" onclick="${fn}('${c.id}')">${esc(c.name)}<span class="k">${collImgs(c.id).length}</span></div>`).join('')
     + `<div class="newrow" style="border-top:8px solid var(--surface);border-bottom:0"
         onclick="newCollFor('${fn}')">＋ New project</div>`;
@@ -4015,6 +4158,9 @@ function editBoardName(){
   if(guest() || !isOwner(CURB.coll)) return;
   const h=$('bd-title'), inp=$('bd-name');
   inp.value=CURB.name; h.style.display='none'; inp.style.display='block';
+  /* Which photograph of the mix you are on is not a question while you are
+     renaming it, and the field needs the width more than the counter does. */
+  $('bd-of').style.display='none'; $('bd-with').style.display='none';
   inp.focus(); inp.select();
 }
 function endBoardName(commit){
@@ -4022,6 +4168,7 @@ function endBoardName(commit){
   if(inp.style.display==='none') return;
   if(commit) setBoardName(inp.value);
   inp.style.display='none'; $('bd-title').style.display='';
+  $('bd-of').style.display=''; $('bd-with').style.display='';
   setBdHead();
 }
 function deleteBoard(){
@@ -4419,7 +4566,7 @@ function saveFrom(id){
   if(_lastColl && coll(_lastColl) && coll(_lastColl).owner===ME){ doSave(_lastColl); return; }
   /* Into a collection you own. Dropping a save into somebody else's folder
      because you happen to be looking at it is how libraries get muddled. */
-  const mine=COLLS.filter(c=>c.owner===ME);
+  const mine=myOwned();
   if(!mine.length){
     const c={id:'c'+uid(),name:'Saved',owner:ME,members:[ME],link:false};
     COLLS.push(c); mine.push(c); save();
@@ -4450,7 +4597,7 @@ function openFoundFeed(id){
 }
 function moveSaved(id){
   $('mv-h').textContent='Move to…';
-  $('mv-rows').innerHTML=COLLS.filter(c=>c.owner===ME).map(c=>
+  $('mv-rows').innerHTML=myOwned().map(c=>
     `<div class="srow" onclick="doMoveSaved('${id}','${c.id}')">${esc(c.name)}</div>`).join('');
   openSheet('sheet-move');
 }
@@ -4844,7 +4991,7 @@ function askDeleteAccount(){
     ' go. Everything is erased on this device. There is no undo.',
     'Delete', ()=>{
       IMGS.forEach(i=>dbDel(i.id));
-      ['colls','boards','imgs','seen','coll','me','cv','follow','fans','pend','firstpub','firstshare','taught','notif','prof','turned']
+      ['colls','boards','imgs','seen','coll','me','cv','ord','follow','fans','pend','firstpub','firstshare','taught','notif','prof','turned']
         .concat(['hello','saidpub','turned'])
         .forEach(k=>{ try{ localStorage.removeItem('ari2-'+k); }catch(e){} });
       location.reload();
