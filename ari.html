@@ -34,6 +34,9 @@
      Text drawn ON a photograph is a different medium and keeps its own two:
      against a picture, the same measure always reads smaller. */
   --t1:19px; --t2:17px; --t3:15px; --t4:13px;
+  /* One size above the scale, used once: the name on the cover of the four
+     cards. A wordmark at title size is a heading, not a wordmark. */
+  --t0:52px;
   --wm:500; --wb:600;
   /* One left edge. Text began at 14, 16 and 18 depending on the screen, so
      the column wandered as you scrolled. Photographs still run to the edge. */
@@ -215,6 +218,10 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .tile .hitnote{position:absolute;left:0;right:0;bottom:0;background:rgba(17,17,17,.8);color:var(--bg);
   font-size:var(--t4);line-height:1.3;padding:4px 5px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* Why it came back, when the reason was not something somebody wrote on the
+   photograph: a project it sits in, a mix, a name. Said in the same place,
+   in a quieter voice. */
+.tile .hitnote.why{background:rgba(17,17,17,.62);font-style:italic}
 /* 17px with an 11px glyph inside it was a smudge. It also sat under the
    note dots; it now takes the other corner. */
 .tile .up{position:absolute;right:5px;top:5px;width:21px;height:21px;border-radius:50%;
@@ -330,6 +337,14 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .mark .pill{background:rgba(17,17,17,.88);color:var(--bg);font-size:var(--photo-note);line-height:1.35;
   padding:6px 9px;border-radius:var(--r-md);margin-left:6px;word-break:break-word;min-width:0;
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+/* A hundred characters is four lines on a phone, and the note is drawn on
+   the photograph it is about. Two lines show; tapping the badge opens the
+   rest, which is the fold that was already there.
+   The clamp is on an inner span because the pill is a flex item, and a flex
+   item's display is blockified — -webkit-box on it becomes flow-root and the
+   clamp quietly does nothing. */
+.mark:not(.open) .pill .ptxt{display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;overflow:hidden}
 .mark.flip .pill{margin-left:0;margin-right:6px}
 /* A note covers the thing it is about. Tapping the badge folds it away and
    tapping again brings it back — September's behaviour, and the reason the
@@ -360,10 +375,20 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .faces{display:flex;align-items:center;gap:5px;margin-right:2px}
 .faces .lf{width:26px;height:26px;border-radius:50%;opacity:.42;flex:none;display:block}
 .faces .lf.on{opacity:1;box-shadow:0 0 0 2px var(--bg)}
-.mkbar{flex:none;display:flex;align-items:center;width:296px;margin:0 auto;
-  padding:8px 0 calc(var(--safeB) + 16px)}
-.mkset{flex:1;display:flex;align-items:center;justify-content:center;gap:6px}
-.mkset .save{flex:none;padding:0 26px}
+/* One centred cluster. It was a fixed 296px box, which fitted three controls
+   and not four; the width now comes from the screen and the row centres what
+   is in it, so nothing drifts to one side when a control appears or goes. */
+.mkbar{flex:none;display:flex;align-items:center;width:100%;
+  padding:8px var(--edge) calc(var(--safeB) + 16px)}
+.mkset{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;min-width:0}
+.mkset .save{flex:none;padding:0 22px}
+.mkset .tbtn{min-width:0}
+.mkset .tbtn span{flex:none}
+/* On, and said so. Not white: white is the primary button standing next to
+   it, and two white pills side by side cannot say which one is a thing you
+   press and which is a state you are in. Blue is what the app already uses
+   for on. */
+.tbtn.on{background:var(--mark);color:var(--bg)}
 /* A blue edge on the frame, so the mode you are in is on the picture rather
    than only in the word at the top. */
 .hold.editing{box-shadow:0 0 0 2px var(--mark)}
@@ -392,9 +417,12 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .nbar .cx{flex:none;width:52px;background:rgba(255,107,96,.16);color:var(--red);
   display:flex;align-items:center;justify-content:center}
 .nbar .cx .ic{stroke-width:1.9}
-.nfield{display:flex;align-items:center;gap:8px;background:var(--ink);border-radius:var(--r-md);padding:0 12px;height:46px}
-.nfield input{flex:1;font-size:var(--t3);color:var(--bg)}
-.nfield input::placeholder{color:var(--soft)}
+.nfield{display:flex;align-items:flex-start;gap:8px;background:var(--ink);
+  border-radius:var(--r-md);padding:11px 12px;min-height:46px}
+.nfield textarea{flex:1;font-size:var(--t3);color:var(--bg);line-height:1.4;resize:none;
+  background:transparent;border:0;font-family:inherit}
+.nfield textarea::placeholder{color:var(--soft)}
+.nfield .cnt{padding-top:2px}
 .nfield .cnt{font-size:var(--t4);color:var(--soft);flex:none}
 .nbar{display:flex;gap:9px;margin-top:12px}
 .nbar button{flex:1;height:46px;border-radius:var(--r-pill);font-size:var(--t3);font-weight:var(--wb)}
@@ -539,6 +567,51 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   padding:4px 5px;border-radius:var(--r-pill)}
 .mtile .dots i{width:5px;height:5px;border-radius:50%;background:var(--bg);display:block}
 
+/* ── what this is ──────────────────────────────────────────── */
+.ob{position:fixed;inset:0;z-index:120;background:var(--bg);display:flex;flex-direction:column}
+.obskip{position:absolute;right:var(--edge);top:calc(var(--safeT) + 12px);z-index:3;
+  font-size:var(--t4);color:var(--soft);padding:6px 4px}
+.obrun{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+  scrollbar-width:none;overscroll-behavior-x:contain}
+.obrun::-webkit-scrollbar{display:none}
+.obcard{flex:0 0 100%;width:100%;scroll-snap-align:center;scroll-snap-stop:always;
+  display:flex;flex-direction:column;padding:calc(var(--safeT) + 48px) var(--edge) 0}
+.obart{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding-bottom:22px}
+.obart .shot{position:relative;width:100%;max-height:100%;border-radius:var(--r-lg);overflow:hidden;
+  background:var(--surface)}
+.obcol{width:100%;display:flex;flex-direction:column;gap:11px}
+.obby{display:flex;align-items:center;gap:9px;font-size:var(--t3)}
+.obart .shot img{width:100%;display:block}
+/* A swipe that begins on a photograph should move the page, not pick the
+   photograph up. Safari starts a drag and offers a callout on a long press,
+   and both of those land in the middle of the gesture. */
+.obart img,.fimg img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;
+  -webkit-touch-callout:none}
+.obquad{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:100%;border-radius:var(--r-lg);
+  overflow:hidden;background:var(--line)}
+.obquad img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+.obh{font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em}
+.obp{font-size:var(--t3);color:var(--soft);line-height:1.55;padding-top:8px}
+.obp + .obp{padding-top:12px}
+/* The last card is the one with something to read, so it has no picture.
+   Its words still sit where the other cards' words sit, low, with the
+   buttons under them — centring it left a hole under the buttons. */
+.obcard.words{justify-content:flex-end}
+/* The cover: the name at its own size, one line under it, and the swipe. */
+.obcard.cover{justify-content:flex-end}
+.obmark{font-size:var(--t0);font-weight:var(--wm);letter-spacing:-.04em;line-height:1;padding-bottom:6px}
+.obhint{display:flex;align-items:center;justify-content:center;gap:4px;
+  font-size:var(--t4);color:var(--faint);padding:26px 0 0}
+.obhint .ic{width:16px;height:16px}
+.obcta{padding:22px 0 calc(var(--safeB) + 16px)}
+.obcta .go{width:100%;height:48px;border-radius:var(--r-pill);background:var(--ink);color:var(--bg);
+  font-size:var(--t3);font-weight:var(--wb)}
+.obcta .later{display:block;width:100%;text-align:center;padding-top:14px;
+  font-size:var(--t4);color:var(--soft)}
+.obfoot{flex:none;padding:0 var(--edge) calc(var(--safeB) + 20px)}
+.obdots{flex:none;display:flex;justify-content:center;gap:6px;padding:0 0 calc(var(--safeB) + 20px)}
+.obdots i{width:6px;height:6px;border-radius:50%;background:var(--line);display:block}
+.obdots i.on{background:var(--ink)}
 /* ── feed ────────────────────────────────────────────────── */
 /* One photograph per screen, turned sideways like a page in a notebook.
    A feed you can scroll past is a feed you do scroll past, and the only
@@ -549,8 +622,10 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 #fd-body{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;
   scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none}
 #fd-body::-webkit-scrollbar{display:none}
-.fpage{flex:0 0 100%;width:100%;scroll-snap-align:center;display:flex;
-  flex-direction:column;justify-content:center;gap:14px;
+/* always, not normal: a flick can carry over a snap point, so throwing the
+   feed sideways stepped two photographs and skipped the one in between. */
+.fpage{flex:0 0 100%;width:100%;scroll-snap-align:center;scroll-snap-stop:always;
+  display:flex;flex-direction:column;justify-content:center;gap:14px;
   padding:8px 0 calc(var(--safeB) + 96px)}
 /* Pinning the line to the bottom of the page and letting the photograph
    float in what was left made the gap between a picture and the name of
@@ -605,10 +680,12 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   background:rgba(17,17,17,.5);color:var(--bg);display:flex;align-items:center;justify-content:center;
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .hidem .ic{width:19px;height:19px;stroke-width:1.8}
-.dark .hbtn .cbadge{position:absolute;right:-1px;top:-1px;min-width:15px;height:15px;padding:0 4px;
+/* The badge was styled only under a dark header, so on a light one it lost
+   its position and flowed out beside the bubble as a loose number. */
+.hbtn .cbadge{position:absolute;right:-1px;top:-1px;min-width:15px;height:15px;padding:0 4px;
   border-radius:var(--r-pill);background:var(--mark);color:var(--bg);font-size:var(--photo-badge);
-  font-weight:var(--wb);display:flex;align-items:center;justify-content:center}
-.dark .hbtn{position:relative}
+  font-weight:var(--wb);display:flex;align-items:center;justify-content:center;line-height:1}
+.hbtn{position:relative}
 .fpage.nomarks .mark,.fpage.nomarks .fink{display:none}
 .fimg .mark .pill{font-size:var(--photo-note);padding:5px 8px}
 .fink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
@@ -704,16 +781,19 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .mehead .mcol2{flex:1;min-width:0}
 .mehead .nm3{font-size:var(--t2);font-weight:var(--wm);letter-spacing:-.02em;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mehead .nm3 span{color:var(--soft);font-weight:400;font-size:var(--t3)}
-.mehead .st2{font-size:var(--t4);color:var(--soft);padding-top:2px;display:flex;gap:6px}
+.mehead .st2{font-size:var(--t4);color:var(--soft);padding-top:3px;display:flex;gap:5px;
+  overflow:hidden;white-space:nowrap}
 .mehead .st2 b{color:var(--ink);font-weight:var(--wm)}
-.mehead .st2 span:not(:nth-child(2)){cursor:pointer}
+.mehead .st2 .hdl2{overflow:hidden;text-overflow:ellipsis;min-width:0}
 .mehead .bio2{font-size:var(--t4);color:var(--soft);padding-top:7px;line-height:1.45}
 .mehead .bio2.ask{color:var(--faint)}
 /* Who else is in it, on the cover and on the row. */
-.cwith{position:absolute;right:7px;bottom:7px}
-.cwith .av{box-shadow:0 0 0 2px var(--bg)}
+.cwith{position:absolute;right:7px;bottom:7px;display:flex}
 .rwith{margin-left:auto;display:flex}
+.cwith .av,.cwith .more,.rwith .av,.rwith .more{box-shadow:0 0 0 2px var(--bg);margin-left:-7px}
+.cwith .av:first-child,.rwith .av:first-child{margin-left:0}
+.more{border-radius:50%;background:var(--soft);color:var(--bg);display:flex;flex:none;
+  align-items:center;justify-content:center;font-weight:var(--wb)}
 .phead{flex:none;padding:2px var(--edge) 16px}
 .phead.own{padding-top:calc(var(--safeT) + 14px)}
 .pid{display:flex;align-items:center;gap:16px}
@@ -782,6 +862,9 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
   font-size:var(--t3);font-weight:var(--wm);color:var(--ink)}
 .door:active{background:var(--surface2)}
 .door .ic{width:27px;height:27px;stroke-width:1.7}
+/* Ticked, and staying put. */
+.ivrow .tick{margin-left:auto;display:flex;color:var(--mark);width:20px;justify-content:flex-end}
+.ivrow.on{background:var(--surface)}
 .sfield{padding:4px var(--edge) 14px}
 .sfield input{width:100%;height:46px;border-radius:var(--r-md);background:var(--surface);padding:0 14px;font-size:var(--t2)}
 .scta{padding:6px var(--edge) 4px;display:flex;gap:9px}
@@ -816,6 +899,10 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .efield:focus-within label{color:var(--ink);font-weight:var(--wb)}
 .efield:focus-within input,.efield:focus-within textarea,
 .efield:focus-within .withat{background:var(--bg);box-shadow:inset 0 0 0 1.5px var(--ink)}
+/* The handle is a field inside a field: the @ sits in a wrapper, and both it
+   and the input were taking the ring, so focusing it drew two boxes with the
+   @ boxed off in its own. The wrapper is the field. */
+.efield:focus-within .withat input{background:transparent;box-shadow:none}
 /* The count belongs to the field being typed in, not to the form. */
 .efield .cnt2{opacity:0;transition:opacity .16s}
 .efield:focus-within .cnt2{opacity:1}
@@ -1001,6 +1088,10 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
       <button class="rnd" onclick="toggleViewMarks()"
         aria-label="Hide the marks" id="vhide"></button>
       <button class="tbtn" onclick="openCrop()" id="v-crop"><span id="vcrop-ic"></span>Crop</button>
+      <!-- Publishing was three taps inside a menu, so nobody met the one rule
+           it has: a photograph goes out with the photographer's words on it
+           or it does not go out. On the bar, the rule is met on the way. -->
+      <button class="tbtn" onclick="toggleShare()" id="v-pub"><span id="vpub-ic"></span>Public</button>
       <button class="save" onclick="enterEdit()" id="mk-note">Mark</button>
     </span>
     <!-- Marking. -->
@@ -1038,7 +1129,11 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
          underline, and put a keyboard between you and a board you had opened
          to look at. Renaming is in the menu, where the rest of the board's
          settings are. -->
-    <h1 id="bd-title"></h1><span class="ofn" id="bd-of"></span>
+    <h1 id="bd-title" onclick="editBoardName()"></h1>
+    <input id="bd-name" class="hname" style="display:none" maxlength="32" autocomplete="off"
+      onblur="endBoardName(true)" onkeydown="if(event.key==='Enter')this.blur();
+        if(event.key==='Escape')endBoardName(false)">
+    <span class="ofn" id="bd-of"></span>
     <span class="bwith" id="bd-with"></span>
     <span class="r">
       <!-- The conversation used to live in a 104px slot under the board, where
@@ -1061,7 +1156,11 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
      do here, so it stands with the other two. -->
 <div class="nsheet" id="nsheet">
   <div class="nh"><span class="badge" id="ns-num">1</span><b id="ns-h">Note</b></div>
-  <div class="nfield"><input id="ns-input" maxlength="70" placeholder="Say what you noticed">
+  <!-- A hundred characters in one line is a hundred characters you cannot see:
+     the field scrolled sideways and you had to drag along the bottom to read
+     back what you had written. It wraps. -->
+  <div class="nfield"><textarea id="ns-input" rows="3" maxlength="100"
+      placeholder="Say what you noticed"></textarea>
     <span class="cnt" id="ns-count"></span></div>
   <div class="nbar"><button class="cx" id="ns-del" onclick="deleteEditingMark()"
       aria-label="Remove this mark"></button>
@@ -1126,6 +1225,8 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">Invite someone</div>
   <div class="sfield"><input id="iv-q" placeholder="Search by name or handle" autocomplete="off"></div>
   <div id="iv-rows"></div>
+  <div class="scta" id="iv-cta" style="display:none">
+    <button class="c2" onclick="addPicked()" id="iv-go">Add</button></div>
 </div>
 
 <div class="sheet" id="sheet-people">
@@ -1188,11 +1289,24 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 <!-- Seven rows ending in delete account, as the brief asks. Every developer
      tool that used to live here is gone: this goes to real people, and a
      product with its scaffolding still up is not one. -->
+<!-- ══ WHAT THIS IS · four cards, once ═══════════════════
+     Somebody opening a link has three words to learn and no reason to trust
+     the thing. It is swiped sideways, which is the gesture Public uses, so
+     reading it teaches the app's main movement. Skip is always there. -->
+<section class="ob" id="ob" style="display:none">
+  <button class="obskip" id="obskip" onclick="endOnboard()">Skip</button>
+  <div class="obrun" id="ob-run"></div>
+  <div class="obdots" id="ob-dots"></div>
+</section>
+
 <div class="sheet" id="sheet-profile">
   <div class="grab"></div><div class="sh" id="pr-h">Settings</div>
   <div class="srow" onclick="openEditProfile()">Edit profile<span class="chev">›</span></div>
   <div class="srow" onclick="openSheet('sheet-notif')">Notifications<span class="chev">›</span></div>
   <div class="srow" onclick="openSheet('sheet-feedback')">Send feedback<span class="chev">›</span></div>
+  <!-- Somebody who opens this again in a week will have forgotten the four
+       cards, which is the normal thing to do with onboarding. -->
+  <div class="srow" onclick="closeSheets();openOnboard()">How ari works<span class="chev">›</span></div>
   <div class="srow" onclick="openSheet('sheet-about')">About ari<span class="chev">›</span></div>
   <div class="srow" onclick="toast('Opens in your browser')">Privacy policy<span class="out">↗</span></div>
   <div class="srow" onclick="toast('Opens in your browser')">Terms of service<span class="out">↗</span></div>
@@ -1240,9 +1354,9 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 
 <div class="sheet" id="sheet-about">
   <div class="grab"></div><div class="sh">About ari</div>
-  <div class="sp">A place to keep what you noticed, and to say what you noticed in it.<br><br>
+  <div class="sp">A visual note app. Write on the picture, at the spot you were looking at.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 3 Sep 19:05 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 4 Sep 13:30 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -1348,6 +1462,7 @@ function paintIcons(){
   put('fab',I.plus);
   $('nb-al').insertAdjacentHTML('afterbegin', I.bell);
   put('fd-prev',I.back); put('fd-next',I.fwd);
+  put('vpub-ic',I.globe,'s');
   put('mk-back',I.back); put('mk-more',I.more); put('bd-back',I.back); put('bd-more',I.more);
   put('fd-back',I.back); put('lib-more',I.more);
   put('c-back',I.back);
@@ -1422,6 +1537,14 @@ const poss = w => w===ME ? 'Yours'
    third person — “Your name” and “You” only work from inside that account.
    Where a label is optional, leave it out rather than print nonsense. */
 const nameOr = (w,alt) => (w===ME || who(w).unnamed) ? (alt===undefined?null:alt) : who(w).short;
+/* Three faces and a number. Four overlapping circles on a cover is a smudge,
+   and the fifth person was invisible either way. */
+function facePile(ids,z){
+  const show=ids.slice(0,3), rest=ids.length-show.length;
+  return show.map(w=>avatar(w,z)).join('')
+    + (rest>0?`<span class="more" style="width:${z}px;height:${z}px;font-size:${
+        Math.round(z*.4)}px">+${rest}</span>`:'');
+}
 const avatar = (id,z) => `<span class="av" style="background:${who(id).c};width:${z}px;height:${z}px;
   font-size:${Math.round(z*.42)}px" title="${esc(who(id).name)}">${who(id).short[0]}</span>`;
 
@@ -1473,7 +1596,7 @@ let FANS  = [];   // [{by,at}]
 let PEND  = null; // {img,at} | null
 let UI = { coll:'', tab:'images', me:'colls', cv:'grid', screen:'s-library', scope:'mine', q:'' };
 const MARK_CAP = 3;
-const NOTE_MAX = 70;
+const NOTE_MAX = 100;
 
 /* ═══ storage ══════════════════════════════════════════════
    Photographs go to IndexedDB. Fifteen of them as data URLs blow
@@ -1709,6 +1832,7 @@ function openSheet(id){
   clearTimeout(_t); $('toast').classList.remove('on');
   $('scrim').classList.add('on'); $(id).classList.add('on');
   document.body.classList.add('sheeted');
+  if(id==='sheet-invite') _ivPick=[];
   if(id==='sheet-projects') renderProjects();
   if(id==='sheet-collmenu') renderCollMenu();
   if(id==='sheet-people')   renderPeople();
@@ -1978,9 +2102,10 @@ function renderCollGrid(cols){
     ...cols.map(c=>{ const im=collImgs(c.id);
       return {id:c.id,name:c.name,cover:(im[0]||{}).src,n:im.length,
         priv:!c.link&&c.members.length<2,globe:!!c.link,
-        /* A face on anything somebody else is inside. “0 images” said
-           nothing about whether the room was empty or shared. */
-        with:(c.members||[]).filter(m=>m!==c.owner)[0]||null,
+        /* Faces on anything somebody else is inside. “0 images” said nothing
+           about whether the room was empty or shared, and one face said
+           nothing about the other three. */
+        with:(c.members||[]).filter(m=>m!==c.owner),
         /* Whose it is, on anything you did not make. “Project 1 · 2 images”
            told somebody who had just been invited nothing about whose
            project they were standing in. */
@@ -1996,7 +2121,7 @@ function renderCollGrid(cols){
           <span><span style="font-weight:500">${esc(r.name)}</span>
             <span class="sub" style="display:block">${r.by?(esc(r.by)+' · '):''}${
               r.n} image${r.n===1?'':'s'}${r.priv?' · Private':''}</span></span>
-          ${r.with?`<span class="rwith">${avatar(r.with,22)}</span>`:''}
+          ${r.with.length?`<span class="rwith">${facePile(r.with,22)}</span>`:''}
         </div>`).join('')
       + `</div><div style="height:104px"></div>`;
     return;
@@ -2005,7 +2130,7 @@ function renderCollGrid(cols){
     `<a class="ccard" onclick="openColl('${r.id}')">
       <span class="ccover">${r.cover?`<img src="${r.cover}" alt="">`:`<span class="none">Empty</span>`}
         ${r.globe?`<span class="gl">${I.globe.replace('class="ic"','class="ic s"')}</span>`:''}
-        ${r.with?`<span class="cwith">${avatar(r.with,22)}</span>`:''}</span>
+        ${r.with.length?`<span class="cwith">${facePile(r.with,22)}</span>`:''}</span>
       <span class="cnm">${esc(r.name)}</span>
       <span class="csub">${r.by?(esc(r.by)+' · '):''}${r.n} image${r.n===1?'':'s'}${
         r.priv?' · Private':''}</span></a>`;
@@ -2165,8 +2290,8 @@ function renderBoardList(c, boards){
   $('coll-body').innerHTML = `<div class="pad">
     ${(cells.length||maker) ? `<div class="bgrid">`+maker+cells.join('')+`</div>` : ''}
     ${cells.length||maker ? '' : `<div class="empty" style="grid-column:auto"><b>No mixes yet</b>
-          A mix is two, four or six images from this project, seen together.
-          <br><span>“${esc(c.name)}” has ${n} image${n===1?'':'s'} — a mix needs at least two.</span></div>`}
+          ${n>=2 ? 'Put two, four or six of these side by side.'
+                 : 'A mix needs at least two images. This one has '+(n?'one':'none')+' so far.'}</div>`}
   </div>`;
 }
 function showShared(){ closeSheets(); openColl('public'); }
@@ -2183,6 +2308,80 @@ function newCollection(){
 }
 /* Two ⋯ on one screen meaning two different things was the confusion. One
    glyph, one place, and the sheet knows whether a collection is open. */
+/* ═══ what this is ═════════════════════════════════════════
+   Four cards. Three words and the truth about what somebody is holding —
+   nothing about how to work the controls, because the first photograph
+   anybody marks already teaches that on the photograph itself. */
+function openOnboard(){
+  const shot = (k,pins) => `<div class="shot"><img src="${SEEDIMG[k]}" alt="">${pins}</div>`;
+  const pin = (n,x,y,t) => `<div class="mark" style="left:${x}%;top:${y}%">
+    <span class="badge">${n}</span>${t?`<span class="pill"><span class="ptxt">${esc(t)}</span></span>`:''}</div>`;
+  const cards = [
+    /* A cover, and nothing on it. Every card after this one is a photograph
+       filling the screen, so the quietest possible first page is what makes
+       the second one land. The swipe hint is here and nowhere else: the
+       whole thing is turned sideways and the first screen is the only place
+       where nobody yet knows that. */
+    { h:'ari', cover:true, hint:true,
+      p:['A visual note app. Write on the picture, at the spot you were looking at.'] },
+    { h:'Mark',
+      p:['Tap a spot, or draw round something, and say what you noticed there.'],
+      art:`<div class="obart">${shot('fabriccave',
+        `<svg class="fink" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M58 22 L72 18 L80 28 L76 42 L62 46 L54 36 Z"/></svg>`
+        + pin(1,14,58,'The fold holds its shape without a seam')
+        + pin(2,74,26,''))}</div>` },
+    { h:'Mix',
+      p:['Put two, four or six side by side. It is how you compare them, and how you show somebody what you are thinking.'],
+      art:`<div class="obart"><div class="obquad">${
+        ['terracotta','marbled','concretequiet','venice']
+          .map(k=>`<img src="${SEEDIMG[k]}" alt="">`).join('')}</div></div>` },
+    { h:'Public',
+      p:["Where everyone's photographs are. Yours go there only when you turn Public on, one photograph at a time."],
+      /* Somebody else's name under it, because the card has to say whose —
+         a photograph with a note on it and no author reads as your own. */
+      art:`<div class="obart"><div class="obcol">${
+        shot('ceiling', pin(1,10,40,'Ribs meet without a joint you can see'))}
+        <div class="obby">${avatar('ines',24)}<b>ines</b></div></div></div>` },
+    { h:'Before you start', words:true,
+      p:['This is a test prototype of ari. It runs inside your browser, so everything you make stays on this phone and nothing is sent anywhere.',
+         'Give yourself a name. It goes on every note you write, so the people you invite know who said what.'],
+      cta:`<div class="obcta"><button class="go" onclick="endOnboard(true)">Set your name</button>
+        <button class="later" onclick="endOnboard()">Look around first</button></div>` }
+  ];
+  $('ob-run').innerHTML = cards.map(c=>`<div class="obcard${c.words?' words':''}${c.cover?' cover':''}">
+    ${c.art||''}<div class="${c.cover?'obmark':'obh'}">${esc(c.h)}</div>
+    ${c.p.map(t=>`<p class="obp">${esc(t)}</p>`).join('')}
+    ${c.hint?`<div class="obhint">Swipe${I.fwd.replace('class="ic"','class="ic s"')}</div>`:''}
+    ${c.cta||'<div class="obfoot"></div>'}</div>`).join('');
+  $('ob-dots').innerHTML = cards.map((_,k)=>`<i class="${k?'':'on'}"></i>`).join('');
+  $('ob').style.display='flex';
+  $('ob-run').scrollLeft=0; obDots();
+}
+function obDots(){
+  const el=$('ob-run'), w=el.clientWidth||1, at=Math.round(el.scrollLeft/w);
+  [...$('ob-dots').children].forEach((d,k)=>d.classList.toggle('on',k===at));
+  /* Skip has nothing left to skip on the last card, where the buttons are. */
+  $('obskip').style.display = at>=$('ob-dots').children.length-1 ? 'none' : 'block';
+}
+let _obTick=0;
+$('ob-run').addEventListener('scroll',()=>{ if(_obTick) return;
+  _obTick=requestAnimationFrame(()=>{ _obTick=0; obDots(); }); },{passive:true});
+/* A laptop has no swipe, and this is the first thing anybody sees. */
+$('ob-run').addEventListener('wheel', ev=>{
+  if(Math.abs(ev.deltaX) >= Math.abs(ev.deltaY)) return;
+  if(Math.abs(ev.deltaY)<4) return; ev.preventDefault();
+  const now=Date.now(); if(now-_obWheel<420) return; _obWheel=now;
+  const el=$('ob-run'), w=el.clientWidth||1;
+  const at=Math.min($('ob-dots').children.length-1,
+    Math.max(0, Math.round(el.scrollLeft/w)+(ev.deltaY>0?1:-1)));
+  el.scrollTo({left:at*w, behavior:'smooth'});
+},{passive:false});
+let _obWheel=0;
+function endOnboard(name){
+  $('ob').style.display='none';
+  try{ localStorage.setItem('ari2-hello','1'); }catch(e){}
+  if(name) openEditProfile();
+}
 function openProjects(){ if(_pickMode || guest()) return; openSheet('sheet-projects'); }
 function renderProjects(){
   const here = UI.coll;
@@ -2321,6 +2520,10 @@ function openInvite(){
   $('iv-q').value=''; renderInvite(); openSheet('sheet-invite');
   setTimeout(()=>$('iv-q').focus(),220);
 }
+/* Inviting three people was three trips through the same two sheets, because
+   the first tap both chose somebody and closed the list. Tapping ticks; the
+   button at the bottom is the errand. */
+let _ivPick=[];
 function renderInvite(){
   const c=coll(UI.coll); if(!c) return;
   const q=($('iv-q').value||'').trim().toLowerCase();
@@ -2328,10 +2531,29 @@ function renderInvite(){
     .filter(id=>id!==ME && id!=='visitor' && !c.members.includes(id))
     .filter(id=>!q || who(id).name.toLowerCase().includes(q) || (who(id).h||'').includes(q));
   $('iv-rows').innerHTML = rest.length
-    ? rest.map(id=>`<div class="srow" onclick="addMember('${id}')">${avatar(id,30)}
+    ? rest.map(id=>{ const on=_ivPick.includes(id);
+      return `<div class="srow ivrow ${on?'on':''}" onclick="ivTap('${id}')">${avatar(id,30)}
         <span>${esc(who(id).name)}<span class="sub" style="display:block">@${esc(who(id).h||id)}</span></span>
-        <span class="k">Invite</span></div>`).join('')
+        <span class="tick">${on?I.check.replace('class="ic"','class="ic s"'):''}</span></div>`; }).join('')
     : `<div class="sp">${q?'Nobody by that name.':'Everybody you know is already here.'}</div>`;
+  const n=_ivPick.length;
+  $('iv-cta').style.display = n ? 'flex' : 'none';
+  $('iv-go').textContent = n===1 ? ('Add '+who(_ivPick[0]).short) : ('Add '+n);
+}
+function ivTap(id){
+  const k=_ivPick.indexOf(id);
+  if(k>=0) _ivPick.splice(k,1); else _ivPick.push(id);
+  renderInvite();
+}
+function addPicked(){
+  const ids=_ivPick.slice(); _ivPick=[];
+  if(!ids.length) return;
+  const c=coll(UI.coll); if(!c) return closeSheets();
+  ids.forEach(id=>{ if(!c.members.includes(id)){ c.members.push(id);
+    (c.invites=c.invites||[]).push({by:ME, who:id, at:Date.now()}); } });
+  save(); closeSheets(); renderLibrary();
+  toast(ids.length===1 ? (who(ids[0]).short+' can mark and comment here')
+                       : (ids.length+' people can mark and comment here'));
 }
 function addMember(id){ const c=coll(UI.coll);
   if(!c.members.includes(id)){ c.members.push(id);
@@ -2631,6 +2853,11 @@ function openMark(id){
   $('v-crop').style.display = mine ? 'flex' : 'none';
   $('mk-crop').style.display = (mine && !_pubRun.length) ? 'flex' : 'none';
   $('mkhold').classList.toggle('editing', editing);
+  /* Only the photographer publishes, and only from the looking bar — mid-mark
+     the question is what you are writing, not who sees it. */
+  const canPub = !editing && im.by===ME && !guest();
+  $('v-pub').style.display = canPub ? 'flex' : 'none';
+  $('v-pub').classList.toggle('on', !!im.shared);
   $('mk-back').innerHTML = editing && !inRun ? I.close : I.back;
   document.querySelector('#s-mark .mkbar').style.display = ro ? 'none' : 'flex';
   $('mk-ro').style.display = ro ? 'block' : 'none';
@@ -2728,7 +2955,15 @@ function paintMarks(){
      label saying whose it is. */
   const col = who(editing ? ME : (LAYER||im.by)).c;
   hold.style.setProperty('--pin', col||'var(--mark)');
-  shown.forEach((m,i)=>hold.appendChild(markEl(m,i)));
+  /* Looking at a photograph, the badge folds its note away — the same tap
+     the feed has. While marking it drags instead, because that is what the
+     badge is for in there. */
+  shown.forEach((m,i)=>{
+    if(editing){ hold.appendChild(markEl(m,i)); return; }
+    const d=document.createElement('div');
+    d.innerHTML=markHTML(m,i,'',true);
+    hold.appendChild(d.firstElementChild);
+  });
   renderFaces(im);
   if(MKRO) return;
   setMkTitle();
@@ -2779,9 +3014,23 @@ function markHTML(m,i,extra,fold){
   const flip=m.x>50, room=Math.max(24, flip ? m.x : 100-m.x);
   return `<div class="mark${flip?' flip':''}" ${extra||''}
     style="${flip?'right:'+(100-m.x)+'%':'left:'+m.x+'%'};top:${m.y}%;max-width:calc(${room}% - 10px)">
-    <span class="badge"${fold?' onclick="foldMark(event)"':''}>${i+1}</span>${m.text?`<span class="pill">${esc(m.text)}</span>`:''}</div>`;
+    <span class="badge"${fold?' onclick="foldMark(event)"':''}>${i+1}</span>${m.text?`<span class="pill"${
+      fold?' onclick="openMark2(event)"':''}><span class="ptxt">${esc(m.text)}</span></span>`:''}</div>`;
 }
-function foldMark(e){ e.stopPropagation(); e.currentTarget.parentElement.classList.toggle('folded'); }
+/* One tap opens a clamped note; the next folds the whole thing away. */
+/* Tapping the words is what people do; the badge was the only thing that
+   opened a clamped note, so a shortened one stayed shortened. */
+function openMark2(e){ e.stopPropagation();
+  const el=e.currentTarget.parentElement;
+  if(!el.classList.contains('open')) el.classList.add('open');
+}
+function foldMark(e){ e.stopPropagation();
+  const el=e.currentTarget.parentElement, txt=el.querySelector('.ptxt');
+  const clamped = txt && !el.classList.contains('open')
+    && txt.scrollHeight - txt.clientHeight > 2;
+  if(clamped){ el.classList.add('open'); return; }
+  el.classList.remove('open'); el.classList.toggle('folded');
+}
 function markEl(m,i){
   const d=document.createElement('div');
   d.innerHTML=markHTML(m,i,`data-i="${i}"`);
@@ -2885,8 +3134,12 @@ function cancelNote(){
   if(_editing!=null && _noteWas && !_noteWas.text) MK.marks.splice(_editing,1);
   _editing=null; $('nsheet').classList.remove('on'); paintMarks();
 }
-function countNote(){ const n=$('ns-input').value.length;
-  $('ns-count').textContent = n>=50 ? (n+'/'+NOTE_MAX) : ''; }
+function countNote(){ const el=$('ns-input');
+  /* An input method can hand over more than maxlength while it is still
+     composing, so the cap is kept here as well as on the field. */
+  if(el.value.length>NOTE_MAX) el.value=el.value.slice(0,NOTE_MAX);
+  const n=el.value.length;
+  $('ns-count').textContent = n>=NOTE_MAX-50 ? (n+'/'+NOTE_MAX) : ''; }
 $('ns-input').addEventListener('input',countNote);
 $('ns-input').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();closeNote();} });
 function deleteEditingMark(){ if(_editing==null) return;
@@ -3146,23 +3399,28 @@ function toggleShare(){
   /* Marks made in this session live in MK until Save, so asking the stored
      image whether anything was said refuses a photograph you have just
      written on. Ask the editor when the editor is open. */
-  /* Publishing is the photographer's act and needs the photographer's words.
-     Mid-edit, ask the editor — but only when the editor is theirs. */
   const written = (MK && MK.id===im.id && im.by===ME)
     ? (MK.marks||[]).some(m=>(m.text||'').trim())
     : said(im);
+  /* The one rule publishing has, and now the only place you meet it. */
   if(!im.shared && !written){
     toast('Say something on it first — that is what people come for');
     return;
   }
+  const first = !im.shared && !localStorage.getItem('ari2-saidpub');
   im.shared=!im.shared; if(im.shared) im.sharedAt=Date.now();
   if(im.shared) firstPublish(im.id);
   save();
-  /* Mid-edit, going to Angles now would throw away the marks on screen. */
-  const editing = document.querySelector('.scr.on')?.id === 's-mark';
-  if(im.shared && !editing){ closeSheets(); openFeedAt(im.id); toast('Now in Public'); return; }
+  /* It is a switch on the bar now, so it switches and stays put. Throwing
+     you into Public was right for a row in a menu and wrong for a control
+     you are looking at, on the photograph you were looking at. */
+  /* Repainting goes through go(), which clears the toast on every screen
+     change — so the words were being set and wiped in the same frame. */
+  if(document.querySelector('#s-mark.on') && MK) openMark(MK.id);
   renderImageSheet();
-  toast(im.shared ? (editing?'It goes to Public when you save':'Now in Public') : 'Taken out of Public');
+  if(im.shared && first){ try{ localStorage.setItem('ari2-saidpub','1'); }catch(e){}
+    toast('Anyone can see this now. You can take it back out any time.'); }
+  else toast(im.shared ? 'Now in Public' : 'Taken out of Public');
 }
 function moveImage(){
   closeSheets();
@@ -3568,12 +3826,33 @@ function copyBoardLink(){
   closeSheets(); toast('Link copied');
 }
 function openAsVisitor(){ location.search='?board='+CURB.id; }
+/* A title is not an arrangement. It was grouped with the cells and the fit,
+   so renaming left the mix dirty: leaving asked whether to save, and
+   Discard put the old name back. It goes out at once, like a comment. */
 function renameBoard(){
   closeSheets();
-  askName('Mix name', CURB.name, v=>{
-    if(!CURB || v===CURB.name) return;
-    CURB.name=v; $('bd-title').textContent=v; renderBoardBar();
-  });
+  askName('Mix name', CURB.name, v=>{ setBoardName(v); });
+}
+function setBoardName(v){
+  v=(v||'').trim();
+  if(!CURB || !v || v===CURB.name) return;
+  CURB.name=v; save(); _bdSnap=bdState(CURB);
+  setBdHead(); renderBoardBar();
+}
+/* Renaming was three taps into a menu, so people left the mix and came back
+   rather than do it. The title is the name; tapping it edits the name. */
+function editBoardName(){
+  if(guest() || !isOwner(CURB.coll)) return;
+  const h=$('bd-title'), inp=$('bd-name');
+  inp.value=CURB.name; h.style.display='none'; inp.style.display='block';
+  inp.focus(); inp.select();
+}
+function endBoardName(commit){
+  const inp=$('bd-name');
+  if(inp.style.display==='none') return;
+  if(commit) setBoardName(inp.value);
+  inp.style.display='none'; $('bd-title').style.display='';
+  setBdHead();
 }
 function deleteBoard(){
   closeSheets();
@@ -3820,13 +4099,17 @@ function feedTurn(d){
   e.scrollTo({left:at*w, behavior:'smooth'});
 }
 let _wheelAt=0;
+/* Only a mouse wheel, which is vertical and would otherwise do nothing here.
+   A trackpad swipe arrives as a horizontal delta and the browser already
+   scrolls and snaps it correctly; intercepting that fought the native scroll
+   and turned three small pushes into three whole pages. */
 $('fd-body').addEventListener('wheel', ev=>{
-  const d=Math.abs(ev.deltaX)>Math.abs(ev.deltaY) ? ev.deltaX : ev.deltaY;
-  if(Math.abs(d)<4) return;
+  if(Math.abs(ev.deltaX) >= Math.abs(ev.deltaY)) return;
+  if(Math.abs(ev.deltaY)<4) return;
   ev.preventDefault();
   const now=Date.now();
   if(now-_wheelAt<420) return;
-  _wheelAt=now; feedTurn(d>0?1:-1);
+  _wheelAt=now; feedTurn(ev.deltaY>0?1:-1);
 },{passive:false});
 addEventListener('keydown', ev=>{
   if(UI.screen!=='s-feed' || _sheet) return;
@@ -4141,10 +4424,16 @@ function renderPerson(){
 /* Your own page, in two lines plus the one you wrote. */
 function meHead(p){
   return `<div class="mehead">
-    <div class="row1">${avatar(p.id,38)}
+    <div class="row1">${avatar(p.id,42)}
       <div class="mcol2">
-        <div class="nm3">${esc(p.name)} <span>@${esc(p.h||p.id)}</span></div>
+        <div class="nm3">${esc(p.name)}</div>
+        ${/* The handle and the two counts are one kind of thing — what
+              somebody else uses to refer to you — so they are one grey line.
+              With the handle beside the name the hierarchy stepped down
+              twice in two lines and the pair read as a single lump. */''}
         <div class="st2">
+          <span class="hdl2">@${esc(p.h||p.id)}</span>
+          <span>·</span>
           <span onclick="openPeopleList('followers')"><b>${FANS.length}</b> followers</span>
           <span>·</span>
           <span onclick="openPeopleList('following')"><b>${FOLLOW.size}</b> following</span>
@@ -4205,6 +4494,35 @@ function setSearchScope(s){ UI.scope=s;
   renderSearch(); }
 function clearSearch(){ $('sr-input').value=''; UI.q=''; renderSearch(); }
 $('sr-input').addEventListener('input',e=>{ UI.q=e.target.value.trim().toLowerCase(); renderSearch(); });
+/* A photograph could only be found by the words somebody had written on it,
+   so anything unmarked was unfindable and a project named Lighting gave back
+   one row instead of its forty images. Every app that searches pictures
+   gathers the text around them first — a caption, a name, a comment — and
+   only then reads the pixels. These are the ones we have. */
+function match(i,q){
+  if((i.marks||[]).some(m=>(m.text||'').toLowerCase().includes(q))) return true;
+  const c=coll(i.coll);
+  if(c && c.name.toLowerCase().includes(q)) return true;
+  if((i.comments||[]).some(x=>(x.text||'').toLowerCase().includes(q))) return true;
+  const w=who(i.by);
+  if(((w.name||'')+' '+(w.h||'')).toLowerCase().includes(q)) return true;
+  /* Named on a mix, and the photograph is in it. */
+  return BOARDS.some(b=>b.name.toLowerCase().includes(q) && (b.cells||[]).includes(i.id));
+}
+/* Why it came back, when it was not the note that matched. */
+function whyHit(i,q){
+  const m=(i.marks||[]).find(x=>(x.text||'').toLowerCase().includes(q));
+  if(m && m.text) return {t:m.text, note:true};
+  const c=coll(i.coll);
+  if(c && c.name.toLowerCase().includes(q)) return {t:'in '+c.name};
+  const cm=(i.comments||[]).find(x=>(x.text||'').toLowerCase().includes(q));
+  if(cm) return {t:'“'+cm.text+'”'};
+  const w=who(i.by);
+  if(((w.name||'')+' '+(w.h||'')).toLowerCase().includes(q)) return {t:'by '+(w.h||w.short)};
+  const b=BOARDS.find(x=>x.name.toLowerCase().includes(q) && (x.cells||[]).includes(i.id));
+  if(b) return {t:'in '+b.name};
+  return null;
+}
 function renderSearch(){
   const q=UI.q;
   let pool = UI.scope==='mine'
@@ -4212,7 +4530,7 @@ function renderSearch(){
     : feedImgs();
   let hits=pool, names=[];
   if(q){
-    hits = pool.filter(i=>(i.marks||[]).some(m=>(m.text||'').toLowerCase().includes(q)));
+    hits = pool.filter(i=>match(i,q));
     if(UI.scope==='mine'){
       names = COLLS.filter(c=>c.name.toLowerCase().includes(q))
         .map(c=>({t:'collection',id:c.id,name:c.name}))
@@ -4225,7 +4543,7 @@ function renderSearch(){
     if(!q) return 0;
     const pool2 = scope==='mine'
       ? IMGS.filter(i=>i.by===ME||(coll(i.coll)||{}).owner===ME) : feedImgs();
-    let n = pool2.filter(i=>(i.marks||[]).some(m=>(m.text||'').toLowerCase().includes(q))).length;
+    let n = pool2.filter(i=>match(i,q)).length;
     if(scope==='mine') n += COLLS.filter(c=>c.name.toLowerCase().includes(q)).length
                           + BOARDS.filter(b=>b.name.toLowerCase().includes(q)).length;
     return n;
@@ -4243,12 +4561,12 @@ function renderSearch(){
     /* Show the note that matched. A grid of pictures does not explain why
        any of them came back. */
     + (hits.length ? `<div class="grid pad">`+hits.map(i=>{
-        const hit=q ? (i.marks||[]).find(m=>(m.text||'').toLowerCase().includes(q)) : null;
+        const hit=q ? whyHit(i,q) : null;
         return `<div class="tile" onclick="${UI.scope==='mine'?`openMark('${i.id}')`:`openFoundFeed('${i.id}')`}">
           <img src="${i.src}" alt="">
-          ${hit&&hit.text?`<span class="hitnote">${esc(hit.text)}</span>`:''}
+          ${hit?`<span class="hitnote${hit.note?'':' why'}">${esc(hit.t)}</span>`:''}
         </div>`; }).join('')+`</div>`
-      : `<div class="empty" style="grid-column:auto">${q?'<b>Nothing matches</b>Notes, project and mix names are searched.':'<b>Search your notes</b>Type a word you wrote on an image.'}</div>`);
+      : `<div class="empty" style="grid-column:auto">${q?'<b>Nothing matches</b>Notes, comments, project and mix names, and who took it.':'<b>Search your notes</b>Type a word you wrote on an image.'}</div>`);
 }
 
 /* ═══ profile ══════════════════════════════════════════════ */
@@ -4300,6 +4618,7 @@ function askDeleteAccount(){
     'Delete', ()=>{
       IMGS.forEach(i=>dbDel(i.id));
       ['colls','boards','imgs','seen','coll','me','cv','follow','fans','pend','firstpub','firstshare','taught','notif','prof','turned']
+        .concat(['hello','saidpub','turned'])
         .forEach(k=>{ try{ localStorage.removeItem('ari2-'+k); }catch(e){} });
       location.reload();
     });
@@ -4380,6 +4699,11 @@ addEventListener('popstate', e=>{
   }
   try{ history.replaceState({s:'s-library'},''); }catch(e){}
   go('s-library');
+  /* Once, on the way in. Not for somebody who arrived by a shared link —
+     they came to read one mix, and four cards about a tool they have not
+     been given is a door in the way of the thing they were sent. */
+  const hello = (()=>{ try{ return localStorage.getItem('ari2-hello')==='1'; }catch(e){ return true; } })();
+  if(!hello && !LINKONLY && !guest()) openOnboard();
 })();
 </script>
 </div>
