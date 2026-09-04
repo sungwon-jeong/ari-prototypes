@@ -353,6 +353,9 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .fimg .mark .badge{cursor:pointer}
 .hint{flex:none;text-align:center;color:rgba(255,255,255,.6);padding:14px 0 0;
   font-size:var(--t4);pointer-events:none}
+/* With no bar under it this line is the last thing on the screen, and the
+   home indicator was taking the bottom off it. */
+#mk-ro{padding-bottom:calc(var(--safeB) + 16px)}
 /* the first-run lesson, over the photograph */
 .lesson{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:22px;z-index:8;pointer-events:none;
@@ -370,11 +373,6 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .lsay{background:rgba(17,17,17,.82);color:var(--bg);font-size:var(--t4);
   padding:7px 13px;border-radius:var(--r-pill);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-/* A row of faces on the photograph's own header. Whose reading you are on is
-   the lit one; the others are there to be tapped. */
-.faces{display:flex;align-items:center;gap:5px;margin-right:2px}
-.faces .lf{width:26px;height:26px;border-radius:50%;opacity:.42;flex:none;display:block}
-.faces .lf.on{opacity:1;box-shadow:0 0 0 2px var(--bg)}
 /* One centred cluster. It was a fixed 296px box, which fitted three controls
    and not four; the width now comes from the screen and the row centres what
    is in it, so nothing drifts to one side when a control appears or goes. */
@@ -641,11 +639,26 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 /* Whose it is, and the four things you can do. Nothing else — the note is on
    the photograph where it was placed, and printing it again underneath said
    the same sentence twice in two sizes. */
-.fbar{display:flex;align-items:center;gap:9px;padding:0 var(--edge);color:var(--ink)}
-.fbar .who{display:flex;align-items:center;gap:9px;cursor:pointer}
-.fbar .who b{font-size:var(--t3);font-weight:var(--wb);letter-spacing:-.01em}
-.fbar .dot{color:var(--soft);font-size:var(--t4)}
-.fbar .acts{margin-left:auto;display:flex;align-items:center;gap:17px}
+/* What gives when a handle is long. The four things you can do are fixed —
+   an icon that moves, or leaves the screen, is worse than a name you cannot
+   read to the end. So the name is the only thing that shrinks, the faces
+   beside it never do, and the row is allowed to run out of space rather than
+   run off the edge. A 21-character handle overflowed a 320pt screen by 47px
+   before this existed. */
+/* No overflow:hidden here — the ring round the chosen face sits 4px outside
+   it and was being sliced into two bars. The ellipsis lives on the handle
+   itself, so the row does not need to clip. */
+.fbar{display:flex;align-items:center;gap:9px;padding:4px var(--edge);color:var(--ink);
+  min-width:0}
+.fbar .who{display:flex;align-items:center;gap:9px;cursor:pointer;min-width:0;flex:0 1 auto}
+.fbar .who .av{flex:none}
+.fbar .who b{font-size:var(--t3);font-weight:var(--wb);letter-spacing:-.01em;
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Shrinks a hundred times faster than the name does, so the sentence about
+   whose photograph it is gives way before the handle starts losing letters. */
+.fbar .dot{color:var(--soft);font-size:var(--t4);white-space:nowrap;
+  flex:0 100 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.fbar .acts{margin-left:auto;display:flex;align-items:center;gap:17px;flex:none;padding-left:9px}
 .fbar .acts>span{display:flex;position:relative}
 .fbar .ic{width:22px;height:22px;stroke-width:1.7}
 .fbar .like.on .ic{fill:var(--red);stroke:var(--red)}
@@ -654,12 +667,40 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    photograph was the thing that made this read as somebody else's app. */
 .fbar .cm .n{position:absolute;right:-9px;top:-3px;font-size:var(--photo-badge);
   font-weight:var(--wb);color:var(--soft)}
-/* The face row switches which reading is on the photograph, and the line
-   under the picture says whose it is. Reading somebody else's marks while
-   the only name on screen was the photographer's is not a smaller mistake
-   than printing the note twice — it is a wrong one. */
-.ffaces{display:flex;align-items:center;justify-content:center;gap:9px;padding:0 var(--edge)}
-.fread{font-size:var(--t4);color:var(--soft);margin-left:3px}
+/* Three earlier designs failed the same test: nobody could say what the
+   control was. A tab bar looked like navigation and a bare row of circles
+   looked like decoration. What was missing was not a better shape — it was
+   that nothing on screen changed its wording when you used it. So: the faces
+   are the switch, and the name beside them always says whose reading is on
+   the photograph. Tap a face and the name changes with the marks. */
+/* The name sits against the face it belongs to. It used to follow the whole
+   row, which put it nine pixels from the last face and forty from the first
+   — so on the photographer's own reading the row read as though the name
+   belonged to somebody else. Proximity is not a hint here, it is the whole
+   explanation, and it was pointing at the wrong circle.
+   Every name is in the row and all but one are collapsed to nothing, so
+   moving between them is a width that animates rather than a row that is
+   thrown away and rebuilt. */
+.rfaces{display:flex;align-items:center;flex:0 1 auto;min-width:0}
+.rfaces .av,.rfaces .more{opacity:.38;flex:none}
+.rfaces .on .av{opacity:1;box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}
+.rfaces.solo .av{opacity:1;box-shadow:none}
+.rfaces button{background:none;border:0;padding:0;display:flex;flex:none;margin-left:6px}
+.rfaces button:first-child{margin-left:0}
+.rfaces button:active{opacity:.6}
+.rfaces .who{max-width:0;opacity:0;overflow:hidden;margin:0;
+  transition:max-width .22s ease,opacity .15s ease,margin .22s ease}
+.rfaces .who.on{max-width:200px;opacity:1;margin:0 3px 0 8px}
+/* Position, on the surface where the gesture lives. Dots do not claim to be
+   a control — they say how many there are and which one you are on, and the
+   swipe is what moves. The title says whose. */
+.rdots{display:flex;justify-content:center;align-items:center;gap:7px;
+  padding:9px 0 0;flex:none}
+.rdot{width:7px;height:7px;border-radius:50%;background:var(--line);
+  border:0;padding:0;flex:none}
+.rdot.on{background:var(--ink)}
+.dark .rdot{background:rgba(255,255,255,.3)}
+.dark .rdot.on{background:var(--bg)}
 .flikes{font-size:var(--t4);color:var(--soft);text-align:center;padding:0 var(--edge)}
 .fend{align-items:center;justify-content:center;text-align:center;
   font-size:var(--t4);color:var(--soft)}
@@ -1051,7 +1092,6 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     <span class="r">
       <!-- Marking is composing and a thread is responding; the two were on
            one surface, and this app already has one place for a thread. -->
-      <span class="faces" id="mk-faces" style="display:none"></span>
       <button class="hbtn" id="mk-cmt" onclick="openComments(MK.id)" aria-label="Comments"></button>
       <button class="hbtn" onclick="openSheet('sheet-image')" aria-label="More" id="mk-more"></button>
     </span>
@@ -1076,7 +1116,10 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     </div>
     <p class="hint" id="mkhint">Tap a spot, or draw round something</p>
   </div>
-  <p class="hint" id="mk-ro" style="display:none">Only whoever took this can mark it</p>
+  <!-- Under the photograph, because that is what you swipe. Above it they
+       would be a tab bar again, and a tab bar is what failed. -->
+  <div class="rdots" id="mk-dots" style="display:none"></div>
+  <p class="hint" id="mk-ro" style="display:none">Only people in this project can mark it</p>
   <div class="mkbar">
     <!-- Three slots, and the white button sits in the middle one. It used to
          be flex:1 beside a 44px circle, so its label sat right of centre —
@@ -1246,6 +1289,11 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
     <button class="sendb" id="cs-post" aria-label="Post" onclick="addSheetComment()"></button></div>
 </div>
 
+<div class="sheet" id="sheet-readings">
+  <div class="grab"></div><div class="sh">Readings</div>
+  <div id="rd-rows"></div>
+</div>
+
 <div class="sheet" id="sheet-post">
   <div class="grab"></div><div class="sh" id="po-h">Post</div>
   <div id="po-rows"></div>
@@ -1356,7 +1404,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A visual note app. Write on the picture, at the spot you were looking at.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 4 Sep 13:30 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 4 Sep 23:30 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -1571,7 +1619,11 @@ const SEED = [
   /* Portrait and landscape alternate deliberately. A wall of one shape tells
      you nothing about what happens when the shapes are mixed, and mixed is
      what a real library is. ▭ marks the wide ones. */
-  {k:'posterwall',   by:'doyun',   t:'Type runs off the edge on purpose',        x:62, y:34},
+  /* One photograph carries a second person's reading, so that the row of
+     names is met rather than described. Without it every seed has exactly
+     one reading and the control never appears. */
+  {k:'posterwall',   by:'doyun',   t:'Type runs off the edge on purpose',        x:62, y:34,
+   also:{by:'marta', t:'The boards are the frame, nothing is glazed', x:28, y:66}},
   {k:'ceiling',      by:'ines',    t:'Ribs meet without a joint you can see',    x:48, y:40},
   {k:'fabriccave',   by:'jieun',   t:'The fold holds its shape without a seam',  x:38, y:52},
   {k:'terracotta',   by:'marta',   t:'Unglazed, so it takes the light flat',     x:55, y:44},
@@ -1631,20 +1683,30 @@ function dbDel(id){try{_db&&_db.transaction('img','readwrite').objectStore('img'
 function dbAll(){return new Promise(res=>{if(!_db)return res([]);try{
   const q=_db.transaction('img','readonly').objectStore('img').getAll();
   q.onsuccess=()=>res(q.result||[]); q.onerror=()=>res([]);}catch(e){res([]);}});}
-function save(){try{
-  localStorage.setItem('ari2-colls',JSON.stringify(COLLS));
-  localStorage.setItem('ari2-boards',JSON.stringify(BOARDS));
-  localStorage.setItem('ari2-seen',String(SEEN));
-  localStorage.setItem('ari2-coll',UI.coll||'');
-  localStorage.setItem('ari2-me',UI.me||'colls');
-  localStorage.setItem('ari2-cv',UI.cv||'grid');
-  localStorage.setItem('ari2-notif',JSON.stringify(NOTIF));
-  localStorage.setItem('ari2-follow',JSON.stringify([...FOLLOW]));
-  localStorage.setItem('ari2-fans',JSON.stringify(FANS));
-  localStorage.setItem('ari2-pend',JSON.stringify(PEND));
-  localStorage.setItem('ari2-prof',JSON.stringify(PROF));
-  localStorage.setItem('ari2-imgs',JSON.stringify(IMGS.map(i=>({...i,src:undefined}))));
-}catch(e){ storageFull('that change'); }}
+/* Twelve writes used to share one try. The first one to hit the quota threw
+   and every write after it was skipped — so a full disk did not lose the
+   change that filled it, it lost eleven unrelated ones as well, silently, and
+   said “that change” as though one thing had gone. One key at a time, and the
+   ones that fail are the ones that are named. */
+function save(){
+  const put=(k,v)=>{ try{ localStorage.setItem('ari2-'+k, v); return null; }
+                     catch(e){ return k; } };
+  const failed=[
+    put('colls',  JSON.stringify(COLLS)),
+    put('boards', JSON.stringify(BOARDS)),
+    put('seen',   String(SEEN)),
+    put('coll',   UI.coll||''),
+    put('me',     UI.me||'colls'),
+    put('cv',     UI.cv||'grid'),
+    put('notif',  JSON.stringify(NOTIF)),
+    put('follow', JSON.stringify([...FOLLOW])),
+    put('fans',   JSON.stringify(FANS)),
+    put('pend',   JSON.stringify(PEND)),
+    put('prof',   JSON.stringify(PROF)),
+    put('imgs',   JSON.stringify(IMGS.map(i=>({...i,src:undefined}))))
+  ].filter(Boolean);
+  if(failed.length) storageFull(failed.length===1 ? 'that change' : 'those changes');
+}
 /* Seeded images are read from the constant above, never written to storage —
    otherwise half a megabyte of base64 lands in localStorage on every save. */
 function plantSeed(){
@@ -1652,11 +1714,11 @@ function plantSeed(){
      rows were only written by the next save() — so a session where you looked
      and left kept the flag and lost the images, and Angles stayed empty for
      good. Now it plants whenever none are there, and persists on the spot. */
-  if(IMGS.some(i=>i.seed)) return;
   const now=Date.now();
+  if(!IMGS.some(i=>i.seed)){
   SEED.forEach((sd,i)=>{
     IMGS.push({ id:'seed_'+sd.k, src:SEEDIMG[sd.k], coll:null, by:sd.by, seed:true,
-      marks:[{id:'m'+uid(),kind:'point',x:sd.x,y:sd.y,text:sd.t}],
+      marks:[{id:'m'+uid(),kind:'point',x:sd.x,y:sd.y,text:sd.t,by:sd.by}],
       comments:[], shared:true, likes:[], saves:[],
       at:now-(i+1)*7200000, sharedAt:now-(i+1)*7200000 });
   });
@@ -1667,18 +1729,39 @@ function plantSeed(){
   L.forEach(([k,who])=>{ const im=IMGS.find(x=>x.id==='seed_'+k); if(im) im.likes=who; });
   [['ceiling',['ines']],['terracotta',['marta']]].forEach(([k,who])=>{
     const im=IMGS.find(x=>x.id==='seed_'+k); if(im) im.saves=who; });
+  }
+  /* Outside the plant, so a library that already has the seeds gets the
+     second reading too rather than only a browser opening this for the
+     first time. */
+  SEED.filter(sd=>sd.also).forEach(sd=>{
+    const im=IMGS.find(x=>x.id==='seed_'+sd.k); if(!im) return;
+    if((im.marks||[]).some(m=>m.by===sd.also.by)) return;
+    (im.marks=im.marks||[]).push({id:'m'+uid(),kind:'point',
+      x:sd.also.x, y:sd.also.y, text:sd.also.t, by:sd.also.by, at:now-3600000});
+  });
   save();
 }
 function load(){
+  /* A read that fails is not permission to write. The whole of this used to
+     sit in one try whose catch replaced COLLS, BOARDS and IMGS with a fresh
+     account — so a single unparseable key silently became a new account, and
+     the next save() wrote that over everything the person had. Now a key that
+     will not parse falls back on its own, and nothing else is touched. */
+  const read=(k,fallback)=>{ try{
+      const raw=localStorage.getItem('ari2-'+k);
+      if(raw===null) return fallback;
+      const v=JSON.parse(raw);
+      return (v===null||v===undefined) ? fallback : v;
+    }catch(e){ return fallback; } };
   try{
     /* One collection to start, named for nothing in particular. Two named
        collections read as an example somebody else had already filled in;
        one empty-ish name reads as a place to put your own things. */
-    COLLS = JSON.parse(localStorage.getItem('ari2-colls')||'null') || [
+    COLLS = read('colls', [
       {id:'c1',name:'Project 1', owner:'me',members:['me'],link:false}
-    ];
-    BOARDS = JSON.parse(localStorage.getItem('ari2-boards')||'[]');
-    IMGS   = JSON.parse(localStorage.getItem('ari2-imgs')||'[]');
+    ]);
+    BOARDS = read('boards', []);
+    IMGS   = read('imgs', []);
     SEEN   = +(localStorage.getItem('ari2-seen')||0);
     /* Open on the collection you were last in. All is a deliberate choice,
        not the thing you land on every morning. */
@@ -1689,14 +1772,14 @@ function load(){
     /* Merged, not replaced. A switch added later is absent from what was
        saved earlier, and reading the old object whole turns it off for
        everybody who has ever opened the app. */
-    NOTIF   = {...NOTIF, ...(JSON.parse(localStorage.getItem('ari2-notif')||'null')||{})};
-    FOLLOW = new Set(JSON.parse(localStorage.getItem('ari2-follow')||'[]'));
-    FANS   = JSON.parse(localStorage.getItem('ari2-fans')||'null');
-    PEND   = JSON.parse(localStorage.getItem('ari2-pend')||'null');
+    NOTIF   = {...NOTIF, ...read('notif', {})};
+    FOLLOW  = new Set(read('follow', []));
+    FANS    = read('fans', null);
+    PEND    = read('pend', null);
     /* Whoever is being viewed as, the owner's chosen name has to be the one
        everybody sees — the profile edit was in memory only, so a rename
        lasted until the next reload and then quietly went back. */
-    PROF   = JSON.parse(localStorage.getItem('ari2-prof')||'{}') || {};
+    PROF   = read('prof', {});
     Object.keys(PROF).forEach(k=>{ if(PEOPLE[k]) Object.assign(PEOPLE[k], PROF[k]); });
     if(!FANS){
       /* Three people who found you. Nothing here claims you made anything —
@@ -1715,7 +1798,11 @@ function load(){
     COLLS.forEach(c=>{c.members=c.members||['me'];c.owner=c.owner||'me';});
     IMGS.forEach(i=>{i.marks=i.marks||[];i.likes=i.likes||[];i.saves=i.saves||[];
       i.comments=i.comments||[];i.by=i.by||'me';});
-  }catch(e){ COLLS=[{id:'c1',name:'Project 1',owner:'me',members:['me'],link:false}]; BOARDS=[]; IMGS=[]; }
+  }catch(e){
+    /* Whatever is left here is a fault in the code below the reads, not in
+       the stored data — so it must not throw anything away. */
+    COLLS=COLLS||[]; BOARDS=BOARDS||[]; IMGS=IMGS||[];
+  }
 }
 
 /* ═══ helpers ══════════════════════════════════════════════ */
@@ -1743,10 +1830,19 @@ const linkGuest = () => LINKONLY || ME==='visitor';
    members do; cropping, deleting and publishing stay with the owner, because
    a crop moves everybody's marks, a delete removes their work, and publishing
    sends somebody else's photograph out into the world. */
-const canEdit = id => { const i=img(id); return !!i && (i.by===ME || (coll(i.coll)||{}).owner===ME); };
-const canMark = id => { const i=img(id); if(!i) return false;
-  const c=coll(i.coll)||{};
-  return i.by===ME || c.owner===ME || (c.members||[]).includes(ME); };
+/* Everything hangs off one question. `i.by===ME` used to be an independent
+   grant, which meant a colleague who had been removed from a project could
+   still mark, crop and delete the photographs they had contributed — the
+   project door was locked and the photograph door was not. Two doors into one
+   room, and one of them was always going to be left open. */
+const inProject = cid => { const c=coll(cid);
+  return !!c && (c.owner===ME || (c.members||[]).includes(ME)); };
+const canMark = id => { const i=img(id); return !!i && inProject(i.coll); };
+/* Marking is what the people in a project do. Cropping, deleting and
+   publishing stay with whoever took the photograph, or whoever owns the
+   project it is in — but only while they are still in it. */
+const canEdit = id => { const i=img(id); if(!i || !inProject(i.coll)) return false;
+  return i.by===ME || (coll(i.coll)||{}).owner===ME; };
 /* One person's reading of one photograph. Everything about layers is this.
    A mark written before marks had authors belongs to whoever took the
    photograph, which is who wrote it. */
@@ -1792,6 +1888,13 @@ function go(id){
      the marking screen can open a mix or jump to Public, and either way the
      next photograph opened anywhere in the app was already armed. */
   if(UI.screen==='s-mark' && id!=='s-mark' && id!=='s-crop') MKEDIT=false;
+  /* And the run, for the same reason. Marking mode was cleared here and the
+     publish run was not, so leaving a run by the ⋯ menu left it loaded: the
+     next photograph opened anywhere wore Skip and Next, its header read
+     “1 of 2”, and Done ran the run's own step instead of finishing marking.
+     The back arrow already ended it; this is the other door. */
+  if(UI.screen==='s-mark' && id!=='s-mark' && id!=='s-crop' && _pubRun.length){
+    _pubRun=[]; _pubIx=0; }
   if(!_popping && UI.screen!==id){ try{ history.pushState({s:id},''); }catch(e){} }
   UI.screen=id;
   /* A toast raised on one screen used to follow you onto the next, where it
@@ -2019,7 +2122,10 @@ function renderLibrary(){
   if(UI.screen==='s-coll') renderColl(); else renderMe();
 }
 /* ── your page ─────────────────────────────────────────────────────── */
-function myColls(){ return guest() ? COLLS.filter(c=>c.members.includes(ME)) : COLLS; }
+/* The filter used to run only when guest() was true, so the account this
+   prototype starts as saw every project in the file — including ones owned by
+   somebody else that it had never been let into. One test, no exceptions. */
+function myColls(){ return COLLS.filter(c=>c.owner===ME || (c.members||[]).includes(ME)); }
 function myImgs2(){
   const ids=myColls().map(c=>c.id);
   return IMGS.filter(i=>i.coll && ids.includes(i.coll)).sort((a,b)=>b.at-a.at);
@@ -2484,6 +2590,10 @@ function doDeleteColl(cid,dest){
   const imgs=collImgs(cid);
   if(dest){ imgs.forEach(i=>i.coll=dest); }
   else{ imgs.forEach(i=>dbDel(i.id));
+        /* The same sweep the single delete does. Without it a Mix in another
+           project kept pointing at a photograph that had gone, and drew a
+           cell that could never be filled. */
+        dropFromBoards(imgs.map(i=>i.id));
         IMGS=IMGS.filter(i=>i.coll!==cid);
         BOARDS=BOARDS.filter(b=>b.coll!==cid); }
   BOARDS.filter(b=>b.coll===cid).forEach(b=>b.coll=dest);
@@ -2587,9 +2697,24 @@ function bindSwipes(){
     el.addEventListener('pointercancel',end);
   });
 }
-function removeMember(id){ const c=coll(UI.coll);
-  c.members=c.members.filter(x=>x!==id); if(ME===id) ME='me';
-  save(); renderPeople(); renderLibrary(); }
+/* Access follows the project, so removing somebody takes the photographs they
+   contributed away from them as well. Nothing is deleted — the project keeps
+   them, which is the point, since taking them out would break the collection
+   for everybody who stayed. The confirmation has to say both halves. */
+function removeMember(id){
+  const c=coll(UI.coll); if(!c) return;
+  const n=IMGS.filter(i=>i.coll===c.id && i.by===id).length;
+  closeSheets();
+  confirmThen('Remove '+esc(who(id).short)+'?',
+    n ? ('They lose access to everything in “'+c.name+'”, including the '+n+
+         ' photograph'+(n===1?'':'s')+' they added. Nothing is deleted.')
+      : ('They lose access to everything in “'+c.name+'”. Nothing is deleted.'),
+    'Remove', ()=>{
+      c.members=c.members.filter(x=>x!==id); if(ME===id) ME='me';
+      save(); renderLibrary();
+      toast(who(id).short+' is out of “'+c.name+'”');
+    });
+}
 
 /* ═══ selection ════════════════════════════════════════════
    Hold to select, then keep the finger down and drag to sweep up
@@ -2793,6 +2918,17 @@ function removeSelected(){
     });
 }
 const inBoard = id => BOARDS.some(b=>b.cells.includes(id));
+const boardsWith = id => BOARDS.filter(b=>(b.cells||[]).includes(id));
+/* A Mix is a composition, not a view of a folder. Losing one photograph used
+   to destroy the whole thing, which threw away three judgements to punish the
+   absence of a fourth — and the grid already draws an empty cell. So the cell
+   empties and the Mix stands; it goes only when there is nothing left in it. */
+function dropFromBoards(ids){
+  const gone = new Set([].concat(ids));
+  BOARDS.forEach(b=>{ b.cells=(b.cells||[]).map(c=>(c && gone.has(c)) ? '' : c);
+    b.comments=(b.comments||[]).filter(x=>!(x.img && gone.has(x.img))); });
+  BOARDS = BOARDS.filter(b=>(b.cells||[]).some(Boolean));
+}
 
 /* ═══ marking ══════════════════════════════════════════════
    An image screen and a marking screen are the same screen. Tap a
@@ -2832,6 +2968,15 @@ function leaveEdit(){
 }
 function openMark(id){
   const im=img(id); if(!im) return;
+  /* The project decides. Without this a removed colleague still had a way in
+     through an alert or a link — openColl refused and this did not.
+     Two exemptions, and both are doors the owner opened rather than holes:
+     a photograph in Public, and a photograph inside a Mix somebody arrived at
+     by its shared link. The first version of this guard had only the first,
+     and shut a link guest out of the very photographs they had been sent. */
+  if(im.coll && coll(im.coll) && !inProject(im.coll) && !im.shared
+     && !(LINKONLY && CURB && CURB.link && (CURB.cells||[]).includes(id))){
+    toast('You are not in that project'); return; }
   if(UI.screen!=='s-mark' && UI.screen!=='s-crop') _markFrom=UI.screen;
   /* Only your own marks are editable, so only yours are in the editor. */
   MK={ id, marks: JSON.parse(JSON.stringify(layerOf(im, ME))) };
@@ -2863,7 +3008,9 @@ function openMark(id){
   $('mk-ro').style.display = ro ? 'block' : 'none';
   $('mk-ro').textContent = linkGuest()
     ? 'Marking and comments are in the app'
-    : 'Only whoever took this can mark it';
+    /* Not “only whoever took this”: the people in the project may mark it
+       too, and that is the test the code actually runs. */
+    : 'Only people in this project can mark it';
   $('mkbar-view').style.display = editing ? 'none' : 'flex';
   _viewHide=false; $('mkhold').classList.remove('nomarks');
   /* Offering to hide nothing is the same fault as offering an action that
@@ -2969,17 +3116,34 @@ function paintMarks(){
   setMkTitle();
   $('mkhint').style.display = MK.marks.length ? 'none' : '';
 }
-/* A row of faces says how many people have read this photograph by being a
-   row. It is absent when only one has. */
+/* Nothing here is a count and nothing here explains itself. The dots say how
+   many readings there are by being that many, and which one is on the
+   photograph by one of them being filled. What the reading is called is on
+   the title above it — “doyun’s”, “Yours” — because a name in the header is
+   read on the way in, and a name on a control has to be interpreted. */
 function renderFaces(im){
-  const el=$('mk-faces'); if(!el) return;
+  const dots=$('mk-dots'); if(!dots) return;
   const ppl=layerPeople(im), editing=MKEDIT && !MKRO;
-  if(ppl.length<2 || editing){ el.style.display='none'; el.innerHTML=''; return; }
-  el.style.display='flex';
-  el.innerHTML = ppl.map(w=>`<button class="lf ${w===(LAYER||im.by)?'on':''}"
-    onclick="showLayer('${w}')" aria-label="${esc(who(w).short)}">${avatar(w,26)}</button>`).join('');
+  if(ppl.length<2 || editing){ dots.style.display='none'; dots.innerHTML=''; return; }
+  const active=LAYER||im.by;
+  dots.style.display='flex';
+  /* Tappable as well as swipeable. A dot is small for a finger, so it carries
+     a name for anybody listening and a hit area larger than it looks. */
+  dots.innerHTML = ppl.map(w=>`<button class="rdot ${w===active?'on':''}"
+    onclick="showLayer('${w}')" aria-label="${esc(poss(w))} reading"></button>`).join('');
 }
-function showLayer(w){ if(MKEDIT) return; LAYER=w; paintMarks(); setMkTitle(); }
+function showLayer(w){ if(MKEDIT) return; LAYER=w; if(MK) FLAYER[MK.id]=w;
+  paintMarks(); setMkTitle(); renderFaces(img(MK.id)); }
+/* Sideways on the photograph, when there is more than one reading of it.
+   The dots underneath are what says the gesture is there. */
+function layerStep(d){
+  if(!MK || MKEDIT) return false;
+  const im=img(MK.id); if(!im) return false;
+  const ppl=layerPeople(im); if(ppl.length<2) return false;
+  const at=Math.max(0, ppl.indexOf(LAYER||im.by)), n=at+d;
+  if(n<0||n>=ppl.length) return true;
+  showLayer(ppl[n]); return true;
+}
 /* One author for the title. It had two — openMark and paintMarks — and
    paintMarks ran second, so every state openMark set was overwritten. */
 function setMkTitle(){
@@ -3075,7 +3239,13 @@ function bindMark(el){
   hold.addEventListener('pointerup',e=>{
     if(!swiping) return; swiping=false;
     const dx=e.clientX-sx, dy=e.clientY-sy;
-    if(Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.6) viewStep(dx<0?1:-1);
+    if(Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.6){
+      const d = dx<0?1:-1;
+      /* Readings are the inner axis and they own the gesture whenever there
+         is more than one — the dots underneath are showing, so the swipe has
+         something saying it is there. With one reading there are no dots and
+         the same drag turns the photograph. */
+      if(!layerStep(d)) viewStep(d); }
   });
   hold.addEventListener('pointerdown',e=>{
     /* canEdit is the owner's permission — crop, delete, publish. Drawing on
@@ -3433,13 +3603,13 @@ function doMoveImage(cid){ const im=img(MK.id); im.coll=cid; save(); closeSheets
   toast('Moved to '+coll(cid).name); }
 function removeImage(){
   closeSheets();
-  const id=MK.id, used=inBoard(id);
+  const id=MK.id, n=boardsWith(id).length;
   confirmThen('Delete this photograph?',
-    used?'It is in a mix. That mix goes with it. There is no undo.'
-        :'It goes from the collection and from anywhere it appears. There is no undo.',
+    n ? ('It leaves a gap in '+(n===1?'a mix':n+' mixes')+'. There is no undo.')
+      : 'It goes from the project and from anywhere it appears. There is no undo.',
     'Delete',()=>{
       dbDel(id);
-      BOARDS=BOARDS.filter(b=>!b.cells.includes(id));
+      dropFromBoards([id]);
       IMGS=IMGS.filter(i=>i.id!==id);
       MK=null; _run=[]; save(); go(BACKTO.includes(_markFrom) ? _markFrom : 's-coll'); toast('Removed');
     });
@@ -3909,25 +4079,84 @@ function renderAngles(){
   }
 }
 let _gsnap=null;
-/* Which reading is on the photograph, per card. Not remembered between
-   visits — it is a look, not a setting. */
+/* Which reading is on the card. Not remembered between visits — it is a
+   look, not a setting. */
 let FLAYER={};
-function feedLayer(id,w){ FLAYER[id]=w; repaintCard(id); }
+/* Patched rather than rebuilt: the name has to slide out from behind one face
+   and in beside another, and a card that is thrown away and re-rendered has
+   nothing to animate from. Falls back to a full repaint when the reading
+   being chosen has no face in the row, which is the case the list handles. */
+function feedLayer(id,w){
+  FLAYER[id]=w;
+  const el=$('fc_'+id), i=img(id); if(!el||!i) return;
+  const btn=[...el.querySelectorAll('.rfaces button')].find(b=>b.dataset.w===w);
+  if(!btn){ repaintCard(id); return; }
+  el.querySelectorAll('.rfaces button').forEach(b=>b.classList.toggle('on', b===btn));
+  el.querySelectorAll('.rfaces .who').forEach(n=>n.classList.toggle('on', n.dataset.w===w));
+  const fimg=el.querySelector('.fimg');
+  fimg.style.setProperty('--pin', who(w).c);
+  const all=layerOf(i,w);
+  fimg.querySelectorAll('.mark').forEach(e=>e.remove());
+  const svg=fimg.querySelector('.fink');
+  const ink=all.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
+  if(svg) svg.innerHTML=ink;
+  fimg.insertAdjacentHTML('beforeend', all.map((m,k)=>markHTML(m,k,'',true)).join(''));
+}
+/* Three faces fit beside a name and the four actions. Past that the rest are
+   a list — and whoever's reading is on the photograph is always one of the
+   three, or the name would have no face to sit against. */
+const RFACES=3;
+function nameChip(x, on){
+  return `<span class="who ${on?'on':''}" data-w="${x}" onclick="openPerson('${x}')"
+    ><b>${esc(who(x).h||who(x).short)}</b></span>`;
+}
+function readerRow(i, ppl, lay){
+  if(ppl.length<2) return `<span class="rfaces solo" onclick="openPerson('${i.by}')"
+    >${avatar(i.by,26)}${nameChip(i.by,true)}</span>`;
+  let show=ppl.slice(0, ppl.length>RFACES ? RFACES-1 : RFACES);
+  if(!show.includes(lay)) show=[ppl[0], lay];
+  const rest=ppl.length-show.length;
+  return `<span class="rfaces">${show.map(x=>`<button class="${x===lay?'on':''}"
+      data-w="${x}" onclick="feedLayer('${i.id}','${x}')"
+      aria-label="${esc(poss(x))} reading">${avatar(x,26)}</button>${nameChip(x, x===lay)}`).join('')}${
+    rest>0?`<button onclick="openReaders('${i.id}')" aria-label="The other readings"
+      ><span class="more" style="width:26px;height:26px;font-size:10px">+${rest}</span></button>`:''}</span>`;
+}
+/* Past four, the faces stop fitting beside a name and four actions. The rest
+   are a list rather than a second screen: choosing a reading should leave you
+   where you were looking. */
+function openReaders(id){
+  const i=img(id); if(!i) return;
+  const ppl=layerPeople(i), lay=(ppl.includes(FLAYER[id])?FLAYER[id]:i.by);
+  $('rd-rows').innerHTML = ppl.map(w=>`<div class="srow ${w===lay?'sel':''}"
+    onclick="closeSheets();feedLayer('${id}','${w}')">${avatar(w,26)}${
+    w===ME ? 'You' : esc(who(w).name)}${w===i.by?'<span class="k">took it</span>':''}</div>`).join('');
+  openSheet('sheet-readings');
+}
+/* Tapping a photograph in Public used to open it, and that was scaffolding
+   for a design where the readings lived on another screen. The faces do that
+   here now, and what the tap opened was smaller than the card it came from
+   (374×499 against 390×520) and was the marking screen, which greets a
+   visitor with a line about what they are not allowed to do. */
 function repaintCard(id){
   const el=$('fc_'+id), i=img(id); if(!el||!i) return;
   const d=document.createElement('div'); d.innerHTML=feedCard(i);
   el.replaceWith(d.firstElementChild);
+  /* The card's height changed — a row of readings appeared, or the line
+     under it went — so the arrows are no longer level with the picture. */
+  placeArrows();
 }
 function feedCard(i){
   const liked=i.likes.includes(ME), saved=i.saves.includes(ME);
   /* The marks stay pinned where the person put them, and that is the only
      place they appear. One layer at a time: three people's pins on one
      picture is not a reading, it is a mess. */
+  /* Whoever took it first, then everybody who has read it. */
   const ppl=layerPeople(i), lay=(ppl.includes(FLAYER[i.id])?FLAYER[i.id]:i.by);
   const all=layerOf(i, lay);
   const ink=all.filter(m=>m.kind==='region').map(m=>`<path d="${pathD(m.path)}"/>`).join('');
   const pins=all.map((m,k)=>markHTML(m,k,'',true)).join('');
-  const cs=(i.comments||[]).length, w=who(i.by), rd=who(lay);
+  const cs=(i.comments||[]).length, w=who(i.by);
   /* Following is a decision about a person, and it belongs on the page about
      that person. On every card it asked the same question over and over of
      somebody who was trying to look at photographs. */
@@ -3938,18 +4167,13 @@ function feedCard(i){
       ${all.length?`<button class="hidem" aria-label="Hide the marks"
         onclick="toggleMarks(event,'${i.id}')">${I.eyeOff}</button>`:''}</div></div>
     <div class="fbar">
-      <span class="who" onclick="openPerson('${lay}')">${avatar(lay,26)}<b>${esc(rd.h||rd.short)}</b></span>
-      ${lay!==i.by?`<span class="dot">on ${esc(w.h||w.short)}’s</span>`
-        : i.from?`<span class="dot">· from ${esc(who(i.from).short)}</span>`:''}
+      ${readerRow(i, ppl, lay)}
+      ${i.from?`<span class="dot">· from ${esc(who(i.from).short)}</span>`:''}
       <span class="acts">
         <span class="like ${liked?'on':''}" onclick="like('${i.id}')">${I.heart}</span>
         <span class="cm" onclick="openComments('${i.id}')">${I.bubble}${cs?`<span class="n">${cs}</span>`:''}</span>
         <span class="keep ${saved?'saved':''}" onclick="saveFrom('${i.id}')">${I.mark}</span>
         <span onclick="postMenu('${i.id}')">${I.more}</span></span></div>
-    ${ppl.length>1?`<div class="ffaces">${ppl.map(x=>
-      `<button class="lf ${x===lay?'on':''}" onclick="feedLayer('${i.id}','${x}')"
-        aria-label="${esc(who(x).short)}">${avatar(x,26)}</button>`).join('')}
-      <span class="fread">${ppl.length} readings</span></div>`:''}
     ${countLine(i)}</div>`;
 }
 /* Only whoever took the photograph is told how it did. A public number
@@ -4613,8 +4837,11 @@ function askDeleteAccount(){
   closeSheets();
   const n=filed().length, c=COLLS.length, b=BOARDS.length;
   confirmThen('Delete your account?',
+    /* The seven-day window is real in the product and cannot be real here:
+       there is no server to hide anything from, and a pretend pending state
+       teaches nobody anything. The prototype says what the prototype does. */
     n+' photograph'+(n===1?'':'s')+', '+c+' project'+(c===1?'':'s')+' and '+b+' mix'+(b===1?'':'es')+
-    ' go. It is hidden straight away and erased seven days from now — opening ari again before then cancels it.',
+    ' go. Everything is erased on this device. There is no undo.',
     'Delete', ()=>{
       IMGS.forEach(i=>dbDel(i.id));
       ['colls','boards','imgs','seen','coll','me','cv','follow','fans','pend','firstpub','firstshare','taught','notif','prof','turned']
