@@ -734,6 +734,10 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
    long press must not turn into a text selection. */
 body.dragging{user-select:none;-webkit-user-select:none}
 body.dragging #lib-body{touch-action:none}
+/* iOS answers a long press over a link or an image with its own menu, which
+   arrives on top of the card being picked up. */
+.rlist .row,.cgrid .ccard,.cgrid .ccard img,.rlist .row img{
+  -webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .fnav{position:absolute;z-index:8;width:36px;height:36px;border-radius:50%;
   display:none;align-items:center;justify-content:center;color:var(--ink);
   background:var(--bg);border:0;box-shadow:var(--lift);
@@ -1429,7 +1433,7 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
   <div class="grab"></div><div class="sh">About ari</div>
   <div class="sp">A visual note app. Write on the picture, at the spot you were looking at.<br><br>
     Private beta · prototype build.<br>
-    <span style="color:var(--faint)">Build 5 Sep 02:35 · <span id="ab-who"></span></span></div>
+    <span style="color:var(--faint)">Build 5 Sep 11:20 · <span id="ab-who"></span></span></div>
 </div>
 
 <div class="sheet" id="sheet-confirm">
@@ -2299,36 +2303,45 @@ function renderCollGrid(cols){
    and a handle would be a third control the card view has no room for — and
    two views with two gestures are two features to learn. One gesture, both
    layouts: the drop point is decided by document order rather than by
-   geometry, so a column and a two-up grid need no separate arithmetic. */
+   geometry, so a column and a two-up grid need no separate arithmetic.
+
+   On a phone the first version did not work at all, and the event log said
+   why: pointerdown, touchstart, one touchmove, then **pointercancel** — the
+   browser handed the gesture to the scroller and took the pointer stream
+   away. Two mistakes underneath that.
+
+   One: `touch-action` is read when a gesture *begins*. Setting it on the
+   container once the press had been held for 340ms was 340ms too late, and
+   changing it mid-gesture does nothing at all. What does work mid-gesture is
+   preventDefault on a **non-passive touchmove**, which has to be registered
+   before the finger lands.
+
+   Two: pointercancel was treated as an ordinary drop, so the first movement
+   ended the drag it was supposed to be.
+
+   So touch is driven by touch events and everything else by pointer events —
+   one or the other, never both, or every gesture is handled twice. */
 let _dragged=false;
+const TOUCH = (typeof window!=='undefined') && ('ontouchstart' in window);
 function armReorder(boxId, sel, done){
   const box=$(boxId); if(!box || box._armed) return;
   box._armed=true;
-  let lift=null, timer=null, sx=0, sy=0, pid=null;
+  let lift=null, timer=null, sx=0, sy=0;
   /* Where the finger was when the lifted thing last took a slot. Everything
      it travels from there is a transform, so the card stays under the finger
      instead of sitting in its old place while the list rearranges around it.
      Re-based on every swap, which is what makes the jump into the new slot
      read as the list settling rather than as the card escaping. */
   let px=0, py=0;
+  const items=()=>[...box.querySelectorAll(sel)];
   const carry=(x,y)=>{ if(lift) lift.style.transform =
     'translate('+(x-px)+'px,'+(y-py)+'px) scale(1.03)'; };
-  const items=()=>[...box.querySelectorAll(sel)];
   const stop=()=>{ clearTimeout(timer); timer=null; };
-  const end=()=>{
-    stop();
-    if(!lift) return;
-    lift.classList.remove('lifted');
-    lift.style.transform='';
-    document.body.classList.remove('dragging');
-    try{ box.releasePointerCapture(pid); }catch(e){}
-    lift=null;
-    done(items().map(e=>e.dataset.cid));
-  };
-  box.addEventListener('pointerdown', e=>{
+
+  const down=(x,y,target)=>{
     if(_pickMode) return;
-    const el=e.target.closest(sel); if(!el) return;
-    sx=e.clientX; sy=e.clientY; pid=e.pointerId;
+    const el=target && target.closest && target.closest(sel); if(!el) return;
+    sx=x; sy=y;
     /* Cleared here rather than by the click that follows a drop, because a
        pointer that moved often produces no click at all — and a suppression
        flag nobody consumes goes on to eat the next honest tap. */
@@ -2338,29 +2351,57 @@ function armReorder(boxId, sel, done){
       lift=el; _dragged=true;
       px=sx; py=sy;
       el.classList.add('lifted');
-      carry(sx,sy);
       document.body.classList.add('dragging');
-      try{ box.setPointerCapture(pid); }catch(err){}
+      carry(sx,sy);
       try{ navigator.vibrate && navigator.vibrate(8); }catch(err){}
     }, 340);
-  });
-  box.addEventListener('pointermove', e=>{
+  };
+  const move=(x,y)=>{
     if(!lift){
       /* A press that turns into a scroll was never a lift. */
-      if(timer && (Math.abs(e.clientX-sx)>8 || Math.abs(e.clientY-sy)>8)) stop();
-      return; }
-    e.preventDefault();
-    carry(e.clientX,e.clientY);
-    const under=document.elementFromPoint(e.clientX,e.clientY);
-    const t=under && under.closest(sel);
-    if(!t || t===lift || t.parentElement!==lift.parentElement) return;
-    const n=items(), ti=n.indexOf(t), li=n.indexOf(lift);
-    if(ti<0||li<0) return;
-    if(ti>li) t.after(lift); else t.before(lift);
-    px=e.clientX; py=e.clientY; carry(e.clientX,e.clientY);
-  });
-  box.addEventListener('pointerup', end);
-  box.addEventListener('pointercancel', end);
+      if(timer && (Math.abs(x-sx)>8 || Math.abs(y-sy)>8)) stop();
+      return false; }
+    carry(x,y);
+    const under=document.elementFromPoint(x,y);
+    const t=under && under.closest && under.closest(sel);
+    if(t && t!==lift && t.parentElement===lift.parentElement){
+      const n=items(), ti=n.indexOf(t), li=n.indexOf(lift);
+      if(ti>=0 && li>=0){
+        if(ti>li) t.after(lift); else t.before(lift);
+        px=x; py=y; carry(x,y);
+      }
+    }
+    return true;
+  };
+  const end=()=>{
+    stop();
+    if(!lift) return;
+    lift.classList.remove('lifted');
+    lift.style.transform='';
+    document.body.classList.remove('dragging');
+    lift=null;
+    done(items().map(e=>e.dataset.cid));
+  };
+
+  if(TOUCH){
+    box.addEventListener('touchstart', e=>{
+      const t=e.touches[0]; if(t) down(t.clientX, t.clientY, e.target);
+    }, {passive:true});
+    /* Non-passive, and registered before the finger lands: this is the only
+       thing that can take the gesture back off the scroller once it has
+       started, and it is why the list no longer moves under the card. */
+    box.addEventListener('touchmove', e=>{
+      const t=e.touches[0]; if(!t) return;
+      if(move(t.clientX, t.clientY)) e.preventDefault();
+    }, {passive:false});
+    box.addEventListener('touchend', end);
+    box.addEventListener('touchcancel', end);
+  }else{
+    box.addEventListener('pointerdown', e=>down(e.clientX, e.clientY, e.target));
+    box.addEventListener('pointermove', e=>{ if(move(e.clientX,e.clientY)) e.preventDefault(); });
+    box.addEventListener('pointerup', end);
+    box.addEventListener('pointercancel', end);
+  }
   /* The finger that finished a drag is still over a project, and letting go
      would otherwise open it. */
   box.addEventListener('click', e=>{
