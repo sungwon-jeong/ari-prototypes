@@ -1313,10 +1313,10 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 /* It was the only place in the bar with no name on it: a week chip stood
    where every other screen puts its title, so the one screen nobody has
    seen before was also the one that never said what it was. */
-.lyhd{flex:none;display:flex;align-items:center;padding:calc(var(--safeT) + 14px) var(--edge) 0}
+.lyhd{flex:none;display:flex;align-items:center;gap:10px;min-height:34px;box-sizing:content-box;
+  padding:calc(var(--safeT) + 14px) var(--edge) 10px}
 .lyhd h1{margin:0;font-size:var(--t1);font-weight:var(--wm);letter-spacing:-.02em}
-.lybar{flex:none;display:flex;align-items:center;min-height:34px;box-sizing:content-box;
-  padding:10px var(--edge) 8px}
+.lyhd .r{margin-left:auto;display:flex;align-items:center;gap:8px}
 .wkchip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 13px;
   border-radius:var(--r-pill);background:var(--surface);color:var(--ink);
   font-size:var(--t4);font-weight:var(--wb)}
@@ -1325,18 +1325,19 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 /* The picture and the words are one group, centred together — so what is
    left over is split above and below instead of piling up at the top. */
 .lymid{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:22px}
+  justify-content:center;gap:14px}
 /* The wrapper shrink-wraps the photo, so the box IS the picture. That is
    what makes a mark's percentage land on the same spot here, on the
    photograph screen, and on every size of phone — which the fixed 404px
    band could not do, and which is why marks used to drift.
    Full width unless the ratio is too tall for the room left: only then are
    there gutters, and the alternative there is cropping. */
-/* ⚠️ Capped to the same column the words are in. Without this the picture
-   was 24px in while the question was 16px in, and then went edge to edge
-   the moment you wrote — the same photograph in two sizes and two places,
-   a step you could not account for. */
-.lypic{position:relative;display:block;max-width:calc(100% - var(--edge)*2);touch-action:pan-y}
+/* ⚠️ To the edges, the way the photograph screen already shows one. It was
+   held to the text column, which aligned it with the question underneath
+   and cost 32px of width — and a portrait photograph is limited by its
+   WIDTH here, so those 32px were the whole reason the picture could not
+   grow however much vertical room it was given. */
+.lypic{position:relative;display:block;max-width:100%;touch-action:pan-y}
 .lypic img{display:block;max-width:100%;max-height:100%;width:auto;height:auto}
 .lypic.tapme{cursor:pointer}
 .lypic.tapme:active img{filter:brightness(.82)}
@@ -1357,9 +1358,9 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 .lyrow2 .sc button.on .av{box-shadow:0 0 0 2.5px var(--ink)}
 .lyq{font-size:25px;font-weight:var(--wb);line-height:1.2;letter-spacing:-.4px}
 .lysub{padding-top:9px;font-size:var(--t4);color:var(--soft)}
-.lybtn{margin-top:18px;width:100%;height:50px;border-radius:var(--r-pill);background:var(--ink);
+.lybtn{margin-top:12px;width:100%;height:50px;border-radius:var(--r-pill);background:var(--ink);
   color:var(--bg);font-size:var(--t3);font-weight:var(--wb)}
-.lyskip{display:block;margin:8px auto 0;height:34px;padding:0 16px;font-size:var(--t4);
+.lyskip{display:block;margin:2px auto 0;height:34px;padding:0 16px;font-size:var(--t4);
   color:var(--faint)}
 .lynm{padding-top:13px;font-size:var(--t2);font-weight:var(--wb);
   display:flex;align-items:center;gap:10px}
@@ -1393,8 +1394,12 @@ body.sheeted .toast.on{transform:translateX(-50%) translateY(0)}
 /* A shelf rather than a list. With the writing out of the rows a list is
    mostly empty space, and nobody remembers `Week 9` — they remember the
    sconce. */
+/* ⚠️ The chosen week is ringed with a 2.5px box-shadow, which is drawn
+   OUTSIDE the picture — and this scrolls, so the top row's ring was cut off
+   flat against the shelf's edge. The padding gives the ring its room inside
+   the scroll box. Same shape as the face row's ring, and the same fix. */
 .wkshelf{flex:1;min-height:0;overflow-y:auto;display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:0 var(--edge) 4px}
+  grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:4px var(--edge) 4px}
 /* ⚠️ A <button> centres what is in it, and the grid stretches every cell to
    the tallest in the row — so a cell holding a long line pushed its picture
    UP and one holding a short line let it fall. Three pictures on one shelf,
@@ -2948,18 +2953,19 @@ function paintLayers(){
      Consequence, stated: from a week you have not written on, the archive
      is one tap away rather than none — through Write your line, or through
      Just look. */
+  /* ⚠️ The name and the week were two rows, and the second one cost 52px of
+     a screen whose whole job is one photograph. They share a row now, the
+     way every other header in the product is laid out: the name on the
+     left, what you can do on the right. The row keeps a floor so it is the
+     same height with the chips and without them — taking its height away
+     with them is what made the picture jump. */
   const bar = wk => {
     const chip = showWeeks
       ? `<button class="wkchip" id="ly-wk" onclick="openWeeks()">${wk}<span class="car">▾</span></button>` : '';
     const hide = showHide
-      ? `<span style="margin-left:auto"><button class="wkchip" id="ly-hide"
-          onclick="toggleLyHide()">${UI.hide ? I.eyeOff : I.eye}${UI.hide?'Show':'Hide'}</button></span>` : '';
-    /* ⚠️ The row stays even when it is holding nothing. Taking it out gave
-       the picture 52px it did not have a moment later, and the photograph
-       changed size the instant you wrote — which is the jump this screen
-       was fixed for once already. What goes is the control, not the room. */
-    return `<div class="lyhd"><h1>Layers</h1></div>
-      <div class="lybar">${chip}${hide}</div>`;
+      ? `<button class="wkchip" id="ly-hide"
+          onclick="toggleLyHide()">${UI.hide ? I.eyeOff : I.eye}${UI.hide?'Show':'Hide'}</button>` : '';
+    return `<div class="lyhd"><h1>Layers</h1><span class="r">${chip}${hide}</span></div>`;
   };
   if(!p){ $('ly-body').innerHTML = bar('Layers') + `<div class="lymid"><div class="lyblk">
       <div class="empty"><b>Nothing up yet</b>
@@ -3036,6 +3042,8 @@ function paintLayers(){
         <img src="${p.src}" alt=""></span>
       <div class="lyblk">${block}</div>
     </div>
+    <!-- The bar floats 90px off the bottom; this is that and a little air,
+         so Just look is not sitting on the pill. -->
     <div style="height:104px;flex:none"></div>`;
   sizeLayerPic();
   if(showMark) drawLayerMark(p, on);
@@ -3092,7 +3100,7 @@ function sizeLayerPic(){
      move. So it is still while you are aiming and settles once, after the
      line is written. Its SIZE never changes, which is what the jump was. */
   if(blk && UI.asking) blk.style.minHeight = lyRoom + 'px';
-  const room = mid.clientHeight - lyRoom - 22;
+  const room = mid.clientHeight - lyRoom - 14;
   pic.style.maxHeight = Math.max(120, room) + 'px';
   const img = pic.querySelector('img'); if(img) img.style.maxHeight = Math.max(120, room) + 'px';
 }
@@ -3316,10 +3324,18 @@ function paintImages(){
        grid, which is every other view. */
     ? (wr ? writtenList(list) : photoGrid(list, mine && UI.scope!=='private'))
     : !mine ? `<div class="empty"><b>Nothing out yet</b></div>`
+    /* ⚠️ Three different empty screens were saying one sentence. A folder
+       you have just made is not a folder whose contents are being filtered
+       out — telling somebody the chips above hold the rest sends them to a
+       row that cannot help, and the screen they are on has no way to put a
+       photo in a folder at all. That way in is on the photo. */
     : `<div class="empty"><b>${
-        UI.scope==='private' ? 'Nothing private here'
+        inF.length === 0 && UI.folder !== ALLF ? 'Nothing in this folder yet'
+        : UI.scope==='private' ? 'Nothing private here'
         : UI.scope==='public' ? 'Nothing public here' : 'Nothing in here'}</b>
-        ${UI.folder===ALLF
+        ${inF.length === 0 && UI.folder !== ALLF
+          ? 'A photo goes in one from its own ⋯, under Put it in a folder.'
+          : UI.folder===ALLF
           ? 'A photo you keep to yourself stays yours until you switch it.'
           : 'This folder has nothing that matches. The chips above hold the rest.'}</div>`)
     + '<div style="height:120px"></div>';
